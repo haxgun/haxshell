@@ -1,0 +1,9 @@
+AudioPopup 1.0 AudioPopup.qml
+AudioSlider 1.0 AudioSlider.qml
+AudioDeviceList 1.0 AudioDeviceList.qml
+BrightnessPopup 1.0 BrightnessPopup.qml
+WiFiPopup 1.0 WiFiPopup.qml
+BluetoothPopup 1.0 BluetoothPopup.qml
+BatteryPopup 1.0 BatteryPopup.qml
+BatteryInfoRow 1.0 BatteryInfoRow.qml
+KeyboardLayoutPopup 1.0 KeyboardLayoutPopup.qml

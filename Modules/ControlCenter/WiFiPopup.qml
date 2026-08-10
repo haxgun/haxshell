@@ -1,0 +1,446 @@
+// WiFiPopup.qml - NetworkManager Wi-Fi selector overlay
+import QtQuick
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Networking
+import "../../Common"
+import "../../Widgets"
+
+PanelWindow {
+  id: root
+
+  property bool isOpen: false
+  property int rightMargin: 16
+  property bool refreshActive: false
+  property var pendingNetwork: null
+  property string wifiPassword: ""
+
+  readonly property var wifiDevice: {
+    let list = Networking.devices && Networking.devices.values ? Networking.devices.values : []
+    for (let i = 0; i < list.length; i++) {
+      if (list[i] && list[i].type === DeviceType.Wifi) return list[i]
+    }
+    return null
+  }
+
+  readonly property var wifiNetworks: wifiDevice && wifiDevice.networks && wifiDevice.networks.values ? wifiDevice.networks.values : []
+  readonly property string connectedNetworkName: {
+    for (let i = 0; i < wifiNetworks.length; i++) {
+      if (wifiNetworks[i] && wifiNetworks[i].connected) return wifiNetworks[i].name
+    }
+    return ""
+  }
+
+  visible: isOpen || container.opacity > 0.01
+
+  WlrLayershell.namespace: "quickshell-bar"
+  WlrLayershell.layer: WlrLayer.Overlay
+  WlrLayershell.exclusiveZone: 0
+  WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+
+  anchors {
+    top: true
+    left: true
+    right: true
+    bottom: true
+  }
+
+  color: "#00000000"
+
+  MouseArea {
+    anchors.fill: parent
+    enabled: root.isOpen
+    onClicked: root.isOpen = false
+  }
+
+  IpcHandler {
+    target: "wifi"
+
+    function toggle() { root.isOpen = !root.isOpen }
+    function open() { root.isOpen = true }
+    function close() { root.isOpen = false }
+  }
+
+  onIsOpenChanged: {
+    if (isOpen && root.wifiDevice) root.wifiDevice.scannerEnabled = true
+  }
+
+  Timer {
+    id: wifiRefreshTimer
+    interval: 1800
+    repeat: false
+    onTriggered: root.refreshActive = false
+  }
+
+  function signalPercent(network) {
+    let value = network && typeof network.signalStrength !== "undefined" ? network.signalStrength : 0
+    return Math.max(0, Math.min(100, Math.round(value <= 1 ? value * 100 : value)))
+  }
+
+  function refreshNetworks() {
+    if (!root.wifiDevice) return
+    root.refreshActive = true
+    wifiRefreshTimer.restart()
+    root.wifiDevice.scannerEnabled = false
+    root.wifiDevice.scannerEnabled = true
+  }
+
+  function statusText(network) {
+    if (network.connected) return "Подключено"
+    if (network.state === ConnectionState.Connecting || network.stateChanging) return "Подключение..."
+    return network.known ? "Сохранено" : "Доступно"
+  }
+
+  function secured(network) {
+    return network && network.security !== WifiSecurityType.Open
+  }
+
+  function signalIcon(network) {
+    let pct = signalPercent(network)
+    if (pct >= 75) return Config.iconWifiConnected
+    if (pct >= 50) return Config.iconWifiSignalHigh
+    if (pct >= 25) return Config.iconWifiSignalMid
+    return Config.iconWifiSignalLow
+  }
+
+  function signalColor(network) {
+    let pct = signalPercent(network)
+    if (network && network.connected) return Config.textWhite
+    if (pct >= 50) return Config.textPrimary
+    if (pct >= 25) return Config.warningAmber
+    return Config.dangerRed
+  }
+
+  function connectNetwork(network) {
+    if (!network) return
+    if (network.connected) {
+      network.disconnect()
+      return
+    }
+    if (network.known || network.security === WifiSecurityType.Open) {
+      network.connect()
+      return
+    }
+    pendingNetwork = network
+    wifiPassword = ""
+  }
+
+  function isPending(network) {
+    return root.pendingNetwork && network && root.pendingNetwork.name === network.name
+  }
+
+  Rectangle {
+    id: container
+    width: 340
+    implicitHeight: columnLayout.implicitHeight + 28
+    anchors.right: parent.right
+    anchors.rightMargin: root.rightMargin
+
+    y: root.isOpen ? Config.dropdownTopGap : -12
+    opacity: root.isOpen ? 1.0 : 0.0
+
+    Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+    Behavior on opacity { NumberAnimation { duration: 160 } }
+
+    color: Config.glassBg
+    radius: Config.overlayRadius
+
+    MouseArea {
+      anchors.fill: parent
+      onClicked: mouse => { mouse.accepted = true }
+    }
+
+    Rectangle {
+      anchors.fill: parent
+      anchors.margins: Config.innerBorderMargin
+      radius: Config.overlayRadius - 2
+      color: "#00000000"
+      border.color: Config.borderColor
+      border.width: 1
+    }
+
+    Column {
+      id: columnLayout
+      width: parent.width - 32
+      anchors.top: parent.top
+      anchors.topMargin: 14
+      anchors.horizontalCenter: parent.horizontalCenter
+      spacing: 12
+
+      Row {
+        width: parent.width
+        height: 28
+        spacing: 10
+
+        Text {
+          text: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected
+          color: Networking.wifiEnabled ? Config.textWhite : Config.dangerRed
+          font.pixelSize: Config.fontSizeTitle
+          font.family: Config.fontIcon
+          anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Column {
+          width: parent.width - 126
+          anchors.verticalCenter: parent.verticalCenter
+          spacing: 1
+
+          Text {
+            text: "Wi-Fi"
+            color: Config.textWhite
+            font.pixelSize: Config.fontSizeLarge
+            font.weight: Font.Bold
+            font.family: Config.fontSans
+          }
+
+          Text {
+            text: root.connectedNetworkName || (Networking.wifiEnabled ? "Не подключено" : "Выключено")
+            color: Config.textMuted
+            font.pixelSize: Config.fontSizeSmall
+            font.family: Config.fontSans
+            elide: Text.ElideRight
+            width: parent.width
+          }
+        }
+
+        Rectangle {
+          width: 28
+          height: 26
+          radius: 8
+          color: wifiRefreshMouse.containsMouse ? Config.activeHoverBg : "#00000000"
+
+          Text {
+            id: wifiRefreshIcon
+            anchors.centerIn: parent
+            text: Config.iconRefresh
+            color: Config.textPrimary
+            font.pixelSize: Config.fontSizeIconMedium
+            font.family: Config.fontIcon
+
+            RotationAnimation on rotation {
+              running: root.refreshActive
+              from: 0
+              to: 360
+              duration: 700
+              loops: Animation.Infinite
+            }
+          }
+
+          MouseArea {
+            id: wifiRefreshMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.refreshNetworks()
+          }
+        }
+
+        ToggleSwitch {
+          checked: Networking.wifiEnabled
+          anchors.verticalCenter: parent.verticalCenter
+          onToggled: Networking.wifiEnabled = !Networking.wifiEnabled
+        }
+      }
+
+      Rectangle {
+        width: parent.width
+        height: 1
+        color: Config.separatorColor
+      }
+
+      Text {
+        width: parent.width
+        visible: !root.wifiDevice
+        text: "Wi-Fi адаптер не найден"
+        color: Config.textMuted
+        font.pixelSize: Config.fontSizeNormal
+        font.family: Config.fontSans
+        horizontalAlignment: Text.AlignHCenter
+      }
+
+      ListView {
+        id: networkList
+        width: parent.width
+        height: Math.min(310, contentHeight)
+        visible: !!root.wifiDevice
+        clip: true
+        spacing: 6
+        model: root.wifiNetworks
+
+        delegate: Rectangle {
+          required property var modelData
+          readonly property bool passwordOpen: root.isPending(modelData)
+
+          width: networkList.width
+          height: passwordOpen ? 142 : 46
+          radius: Config.cardRadius
+          color: networkMouse.containsMouse || modelData.connected ? Config.hoverBg : "#00000000"
+          clip: true
+
+          Behavior on height { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+          onPasswordOpenChanged: if (passwordOpen) focusPasswordTimer.restart()
+
+          Timer {
+            id: focusPasswordTimer
+            interval: 120
+            repeat: false
+            onTriggered: inlinePasswordInput.forceActiveFocus()
+          }
+
+          Row {
+            id: networkRow
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: 46
+            anchors.leftMargin: 12
+            anchors.rightMargin: 12
+            spacing: 10
+
+            Text {
+              text: root.signalIcon(modelData)
+              color: root.signalColor(modelData)
+              font.pixelSize: Config.fontSizeIconMedium
+              font.family: Config.fontIcon
+              anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Column {
+              width: parent.width - 54
+              anchors.verticalCenter: parent.verticalCenter
+              spacing: 1
+
+              Text {
+                text: modelData.name || "Скрытая сеть"
+                color: modelData.connected ? Config.textWhite : Config.textPrimary
+                font.pixelSize: Config.fontSizeNormal
+                font.weight: modelData.connected ? Font.Bold : Font.Medium
+                font.family: Config.fontSans
+                elide: Text.ElideRight
+                width: parent.width
+              }
+
+              Text {
+                text: root.statusText(modelData)
+                color: Config.textMuted
+                font.pixelSize: Config.fontSizeSmall
+                font.family: Config.fontSans
+              }
+            }
+
+            Text {
+              width: 18
+              text: root.secured(modelData) ? Config.iconLock : Config.iconUnlock
+              color: root.secured(modelData) ? Config.textSubtle : Config.textMuted
+              font.pixelSize: Config.fontSizeIconSmall
+              font.family: Config.fontIcon
+              horizontalAlignment: Text.AlignRight
+              anchors.verticalCenter: parent.verticalCenter
+            }
+          }
+
+          Column {
+            id: passwordPanel
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: networkRow.bottom
+            anchors.leftMargin: 12
+            anchors.rightMargin: 12
+            spacing: 8
+            opacity: parent.passwordOpen ? 1 : 0
+            visible: opacity > 0.01
+
+            Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
+
+            Rectangle { width: parent.width; height: 1; color: Config.separatorColor; opacity: 0.45 }
+
+            Text {
+              width: parent.width
+              text: "Пароль для " + (modelData.name || "сети")
+              color: Config.textSubtle
+              font.pixelSize: Config.fontSizeSmall
+              font.family: Config.fontSans
+              elide: Text.ElideRight
+            }
+
+            Rectangle {
+              width: parent.width
+              height: 34
+              radius: 10
+              color: Config.searchBg
+              border.color: inlinePasswordInput.activeFocus ? Config.activeBorderColor : Config.borderColor
+              border.width: 1
+
+              TextInput {
+                id: inlinePasswordInput
+                anchors.fill: parent
+                anchors.leftMargin: 12
+                anchors.rightMargin: 12
+                verticalAlignment: TextInput.AlignVCenter
+                text: root.wifiPassword
+                echoMode: TextInput.Password
+                color: Config.textPrimary
+                selectedTextColor: Config.textWhite
+                selectionColor: Config.selectedBg
+                font.pixelSize: Config.fontSizeNormal
+                font.family: Config.fontSans
+                clip: true
+                onTextChanged: if (passwordOpen) root.wifiPassword = text
+                Keys.onReturnPressed: connectButton.clicked()
+                Keys.onEscapePressed: root.pendingNetwork = null
+              }
+            }
+
+            Row {
+              width: parent.width
+              spacing: 8
+
+              Rectangle {
+                width: (parent.width - 8) / 2
+                height: 28
+                radius: 8
+                color: cancelMouse.containsMouse ? Config.hoverBg : "#151A1A1A"
+                border.color: Config.borderColor
+                border.width: 1
+
+                Text { anchors.centerIn: parent; text: "Отмена"; color: Config.textSubtle; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                MouseArea { id: cancelMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.pendingNetwork = null }
+              }
+
+              Rectangle {
+                id: connectButton
+                width: (parent.width - 8) / 2
+                height: 28
+                radius: 8
+                color: connectMouse.containsMouse ? Config.activeHoverBg : Config.selectedBg
+                border.color: Config.activeBorderColor
+                border.width: 1
+
+                signal clicked()
+                onClicked: {
+                  if (root.pendingNetwork) root.pendingNetwork.connectWithPsk(root.wifiPassword)
+                  root.pendingNetwork = null
+                }
+
+                Text { anchors.centerIn: parent; text: "Подключить"; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+                MouseArea { id: connectMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: connectButton.clicked() }
+              }
+            }
+          }
+
+          MouseArea {
+            id: networkMouse
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: networkRow.height
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.connectNetwork(modelData)
+          }
+        }
+      }
+    }
+  }
+}
