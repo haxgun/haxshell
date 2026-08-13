@@ -126,11 +126,23 @@ PanelWindow {
     radius: Config.overlayRadius
     color: Config.glassBg
 
+    Rectangle {
+      visible: Config.shellShadowsEnabled
+      x: 0
+      y: Config.shellShadowOffsetY
+      width: parent.width
+      height: parent.height
+      radius: parent.radius
+      color: Config.shellShadowColor
+      opacity: 0.55
+      z: -1
+    }
+
     Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
     Behavior on opacity { NumberAnimation { duration: 160 } }
 
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
-    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
+    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: Config.shellBordersEnabled ? 1 : 0 }
 
     Column {
       id: content

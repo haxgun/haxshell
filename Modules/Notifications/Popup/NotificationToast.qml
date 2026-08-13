@@ -31,6 +31,18 @@ Rectangle {
   opacity: shown && !closing ? 1.0 : 0.0
   x: 0
 
+  Rectangle {
+    visible: Config.shellShadowsEnabled
+    x: 0
+    y: Config.shellShadowOffsetY
+    width: parent.width
+    height: parent.height
+    radius: parent.radius
+    color: Config.shellShadowColor
+    opacity: 0.55
+    z: -1
+  }
+
   Component.onCompleted: shown = true
 
   Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
@@ -57,7 +69,7 @@ Rectangle {
     if (n) n.dismiss()
   }
 
-  Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
+  Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: Config.shellBordersEnabled ? 1 : 0 }
 
   MouseArea {
     id: toastDragArea

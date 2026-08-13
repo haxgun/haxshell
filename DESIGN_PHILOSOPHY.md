@@ -1,6 +1,6 @@
-# Quickshell Design Philosophy & Technical Guide
+# hush Design Philosophy & Technical Guide
 
-A comprehensive overview of the design aesthetics, modular architecture, central configuration system, and advanced QML/Linux integration techniques used in this Quickshell Hyprland desktop environment.
+A comprehensive overview of the design aesthetics, modular architecture, central configuration system, and advanced QML/Linux integration techniques used in the `hush` Hyprland desktop environment.
 
 ---
 
@@ -16,6 +16,7 @@ A comprehensive overview of the design aesthetics, modular architecture, central
 - **Surface Elevation & Borders**:
   - `radius: 14` (`Config.widgetRadius`) for top bar floating widget cards; `radius: 18` (`Config.overlayRadius`) for main overlays.
   - 1px translucent inner border (`Config.borderColor`: `#80464646`) creating subtle contrast on dynamic wallpapers.
+  - Shell-wide toggles in `Config.qml` control blur appearance, borders, and shadows for the `Bar` and overlay surfaces.
 
 ### 2. Strict Dimensional Standardization
 - **Uniform Bar Height**: All top bar widgets (`WorkspaceWidget`, `ClockWidget`, `StatusWidget`) share a standardized `implicitHeight: 40px` (`Config.barHeight`) and 28px inner button heights (`Config.buttonHeight`).
@@ -39,7 +40,7 @@ System event monitoring and resource polling are decoupled from UI components in
 - **[app_scanner.py](scripts/app_scanner.py)**: Desktop application entry scanner building a sorted JSON list of installed applications.
 
 ### 3. Hyprland LayerShell Blur Rule Integration
-For the frosted glass effect to render seamlessly on Wayland, Quickshell top bar and overlay windows set `WlrLayershell.namespace: "quickshell-bar"`. Hyprland matches this namespace in [windows_and_workspaces.lua](../../hypr/.config/hypr/windows_and_workspaces.lua):
+For the frosted glass effect to render seamlessly on Wayland, `hush` `Bar` and overlay windows set `WlrLayershell.namespace: "quickshell-bar"`. Hyprland matches this namespace in [windows_and_workspaces.lua](../../hypr/.config/hypr/windows_and_workspaces.lua):
 ```lua
 hl.layer_rule({
     name = "quickshell-frosted-glass",
@@ -64,8 +65,8 @@ appLauncher.command = ["setsid", "-f", "sh", "-c", commandStr]
 ~/.config/quickshell/
 ├── Config.qml              # Central design tokens, metrics, options, icons & commands
 ├── qmldir                  # QML module definition registering Config singleton
-├── shell.qml               # Root entry point instantiating Bar & Overlays
-├── Bar.qml                 # Top bar container embedding widgets
+├── shell.qml               # hush root entry point instantiating Bar & overlays
+├── Modules/.../Bar.qml      # Bar container embedding widgets
 ├── WorkspaceWidget.qml     # Hyprland workspace indicator & app launcher icon
 ├── ClockWidget.qml         # Center Date/Time clock & symmetrical MPRIS player
 ├── StatusWidget.qml        # Audio volume, Bluetooth, Wi-Fi/Ethernet & Power controls
@@ -75,7 +76,6 @@ appLauncher.command = ["setsid", "-f", "sh", "-c", commandStr]
 ├── AppLauncher.qml         # Helper component for session-detached app spawning
 ├── AppScanner.qml          # Process wrapper executing app_scanner.py
 └── scripts/
-    ├── app_scanner.py      # Desktop entry scanner script
-    ├── sys_monitor.py      # CPU, RAM, Network & Disk usage monitor script
-    └── net_monitor.py      # NetworkManager connection state script
+    ├── qsctl.go             # Go source for the JSON system helper
+    └── qsctl                # Built helper executed by QML Process objects
 ```

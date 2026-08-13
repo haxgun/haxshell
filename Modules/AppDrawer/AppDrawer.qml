@@ -160,6 +160,18 @@ PanelWindow {
     color: root.glassBgColor
     radius: root.containerRadius
 
+    Rectangle {
+      visible: Config.shellShadowsEnabled
+      x: 0
+      y: Config.shellShadowOffsetY
+      width: parent.width
+      height: parent.height
+      radius: parent.radius
+      color: Config.shellShadowColor
+      opacity: 0.55
+      z: -1
+    }
+
     MouseArea {
       anchors.fill: parent
       onClicked: mouse => { mouse.accepted = true }
@@ -171,7 +183,7 @@ PanelWindow {
       radius: root.innerBorderRadius
       color: "#00000000"
       border.color: root.borderColor
-      border.width: 1
+      border.width: Config.shellBordersEnabled ? 1 : 0
     }
 
     Column {
