@@ -84,10 +84,4 @@ Singleton {
     if (activePlayer && activePlayer.canGoNext) activePlayer.next()
   }
 
-  Timer {
-    interval: 1000
-    running: root.activePlayer && root.activePlayer.playbackState === MprisPlaybackState.Playing
-    repeat: true
-    onTriggered: root.activePlayer.positionChanged()
-  }
 }

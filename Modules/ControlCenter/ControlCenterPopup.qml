@@ -14,6 +14,7 @@ PanelWindow {
   property bool isOpen: false
   property int rightMargin: 16
   property var audioPopup: null
+  property var osd: null
   property string activeSection: "wifi"
   property int brightnessPercent: 100
   property string activeBrightnessBus: Config.brightnessMonitorBus
@@ -74,11 +75,10 @@ PanelWindow {
 
   Timer {
     interval: 12000
-    running: true
+    running: root.isOpen
     repeat: true
     onTriggered: {
-      refreshBattery()
-      if (root.isOpen) refreshAll()
+      refreshAll()
     }
   }
 
@@ -163,7 +163,12 @@ PanelWindow {
   }
 
   function run(command) { restart(actionProc, command) }
-  function setBrightness(value) { run([qsctl, "brightness", "set", Math.max(0, Math.min(100, value)).toString(), activeBrightnessBus, Config.brightnessSleepMultiplier]) }
+  function setBrightness(value) {
+    let target = Math.max(0, Math.min(100, value))
+    brightnessPercent = target
+    if (osd) osd.showBrightness(target)
+    run([qsctl, "brightness", "set", target.toString(), activeBrightnessBus, Config.brightnessSleepMultiplier])
+  }
   function setAudio(action, value) { run([qsctl, "audio", action, value.toString()]) }
   function openAudioPopup() {
     if (!audioPopup) return

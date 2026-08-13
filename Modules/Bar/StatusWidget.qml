@@ -46,6 +46,7 @@ Rectangle {
   property var powerPopup: null
   property var systemPopup: null
   property var mediaPopup: null
+  property var osd: null
   readonly property int brightnessPercent: brightnessPopup ? brightnessPopup.brightnessPercent : 100
   readonly property int iconButtonPadding: 7
   readonly property bool wifiEnabled: Networking.wifiEnabled
@@ -112,10 +113,11 @@ Rectangle {
     }
   }
 
-  // Audio state properties
-  property int volumePercent: 0
-  property bool isMuted: false
-  property bool initialized: false
+  // Keep the default output bound so the indicator and OSD update together.
+  readonly property var sink: Pipewire.defaultAudioSink
+  readonly property int volumePercent: sink && sink.audio ? Math.round(sink.audio.volume * 100) : 0
+  readonly property bool isMuted: sink && sink.audio ? sink.audio.muted : false
+  property bool audioReady: false
 
   // Dynamic Network connection states
   property bool wifiConnected: false
@@ -198,7 +200,7 @@ Rectangle {
     interval: Config.sysCheckIntervalMs
     running: true
     repeat: true
-    onTriggered: fetchSysProc.running = true
+    onTriggered: if (!fetchSysProc.running) fetchSysProc.running = true
   }
 
   SystemClock {
@@ -242,8 +244,8 @@ Rectangle {
 
     stdout: SplitParser {
       onRead: data => {
-        fetchNetProc.running = true
-        fetchVpnProc.running = true
+        if (!fetchNetProc.running) fetchNetProc.running = true
+        if (!fetchVpnProc.running) fetchVpnProc.running = true
       }
     }
   }
@@ -254,8 +256,8 @@ Rectangle {
     running: true
     repeat: true
     onTriggered: {
-      fetchNetProc.running = true
-      fetchVpnProc.running = true
+      if (!fetchNetProc.running) fetchNetProc.running = true
+      if (!fetchVpnProc.running) fetchVpnProc.running = true
     }
   }
 
@@ -273,55 +275,44 @@ Rectangle {
     }
   }
 
-  // Trigger inline volume display on volume / mute changes
-  onVolumePercentChanged: {
-    if (initialized) {
-      showVolumeText = true
-      hideVolumeTimer.restart()
+  Timer {
+    id: audioReadyTimer
+    interval: 1000
+    repeat: false
+    onTriggered: root.audioReady = true
+  }
+
+  function showAudioOsd() {
+    showVolumeText = true
+    hideVolumeTimer.restart()
+    if (osd) osd.showVolume(volumePercent, isMuted)
+  }
+
+  Connections {
+    target: root
+    function onSinkChanged() {
+      root.audioReady = false
+      audioReadyTimer.restart()
     }
   }
 
-  onIsMutedChanged: {
-    if (initialized) {
-      showVolumeText = true
-      hideVolumeTimer.restart()
+  Connections {
+    target: root.sink && root.sink.audio ? root.sink.audio : null
+    function onVolumeChanged() {
+      if (root.audioReady) root.showAudioOsd()
+      else audioReadyTimer.restart()
+    }
+    function onMutedChanged() {
+      if (root.audioReady) root.showAudioOsd()
+      else audioReadyTimer.restart()
     }
   }
 
-  // Real-time PulseAudio / PipeWire event subscriber
-  Process {
-    id: pactlSub
-    command: ["pactl", "subscribe"]
-    running: true
-
-    stdout: SplitParser {
-      onRead: data => {
-        if (data.includes("sink")) {
-          fetchVolProc.running = true
-        }
-      }
-    }
+  PwObjectTracker {
+    objects: Pipewire.nodes.values.filter(node => node && node.audio && !node.isStream)
   }
 
-  // Fetch current default sink volume & mute status
-  Process {
-    id: fetchVolProc
-    command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
-    running: true
-
-    stdout: SplitParser {
-      onRead: data => {
-        let isMuted = data.includes("[MUTED]")
-        let matches = data.match(/Volume:\s+([0-9.]+)/)
-        if (matches && matches[1]) {
-          let volVal = Math.round(parseFloat(matches[1]) * 100)
-          root.isMuted = isMuted
-          root.volumePercent = volVal
-          root.initialized = true
-        }
-      }
-    }
-  }
+  Component.onCompleted: audioReadyTimer.restart()
 
   // Command Processes for interactable buttons
   Process {
@@ -342,21 +333,6 @@ Rectangle {
   Process {
     id: pickerProc
     command: ["hyprpicker", "-a"]
-  }
-
-  Process {
-    id: toggleMuteProc
-    command: ["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]
-  }
-
-  Process {
-    id: volUpProc
-    command: ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"]
-  }
-
-  Process {
-    id: volDownProc
-    command: ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"]
   }
 
   Grid {
@@ -419,7 +395,7 @@ Rectangle {
           anchors.verticalCenter: parent.verticalCenter
 
           SysMetricPill { icon: Config.iconCpu; value: root.sysCpuPercent + "%"; cardWidth: 52; accent: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.textMuted); anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { icon: Config.iconRam; value: root.sysRamPercent + "%"; cardWidth: 52; accent: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.textMuted); anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { icon: Config.iconRam; value: root.sysRamUsedGb.toFixed(1) + "G"; cardWidth: 52; accent: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.textMuted); anchors.verticalCenter: parent.verticalCenter }
           SysMetricPill { icon: Config.iconNet; value: root.sysNetRx.trim(); cardWidth: 74; accent: Config.textMuted; anchors.verticalCenter: parent.verticalCenter }
         }
 
@@ -556,7 +532,7 @@ Rectangle {
 
         onClicked: (mouse) => {
           if (mouse.button === Qt.RightButton) {
-            toggleMuteProc.running = true
+            if (root.sink && root.sink.audio) root.sink.audio.muted = !root.sink.audio.muted
           } else {
             if (!root.toggleAnchoredFlyout("audio", root.audioPopup, volContainer)) {
               volumeProc.running = true
@@ -565,11 +541,10 @@ Rectangle {
         }
 
         onWheel: (wheel) => {
-          if (wheel.angleDelta.y > 0) {
-            volUpProc.running = true
-          } else {
-            volDownProc.running = true
-          }
+          if (!root.sink || !root.sink.audio || wheel.angleDelta.y === 0) return
+          let nextVolume = Math.max(0, Math.min(150, root.volumePercent + (wheel.angleDelta.y > 0 ? 5 : -5)))
+          root.sink.audio.muted = false
+          root.sink.audio.volume = nextVolume / 100
         }
       }
     }
@@ -609,6 +584,7 @@ Rectangle {
             let delta = wheel.angleDelta.y > 0 ? 5 : -5
             let newPct = Math.max(0, Math.min(100, root.brightnessPercent + delta))
             root.brightnessPopup.brightnessPercent = newPct
+            if (root.osd) root.osd.showBrightness(newPct)
             brightnessDebounceTimer.restart()
           }
         }

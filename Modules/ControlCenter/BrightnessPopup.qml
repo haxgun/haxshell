@@ -10,9 +10,11 @@ PanelWindow {
 
   property bool isOpen: false
   property int rightMargin: 16
+  property var osd: null
   property int brightnessPercent: 100
   property string activeBrightnessBus: Config.brightnessMonitorBus
   property int lastAppliedBrightness: -1
+  property bool brightnessInitialized: false
   readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
 
   visible: isOpen || container.opacity > 0.01
@@ -67,9 +69,25 @@ PanelWindow {
           if (res.ok && typeof res.brightness !== "undefined") root.brightnessPercent = res.brightness
           if (res.ok && res.bus) root.activeBrightnessBus = res.bus.toString()
           if (res.ok && res.device) root.activeBrightnessBus = res.device.toString()
+          if (res.ok) root.brightnessInitialized = true
         } catch(e) {}
       }
     }
+  }
+
+  Timer {
+    interval: 250
+    running: true
+    repeat: true
+    onTriggered: {
+      if (fetchBrightnessProc.running) return
+      fetchBrightnessProc.command = [root.qsctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
+      fetchBrightnessProc.running = true
+    }
+  }
+
+  onBrightnessPercentChanged: {
+    if (brightnessInitialized && osd) osd.showBrightness(brightnessPercent)
   }
 
   // Set brightness via ddcutil process

@@ -12,6 +12,7 @@ PanelWindow {
 
   property bool isOpen: false
   property int rightMargin: 16
+  property var osd: null
   readonly property var sink: Pipewire.defaultAudioSink
   readonly property var source: Pipewire.defaultAudioSource
   readonly property int sinkVolume: sink && sink.audio ? Math.round(sink.audio.volume * 100) : 0
@@ -161,8 +162,8 @@ PanelWindow {
         iconText: root.sinkMuted ? Config.iconVolMuted : Config.iconVolHigh
         value: root.sinkVolume
         muted: root.sinkMuted
-        onApplyValue: val => { if (root.sink && root.sink.audio) root.sink.audio.volume = val / 100 }
-        onToggleMute: if (root.sink && root.sink.audio) root.sink.audio.muted = !root.sink.audio.muted
+        onApplyValue: val => { if (root.sink && root.sink.audio) { root.sink.audio.volume = val / 100; if (root.osd) root.osd.showVolume(val, false) } }
+        onToggleMute: if (root.sink && root.sink.audio) { root.sink.audio.muted = !root.sink.audio.muted; if (root.osd) root.osd.showVolume(root.sinkVolume, !root.sinkMuted) }
       }
 
       AudioDeviceList {

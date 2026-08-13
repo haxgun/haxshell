@@ -73,6 +73,7 @@ Scope {
     powerPopup: power
     systemPopup: system
     mediaPopup: media
+    osd: osd
   }
 
   // Application Drawer Overlay
@@ -89,10 +90,12 @@ Scope {
   ControlCenterPopup {
     id: controlCenter
     audioPopup: audio
+    osd: osd
   }
 
   BrightnessPopup {
     id: brightness
+    osd: osd
   }
 
   WiFiPopup {
@@ -105,6 +108,7 @@ Scope {
 
   AudioPopup {
     id: audio
+    osd: osd
   }
 
   BatteryPopup {
@@ -137,5 +141,9 @@ Scope {
 
   MediaPopup {
     id: media
+  }
+
+  Osd {
+    id: osd
   }
 }

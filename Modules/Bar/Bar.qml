@@ -24,6 +24,7 @@ Scope {
   property var powerPopup: null
   property var systemPopup: null
   property var mediaPopup: null
+  property var osd: null
 
   function closeBarFlyouts() {
     let popups = [
@@ -163,6 +164,7 @@ Scope {
             powerPopup: root.powerPopup
             systemPopup: root.systemPopup
             mediaPopup: root.mediaPopup
+            osd: root.osd
             vertical: false
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter

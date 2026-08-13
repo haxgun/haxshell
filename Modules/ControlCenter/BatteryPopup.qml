@@ -60,7 +60,7 @@ PanelWindow {
 
   Timer {
     interval: 10000
-    running: true
+    running: root.isOpen
     repeat: true
     onTriggered: root.refresh()
   }

@@ -1,14 +1,14 @@
 singleton Config 1.0 Common/Config.qml
-Bar 1.0 Modules/DankBar/Bar.qml
-WorkspaceWidget 1.0 Modules/DankBar/WorkspaceWidget.qml
-ClockWidget 1.0 Modules/DankBar/ClockWidget.qml
-StatusWidget 1.0 Modules/DankBar/StatusWidget.qml
-TrayWidget 1.0 Modules/DankBar/TrayWidget.qml
-KeyboardLayoutWidget 1.0 Modules/DankBar/KeyboardLayoutWidget.qml
-WeatherWidget 1.0 Modules/DankBar/WeatherWidget.qml
-ActiveAppWidget 1.0 Modules/DankBar/ActiveAppWidget.qml
-MediaWidget 1.0 Modules/DankBar/MediaWidget.qml
-Time 1.0 Modules/DankBar/Time.qml
+Bar 1.0 Modules/Bar/Bar.qml
+WorkspaceWidget 1.0 Modules/Bar/WorkspaceWidget.qml
+ClockWidget 1.0 Modules/Bar/ClockWidget.qml
+StatusWidget 1.0 Modules/Bar/StatusWidget.qml
+TrayWidget 1.0 Modules/Bar/TrayWidget.qml
+KeyboardLayoutWidget 1.0 Modules/Bar/KeyboardLayoutWidget.qml
+WeatherWidget 1.0 Modules/Bar/WeatherWidget.qml
+ActiveAppWidget 1.0 Modules/Bar/ActiveAppWidget.qml
+MediaWidget 1.0 Modules/Bar/MediaWidget.qml
+Time 1.0 Modules/Bar/Time.qml
 AppDrawer 1.0 Modules/AppDrawer/AppDrawer.qml
 AppLauncher 1.0 Modules/AppDrawer/AppLauncher.qml
 CalendarPopup 1.0 Modules/Calendar/CalendarPopup.qml
@@ -33,4 +33,5 @@ SystemPopup 1.0 Modules/System/SystemPopup.qml
 MediaPopup 1.0 Modules/Media/MediaPopup.qml
 NotificationPopup 1.0 Modules/Notifications/NotificationPopup.qml
 PowerPopup 1.0 Modules/Power/PowerPopup.qml
+Osd 1.0 Modules/OSD/Osd.qml
 AppScanner 1.0 Services/AppScanner.qml
