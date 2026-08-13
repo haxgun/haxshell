@@ -25,6 +25,7 @@ Singleton {
   property alias showSeconds: adapter.showSeconds
   property alias language: adapter.language
   property alias musicVisualizerEnabled: adapter.musicVisualizerEnabled
+  property alias showWorkspaceNumbers: adapter.showWorkspaceNumbers
   property alias uiScale: adapter.uiScale
   property alias reduceMotion: adapter.reduceMotion
   property alias weatherEnabled: adapter.weatherEnabled
@@ -75,6 +76,7 @@ Singleton {
       property string showSeconds: "false"
       property string language: "ru"
       property string musicVisualizerEnabled: "true"
+      property string showWorkspaceNumbers: "true"
       property string uiScale: "1.0"
       property string reduceMotion: "false"
       property string weatherEnabled: "true"
@@ -108,6 +110,7 @@ Singleton {
       showSeconds: adapter.showSeconds,
       language: adapter.language,
       musicVisualizerEnabled: adapter.musicVisualizerEnabled,
+      showWorkspaceNumbers: adapter.showWorkspaceNumbers,
       uiScale: adapter.uiScale,
       reduceMotion: adapter.reduceMotion,
       weatherEnabled: adapter.weatherEnabled,

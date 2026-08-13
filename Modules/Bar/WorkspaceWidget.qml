@@ -191,6 +191,7 @@ Rectangle {
           anchors.centerIn: parent
           anchors.verticalCenterOffset: (!itemRect.isActive && itemRect.isOccupied && root.indicatorStyle === "dot") ? -2 : 0
           text: modelData.toString()
+          visible: Config.showWorkspaceNumbers
           color: itemRect.isActive ? Config.textWhite : (itemRect.isOccupied ? Config.textPrimary : (itemRect.isHovered ? Config.textSubtle : Config.textPlaceholder))
           font.pixelSize: Config.fontSizeMedium
           font.weight: itemRect.isActive ? Font.Bold : (itemRect.isOccupied ? Font.Medium : Font.Normal)

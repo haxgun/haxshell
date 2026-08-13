@@ -107,6 +107,7 @@ QtObject {
   // Workspace Switcher Options
   // Options: "tint" (Soft Translucent Tint), "dot" (Bottom Dot), "border" (Subtle Border Ring)
   property string workspaceIndicatorStyle: "tint"
+  property bool showWorkspaceNumbers: true
   property int defaultMinWorkspaces: 5
   property string timeFormat: "24"
   property bool showSeconds: false

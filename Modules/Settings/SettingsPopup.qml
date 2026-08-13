@@ -12,7 +12,7 @@ PanelWindow {
 
   property bool isOpen: false
   property int rightMargin: 16
-  property string activeSection: "appearance"
+  property string activeSection: "general"
   property string fontSearch: ""
   property bool languageDropdownOpen: false
   property real languageDropdownX: 0
@@ -44,7 +44,7 @@ PanelWindow {
   readonly property real manualHue: manualAccentColor.hslHue >= 0 ? manualAccentColor.hslHue : 0
   readonly property real manualSat: manualAccentColor.hslSaturation
   readonly property string currentManualHex: colorToHex(manualAccentColor)
-  readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
+  readonly property string hushctl: Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", "")
 
   onIsOpenChanged: if (isOpen) {
     wallpaperDirInput.text = Config.wallpaperDir
@@ -179,6 +179,7 @@ PanelWindow {
       Config.musicVisualizerEnabled = value
       Config.mprisRightDisplayMode = value ? "visualizer" : "progress"
     }
+    if (key === "showWorkspaceNumbers") Config.showWorkspaceNumbers = value
     if (key === "reduceMotion") Config.reduceMotion = value
     saveSetting(key, value ? "true" : "false")
   }
@@ -189,13 +190,13 @@ PanelWindow {
     Config.wallpaperDir = nextDir
     saveSetting("wallpaperDir", nextDir)
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "config", nextDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "config", nextDir]
     wallpaperProc.running = true
   }
 
   function refreshFonts() {
     fontProc.running = false
-    fontProc.command = [root.qsctl, "fonts"]
+    fontProc.command = [root.hushctl, "fonts"]
     fontProc.running = true
   }
 
@@ -220,19 +221,19 @@ PanelWindow {
 
   function pickWallpaperDir() {
     folderProc.running = false
-    folderProc.command = [root.qsctl, "pick-folder", Config.wallpaperDir]
+    folderProc.command = [root.hushctl, "pick-folder", Config.wallpaperDir]
     folderProc.running = true
   }
 
   function refreshWallpapers() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "get", Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "get", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "next", Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "next", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 
@@ -240,7 +241,7 @@ PanelWindow {
     wallpaperGridContentY = wallpaperGrid.contentY
     wallpaperSelectionInProgress = true
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "set", index.toString(), Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "set", index.toString(), Config.wallpaperDir]
     wallpaperProc.running = true
   }
 
@@ -300,8 +301,8 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 430
-    height: Math.min(contentRoot.implicitHeight + 28, root.height - 32)
+    width: 620
+    height: Math.min(480, root.height - 32)
     anchors.right: parent.right
     anchors.rightMargin: root.rightMargin
     y: root.isOpen ? Config.dropdownTopGap : -12
@@ -346,40 +347,51 @@ PanelWindow {
 
       Row {
         width: parent.width
-        height: 38
-        spacing: 8
+        height: container.height - 70
+        spacing: 12
 
-        Repeater {
-          model: [
-            { key: "appearance", icon: Config.iconSettings, title: "Общие" },
-            { key: "wallpaper", icon: Config.iconWallpaper, title: "Обои" }
-          ]
-          Rectangle {
-            required property var modelData
-            width: (parent.width - 8) / 2
-            height: 36
-            radius: Config.cardRadius
-            readonly property bool active: root.activeSection === modelData.key
-            color: active ? Config.selectedBg : (sectionMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
-            border.color: active ? Config.activeBorderColor : "#30464646"
-            border.width: 1
+        Column {
+          id: sectionNav
+          width: 118
+          spacing: 5
 
-            Row {
-              anchors.centerIn: parent
-              spacing: 6
-              Text { text: parent.parent.modelData.icon; color: parent.parent.active ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-              Text { text: I18n.tr(parent.parent.modelData.title); color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+          Repeater {
+            model: [
+              { key: "general", icon: Config.iconSettings, title: "Общие" },
+              { key: "bar", icon: Config.iconWallpaper, title: "Бар" },
+              { key: "notifications", icon: Config.iconNotifications, title: "Уведомления" },
+              { key: "wallpaper", icon: Config.iconWallpaper, title: "Обои" },
+              { key: "location", icon: Config.iconWeather, title: "Локация" },
+              { key: "monitoring", icon: Config.iconCpu, title: "Мониторинг" },
+              { key: "about", icon: Config.iconSettings, title: "О shell" }
+            ]
+            Rectangle {
+              required property var modelData
+              width: sectionNav.width
+              height: 34
+              radius: Config.cardRadius
+              readonly property bool active: root.activeSection === modelData.key
+              color: active ? Config.selectedBg : (sectionMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
+              border.color: active ? Config.activeBorderColor : "#30464646"
+              border.width: 1
+
+              Row {
+                anchors.left: parent.left
+                anchors.leftMargin: 9
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 7
+                Text { text: parent.parent.modelData.icon; color: parent.parent.active ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+                Text { text: I18n.tr(parent.parent.modelData.title); color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight; width: 78; anchors.verticalCenter: parent.verticalCenter }
+              }
+              MouseArea { id: sectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.activeSection = parent.modelData.key }
             }
-            MouseArea { id: sectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.activeSection = parent.modelData.key }
           }
         }
-      }
-
-      Rectangle { width: parent.width; height: 1; color: Config.separatorColor }
 
       Flickable {
-        width: parent.width
-        height: Math.min(sectionContent.implicitHeight, root.height - 144)
+        id: settingsFlickable
+        width: parent.width - sectionNav.width - 12
+        height: parent.height
         contentWidth: width
         contentHeight: sectionContent.implicitHeight
         clip: true
@@ -392,7 +404,9 @@ PanelWindow {
           Column {
             width: parent.width
             spacing: 10
-            visible: root.activeSection === "appearance"
+            visible: root.activeSection === "general"
+            height: visible ? implicitHeight : 0
+            clip: true
             Text { text: I18n.tr("Оформление"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconPalette
@@ -536,152 +550,6 @@ PanelWindow {
               }
             }
 
-            SettingsRow {
-              icon: Config.iconWallpaper
-              title: I18n.tr("Положение панели")
-              subtitle: Config.barPosition === "bottom" ? I18n.tr("Снизу") : (Config.barPosition === "left" ? I18n.tr("Слева") : (Config.barPosition === "right" ? I18n.tr("Справа") : I18n.tr("Сверху")))
-              Rectangle {
-                id: barPosSegment
-                width: 226
-                height: 34
-                radius: 9
-                color: "transparent"
-                Row {
-                  anchors.fill: parent
-                  spacing: 2
-                  Repeater {
-                    model: [{ key: "top", label: "Верх" }, { key: "bottom", label: "Низ" }, { key: "left", label: "Слева" }, { key: "right", label: "Справа" }]
-                    Rectangle {
-                      required property var modelData
-                      width: (barPosSegment.width - 6) / 4
-                      height: 34
-                      radius: 9
-                      readonly property bool active: Config.barPosition === modelData.key
-                      color: active ? Config.selectedBg : (barPosMouse.containsMouse ? Config.hoverBg : "transparent")
-                      Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.2 }
-                      MouseArea { id: barPosMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarPosition(parent.modelData.key) }
-                    }
-                  }
-                }
-              }
-            }
-
-            SettingsRow {
-              icon: Config.iconWallpaper
-              title: I18n.tr("Папка обоев")
-              subtitle: Config.wallpaperDir
-              Item {
-                width: 194
-                height: 34
-                Rectangle {
-                  anchors.left: parent.left
-                  anchors.right: folderButton.left
-                  anchors.rightMargin: 6
-                  height: 34
-                  radius: 10
-                  color: Config.searchBg
-                  border.color: wallpaperDirInput.activeFocus ? Config.activeBorderColor : "#00000000"
-                  border.width: wallpaperDirInput.activeFocus ? 1 : 0
-                  TextInput {
-                    id: wallpaperDirInput
-                    anchors.fill: parent
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
-                    verticalAlignment: TextInput.AlignVCenter
-                    text: Config.wallpaperDir
-                    color: Config.textPrimary
-                    selectedTextColor: Config.textWhite
-                    selectionColor: Config.selectedBg
-                    font.pixelSize: 10
-                    font.family: Config.fontSans
-                    clip: true
-                    onEditingFinished: root.applyWallpaperDir(text)
-                    Keys.onReturnPressed: focus = false
-                    Keys.onEscapePressed: {
-                      text = Config.wallpaperDir
-                      focus = false
-                    }
-                  }
-                }
-                Rectangle {
-                  id: folderButton
-                  anchors.right: parent.right
-                  width: 34
-                  height: 34
-                  radius: 10
-                  color: folderMouse.containsMouse ? Config.hoverBg : "#00000000"
-                  Text { anchors.centerIn: parent; text: Config.iconFolder; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-                  MouseArea { id: folderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.pickWallpaperDir() }
-                }
-              }
-            }
-
-            SettingsRow {
-              icon: Config.iconWeather
-              title: I18n.tr("Город погоды")
-              subtitle: Config.weatherLocation.length > 0 ? Config.weatherLocation : I18n.tr("Автоматически по IP")
-              Rectangle {
-                width: 210
-                height: 34
-                radius: 10
-                color: Config.searchBg
-                border.color: weatherLocationInput.activeFocus ? Config.activeBorderColor : "#00000000"
-                border.width: weatherLocationInput.activeFocus ? 1 : 0
-                TextInput {
-                  id: weatherLocationInput
-                  anchors.fill: parent
-                  anchors.leftMargin: 10
-                  anchors.rightMargin: 10
-                  verticalAlignment: TextInput.AlignVCenter
-                  text: Config.weatherLocation
-                  color: Config.textPrimary
-                  selectedTextColor: Config.textWhite
-                  selectionColor: Config.selectedBg
-                  font.pixelSize: Config.fontSizeSmall
-                  font.family: Config.fontSans
-                  clip: true
-                  Text { text: I18n.tr("авто по IP"); color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; visible: !weatherLocationInput.text && !weatherLocationInput.activeFocus; anchors.verticalCenter: parent.verticalCenter }
-                  onTextChanged: if (activeFocus) citySearchTimer.restart()
-                  onEditingFinished: root.applyWeatherLocation(text)
-                  Keys.onReturnPressed: focus = false
-                  Keys.onEscapePressed: {
-                    text = Config.weatherLocation
-                    weatherSuggestions.clear()
-                    focus = false
-                  }
-                }
-              }
-            }
-            Column {
-              width: parent.width
-              spacing: 4
-              visible: weatherSuggestions.count > 0
-              Repeater {
-                model: weatherSuggestions
-                Rectangle {
-                  required property string label
-                  width: parent.width
-                  height: 32
-                  radius: 8
-                  color: cityMouse.containsMouse ? Config.hoverBg : "#00000000"
-                  Text { anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; verticalAlignment: Text.AlignVCenter; text: label; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight }
-                  MouseArea {
-                    id: cityMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                      weatherLocationInput.text = parent.label
-                      root.applyWeatherLocation(parent.label)
-                      weatherSuggestions.clear()
-                      weatherLocationInput.focus = false
-                      citySearchTimer.stop()
-                    }
-                  }
-                }
-              }
-            }
-
             Text { text: I18n.tr("Часы и медиа"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
 
             SettingsRow {
@@ -716,13 +584,6 @@ PanelWindow {
               title: I18n.tr("Секунды в часах")
               subtitle: Config.showSeconds ? I18n.tr("Показываются") : I18n.tr("Скрыты")
               ToggleSwitch { checked: Config.showSeconds; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showSeconds", !Config.showSeconds) }
-            }
-
-            SettingsRow {
-              icon: Config.iconMusic
-              title: I18n.tr("Визуализация музыки")
-              subtitle: Config.musicVisualizerEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
-              ToggleSwitch { checked: Config.musicVisualizerEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("musicVisualizerEnabled", !Config.musicVisualizerEnabled) }
             }
 
             SettingsRow {
@@ -830,6 +691,8 @@ PanelWindow {
             width: parent.width
             spacing: 10
             visible: root.activeSection === "fontPicker"
+            height: visible ? implicitHeight : 0
+            clip: true
             Row {
               width: parent.width
               height: 32
@@ -842,7 +705,7 @@ PanelWindow {
                 border.color: Config.borderColor
                 border.width: 1
                 Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-                MouseArea { id: backMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.activeSection = "appearance" }
+                MouseArea { id: backMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.activeSection = "general" }
               }
               Text { text: I18n.tr("Шрифт интерфейса"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
             }
@@ -920,6 +783,54 @@ PanelWindow {
             width: parent.width
             spacing: 10
             visible: root.activeSection === "wallpaper"
+            height: visible ? implicitHeight : 0
+            clip: true
+            SettingsRow {
+              icon: Config.iconWallpaper
+              title: I18n.tr("Папка обоев")
+              subtitle: Config.wallpaperDir
+              Item {
+                width: 194
+                height: 34
+                Rectangle {
+                  anchors.left: parent.left
+                  anchors.right: folderButton.left
+                  anchors.rightMargin: 6
+                  height: 34
+                  radius: 10
+                  color: Config.searchBg
+                  border.color: wallpaperDirInput.activeFocus ? Config.activeBorderColor : "#00000000"
+                  border.width: wallpaperDirInput.activeFocus ? 1 : 0
+                  TextInput {
+                    id: wallpaperDirInput
+                    anchors.fill: parent
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    verticalAlignment: TextInput.AlignVCenter
+                    text: Config.wallpaperDir
+                    color: Config.textPrimary
+                    selectedTextColor: Config.textWhite
+                    selectionColor: Config.selectedBg
+                    font.pixelSize: 10
+                    font.family: Config.fontSans
+                    clip: true
+                    onEditingFinished: root.applyWallpaperDir(text)
+                    Keys.onReturnPressed: focus = false
+                    Keys.onEscapePressed: { text = Config.wallpaperDir; focus = false }
+                  }
+                }
+                Rectangle {
+                  id: folderButton
+                  anchors.right: parent.right
+                  width: 34
+                  height: 34
+                  radius: 10
+                  color: folderMouse.containsMouse ? Config.hoverBg : "#00000000"
+                  Text { anchors.centerIn: parent; text: Config.iconFolder; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+                  MouseArea { id: folderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.pickWallpaperDir() }
+                }
+              }
+            }
             Text { width: parent.width; visible: wallpapersModel.count === 0; text: I18n.tr("В папке нет поддерживаемых изображений или видео"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap }
             GridView {
               id: wallpaperGrid
@@ -927,7 +838,7 @@ PanelWindow {
               readonly property real tileWidth: width / 3
               readonly property real tileHeight: (tileWidth - tileGap) * 9 / 16 + tileGap
               width: parent.width
-              height: Math.min(300, Math.ceil(wallpapersModel.count / 3) * tileHeight)
+              height: settingsFlickable.height
               anchors.horizontalCenter: parent.horizontalCenter
               visible: wallpapersModel.count > 0
               clip: true
@@ -1027,8 +938,204 @@ PanelWindow {
             }
           }
 
+          Column {
+            width: parent.width
+            spacing: 10
+            visible: root.activeSection === "bar"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("Панель"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconWallpaper
+              title: I18n.tr("Положение панели")
+              subtitle: Config.barPosition === "bottom" ? I18n.tr("Снизу") : (Config.barPosition === "left" ? I18n.tr("Слева") : (Config.barPosition === "right" ? I18n.tr("Справа") : I18n.tr("Сверху")))
+              Row {
+                width: 194
+                spacing: 4
+                Repeater {
+                  model: [{ key: "top", label: "Верх" }, { key: "bottom", label: "Низ" }, { key: "left", label: "Слева" }, { key: "right", label: "Справа" }]
+                  Rectangle {
+                    required property var modelData
+                    width: (parent.width - 12) / 4
+                    height: 30
+                    radius: 8
+                    readonly property bool active: Config.barPosition === modelData.key
+                    color: active ? Config.selectedBg : (barSectionMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
+                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: 9; font.family: Config.fontSans }
+                    MouseArea { id: barSectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarPosition(parent.modelData.key) }
+                  }
+                }
+              }
+            }
+            SettingsRow {
+              icon: Config.iconMusic
+              title: I18n.tr("Визуализация музыки")
+              subtitle: Config.musicVisualizerEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              last: true
+              ToggleSwitch { checked: Config.musicVisualizerEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("musicVisualizerEnabled", !Config.musicVisualizerEnabled) }
+            }
+            Text { text: I18n.tr("Рабочие столы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Цифры рабочих столов")
+              subtitle: Config.showWorkspaceNumbers ? I18n.tr("Показываются") : I18n.tr("Скрыты")
+              last: true
+              ToggleSwitch { checked: Config.showWorkspaceNumbers; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showWorkspaceNumbers", !Config.showWorkspaceNumbers) }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: 10
+            visible: root.activeSection === "notifications"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("Уведомления"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Rectangle {
+              width: parent.width
+              height: 62
+              radius: Config.cardRadius
+              color: Config.searchBg
+              border.color: Config.borderColor
+              border.width: 1
+              Text { anchors.fill: parent; anchors.margins: 12; text: I18n.tr("Уведомления отображаются в центре уведомлений и во всплывающих тостах."); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: 10
+            visible: root.activeSection === "location"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("Локация"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconWeather
+              title: I18n.tr("Город погоды")
+              subtitle: Config.weatherLocation.length > 0 ? Config.weatherLocation : I18n.tr("Автоматически по IP")
+              Rectangle {
+                width: 210
+                height: 34
+                radius: 10
+                color: Config.searchBg
+                border.color: weatherLocationInput.activeFocus ? Config.activeBorderColor : "#00000000"
+                border.width: weatherLocationInput.activeFocus ? 1 : 0
+                TextInput {
+                  id: weatherLocationInput
+                  anchors.fill: parent
+                  anchors.leftMargin: 10
+                  anchors.rightMargin: 10
+                  verticalAlignment: TextInput.AlignVCenter
+                  text: Config.weatherLocation
+                  color: Config.textPrimary
+                  selectedTextColor: Config.textWhite
+                  selectionColor: Config.selectedBg
+                  font.pixelSize: Config.fontSizeSmall
+                  font.family: Config.fontSans
+                  clip: true
+                  Text { text: I18n.tr("авто по IP"); color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; visible: !weatherLocationInput.text && !weatherLocationInput.activeFocus; anchors.verticalCenter: parent.verticalCenter }
+                  onTextChanged: if (activeFocus) citySearchTimer.restart()
+                  onEditingFinished: root.applyWeatherLocation(text)
+                  Keys.onReturnPressed: focus = false
+                  Keys.onEscapePressed: { text = Config.weatherLocation; weatherSuggestions.clear(); focus = false }
+                }
+              }
+            }
+            Column {
+              width: parent.width
+              spacing: 4
+              visible: weatherSuggestions.count > 0
+              Repeater {
+                model: weatherSuggestions
+                Rectangle {
+                  required property string label
+                  width: parent.width
+                  height: 32
+                  radius: 8
+                  color: cityMouse.containsMouse ? Config.hoverBg : "#00000000"
+                  Text { anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; verticalAlignment: Text.AlignVCenter; text: label; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+                  MouseArea {
+                    id: cityMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                      weatherLocationInput.text = parent.label
+                      root.applyWeatherLocation(parent.label)
+                      weatherSuggestions.clear()
+                      weatherLocationInput.focus = false
+                      citySearchTimer.stop()
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: 10
+            visible: root.activeSection === "monitoring"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("Мониторинг системы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Rectangle {
+              width: parent.width
+              height: 76
+              radius: Config.cardRadius
+              color: Config.searchBg
+              border.color: Config.borderColor
+              border.width: 1
+              Column {
+                anchors.fill: parent
+                anchors.margins: 12
+                spacing: 5
+                Text { text: I18n.tr("Системные метрики"); color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans }
+                Text { text: I18n.tr("CPU, память, сеть и накопители отображаются на панели и в системном попапе."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: 10
+            visible: root.activeSection === "about"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("О shell"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Rectangle {
+              width: parent.width
+              height: 104
+              radius: Config.cardRadius
+              color: Config.searchBg
+              border.color: Config.borderColor
+              border.width: 1
+              Row {
+                anchors.fill: parent
+                anchors.margins: 12
+                spacing: 12
+                Image {
+                  width: 64
+                  height: 64
+                  source: Qt.resolvedUrl("../../logo.svg")
+                  fillMode: Image.PreserveAspectFit
+                  asynchronous: true
+                  anchors.verticalCenter: parent.verticalCenter
+                }
+                Column {
+                  width: parent.width - 76
+                  anchors.verticalCenter: parent.verticalCenter
+                  spacing: 5
+                  Text { text: "hush"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans }
+                  Text { text: "Wayland shell на Quickshell и QML для Hyprland."; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
+                }
+              }
+            }
+          }
+
         }
       }
+    }
     }
 
       Rectangle {
@@ -1043,7 +1150,7 @@ PanelWindow {
         border.color: Config.activeBorderColor
         border.width: 1
         clip: true
-        visible: root.languageDropdownOpen && root.activeSection === "appearance"
+        visible: root.languageDropdownOpen && root.activeSection === "general"
 
         Flickable {
           id: languageList
