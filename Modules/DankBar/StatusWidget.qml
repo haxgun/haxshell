@@ -12,9 +12,10 @@ import "../../Widgets"
 Rectangle {
   id: root
 
-  implicitWidth: rowLayout.implicitWidth + 24
-  implicitHeight: Config.barHeight
+  implicitWidth: root.vertical ? Config.buttonWidth + 12 : rowLayout.implicitWidth + 24
+  implicitHeight: root.vertical ? rowLayout.implicitHeight + 12 : Config.barHeight
   property bool embeddedInBar: false
+  property bool vertical: false
 
   // Frosted Glass Tint & Border
   color: embeddedInBar ? "#00000000" : Config.glassBg
@@ -32,6 +33,7 @@ Rectangle {
 
   // Target BrightnessPopup reference to toggle
   property var calendarPopup: null
+  property var controlCenterPopup: null
   property var brightnessPopup: null
   property var wifiPopup: null
   property var bluetoothPopup: null
@@ -50,6 +52,7 @@ Rectangle {
   readonly property bool bluetoothEnabled: Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled
 
   function closeFlyouts(exceptName) {
+    if (exceptName !== "controlCenter" && root.controlCenterPopup) root.controlCenterPopup.isOpen = false
     if (exceptName !== "audio" && root.audioPopup) root.audioPopup.isOpen = false
     if (exceptName !== "brightness" && root.brightnessPopup) root.brightnessPopup.isOpen = false
     if (exceptName !== "bluetooth" && root.bluetoothPopup) root.bluetoothPopup.isOpen = false
@@ -67,11 +70,21 @@ Rectangle {
 
   function positionPopupFor(name, item, popup) {
     if (!item || !popup) return
-    if (name !== "system") {
+    if (name !== "system" && name !== "controlCenter") {
       popup.rightMargin = 16
       return
     }
     popup.rightMargin = Math.max(16, Math.round(root.width - (rowLayout.x + item.x + item.width) + Config.barMargin))
+  }
+
+  function openControlCenter(section, item) {
+    if (!root.controlCenterPopup) return false
+    let sameSection = root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === section
+    positionPopupFor("controlCenter", item, root.controlCenterPopup)
+    closeFlyouts("controlCenter")
+    root.controlCenterPopup.activeSection = section
+    root.controlCenterPopup.isOpen = !sameSection
+    return true
   }
 
   function toggleAnchoredFlyout(name, popup, item) {
@@ -346,34 +359,35 @@ Rectangle {
     command: ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"]
   }
 
-  Row {
+  Grid {
     id: rowLayout
     anchors.centerIn: parent
     spacing: 5
+    rows: root.vertical ? 0 : 1
+    columns: root.vertical ? 1 : 0
+    verticalItemAlignment: Grid.AlignVCenter
+    horizontalItemAlignment: Grid.AlignHCenter
+
+    MediaWidget {
+      mediaPopup: root.mediaPopup
+      closeFlyouts: root.closeFlyouts
+    }
 
     TrayWidget {
       trayMenuPopup: root.trayMenuPopup
       closeFlyouts: root.closeFlyouts
-      anchors.verticalCenter: parent.verticalCenter
     }
 
     KeyboardLayoutWidget {
       keyboardLayoutPopup: root.keyboardLayoutPopup
       closeFlyouts: root.closeFlyouts
-      anchors.verticalCenter: parent.verticalCenter
-    }
-
-    MediaWidget {
-      mediaPopup: root.mediaPopup
-      closeFlyouts: root.closeFlyouts
-      anchors.verticalCenter: parent.verticalCenter
     }
 
     // Expandable System Resources Pill (CPU, RAM, Net Speed, Disks)
     Rectangle {
       id: sysContainer
       height: Config.buttonHeight
-      implicitWidth: sysRow.implicitWidth + 12
+      implicitWidth: root.vertical ? Config.buttonWidth : sysRow.implicitWidth + 12
       radius: Config.buttonRadius
       clip: true
       readonly property bool isSystemActive: root.systemPopup && root.systemPopup.isOpen
@@ -382,10 +396,20 @@ Rectangle {
       Behavior on color { ColorAnimation { duration: 150 } }
       Behavior on implicitWidth { NumberAnimation { duration: 220; easing.type: Easing.InOutQuad } }
 
+      Text {
+        anchors.centerIn: parent
+        visible: root.vertical
+        text: Config.iconCpu
+        color: (sysContainer.isSystemActive || sysMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        font.pixelSize: Config.fontSizeIconMedium
+        font.family: Config.fontIcon
+      }
+
       Row {
         id: sysRow
         anchors.centerIn: parent
         spacing: 6
+        visible: !root.vertical
 
         // CONDENSED VIEW: CPU% RAM% | Net speed
         Row {
@@ -431,40 +455,12 @@ Rectangle {
       width: 8
       visible: false
       height: 16
-      anchors.verticalCenter: parent.verticalCenter
 
       Rectangle {
         anchors.centerIn: parent
         width: 1
         height: 16
         color: Config.separatorColor
-      }
-    }
-
-    Rectangle {
-      id: settingsContainer
-      width: Config.buttonWidth
-      height: Config.buttonHeight
-      radius: Config.buttonRadius
-      readonly property bool isSettingsActive: root.settingsPopup && root.settingsPopup.isOpen
-      color: (isSettingsActive || settingsMouse.containsMouse) ? Config.pressedBg : "#00000000"
-
-      Behavior on color { ColorAnimation { duration: 150 } }
-
-      Text {
-        anchors.centerIn: parent
-        text: Config.iconSettings
-        color: (settingsContainer.isSettingsActive || settingsMouse.containsMouse) ? Config.textWhite : Config.textPrimary
-        font.pixelSize: Config.fontSizeIconMedium
-        font.family: Config.fontIcon
-      }
-
-      MouseArea {
-        id: settingsMouse
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: root.toggleAnchoredFlyout("settings", root.settingsPopup, settingsContainer)
       }
     }
 
@@ -515,7 +511,7 @@ Rectangle {
     Rectangle {
       id: volContainer
       height: Config.buttonHeight
-      implicitWidth: volRow.implicitWidth + 12
+      implicitWidth: root.vertical ? Config.buttonWidth : volRow.implicitWidth + 12
       radius: Config.buttonRadius
       readonly property bool isAudioActive: (root.audioPopup && root.audioPopup.isOpen)
       color: (isAudioActive || volMouse.containsMouse) ? Config.pressedBg : "#00000000"
@@ -538,7 +534,7 @@ Rectangle {
 
         Text {
           id: volText
-          visible: opacity > 0.01
+          visible: !root.vertical && opacity > 0.01
           opacity: (root.showVolumeText || volMouse.containsMouse) ? 1.0 : 0.0
           text: root.isMuted ? "Выкл." : (root.volumePercent + "%")
           color: root.isMuted ? Config.dangerRed : Config.textPrimary
@@ -857,9 +853,93 @@ Rectangle {
     }
 
     Rectangle {
+      id: controlCenterContainer
+      height: Config.buttonHeight
+      width: Config.buttonWidth + 4
+      radius: Config.buttonRadius
+      readonly property bool isControlCenterActive: root.controlCenterPopup && root.controlCenterPopup.isOpen
+      color: (isControlCenterActive || controlCenterMouse.containsMouse) ? Config.activeHoverBg : "#00000000"
+
+      Behavior on color { ColorAnimation { duration: 150 } }
+
+      Item {
+        anchors.centerIn: parent
+        width: 18
+        height: 16
+
+        readonly property color iconColor: (controlCenterContainer.isControlCenterActive || controlCenterMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+
+        Rectangle {
+          x: 0
+          y: 1
+          width: 18
+          height: 3
+          radius: 2
+          color: parent.iconColor
+          opacity: 0.9
+        }
+
+        Rectangle {
+          x: 0
+          y: 6
+          width: 18
+          height: 3
+          radius: 2
+          color: parent.iconColor
+          opacity: 0.9
+        }
+
+        Rectangle {
+          x: 0
+          y: 11
+          width: 18
+          height: 3
+          radius: 2
+          color: parent.iconColor
+          opacity: 0.9
+        }
+
+        Rectangle {
+          x: 12
+          y: 0
+          width: 6
+          height: 6
+          radius: 3
+          color: parent.iconColor
+        }
+
+        Rectangle {
+          x: 2
+          y: 5
+          width: 6
+          height: 6
+          radius: 3
+          color: parent.iconColor
+        }
+
+        Rectangle {
+          x: 8
+          y: 10
+          width: 6
+          height: 6
+          radius: 3
+          color: parent.iconColor
+        }
+      }
+
+      MouseArea {
+        id: controlCenterMouse
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.openControlCenter("wifi", controlCenterContainer)
+      }
+    }
+
+    Rectangle {
       id: dateTimeContainer
       height: Config.buttonHeight
-      implicitWidth: dateTimeText.implicitWidth + 14
+      implicitWidth: root.vertical ? 58 : dateTimeText.implicitWidth + 14
       radius: Config.buttonRadius
       readonly property bool isCalendarActive: root.calendarPopup && root.calendarPopup.isOpen
       color: (isCalendarActive || dateTimeMouse.containsMouse) ? Config.activeHoverBg : "#00000000"
@@ -869,7 +949,7 @@ Rectangle {
       Text {
         id: dateTimeText
         anchors.centerIn: parent
-        text: Config.formatBarDateTimeRu(statusClock.date)
+        text: root.vertical ? Config.formatTime24(statusClock.date) : Config.formatBarDateTimeRu(statusClock.date)
         color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.textPrimary
         font.pixelSize: Config.fontSizeNormal
         font.weight: Font.Medium

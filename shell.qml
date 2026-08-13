@@ -44,11 +44,15 @@ Scope {
       if (typeof settings.weatherEnabled === "string") Config.weatherEnabled = settings.weatherEnabled === "true"
       if (settings.brightnessMonitorBus) Config.brightnessMonitorBus = settings.brightnessMonitorBus
       if (settings.brightnessSleepMultiplier) Config.brightnessSleepMultiplier = settings.brightnessSleepMultiplier
+      if (typeof settings.shellBlurEnabled === "string") Config.shellBlurEnabled = settings.shellBlurEnabled === "true"
+      if (typeof settings.shellBordersEnabled === "string") Config.shellBordersEnabled = settings.shellBordersEnabled === "true"
+      if (typeof settings.shellShadowsEnabled === "string") Config.shellShadowsEnabled = settings.shellShadowsEnabled === "true"
       if (typeof settings.musicVisualizerEnabled === "string") {
         Config.musicVisualizerEnabled = settings.musicVisualizerEnabled === "true"
         Config.mprisRightDisplayMode = Config.musicVisualizerEnabled ? "visualizer" : "progress"
       }
       if (typeof settings.reduceMotion === "string") Config.reduceMotion = settings.reduceMotion === "true"
+      if (settings.barPosition) Config.barPosition = settings.barPosition
     } catch(e) {}
   }
 
@@ -56,6 +60,7 @@ Scope {
   Bar {
     appDrawer: drawer
     calendarPopup: calendar
+    controlCenterPopup: controlCenter
     brightnessPopup: brightness
     wifiPopup: wifi
     bluetoothPopup: bluetooth
@@ -81,6 +86,10 @@ Scope {
   }
 
   // Display Brightness Control Overlay
+  ControlCenterPopup {
+    id: controlCenter
+  }
+
   BrightnessPopup {
     id: brightness
   }

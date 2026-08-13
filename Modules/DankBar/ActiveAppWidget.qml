@@ -17,10 +17,11 @@ Rectangle {
   readonly property bool hasApp: !!activeWindow
 
   visible: hasApp
-  implicitWidth: Math.min(appRow.implicitWidth + 14, 360)
-  implicitHeight: Config.buttonHeight
+  implicitWidth: root.vertical ? Config.buttonWidth : Math.min(appRow.implicitWidth + 14, 360)
+  implicitHeight: root.vertical ? appRow.implicitHeight + 14 : Config.buttonHeight
   radius: Config.buttonRadius
   color: appMouse.containsMouse ? Config.hoverBg : "#00000000"
+  property bool vertical: false
 
   function lookupDesktopEntry() {
     let names = []
@@ -83,7 +84,8 @@ Rectangle {
     }
 
     Text {
-      width: Math.min(300, implicitWidth)
+      width: root.vertical ? 0 : Math.min(300, implicitWidth)
+      visible: !root.vertical
       text: root.labelText()
       color: Config.textPrimary
       font.pixelSize: Config.fontSizeSmall

@@ -1,4 +1,4 @@
-// Bar.qml - Quickshell Top Bar Window Container
+// Bar.qml - Quickshell bar window container
 import Quickshell
 import QtQuick
 import Quickshell.Wayland
@@ -11,6 +11,7 @@ Scope {
   // Public Component References
   property var appDrawer: null
   property var calendarPopup: null
+  property var controlCenterPopup: null
   property var brightnessPopup: null
   property var wifiPopup: null
   property var bluetoothPopup: null
@@ -24,6 +25,18 @@ Scope {
   property var systemPopup: null
   property var mediaPopup: null
 
+  function closeBarFlyouts() {
+    let popups = [
+      root.appDrawer, root.calendarPopup, root.brightnessPopup, root.wifiPopup,
+      root.bluetoothPopup, root.audioPopup, root.batteryPopup, root.notificationPopup,
+      root.trayMenuPopup, root.keyboardLayoutPopup, root.settingsPopup, root.powerPopup,
+      root.systemPopup, root.mediaPopup, root.controlCenterPopup
+    ]
+    for (let p of popups) {
+      if (p && typeof p.isOpen !== "undefined") p.isOpen = false
+    }
+  }
+
   Variants {
     model: Quickshell.screens
 
@@ -32,29 +45,50 @@ Scope {
       required property var modelData
       screen: modelData
 
+      readonly property bool posTop: Config.barPosition === "top"
+      readonly property bool posBottom: Config.barPosition === "bottom"
+      readonly property bool posLeft: Config.barPosition === "left"
+      readonly property bool posRight: Config.barPosition === "right"
+      readonly property bool vertical: posLeft || posRight
+      readonly property int screenWidth: modelData.width || width
+      readonly property int screenHeight: modelData.height || height
+
       // Wayland LayerShell Integration
       WlrLayershell.namespace: "quickshell-bar"
       WlrLayershell.layer: WlrLayer.Top
 
       anchors {
-        top: true
-        left: true
-        right: true
+        top: window.vertical || window.posTop
+        bottom: window.vertical || window.posBottom
+        left: !window.vertical || window.posLeft
+        right: !window.vertical || window.posRight
       }
 
-      implicitHeight: Config.barHeight + Config.barMargin
+      implicitWidth: window.vertical ? Config.barHeight + Config.barMargin : 0
+      implicitHeight: window.vertical ? 0 : Config.barHeight + Config.barMargin
       color: "#00000000"
 
       Rectangle {
         id: barSurface
-        height: Config.barHeight
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: Config.barMargin
-        anchors.rightMargin: Config.barMargin
-        anchors.verticalCenter: parent.verticalCenter
+        readonly property bool vertical: window.vertical
+        x: vertical ? (parent.width - Config.barHeight) / 2 : Config.barMargin
+        y: vertical ? Config.barMargin : (parent.height - Config.barHeight) / 2
+        width: vertical ? Config.barHeight : parent.width - Config.barMargin * 2
+        height: vertical ? parent.height - Config.barMargin * 2 : Config.barHeight
         radius: Config.widgetRadius
         color: Config.glassBg
+
+        Rectangle {
+          visible: Config.shellShadowsEnabled
+          x: 0
+          y: Config.shellShadowOffsetY
+          width: parent.width
+          height: parent.height
+          radius: parent.radius
+          color: Config.shellShadowColor
+          opacity: 0.55
+          z: -1
+        }
 
         Rectangle {
           anchors.fill: parent
@@ -62,45 +96,77 @@ Scope {
           radius: Config.innerBorderRadius
           color: "#00000000"
           border.color: Config.borderColor
-          border.width: 1
+          border.width: Config.shellBordersEnabled ? 1 : 0
         }
 
-        // Left Module: Workspace switcher & App Launcher Icon
-        WorkspaceWidget {
-          id: workspaceWidget
-          embeddedInBar: true
-          appDrawer: root.appDrawer
-          anchors.left: parent.left
-          anchors.leftMargin: 0
-          anchors.verticalCenter: parent.verticalCenter
+        TapHandler {
+          acceptedButtons: Qt.LeftButton
+          onTapped: root.closeBarFlyouts()
         }
 
-        ActiveAppWidget {
-          anchors.left: workspaceWidget.right
-          anchors.leftMargin: 0
-          anchors.verticalCenter: parent.verticalCenter
+        // Right-click on empty bar area opens settings near the cursor.
+        // Placed below widgets so tray icons handle their own right-click first.
+        MouseArea {
+          anchors.fill: parent
+          acceptedButtons: Qt.RightButton
+          onClicked: (mouse) => {
+            root.closeBarFlyouts()
+            if (!root.settingsPopup) return
+            let gap = 16
+            let screenW = window.screenWidth
+            let popupW = 430
+            let windowOffsetX = window.posRight ? (screenW - window.width) : 0
+            let cursorX = windowOffsetX + barSurface.x + mouse.x
+            root.settingsPopup.rightMargin = Math.max(gap, Math.min(screenW - popupW - gap, screenW - popupW / 2 - cursorX))
+            root.settingsPopup.isOpen = true
+          }
         }
 
-        // Right Module: System Status, Audio, Connectivity & Power
-        StatusWidget {
-          id: statusWidget
-          embeddedInBar: true
-          calendarPopup: root.calendarPopup
-          brightnessPopup: root.brightnessPopup
-          wifiPopup: root.wifiPopup
-          bluetoothPopup: root.bluetoothPopup
-          audioPopup: root.audioPopup
-          batteryPopup: root.batteryPopup
-          notificationPopup: root.notificationPopup
-          trayMenuPopup: root.trayMenuPopup
-          keyboardLayoutPopup: root.keyboardLayoutPopup
-          settingsPopup: root.settingsPopup
-          powerPopup: root.powerPopup
-          systemPopup: root.systemPopup
-          mediaPopup: root.mediaPopup
-          anchors.right: parent.right
-          anchors.rightMargin: 0
-          anchors.verticalCenter: parent.verticalCenter
+        Item {
+          id: contentStrip
+          width: window.vertical ? barSurface.height : barSurface.width
+          height: window.vertical ? barSurface.width : barSurface.height
+          anchors.centerIn: parent
+          rotation: Config.barRotation
+          transformOrigin: Item.Center
+
+          WorkspaceWidget {
+            id: workspaceWidget
+            embeddedInBar: true
+            appDrawer: root.appDrawer
+            monitorName: modelData.name
+            vertical: false
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          ActiveAppWidget {
+            vertical: false
+            anchors.left: workspaceWidget.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          StatusWidget {
+            id: statusWidget
+            embeddedInBar: true
+            calendarPopup: root.calendarPopup
+            controlCenterPopup: root.controlCenterPopup
+            brightnessPopup: root.brightnessPopup
+            wifiPopup: root.wifiPopup
+            bluetoothPopup: root.bluetoothPopup
+            audioPopup: root.audioPopup
+            batteryPopup: root.batteryPopup
+            notificationPopup: root.notificationPopup
+            trayMenuPopup: root.trayMenuPopup
+            keyboardLayoutPopup: root.keyboardLayoutPopup
+            settingsPopup: root.settingsPopup
+            powerPopup: root.powerPopup
+            systemPopup: root.systemPopup
+            mediaPopup: root.mediaPopup
+            vertical: false
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
         }
       }
     }

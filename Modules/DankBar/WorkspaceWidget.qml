@@ -8,9 +8,10 @@ import "../../Common"
 Rectangle {
   id: root
 
-  implicitWidth: rowLayout.implicitWidth + 16
-  implicitHeight: Config.barHeight
+  implicitWidth: root.vertical ? Config.buttonWidth + 16 : rowLayout.implicitWidth + 16
+  implicitHeight: root.vertical ? rowLayout.implicitHeight + 16 : Config.barHeight
   property bool embeddedInBar: false
+  property bool vertical: false
 
   Behavior on implicitWidth {
     NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
@@ -43,21 +44,45 @@ Rectangle {
   property string indicatorStyle: Config.workspaceIndicatorStyle
 
   // Active workspace ID from Hyprland
-  readonly property int activeWsId: (Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id > 0) ? Hyprland.focusedWorkspace.id : 1
+  property string monitorName: ""
 
-  // Only show occupied workspaces and the currently focused workspace.
+  function isOnMonitor(ws) {
+    if (!ws) return false
+    if (root.monitorName.length === 0) return true
+    return ws.monitor && ws.monitor.name === root.monitorName
+  }
+
+  // The workspace currently active on this monitor
+  readonly property int activeWsId: {
+    let best = 0
+    if (Hyprland.workspaces && Hyprland.workspaces.values) {
+      let list = Hyprland.workspaces.values
+      for (let i = 0; i < list.length; i++) {
+        let ws = list[i]
+        if (!ws || ws.id <= 0 || !root.isOnMonitor(ws)) continue
+        if (best === 0 || ws.id < best) best = ws.id
+        if (ws.active) return ws.id
+      }
+    }
+    let fw = Hyprland.focusedWorkspace
+    if (fw && fw.id > 0 && root.isOnMonitor(fw)) return fw.id
+    if (best > 0) return best
+    return 1
+  }
+
+  // Only show occupied workspaces and the active workspace on this monitor.
   readonly property var workspaceList: {
     let arr = []
     if (Hyprland.workspaces && Hyprland.workspaces.values) {
       let list = Hyprland.workspaces.values
       for (let i = 0; i < list.length; i++) {
         let ws = list[i]
-        if (!ws || ws.id <= 0) continue
+        if (!ws || ws.id <= 0 || !root.isOnMonitor(ws)) continue
         let occupied = ws.toplevels ? ws.toplevels.values.length > 0 : true
-        if (occupied || ws.id === activeWsId) arr.push(ws.id)
+        if (occupied || ws.id === root.activeWsId) arr.push(ws.id)
       }
     }
-    if (arr.indexOf(activeWsId) < 0) arr.push(activeWsId)
+    if (arr.indexOf(root.activeWsId) < 0) arr.push(root.activeWsId)
     arr.sort((a, b) => a - b)
     return arr
   }
@@ -81,10 +106,12 @@ Rectangle {
     }
   }
 
-  Row {
+  Grid {
     id: rowLayout
     anchors.centerIn: parent
     spacing: 2
+    rows: root.vertical ? 0 : 1
+    columns: root.vertical ? 1 : 0
 
     // App Launcher Toggle Button
     Rectangle {
@@ -121,14 +148,13 @@ Rectangle {
 
     // Separator line
     Item {
-      width: 6
-      height: 18
-      anchors.verticalCenter: parent.verticalCenter
+      width: root.vertical ? 16 : 6
+      height: launcherBtn.height
 
       Rectangle {
         anchors.centerIn: parent
-        width: 1
-        height: 18
+        width: root.vertical ? 10 : 1
+        height: root.vertical ? 1 : Math.max(12, launcherBtn.height - 12)
         color: Config.separatorColor
       }
     }

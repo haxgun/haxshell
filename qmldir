@@ -13,6 +13,7 @@ AppDrawer 1.0 Modules/AppDrawer/AppDrawer.qml
 AppLauncher 1.0 Modules/AppDrawer/AppLauncher.qml
 CalendarPopup 1.0 Modules/Calendar/CalendarPopup.qml
 BrightnessPopup 1.0 Modules/ControlCenter/BrightnessPopup.qml
+ControlCenterPopup 1.0 Modules/ControlCenter/ControlCenterPopup.qml
 WiFiPopup 1.0 Modules/ControlCenter/WiFiPopup.qml
 BluetoothPopup 1.0 Modules/ControlCenter/BluetoothPopup.qml
 AudioPopup 1.0 Modules/ControlCenter/AudioPopup.qml

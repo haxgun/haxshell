@@ -13,17 +13,21 @@ QtObject {
   property string dynamicAccent: "#e2e8f0"
   property string manualAccent: "#e2e8f0"
   property bool manualDark: true
+  property bool shellBlurEnabled: true
+  property bool shellBordersEnabled: true
+  property bool shellShadowsEnabled: true
   readonly property bool isDynamicTheme: themeName === "dynamic"
   readonly property bool isManualTheme: themeName === "manual"
   readonly property bool isLightTheme: themeName === "light" || (isManualTheme && !manualDark)
   readonly property color themeAccent: isManualTheme ? manualAccent : (isDynamicTheme ? dynamicAccent : (isLightTheme ? "#64748b" : "#e2e8f0"))
 
-  readonly property color glassBg: isLightTheme ? "#b8f8fafc" : "#901A1A1A"
-  readonly property color glassHoverBg: isLightTheme ? "#d2f8fafc" : "#c01A1A1A"
-  readonly property color searchBg: isLightTheme ? "#90e2e8f0" : "#251A1A1A"
-  readonly property color borderColor: isLightTheme ? "#8094a3b8" : "#80464646"
-  readonly property color activeBorderColor: Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, 0.55)
+  readonly property color glassBg: shellBlurEnabled ? (isLightTheme ? "#b8f8fafc" : "#901A1A1A") : (isLightTheme ? "#f3f8fc" : "#1b1b1b")
+  readonly property color glassHoverBg: shellBlurEnabled ? (isLightTheme ? "#d2f8fafc" : "#c01A1A1A") : (isLightTheme ? "#eef4fa" : "#242424")
+  readonly property color searchBg: shellBlurEnabled ? (isLightTheme ? "#90e2e8f0" : "#251A1A1A") : (isLightTheme ? "#dde7f0" : "#2a2a2a")
+  readonly property color borderColor: shellBordersEnabled ? (isLightTheme ? "#8094a3b8" : "#80464646") : "#00000000"
+  readonly property color activeBorderColor: shellBordersEnabled ? Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, 0.55) : "#00000000"
   readonly property color separatorColor: isLightTheme ? "#6094a3b8" : "#5064748b"
+  readonly property color shellShadowColor: isLightTheme ? "#2864748b" : "#50000000"
 
   // Element State Colors
   readonly property color hoverBg: Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, isLightTheme ? 0.15 : 0.13)
@@ -62,6 +66,10 @@ QtObject {
   readonly property int innerBorderMargin: 2
   readonly property int popupTopGap: 2
   readonly property int dropdownTopGap: popupTopGap
+  readonly property int shellShadowOffsetY: Math.round(3 * uiScale)
+  property string barPosition: "top"
+  readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
+  readonly property int barRotation: barPosition === "left" ? -90 : (barPosition === "right" ? 90 : 0)
 
   readonly property int buttonHeight: Math.round(28 * uiScale)
   readonly property int buttonWidth: Math.round(28 * uiScale)
