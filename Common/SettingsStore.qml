@@ -28,6 +28,10 @@ Singleton {
   property alias weatherEnabled: adapter.weatherEnabled
   property alias brightnessMonitorBus: adapter.brightnessMonitorBus
   property alias brightnessSleepMultiplier: adapter.brightnessSleepMultiplier
+  property alias barPosition: adapter.barPosition
+  property alias shellBlurEnabled: adapter.shellBlurEnabled
+  property alias shellBordersEnabled: adapter.shellBordersEnabled
+  property alias shellShadowsEnabled: adapter.shellShadowsEnabled
 
   signal reloaded()
 
@@ -74,6 +78,10 @@ Singleton {
       property string weatherEnabled: "true"
       property string brightnessMonitorBus: "auto"
       property string brightnessSleepMultiplier: ".2"
+      property string barPosition: "top"
+      property string shellBlurEnabled: "true"
+      property string shellBordersEnabled: "true"
+      property string shellShadowsEnabled: "true"
     }
   }
 
@@ -102,8 +110,12 @@ Singleton {
       reduceMotion: adapter.reduceMotion,
       weatherEnabled: adapter.weatherEnabled,
       brightnessMonitorBus: adapter.brightnessMonitorBus,
-      brightnessSleepMultiplier: adapter.brightnessSleepMultiplier
-    }
+      brightnessSleepMultiplier: adapter.brightnessSleepMultiplier,
+      barPosition: adapter.barPosition,
+      shellBlurEnabled: adapter.shellBlurEnabled,
+      shellBordersEnabled: adapter.shellBordersEnabled,
+      shellShadowsEnabled: adapter.shellShadowsEnabled
+      }
   }
 
   function setValue(key, value) {

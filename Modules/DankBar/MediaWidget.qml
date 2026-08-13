@@ -16,7 +16,7 @@ Rectangle {
   property string artUrl: ""
   readonly property string mediaSeparator: "\u001f"
 
-  visible: root.hasMedia
+  visible: Config.musicVisualizerEnabled && root.hasMedia
   height: Config.buttonHeight
   implicitWidth: mediaRow.implicitWidth + 12
   radius: Config.buttonRadius

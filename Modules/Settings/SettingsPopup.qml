@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Widgets
 import "../../Widgets"
 import "../../Common"
 
@@ -28,8 +29,17 @@ PanelWindow {
   property string thumbnail: ""
   property string wallName: "Нет обоев"
   property int currentWallpaperIndex: 0
+  property real wallpaperGridContentY: 0
+  property bool restoringWallpaperScroll: false
+  property bool wallpaperSelectionInProgress: false
+
+  Timer {
+    id: wallpaperScrollRestoreTimer
+    interval: 0
+    repeat: false
+    onTriggered: root.restoreWallpaperScroll()
+  }
   property var palette: []
-  property bool caffeineEnabled: false
   property color manualAccentColor: Config.manualAccent
   readonly property real manualHue: manualAccentColor.hslHue >= 0 ? manualAccentColor.hslHue : 0
   readonly property real manualSat: manualAccentColor.hslSaturation
@@ -41,7 +51,6 @@ PanelWindow {
     weatherLocationInput.text = Config.weatherLocation
     fontSearchInput.text = root.fontSearch
     manualAccentInput.text = Config.manualAccent
-    refreshCaffeine()
     refreshWallpapers()
     refreshFonts()
   } else {
@@ -100,11 +109,6 @@ PanelWindow {
     stdout: SplitParser { onRead: data => root.applyCitySuggestions(data) }
   }
 
-  Process {
-    id: caffeineProc
-    stdout: SplitParser { onRead: data => root.applyCaffeineState(data) }
-  }
-
   Timer { id: citySearchTimer; interval: 350; repeat: false; onTriggered: if (weatherLocationInput.activeFocus) root.searchCities(weatherLocationInput.text) }
 
   Connections { target: Config; function onWallpaperDirChanged() { root.refreshWallpapers() } }
@@ -140,6 +144,10 @@ PanelWindow {
     saveSetting("themeName", value)
     if (value === "dynamic") refreshWallpapers()
   }
+  function applyBarPosition(value) {
+    Config.barPosition = value
+    saveSetting("barPosition", value)
+  }
   function applyFont(value) { Config.fontFamily = value; saveSetting("fontFamily", value) }
   function applyWeatherLocation(value) { let location = value.trim(); Config.weatherLocation = location; saveSetting("weatherLocation", location) }
   function applyTimeFormat(value) { Config.timeFormat = value; saveSetting("timeFormat", value) }
@@ -173,25 +181,6 @@ PanelWindow {
     }
     if (key === "reduceMotion") Config.reduceMotion = value
     saveSetting(key, value ? "true" : "false")
-  }
-
-  function refreshCaffeine() {
-    caffeineProc.running = false
-    caffeineProc.command = [root.qsctl, "caffeine", "state"]
-    caffeineProc.running = true
-  }
-
-  function toggleCaffeine() {
-    caffeineProc.running = false
-    caffeineProc.command = [root.qsctl, "caffeine", "toggle"]
-    caffeineProc.running = true
-  }
-
-  function applyCaffeineState(data) {
-    try {
-      let res = JSON.parse(data)
-      root.caffeineEnabled = !!res.enabled
-    } catch(e) {}
   }
 
   function applyWallpaperDir(value) {
@@ -248,9 +237,20 @@ PanelWindow {
   }
 
   function setWallpaper(index) {
+    wallpaperGridContentY = wallpaperGrid.contentY
+    wallpaperSelectionInProgress = true
     wallpaperProc.running = false
     wallpaperProc.command = [root.qsctl, "wallpaper", "set", index.toString(), Config.wallpaperDir]
     wallpaperProc.running = true
+  }
+
+  function restoreWallpaperScroll() {
+    if (!wallpaperGrid) return
+    root.restoringWallpaperScroll = true
+    let maxContentY = Math.max(0, wallpaperGrid.contentHeight - wallpaperGrid.height)
+    wallpaperGrid.contentY = Math.min(root.wallpaperGridContentY, maxContentY)
+    root.wallpaperGridContentY = wallpaperGrid.contentY
+    root.restoringWallpaperScroll = false
   }
 
   function applyWallpaperState(data) {
@@ -264,9 +264,14 @@ PanelWindow {
         Config.dynamicAccent = root.palette[0]
         saveSettingAlt("dynamicAccent", root.palette[0])
       }
-      wallpapersModel.clear()
-      let items = res.items || []
-      for (let i = 0; i < items.length; i++) wallpapersModel.append(items[i])
+      if (!root.wallpaperSelectionInProgress) {
+        wallpapersModel.clear()
+        let items = res.items || []
+        for (let i = 0; i < items.length; i++) wallpapersModel.append(items[i])
+        wallpaperScrollRestoreTimer.restart()
+      }
+      root.wallpaperSelectionInProgress = false
+      root.restoringWallpaperScroll = false
     } catch(e) {}
   }
 
@@ -305,11 +310,23 @@ PanelWindow {
     color: Config.glassBg
     clip: false
 
+    Rectangle {
+      visible: Config.shellShadowsEnabled
+      x: 0
+      y: Config.shellShadowOffsetY
+      width: parent.width
+      height: parent.height
+      radius: parent.radius
+      color: Config.shellShadowColor
+      opacity: 0.55
+      z: -1
+    }
+
     Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
     Behavior on opacity { NumberAnimation { duration: 160 } }
 
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
-    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
+    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: Config.shellBordersEnabled ? 1 : 0 }
 
     Column {
       id: contentRoot
@@ -515,6 +532,36 @@ PanelWindow {
                     onEditingFinished: root.applyManualAccent(text)
                     Keys.onReturnPressed: focus = false
                     Keys.onEscapePressed: { text = Config.manualAccent; focus = false }
+                  }
+                }
+              }
+            }
+
+            SettingsRow {
+              icon: Config.iconWallpaper
+              title: I18n.tr("Положение панели")
+              subtitle: Config.barPosition === "bottom" ? I18n.tr("Снизу") : (Config.barPosition === "left" ? I18n.tr("Слева") : (Config.barPosition === "right" ? I18n.tr("Справа") : I18n.tr("Сверху")))
+              Rectangle {
+                id: barPosSegment
+                width: 226
+                height: 34
+                radius: 9
+                color: "transparent"
+                Row {
+                  anchors.fill: parent
+                  spacing: 2
+                  Repeater {
+                    model: [{ key: "top", label: "Верх" }, { key: "bottom", label: "Низ" }, { key: "left", label: "Слева" }, { key: "right", label: "Справа" }]
+                    Rectangle {
+                      required property var modelData
+                      width: (barPosSegment.width - 6) / 4
+                      height: 34
+                      radius: 9
+                      readonly property bool active: Config.barPosition === modelData.key
+                      color: active ? Config.selectedBg : (barPosMouse.containsMouse ? Config.hoverBg : "transparent")
+                      Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.2 }
+                      MouseArea { id: barPosMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarPosition(parent.modelData.key) }
+                    }
                   }
                 }
               }
@@ -874,73 +921,113 @@ PanelWindow {
             width: parent.width
             spacing: 10
             visible: root.activeSection === "wallpaper"
-            Rectangle {
-              width: parent.width
-              height: 112
-              radius: Config.cardRadius
-              clip: true
-              color: "#151A1A1A"
-              Image { anchors.fill: parent; source: root.thumbnail; fillMode: Image.PreserveAspectCrop; visible: root.thumbnail.length > 0; asynchronous: true }
-              Rectangle { anchors.fill: parent; color: "#50000000" }
-              Text { anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.margins: 12; text: root.wallName; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
-            }
-            Row {
-              width: parent.width
-              height: 18
-              spacing: 6
-              visible: root.palette.length > 0
-              Repeater {
-                model: root.palette
-                Rectangle {
-                  required property string modelData
-                  width: (parent.width - 30) / 6
-                  height: 18
-                  radius: 6
-                  color: modelData
-                  border.color: Config.borderColor
-                  border.width: 1
-                }
-              }
-            }
             Text { width: parent.width; visible: wallpapersModel.count === 0; text: I18n.tr("В папке нет поддерживаемых изображений или видео"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap }
-            ListView {
+            GridView {
+              id: wallpaperGrid
+              readonly property real tileGap: 6
+              readonly property real tileWidth: width / 3
+              readonly property real tileHeight: (tileWidth - tileGap) * 9 / 16 + tileGap
               width: parent.width
-              height: Math.min(190, contentHeight)
+              height: Math.min(300, Math.ceil(wallpapersModel.count / 3) * tileHeight)
+              anchors.horizontalCenter: parent.horizontalCenter
               visible: wallpapersModel.count > 0
               clip: true
-              spacing: 6
+              cellWidth: tileWidth
+              cellHeight: tileHeight
               model: wallpapersModel
-              delegate: Rectangle {
+              onContentYChanged: {
+                if (!root.restoringWallpaperScroll) root.wallpaperGridContentY = contentY
+              }
+              onContentHeightChanged: if (root.restoringWallpaperScroll) wallpaperScrollRestoreTimer.restart()
+
+              delegate: Item {
+                id: tile
                 required property int wallIndex
                 required property string name
                 required property string thumbnail
-                width: ListView.view.width
-                height: 42
-                radius: Config.cardRadius
-                color: wallItemMouse.containsMouse || wallIndex === root.currentWallpaperIndex ? Config.hoverBg : "#00000000"
-                border.color: wallIndex === root.currentWallpaperIndex ? Config.activeBorderColor : "#00000000"
-                border.width: wallIndex === root.currentWallpaperIndex ? 1 : 0
-                Image { anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 34; height: 26; source: thumbnail; fillMode: Image.PreserveAspectCrop; asynchronous: true; visible: thumbnail.length > 0; clip: true }
-                Text { anchors.fill: parent; anchors.leftMargin: 50; anchors.rightMargin: 12; verticalAlignment: Text.AlignVCenter; text: name; color: wallIndex === root.currentWallpaperIndex ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: wallIndex === root.currentWallpaperIndex ? Font.Bold : Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-                MouseArea { id: wallItemMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.setWallpaper(wallIndex) }
+                width: GridView.view.cellWidth
+                height: GridView.view.cellHeight
+
+                readonly property bool isSelected: wallIndex === root.currentWallpaperIndex
+                readonly property bool isHovered: wallItemMouse.containsMouse
+
+                Rectangle {
+                  id: wallpaperFrame
+                  anchors.fill: parent
+                  anchors.margins: wallpaperGrid.tileGap / 2
+                  radius: Config.cardRadius
+                  color: Config.searchBg
+                  clip: true
+                  scale: tile.isHovered ? 1.03 : 1.0
+                  border.color: tile.isSelected ? Config.activeBorderColor : "#00000000"
+                  border.width: tile.isSelected ? 2 : 0
+
+                  Behavior on scale { NumberAnimation { duration: Config.reduceMotion ? 0 : 120; easing.type: Easing.OutCubic } }
+
+                  ClippingRectangle {
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    radius: Config.overlayRadius - 4
+                    color: Config.searchBg
+
+                    Image {
+                      anchors.fill: parent
+                      source: thumbnail
+                      fillMode: Image.PreserveAspectCrop
+                      asynchronous: true
+                      cache: true
+                      sourceSize.width: 220
+                      sourceSize.height: 150
+                      visible: thumbnail.length > 0
+                    }
+
+                    Rectangle {
+                      anchors.fill: parent
+                      color: Config.textWhite
+                      opacity: tile.isHovered ? 0.06 : 0
+                      Behavior on opacity { NumberAnimation { duration: Config.reduceMotion ? 0 : 115 } }
+                    }
+
+                    Rectangle {
+                      anchors.left: parent.left
+                      anchors.right: parent.right
+                      anchors.bottom: parent.bottom
+                      height: 34
+                      opacity: tile.isHovered || tile.isSelected ? 1 : 0
+                      gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#00000000" }
+                        GradientStop { position: 1.0; color: "#cc000000" }
+                      }
+
+                      Behavior on opacity { NumberAnimation { duration: Config.reduceMotion ? 0 : 140 } }
+
+                      Text {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 8
+                        text: name
+                        color: Config.textWhite
+                        font.pixelSize: Config.fontSizeSmall
+                        font.weight: tile.isSelected ? Font.Bold : Font.Medium
+                        font.family: Config.fontSans
+                        elide: Text.ElideMiddle
+                      }
+                    }
+                  }
+                }
+
+                MouseArea {
+                  id: wallItemMouse
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: root.setWallpaper(wallIndex)
+                }
               }
             }
           }
 
-          Column {
-            width: parent.width
-            spacing: 10
-            visible: root.activeSection === "system"
-            Text { text: I18n.tr("Питание"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            SettingsRow {
-              icon: Config.iconCoffee
-              title: I18n.tr("Не спать")
-              subtitle: root.caffeineEnabled ? I18n.tr("Сон и idle заблокированы") : I18n.tr("Обычный режим сна")
-              last: true
-              onClicked: root.toggleCaffeine()
-              ToggleSwitch { checked: root.caffeineEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.toggleCaffeine() }
-            }
-          }
         }
       }
     }

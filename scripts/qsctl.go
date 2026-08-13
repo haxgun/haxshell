@@ -135,6 +135,10 @@ func settingsDefaults() map[string]string {
 		"weatherEnabled":            "true",
 		"brightnessMonitorBus":      "auto",
 		"brightnessSleepMultiplier": ".2",
+		"barPosition":               "top",
+		"shellBlurEnabled":          "true",
+		"shellBordersEnabled":       "true",
+		"shellShadowsEnabled":       "true",
 	}
 }
 
