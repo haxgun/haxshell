@@ -161,20 +161,32 @@ func readSettings() map[string]string {
 	return settings
 }
 
+func updateSetting(settings map[string]string, key, value string) bool {
+	if _, ok := settings[key]; !ok {
+		return false
+	}
+	settings[key] = value
+	return true
+}
+
+func writeSettings(settings map[string]string, changedKey string) {
+	writeJSONFile(settingsPath(), settings)
+	if changedKey == "wallpaperDir" {
+		writeJSONFile(wallutilPath(), map[string]string{"wallDir": settings[changedKey]})
+	}
+}
+
 func cmdSettings(args []string) {
 	lock := lockSettings()
 	settings := readSettings()
+	changedKey := ""
 	if len(args) >= 3 && args[0] == "set" {
 		key, value := args[1], args[2]
-		if _, ok := settings[key]; ok {
-			settings[key] = value
-			writeJSONFile(settingsPath(), settings)
-			if key == "wallpaperDir" {
-				writeJSONFile(wallutilPath(), map[string]string{"wallDir": value})
-			}
+		if updateSetting(settings, key, value) {
+			changedKey = key
 		}
 	}
-	writeJSONFile(settingsPath(), settings)
+	writeSettings(settings, changedKey)
 	unlockSettings(lock)
 	applyTheme(settings["themeName"], settings["manualDark"] == "true", settings["reduceMotion"] == "true")
 	setCaffeineEnabled(settings["caffeineEnabled"] == "true")
@@ -184,12 +196,8 @@ func cmdSettings(args []string) {
 func saveSettingValue(key, value string) map[string]string {
 	lock := lockSettings()
 	settings := readSettings()
-	if _, ok := settings[key]; ok {
-		settings[key] = value
-		writeJSONFile(settingsPath(), settings)
-		if key == "wallpaperDir" {
-			writeJSONFile(wallutilPath(), map[string]string{"wallDir": value})
-		}
+	if updateSetting(settings, key, value) {
+		writeSettings(settings, key)
 	}
 	unlockSettings(lock)
 	return settings
