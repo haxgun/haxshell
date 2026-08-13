@@ -27,19 +27,20 @@
 
 ```text
 .
-├── shell.qml                 # Quickshell entry point
-├── Common/                   # Shared configuration and singleton services
-├── Modules/                  # Bar, popups, and settings
-├── Widgets/                  # Reusable QML components
-├── Services/                 # QML services
+├── quickshell/               # Quickshell configuration
+│   ├── shell.qml             # Quickshell entry point
+│   ├── Common/               # Shared configuration and singleton services
+│   ├── Modules/              # Bar, popups, and settings
+│   ├── Widgets/              # Reusable QML components
+│   ├── Services/             # QML services
+│   └── translations/         # UI translations
 ├── core/                     # Go module for hushctl
 │   ├── cmd/hushctl/          # hushctl command entry point
 │   ├── internal/hushctl/     # Shell-specific command implementation
 │   ├── pkg/                  # Public Go packages
 │   ├── go.mod
 │   └── go.sum
-├── translations/             # UI translations
-└── settings.json             # Persisted user settings
+└── install.sh                # Arch Linux installer
 ```
 
 ## Run
@@ -47,13 +48,13 @@
 From the repository root:
 
 ```bash
-quickshell --path .
+quickshell --path quickshell
 ```
 
 To start the shell automatically, create a symbolic link to the project directory:
 
 ```bash
-ln -s "$(pwd)" ~/.config/quickshell
+ln -s "$(pwd)/quickshell" ~/.config/quickshell
 ```
 
 ## Install
@@ -78,13 +79,13 @@ Rebuild the utility and restart Quickshell after changing files under `core/`.
 
 ## Configuration
 
-- Shared configuration is in `Common/Config.qml`.
-- User settings are persisted by `Common/SettingsStore.qml` in `settings.json`.
+- Shared configuration is in `quickshell/Common/Config.qml`.
+- User settings are persisted by `quickshell/Common/SettingsStore.qml` in `quickshell/settings.json`.
 - Appearance settings: `shellBlurEnabled`, `shellBordersEnabled`, `shellShadowsEnabled`.
 
 ## Verification
 
 ```bash
 git diff --check
-quickshell --path .
+quickshell --path quickshell
 ```

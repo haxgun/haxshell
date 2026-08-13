@@ -2,6 +2,7 @@
 set -euo pipefail
 
 readonly PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly SHELL_DIR="$PROJECT_DIR/quickshell"
 readonly CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell"
 readonly PACKAGES=(
   awww
@@ -77,12 +78,15 @@ fi
 mkdir -p "$(dirname "$CONFIG_DIR")"
 if [[ -L "$CONFIG_DIR" ]]; then
   current_target="$(readlink -f "$CONFIG_DIR")"
-  if [[ "$current_target" != "$PROJECT_DIR" ]]; then
+  if [[ "$current_target" == "$PROJECT_DIR" ]]; then
+    rm "$CONFIG_DIR"
+    ln -s "$SHELL_DIR" "$CONFIG_DIR"
+  elif [[ "$current_target" != "$SHELL_DIR" ]]; then
     die "$CONFIG_DIR points to $current_target; replace it manually if you want to use hush"
   fi
 else
-  ln -s "$PROJECT_DIR" "$CONFIG_DIR"
+  ln -s "$SHELL_DIR" "$CONFIG_DIR"
 fi
 
-printf '\nhush is installed. Start it with:\n  quickshell --path %s\n' "$PROJECT_DIR"
+printf '\nhush is installed. Start it with:\n  quickshell --path %s\n' "$SHELL_DIR"
 printf 'Add this command to your Hyprland startup configuration to launch it automatically.\n'

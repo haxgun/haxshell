@@ -27,19 +27,20 @@
 
 ```text
 .
-├── shell.qml                 # Точка входа Quickshell
-├── Common/                   # Общая конфигурация и singleton-сервисы
-├── Modules/                  # Панель, всплывающие окна и настройки
-├── Widgets/                  # Переиспользуемые QML-компоненты
-├── Services/                 # QML-сервисы
+├── quickshell/               # Конфигурация Quickshell
+│   ├── shell.qml             # Точка входа Quickshell
+│   ├── Common/               # Общая конфигурация и singleton-сервисы
+│   ├── Modules/              # Панель, всплывающие окна и настройки
+│   ├── Widgets/              # Переиспользуемые QML-компоненты
+│   ├── Services/             # QML-сервисы
+│   └── translations/         # Переводы интерфейса
 ├── core/                     # Go-модуль hushctl
 │   ├── cmd/hushctl/          # Точка входа команды hushctl
 │   ├── internal/hushctl/     # Реализация команд для оболочки
 │   ├── pkg/                  # Публичные Go-пакеты
 │   ├── go.mod
 │   └── go.sum
-├── translations/             # Переводы интерфейса
-└── settings.json             # Сохраненные пользовательские настройки
+└── install.sh                # Установщик для Arch Linux
 ```
 
 ## Запуск
@@ -47,13 +48,13 @@
 Из корня репозитория:
 
 ```bash
-quickshell --path .
+quickshell --path quickshell
 ```
 
 Для автоматического запуска можно создать символьную ссылку на каталог проекта:
 
 ```bash
-ln -s "$(pwd)" ~/.config/quickshell
+ln -s "$(pwd)/quickshell" ~/.config/quickshell
 ```
 
 ## Установка
@@ -78,13 +79,13 @@ go build -C core -o hushctl ./cmd/hushctl
 
 ## Настройка
 
-- Общая конфигурация находится в `Common/Config.qml`.
-- Пользовательские параметры сохраняются через `Common/SettingsStore.qml` в `settings.json`.
+- Общая конфигурация находится в `quickshell/Common/Config.qml`.
+- Пользовательские параметры сохраняются через `quickshell/Common/SettingsStore.qml` в `quickshell/settings.json`.
 - Параметры внешнего вида: `shellBlurEnabled`, `shellBordersEnabled`, `shellShadowsEnabled`.
 
 ## Проверка
 
 ```bash
 git diff --check
-quickshell --path .
+quickshell --path quickshell
 ```
