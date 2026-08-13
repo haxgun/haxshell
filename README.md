@@ -44,6 +44,16 @@ To start the shell automatically, create a symbolic link to the project director
 ln -s "$(pwd)" ~/.config/quickshell
 ```
 
+## Install
+
+The included installer targets Arch Linux with Hyprland. It installs repository and AUR dependencies, builds `qsctl`, and links this repository to `~/.config/quickshell` without replacing an existing configuration.
+
+```bash
+./install.sh
+```
+
+`yay` or `paru` is required when Vicinae is not installed because it is installed from the AUR.
+
 ## Build `qsctl`
 
 `qsctl` is used by QML components for system operations including brightness, audio, and wallpaper control.
