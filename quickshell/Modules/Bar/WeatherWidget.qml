@@ -8,9 +8,6 @@ Rectangle {
   id: root
 
   property string weatherText: "--"
-  property bool loading: false
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
-
   visible: Config.weatherEnabled
   implicitWidth: weatherRow.implicitWidth + 12
   implicitHeight: Config.buttonHeight
@@ -19,7 +16,7 @@ Rectangle {
 
   Process {
     id: weatherProc
-    command: [root.hushctl, "weather"]
+    command: [Config.hushctl, "weather"]
     running: Config.weatherEnabled
 
     stdout: SplitParser {
@@ -28,11 +25,8 @@ Rectangle {
           let weather = JSON.parse(data)
           root.weatherText = weather.ok ? (Math.round(weather.temperature) + "°") : "--"
         } catch(e) { root.weatherText = "--" }
-        root.loading = false
       }
     }
-
-    onExited: root.loading = false
   }
 
   Timer {
@@ -44,9 +38,8 @@ Rectangle {
 
   function refresh() {
     if (!Config.weatherEnabled) return
-    root.loading = true
     weatherProc.running = false
-    weatherProc.command = [root.hushctl, "weather"]
+    weatherProc.command = [Config.hushctl, "weather"]
     weatherProc.running = true
   }
 
@@ -56,14 +49,11 @@ Rectangle {
     spacing: 5
 
     Text {
-      text: root.loading ? Config.iconRefresh : Config.iconWeather
+      text: Config.iconWeather
       color: Config.textMuted
-      rotation: root.loading ? 360 : 0
       font.pixelSize: Config.fontSizeIconSmall
       font.family: Config.fontIcon
       anchors.verticalCenter: parent.verticalCenter
-
-      Behavior on rotation { NumberAnimation { duration: 500; easing.type: Easing.InOutQuad } }
     }
 
     Text {

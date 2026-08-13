@@ -120,28 +120,29 @@ func unlockSettings(f *os.File) {
 
 func settingsDefaults() map[string]string {
 	return map[string]string{
-		"themeName":                 "dark",
-		"fontFamily":                "Geist Mono",
-		"wallpaperDir":              "~/wallpapers/animated",
-		"weatherLocation":           "",
-		"dynamicAccent":             "#e2e8f0",
-		"manualAccent":              "#e2e8f0",
-		"manualDark":                "true",
-		"caffeineEnabled":           "false",
-		"timeFormat":                "24",
-		"showSeconds":               "false",
-		"language":                  "ru",
-		"musicVisualizerEnabled":    "true",
-		"showWorkspaceNumbers":      "true",
-		"uiScale":                   "1.0",
-		"reduceMotion":              "false",
-		"weatherEnabled":            "true",
-		"brightnessMonitorBus":      "auto",
-		"brightnessSleepMultiplier": ".2",
-		"barPosition":               "top",
-		"shellBlurEnabled":          "true",
-		"shellBordersEnabled":       "true",
-		"shellShadowsEnabled":       "true",
+		"themeName":                   "dark",
+		"fontFamily":                  "Geist Mono",
+		"wallpaperDir":                "~/wallpapers/animated",
+		"weatherLocation":             "",
+		"dynamicAccent":               "#e2e8f0",
+		"manualAccent":                "#e2e8f0",
+		"manualDark":                  "true",
+		"caffeineEnabled":             "false",
+		"timeFormat":                  "24",
+		"showSeconds":                 "false",
+		"language":                    "ru",
+		"musicVisualizerEnabled":      "true",
+		"showWorkspaceNumbers":        "true",
+		"showWorkspacesOnAllMonitors": "false",
+		"uiScale":                     "1.0",
+		"reduceMotion":                "false",
+		"weatherEnabled":              "true",
+		"brightnessMonitorBus":        "auto",
+		"brightnessSleepMultiplier":   ".2",
+		"barPosition":                 "top",
+		"shellBlurEnabled":            "true",
+		"shellBordersEnabled":         "true",
+		"shellShadowsEnabled":         "true",
 	}
 }
 
@@ -1407,7 +1408,7 @@ func cmdWeather(args []string) {
 		return
 	}
 	place := geo.Results[0]
-	forecastURL := fmt.Sprintf("https://api.open-meteo.com/v1/forecast?latitude=%.5f&longitude=%.5f&current=temperature_2m,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4", place.Latitude, place.Longitude)
+	forecastURL := fmt.Sprintf("https://api.open-meteo.com/v1/forecast?latitude=%.5f&longitude=%.5f&current=temperature_2m,relative_humidity_2m,weather_code&hourly=relative_humidity_2m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4", place.Latitude, place.Longitude)
 	forecastRaw, forecastCode := run(6*time.Second, "curl", "-fsS", "--max-time", "5", forecastURL)
 	if forecastCode != 0 {
 		if cached != nil {
@@ -1429,6 +1430,10 @@ func cmdWeather(args []string) {
 			Max   []float64 `json:"temperature_2m_max"`
 			Min   []float64 `json:"temperature_2m_min"`
 		} `json:"daily"`
+		Hourly struct {
+			Time     []string  `json:"time"`
+			Humidity []float64 `json:"relative_humidity_2m"`
+		} `json:"hourly"`
 	}
 	if json.Unmarshal([]byte(forecastRaw), &forecast) != nil {
 		if cached != nil {
@@ -1438,10 +1443,22 @@ func cmdWeather(args []string) {
 		output(map[string]any{"ok": false, "error": "invalid forecast"})
 		return
 	}
+	totalHumidity := map[string]float64{}
+	humiditySamples := map[string]int{}
+	for i := 0; i < len(forecast.Hourly.Time) && i < len(forecast.Hourly.Humidity); i++ {
+		date := strings.SplitN(forecast.Hourly.Time[i], "T", 2)[0]
+		totalHumidity[date] += forecast.Hourly.Humidity[i]
+		humiditySamples[date]++
+	}
 	days := []map[string]any{}
-	for i := 0; i < len(forecast.Daily.Time) && i < 4; i++ {
+	for i := 0; i < len(forecast.Daily.Time) && i < len(forecast.Daily.Codes) && i < len(forecast.Daily.Max) && i < len(forecast.Daily.Min) && i < 4; i++ {
 		code := forecast.Daily.Codes[i]
-		days = append(days, map[string]any{"date": forecast.Daily.Time[i], "code": code, "condition": weatherDescription(code), "min": math.Round(forecast.Daily.Min[i]*10) / 10, "max": math.Round(forecast.Daily.Max[i]*10) / 10})
+		averageTemp := (forecast.Daily.Min[i] + forecast.Daily.Max[i]) / 2
+		humidity := 0
+		if samples := humiditySamples[forecast.Daily.Time[i]]; samples > 0 {
+			humidity = int(math.Round(totalHumidity[forecast.Daily.Time[i]] / float64(samples)))
+		}
+		days = append(days, map[string]any{"date": forecast.Daily.Time[i], "code": code, "condition": weatherDescription(code), "temperature": math.Round(averageTemp*10) / 10, "humidity": humidity})
 	}
 	result := map[string]any{"ok": true, "location": location, "name": place.Name, "country": place.Country, "temperature": math.Round(forecast.Current.Temperature*10) / 10, "humidity": int(math.Round(forecast.Current.Humidity)), "code": forecast.Current.Code, "condition": weatherDescription(forecast.Current.Code), "days": days, "cachedAt": time.Now().Unix()}
 	writeJSONFile(weatherCachePath(), result)

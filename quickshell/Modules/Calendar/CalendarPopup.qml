@@ -57,7 +57,6 @@ PanelWindow {
   property string weatherCondition: "Погода недоступна"
   property string weatherDetails: "Погода недоступна"
   property string weatherHumidity: "--"
-  property bool weatherLoading: false
 
   onIsOpenChanged: {
     if (isOpen) {
@@ -70,20 +69,18 @@ PanelWindow {
 
   Process {
     id: weatherProc
-    command: [Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", ""), "weather"]
+    command: [Config.hushctl, "weather"]
 
     stdout: SplitParser {
       onRead: data => root.applyWeather(data)
     }
 
-    onExited: root.weatherLoading = false
   }
 
   function refreshWeather() {
     if (!Config.weatherEnabled) return
-    root.weatherLoading = true
     weatherProc.running = false
-    weatherProc.command = [Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", ""), "weather", "refresh"]
+    weatherProc.command = [Config.hushctl, "weather", "refresh"]
     weatherProc.running = true
   }
 
@@ -101,8 +98,8 @@ PanelWindow {
         let day = days[i]
         forecastModel.append({
           dayLabel: root.forecastDayLabel(day.date, i),
-          temp: Math.round(day.min) + "…" + Math.round(day.max) + "°",
-          humidity: "",
+          temp: Math.round(day.temperature) + "°",
+          humidity: day.humidity + "%",
           desc: day.condition || "Прогноз"
         })
       }
@@ -115,7 +112,6 @@ PanelWindow {
         })
       }
     } catch(e) {}
-    root.weatherLoading = false
   }
 
   function forecastDayLabel(rawDate, index) {
@@ -259,7 +255,7 @@ PanelWindow {
             spacing: 10
 
             Text {
-              text: root.weatherLoading ? Config.iconRefresh : Config.iconWeather
+              text: Config.iconWeather
               color: Config.activeBorderColor
               font.pixelSize: 28
               font.family: Config.fontIcon
@@ -281,14 +277,14 @@ PanelWindow {
             height: 24
             spacing: 6
             Text { width: parent.width - 52; text: Config.weatherLocation || "Погода"; color: Config.textSubtle; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
-            Text { width: 46; text: "◌ " + root.weatherHumidity; color: Config.textMuted; font.pixelSize: 10; font.family: Config.fontSans; horizontalAlignment: Text.AlignRight; anchors.verticalCenter: parent.verticalCenter }
+            Text { width: 46; text: Config.iconHumidity + " " + root.weatherHumidity; color: Config.textMuted; font.pixelSize: 10; font.family: Config.fontIcon; horizontalAlignment: Text.AlignRight; anchors.verticalCenter: parent.verticalCenter }
           }
 
           Rectangle { width: parent.width; height: 1; color: Config.separatorColor; opacity: 0.45 }
 
           Row {
             width: parent.width
-            height: 76
+            height: 88
             spacing: 4
 
             Repeater {
@@ -298,8 +294,8 @@ PanelWindow {
                 spacing: 4
                 Text { width: parent.width; text: dayLabel; color: Config.textMuted; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight }
                 Text { width: parent.width; text: Config.iconWeather; color: Config.textSubtle; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
-                Text { width: parent.width; text: temp; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter }
-                Text { width: parent.width; text: "◌ " + humidity; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter }
+                Text { width: parent.width; text: Config.iconTemperature + " " + temp; color: Config.textWhite; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
+                Text { width: parent.width; text: Config.iconHumidity + " " + humidity; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
               }
             }
           }

@@ -17,7 +17,7 @@ PanelWindow {
   readonly property string artist: MprisController.stableArtist
   readonly property string album: MprisController.stableAlbum
   readonly property string title: MprisController.stableTitle
-  readonly property string artUrl: resolveArtUrl(player && player.trackArtUrl ? player.trackArtUrl : "", player && player.metadata ? player.metadata["xesam:url"] : "")
+  readonly property string artUrl: normalizeArtUrl(player && player.trackArtUrl ? player.trackArtUrl : "")
   readonly property int positionSec: player ? Math.floor(player.position) : 0
   readonly property int durationSec: Math.floor(MprisController.stableLength)
 
@@ -36,19 +36,6 @@ PanelWindow {
     function toggle() { root.isOpen = !root.isOpen }
     function open() { root.isOpen = true }
     function close() { root.isOpen = false }
-  }
-
-  function resolveArtUrl(artValue, pageUrl) {
-    let art = root.normalizeArtUrl(artValue)
-    if (art.length > 0) return art
-    return root.youtubeArtUrl(pageUrl)
-  }
-
-  function youtubeArtUrl(value) {
-    let url = (value || "").trim()
-    let match = url.match(/[?&]v=([^&#]+)/) || url.match(/youtu\.be\/([^?&#/]+)/) || url.match(/\/(?:shorts|embed)\/([^?&#/]+)/)
-    if (!match || !match[1]) return ""
-    return "https://i.ytimg.com/vi/" + match[1] + "/hqdefault.jpg"
   }
 
   function normalizeArtUrl(value) {

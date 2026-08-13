@@ -14,7 +14,7 @@ Rectangle {
   readonly property bool isPlaying: player && player.isPlaying
   readonly property string title: MprisController.stableTitle
   readonly property string artist: MprisController.stableArtist
-  readonly property string artUrl: resolveArtUrl(player && player.trackArtUrl ? player.trackArtUrl : "", player && player.metadata ? player.metadata["xesam:url"] : "")
+  readonly property string artUrl: normalizeArtUrl(player && player.trackArtUrl ? player.trackArtUrl : "")
 
   visible: Config.musicVisualizerEnabled && root.hasMedia
   height: Config.buttonHeight
@@ -22,19 +22,6 @@ Rectangle {
   radius: Config.buttonRadius
   color: mediaMouse.containsMouse || (mediaPopup && mediaPopup.isOpen) ? Config.pressedBg : "#00000000"
   clip: true
-
-  function resolveArtUrl(artValue, pageUrl) {
-    let art = root.normalizeArtUrl(artValue)
-    if (art.length > 0) return art
-    return root.youtubeArtUrl(pageUrl)
-  }
-
-  function youtubeArtUrl(value) {
-    let url = (value || "").trim()
-    let match = url.match(/[?&]v=([^&#]+)/) || url.match(/youtu\.be\/([^?&#/]+)/) || url.match(/\/(?:shorts|embed)\/([^?&#/]+)/)
-    if (!match || !match[1]) return ""
-    return "https://i.ytimg.com/vi/" + match[1] + "/hqdefault.jpg"
-  }
 
   function normalizeArtUrl(value) {
     let url = (value || "").trim()
