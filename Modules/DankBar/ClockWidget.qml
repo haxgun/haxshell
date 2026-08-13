@@ -23,12 +23,13 @@ Rectangle {
   property var visualizerBars: [4, 4, 4, 4, 4, 4, 4, 4]
 
   // Media Player State Properties
-  property bool hasMedia: false
-  property bool isPlaying: false
-  property string mediaArtist: ""
-  property string mediaTitle: ""
-  property int positionSec: 0
-  property int durationSec: 0
+  readonly property var player: MprisController.activePlayer
+  readonly property bool hasMedia: player && !MprisController.isIdle(player)
+  readonly property bool isPlaying: player && player.isPlaying
+  readonly property string mediaArtist: MprisController.stableArtist
+  readonly property string mediaTitle: MprisController.stableTitle
+  readonly property int positionSec: player ? Math.floor(player.position) : 0
+  readonly property int durationSec: Math.floor(MprisController.stableLength)
 
   // Fixed symmetric width for left and right extensions
   readonly property int targetSideWidth: (hasMedia && (mediaTitle || mediaArtist)) ? Config.mprisTargetSideWidth : 0
@@ -51,52 +52,6 @@ Rectangle {
     return mStr + ":" + sStr
   }
 
-  // Real-time MPRIS metadata subscriber via playerctl
-  Process {
-    id: mprisProc
-    command: ["playerctl", "metadata", "-F", "--format", "{{status}};;{{artist}};;{{title}};;{{position}};;{{mpris:length}}"]
-    running: true
-
-    stdout: SplitParser {
-      onRead: data => {
-        let parts = data.trim().split(";;")
-        if (parts.length >= 5) {
-          let statusStr = parts[0]
-          let artistStr = parts[1]
-          let titleStr = parts[2]
-          let posMicro = parseInt(parts[3]) || 0
-          let lenMicro = parseInt(parts[4]) || 0
-
-          root.isPlaying = (statusStr === "Playing")
-          root.hasMedia = (statusStr === "Playing" || statusStr === "Paused")
-          root.mediaArtist = artistStr
-          root.mediaTitle = titleStr
-          root.positionSec = Math.floor(posMicro / 1000000)
-          root.durationSec = Math.floor(lenMicro / 1000000)
-        } else {
-          root.hasMedia = false
-          root.isPlaying = false
-        }
-      }
-    }
-  }
-
-  // Media Player Command Processes
-  Process {
-    id: playPauseProc
-    command: ["playerctl", "play-pause"]
-  }
-
-  Process {
-    id: prevTrackProc
-    command: ["playerctl", "previous"]
-  }
-
-  Process {
-    id: nextTrackProc
-    command: ["playerctl", "next"]
-  }
-
   Process {
     id: cavaProc
     running: root.rightDisplayMode === "visualizer"
@@ -106,18 +61,6 @@ Rectangle {
       onRead: data => {
         let values = data.trim().split(/[;\s]+/).filter(v => v.length > 0).map(v => parseInt(v) || 0)
         if (values.length > 0) root.visualizerBars = values.slice(0, root.visualizerBarCount)
-      }
-    }
-  }
-
-  // Position increment timer when playing
-  Timer {
-    interval: 1000
-    running: root.isPlaying
-    repeat: true
-    onTriggered: {
-      if (root.durationSec > 0 && root.positionSec < root.durationSec) {
-        root.positionSec++
       }
     }
   }
@@ -213,7 +156,7 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: playPauseProc.running = true
+            onClicked: if (root.player && root.player.canTogglePlaying) root.player.togglePlaying()
           }
         }
 
@@ -351,7 +294,7 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: prevTrackProc.running = true
+            onClicked: MprisController.previousOrRewind()
           }
         }
 
@@ -439,7 +382,7 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: nextTrackProc.running = true
+            onClicked: MprisController.next()
           }
         }
       }

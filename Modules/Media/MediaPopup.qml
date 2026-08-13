@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Widgets
 import "../../Common"
 
 PanelWindow {
@@ -10,15 +11,15 @@ PanelWindow {
 
   property bool isOpen: false
   property int rightMargin: 16
-  property bool hasMedia: false
-  property bool isPlaying: false
-  property string artist: ""
-  property string album: ""
-  property string title: ""
-  property string artUrl: ""
-  property int positionSec: 0
-  property int durationSec: 0
-  readonly property string mediaSeparator: "\u001f"
+  readonly property var player: MprisController.activePlayer
+  readonly property bool hasMedia: player && !MprisController.isIdle(player)
+  readonly property bool isPlaying: player && player.isPlaying
+  readonly property string artist: MprisController.stableArtist
+  readonly property string album: MprisController.stableAlbum
+  readonly property string title: MprisController.stableTitle
+  readonly property string artUrl: resolveArtUrl(player && player.trackArtUrl ? player.trackArtUrl : "", player && player.metadata ? player.metadata["xesam:url"] : "")
+  readonly property int positionSec: player ? Math.floor(player.position) : 0
+  readonly property int durationSec: Math.floor(MprisController.stableLength)
 
   visible: isOpen || container.opacity > 0.01
   WlrLayershell.namespace: "quickshell-bar"
@@ -35,42 +36,6 @@ PanelWindow {
     function toggle() { root.isOpen = !root.isOpen }
     function open() { root.isOpen = true }
     function close() { root.isOpen = false }
-  }
-
-  Process {
-    id: metadataProc
-    command: ["playerctl", "metadata", "-F", "--format", "{{status}}" + root.mediaSeparator + "{{artist}}" + root.mediaSeparator + "{{album}}" + root.mediaSeparator + "{{title}}" + root.mediaSeparator + "{{mpris:artUrl}}" + root.mediaSeparator + "{{xesam:url}}" + root.mediaSeparator + "{{position}}" + root.mediaSeparator + "{{mpris:length}}"]
-    running: true
-    stdout: SplitParser { onRead: data => root.applyMedia(data) }
-  }
-
-  Process { id: controlProc }
-
-  Timer {
-    interval: 1000
-    running: root.isPlaying
-    repeat: true
-    onTriggered: if (root.durationSec <= 0 || root.positionSec < root.durationSec) root.positionSec++
-  }
-
-  function runControl(action) {
-    controlProc.running = false
-    controlProc.command = ["playerctl", action]
-    controlProc.running = true
-  }
-
-  function applyMedia(data) {
-    let parts = data.trim().split(root.mediaSeparator)
-    if (parts.length >= 8) {
-      root.isPlaying = parts[0] === "Playing"
-      root.hasMedia = parts[0] === "Playing" || parts[0] === "Paused"
-      root.artist = parts[1]
-      root.album = parts[2]
-      root.title = parts[3]
-      root.artUrl = root.resolveArtUrl(parts[4], parts[5])
-      root.positionSec = Math.floor((parseInt(parts[6]) || 0) / 1000000)
-      root.durationSec = Math.floor((parseInt(parts[7]) || 0) / 1000000)
-    }
   }
 
   function resolveArtUrl(artValue, pageUrl) {
@@ -131,7 +96,12 @@ PanelWindow {
         radius: Config.cardRadius
         clip: true
         color: Config.searchBg
-        Image { anchors.fill: parent; source: root.artUrl; fillMode: Image.PreserveAspectCrop; asynchronous: true; cache: false; visible: root.artUrl.length > 0 }
+        ClippingRectangle {
+          anchors.fill: parent
+          radius: parent.radius
+          color: "transparent"
+          Image { anchors.fill: parent; source: root.artUrl; fillMode: Image.PreserveAspectCrop; asynchronous: true; cache: false; visible: root.artUrl.length > 0 }
+        }
         Rectangle { anchors.fill: parent; color: "#50000000" }
         Text { anchors.centerIn: parent; visible: root.artUrl.length === 0; text: Config.iconPlay; color: Config.textMuted; font.pixelSize: 44; font.family: Config.fontIcon }
         Rectangle { anchors.fill: parent; radius: parent.radius; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
@@ -178,7 +148,7 @@ PanelWindow {
             border.color: Config.borderColor
             border.width: 1
             Text { anchors.centerIn: parent; text: parent.modelData.icon; color: Config.textWhite; font.pixelSize: parent.modelData.primary ? Config.fontSizeIconLarge : Config.fontSizeIconMedium; font.family: Config.fontIcon }
-            MouseArea { id: mediaButtonMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.runControl(parent.modelData.action) }
+            MouseArea { id: mediaButtonMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { if (!root.player) return; if (parent.modelData.action === "previous") MprisController.previousOrRewind(); else if (parent.modelData.action === "next") MprisController.next(); else if (root.player.canTogglePlaying) root.player.togglePlaying() } }
           }
         }
       }

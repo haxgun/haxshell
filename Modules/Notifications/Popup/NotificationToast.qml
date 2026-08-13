@@ -1,3 +1,4 @@
+// NotificationToast.qml - Timed desktop notification toast
 import QtQuick
 import Quickshell.Widgets
 import "../../../"
@@ -106,7 +107,12 @@ Rectangle {
       anchors.left: parent.left
       anchors.top: parent.top
 
-      Image { id: toastImage; anchors.fill: parent; source: toast.toastImageSource; visible: source.toString().length > 0; fillMode: Image.PreserveAspectCrop; asynchronous: true }
+      ClippingRectangle {
+        anchors.fill: parent
+        radius: parent.radius
+        color: "transparent"
+        Image { id: toastImage; anchors.fill: parent; source: toast.toastImageSource; visible: source.toString().length > 0; fillMode: Image.PreserveAspectCrop; asynchronous: true }
+      }
       IconImage { anchors.centerIn: parent; width: 28; height: 28; source: toast.toastIconSource; visible: !toastImage.visible && source.toString().length > 0 }
       Text { anchors.centerIn: parent; visible: !toastImage.visible && toast.toastIconSource.length === 0; text: (toast.toastAppName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans }
     }

@@ -352,12 +352,11 @@ PanelWindow {
         Repeater {
           model: [
             { key: "appearance", icon: Config.iconSettings, title: "Общие" },
-            { key: "wallpaper", icon: Config.iconWallpaper, title: "Обои" },
-            { key: "system", icon: Config.iconCoffee, title: "Сон" }
+            { key: "wallpaper", icon: Config.iconWallpaper, title: "Обои" }
           ]
           Rectangle {
             required property var modelData
-            width: (parent.width - 16) / 3
+            width: (parent.width - 8) / 2
             height: 36
             radius: Config.cardRadius
             readonly property bool active: root.activeSection === modelData.key

@@ -1,3 +1,4 @@
+// NotificationCard.qml - Individual notification card for the notification center
 import QtQuick
 import Quickshell.Services.Notifications
 import Quickshell.Widgets
@@ -45,7 +46,12 @@ Rectangle {
       anchors.left: parent.left
       anchors.top: parent.top
 
-      Image { id: centerImage; anchors.fill: parent; source: imageSource; visible: source.toString().length > 0; fillMode: Image.PreserveAspectCrop; asynchronous: true }
+      ClippingRectangle {
+        anchors.fill: parent
+        radius: parent.radius
+        color: "transparent"
+        Image { id: centerImage; anchors.fill: parent; source: imageSource; visible: source.toString().length > 0; fillMode: Image.PreserveAspectCrop; asynchronous: true }
+      }
       IconImage { anchors.centerIn: parent; width: 26; height: 26; source: iconSource; visible: !centerImage.visible && source.toString().length > 0 }
       Text { anchors.centerIn: parent; visible: !centerImage.visible && iconSource.length === 0; text: (appName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans }
     }

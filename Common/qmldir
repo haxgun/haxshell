@@ -1,3 +1,4 @@
 singleton Config 1.0 Config.qml
 singleton SettingsStore 1.0 SettingsStore.qml
 singleton I18n 1.0 I18n.qml
+singleton MprisController 1.0 MprisController.qml
