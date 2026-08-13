@@ -9,7 +9,7 @@ import Quickshell.Io
 Singleton {
   id: root
 
-  readonly property string settingsPath: Qt.resolvedUrl("../settings.json").toString().replace("file://", "")
+  readonly property string settingsPath: (Quickshell.env("XDG_CONFIG_HOME") || (Quickshell.env("HOME") + "/.config")) + "/quickshell/settings.json"
   property bool loaded: false
   property bool parseError: false
 
@@ -26,6 +26,7 @@ Singleton {
   property alias language: adapter.language
   property alias musicVisualizerEnabled: adapter.musicVisualizerEnabled
   property alias showWorkspaceNumbers: adapter.showWorkspaceNumbers
+  property alias showWorkspacesOnAllMonitors: adapter.showWorkspacesOnAllMonitors
   property alias uiScale: adapter.uiScale
   property alias reduceMotion: adapter.reduceMotion
   property alias weatherEnabled: adapter.weatherEnabled
@@ -77,6 +78,7 @@ Singleton {
       property string language: "ru"
       property string musicVisualizerEnabled: "true"
       property string showWorkspaceNumbers: "true"
+      property string showWorkspacesOnAllMonitors: "false"
       property string uiScale: "1.0"
       property string reduceMotion: "false"
       property string weatherEnabled: "true"
@@ -111,6 +113,7 @@ Singleton {
       language: adapter.language,
       musicVisualizerEnabled: adapter.musicVisualizerEnabled,
       showWorkspaceNumbers: adapter.showWorkspaceNumbers,
+      showWorkspacesOnAllMonitors: adapter.showWorkspacesOnAllMonitors,
       uiScale: adapter.uiScale,
       reduceMotion: adapter.reduceMotion,
       weatherEnabled: adapter.weatherEnabled,

@@ -45,6 +45,7 @@ Rectangle {
 
   // Active workspace ID from Hyprland
   property string monitorName: ""
+  readonly property bool showAllWorkspaces: Config.showWorkspacesOnAllMonitors
 
   function isOnMonitor(ws) {
     if (!ws) return false
@@ -77,7 +78,7 @@ Rectangle {
       let list = Hyprland.workspaces.values
       for (let i = 0; i < list.length; i++) {
         let ws = list[i]
-        if (!ws || ws.id <= 0 || !root.isOnMonitor(ws)) continue
+        if (!ws || ws.id <= 0 || (!root.showAllWorkspaces && !root.isOnMonitor(ws))) continue
         let occupied = ws.toplevels ? ws.toplevels.values.length > 0 : true
         if (occupied || ws.id === root.activeWsId) arr.push(ws.id)
       }

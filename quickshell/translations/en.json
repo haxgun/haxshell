@@ -52,5 +52,7 @@
   "RAM": "RAM",
   "Уведомления": "Notifications",
   "Не беспокоить": "Do Not Disturb",
-  "Нет уведомлений": "No notifications"
+  "Нет уведомлений": "No notifications",
+  "Рабочие столы на всех экранах": "Workspaces on all screens",
+  "На своих экранах": "On their own screens"
 }
