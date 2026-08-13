@@ -72,7 +72,7 @@ The included installer targets Arch Linux with Hyprland. It installs repository 
 `hushctl` is used by QML components for system operations including brightness, audio, weather, and wallpaper control.
 
 ```bash
-go build -C core -o hushctl ./cmd/hushctl
+go build -C core -o ../quickshell/hushctl ./cmd/hushctl
 ```
 
 Rebuild the utility and restart Quickshell after changing files under `core/`.

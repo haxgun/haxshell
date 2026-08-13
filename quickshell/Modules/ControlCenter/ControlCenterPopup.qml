@@ -31,7 +31,7 @@ PanelWindow {
   readonly property string mediaArtist: MprisController.stableArtist
   readonly property string mediaTitle: MprisController.stableTitle
 
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
+  readonly property string hushctl: Config.hushctl
   readonly property var adapter: Bluetooth.defaultAdapter
   readonly property var bluetoothDevices: adapter && adapter.devices && adapter.devices.values ? adapter.devices.values : []
   readonly property var wifiDevice: {

@@ -44,7 +44,7 @@ PanelWindow {
   readonly property real manualHue: manualAccentColor.hslHue >= 0 ? manualAccentColor.hslHue : 0
   readonly property real manualSat: manualAccentColor.hslSaturation
   readonly property string currentManualHex: colorToHex(manualAccentColor)
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
+  readonly property string hushctl: Config.hushctl
 
   onIsOpenChanged: if (isOpen) {
     wallpaperDirInput.text = Config.wallpaperDir
@@ -180,6 +180,7 @@ PanelWindow {
       Config.mprisRightDisplayMode = value ? "visualizer" : "progress"
     }
     if (key === "showWorkspaceNumbers") Config.showWorkspaceNumbers = value
+    if (key === "showWorkspacesOnAllMonitors") Config.showWorkspacesOnAllMonitors = value
     if (key === "reduceMotion") Config.reduceMotion = value
     saveSetting(key, value ? "true" : "false")
   }
@@ -979,8 +980,15 @@ PanelWindow {
               icon: Config.iconSettings
               title: I18n.tr("Цифры рабочих столов")
               subtitle: Config.showWorkspaceNumbers ? I18n.tr("Показываются") : I18n.tr("Скрыты")
-              last: true
               ToggleSwitch { checked: Config.showWorkspaceNumbers; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showWorkspaceNumbers", !Config.showWorkspaceNumbers) }
+            }
+            SettingsRow {
+              icon: Config.iconWorkspace
+              title: I18n.tr("Рабочие столы на всех экранах")
+              subtitle: Config.showWorkspacesOnAllMonitors ? I18n.tr("Показываются") : I18n.tr("На своих экранах")
+              last: true
+              onClicked: root.setBoolSetting("showWorkspacesOnAllMonitors", !Config.showWorkspacesOnAllMonitors)
+              ToggleSwitch { z: 1; checked: Config.showWorkspacesOnAllMonitors; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showWorkspacesOnAllMonitors", !Config.showWorkspacesOnAllMonitors) }
             }
           }
 

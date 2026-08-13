@@ -57,7 +57,7 @@ PanelWindow {
 
   Process {
     id: sysProc
-    command: [Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", ""), "sys"]
+    command: [Config.hushctl, "sys"]
     running: false
     stdout: SplitParser { onRead: data => root.applyState(data) }
   }

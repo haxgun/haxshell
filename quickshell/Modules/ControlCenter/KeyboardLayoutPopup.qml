@@ -12,7 +12,7 @@ PanelWindow {
   property int rightMargin: 16
   property string currentLayout: "??"
   property string currentName: "Unknown"
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
+  readonly property string hushctl: Config.hushctl
 
   signal layoutChanged(var state)
 

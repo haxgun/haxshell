@@ -72,7 +72,7 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 `hushctl` используется QML-компонентами для системных операций: управления яркостью, звуком, погодой, обоями и другими функциями.
 
 ```bash
-go build -C core -o hushctl ./cmd/hushctl
+go build -C core -o ../quickshell/hushctl ./cmd/hushctl
 ```
 
 После изменения файлов в `core/` пересоберите утилиту и перезапустите Quickshell.

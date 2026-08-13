@@ -11,8 +11,6 @@ Rectangle {
   property string layoutName: "Unknown"
   property var keyboardLayoutPopup: null
   property var closeFlyouts: null
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
-
   implicitWidth: keyRow.implicitWidth + 12
   implicitHeight: Config.buttonHeight
   radius: Config.buttonRadius
@@ -28,7 +26,7 @@ Rectangle {
 
   Process {
     id: layoutProc
-    command: [root.hushctl, "keyboard"]
+    command: [Config.hushctl, "keyboard"]
     running: true
 
     stdout: SplitParser {

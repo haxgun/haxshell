@@ -19,7 +19,7 @@ PanelWindow {
   property int batteryCapacity: 0
   property double batteryTimeHours: 0
   property string powerProfile: "balanced"
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
+  readonly property string hushctl: Config.hushctl
 
   visible: isOpen || container.opacity > 0.01
 

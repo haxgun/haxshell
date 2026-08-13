@@ -160,7 +160,7 @@ Rectangle {
   // Execute external system monitor python script
   Process {
     id: fetchSysProc
-    command: [Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", ""), "sys"]
+    command: [Config.hushctl, "sys"]
     running: true
 
     stdout: SplitParser {
@@ -211,7 +211,7 @@ Rectangle {
   // Execute external network monitor python script
   Process {
     id: fetchNetProc
-    command: [Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", ""), "net"]
+    command: [Config.hushctl, "net"]
     running: true
 
     stdout: SplitParser {

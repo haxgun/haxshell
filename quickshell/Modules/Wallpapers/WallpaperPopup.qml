@@ -13,7 +13,7 @@ PanelWindow {
   property string wallName: "Нет обоев"
   property int currentIndex: 0
   property var palette: []
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
+  readonly property string hushctl: Config.hushctl
 
   visible: isOpen || container.opacity > 0.01
 

@@ -15,7 +15,7 @@ PanelWindow {
   property string activeBrightnessBus: Config.brightnessMonitorBus
   property int lastAppliedBrightness: -1
   property bool brightnessInitialized: false
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
+  readonly property string hushctl: Config.hushctl
 
   visible: isOpen || container.opacity > 0.01
 

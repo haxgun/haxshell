@@ -11,7 +11,7 @@ Rectangle {
   property string wallName: ""
   property var wallpaperPopup: null
   property var closeFlyouts: null
-  readonly property string hushctl: Qt.resolvedUrl("../../../core/hushctl").toString().replace("file://", "")
+  readonly property string hushctl: Config.hushctl
 
   width: 26
   height: Config.buttonHeight

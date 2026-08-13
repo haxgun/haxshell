@@ -2,9 +2,12 @@
 pragma Singleton
 
 import QtQuick
+import Quickshell
 
 QtObject {
   id: root
+
+  readonly property string hushctl: Quickshell.shellDir + "/hushctl"
 
   // ==========================================
   // 🎨 SECTION 1: COLOR PALETTE & THEMING
@@ -166,6 +169,7 @@ QtObject {
   // 󰀻 SECTION 6: NERD FONT GLYPH ICONS
   // ==========================================
   readonly property string iconLauncher: "󰀻"
+  readonly property string iconWorkspace: "󰍹"
   readonly property string iconSearch: "󰍉"
   readonly property string iconPlay: "󰐊"
   readonly property string iconPause: "󰏤"
@@ -176,6 +180,8 @@ QtObject {
   readonly property string iconNet: "󰛳"
   readonly property string iconDisk: "󰋊"
   readonly property string iconWeather: "󰖕"
+  readonly property string iconTemperature: "󰔏"
+  readonly property string iconHumidity: "󰖎"
   readonly property string iconBluetooth: "󰂯"
   readonly property string iconEthernet: "󰈀"
   readonly property string iconWifiConnected: "󰤨"

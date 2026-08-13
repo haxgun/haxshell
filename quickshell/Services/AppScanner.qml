@@ -12,7 +12,7 @@ Item {
   // Scanner process execution
   Process {
     id: scannerProcess
-    command: [Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", ""), "app-scanner"]
+    command: [Config.hushctl, "app-scanner"]
     running: true
 
     stdout: SplitParser {

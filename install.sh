@@ -58,6 +58,11 @@ if ! command -v quickshell >/dev/null; then
   die "quickshell was not installed; enable a repository that provides it, then rerun this script"
 fi
 
+if systemctl --user is-active --quiet dunst.service; then
+  printf 'Stopping Dunst so Quickshell can receive notifications...\n'
+  systemctl --user mask --now dunst.service
+fi
+
 if ! command -v vicinae >/dev/null; then
   if ! command -v yay >/dev/null && ! command -v paru >/dev/null; then
     die "install an AUR helper (yay or paru), then rerun this script to install: ${AUR_PACKAGES[*]}"
@@ -68,8 +73,8 @@ if ! command -v vicinae >/dev/null; then
 fi
 
 printf 'Building hushctl...\n'
-go build -C "$PROJECT_DIR/core" -o hushctl ./cmd/hushctl
-chmod +x "$PROJECT_DIR/core/hushctl"
+go build -C "$PROJECT_DIR/core" -o "$SHELL_DIR/hushctl" ./cmd/hushctl
+chmod +x "$SHELL_DIR/hushctl"
 
 if [[ -e "$CONFIG_DIR" && ! -L "$CONFIG_DIR" ]]; then
   die "$CONFIG_DIR already exists and is not a symbolic link; move it before installing hush"
