@@ -1,4 +1,4 @@
-// Time.qml
+// Time.qml - Standalone date and time display widget
 pragma Singleton
 
 import Quickshell

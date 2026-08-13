@@ -1,3 +1,4 @@
+// NotificationPopupManager.qml - Notification toast lifecycle manager
 import QtQuick
 import Quickshell
 import Quickshell.Wayland

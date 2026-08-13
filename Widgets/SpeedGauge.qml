@@ -1,3 +1,4 @@
+// SpeedGauge.qml - Network throughput gauge
 import QtQuick
 import "../Common"
 

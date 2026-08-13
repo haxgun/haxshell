@@ -1,3 +1,4 @@
+// SettingsRow.qml - Reusable settings list row
 import QtQuick
 import "../Common"
 

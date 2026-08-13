@@ -1,3 +1,4 @@
+// NotificationPopup.qml - Notification center overlay entry point
 import Quickshell
 import Quickshell.Io
 import "../../Services"

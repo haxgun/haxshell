@@ -1,4 +1,4 @@
-// Config.qml
+// Config.qml - Shared shell appearance, behavior, and command configuration
 pragma Singleton
 
 import QtQuick

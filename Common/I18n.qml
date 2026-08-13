@@ -1,5 +1,7 @@
 pragma Singleton
 
+// I18n.qml - Minimal translation lookup service
+
 import QtQuick
 import Quickshell
 import Quickshell.Io

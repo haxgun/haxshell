@@ -1,3 +1,4 @@
+// SystemDial.qml - Circular system resource indicator
 import QtQuick
 import "../Common"
 

@@ -1,3 +1,4 @@
+// NotificationCenterPopup.qml - Notification history and active notification panel
 import QtQuick
 import Quickshell
 import Quickshell.Wayland

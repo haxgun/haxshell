@@ -1,5 +1,7 @@
 pragma Singleton
 
+// SettingsStore.qml - Persistent shell settings adapter
+
 import QtQuick
 import Quickshell
 import Quickshell.Io

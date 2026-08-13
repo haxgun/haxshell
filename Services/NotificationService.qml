@@ -1,5 +1,7 @@
 pragma Singleton
 
+// NotificationService.qml - Notification storage, actions, and image resolution
+
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland

@@ -1,3 +1,4 @@
+// ToggleSwitch.qml - Reusable on/off switch control
 import QtQuick
 import "../Common"
 
