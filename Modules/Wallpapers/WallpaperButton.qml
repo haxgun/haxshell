@@ -11,7 +11,7 @@ Rectangle {
   property string wallName: ""
   property var wallpaperPopup: null
   property var closeFlyouts: null
-  readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
+  readonly property string hushctl: Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", "")
 
   width: 26
   height: Config.buttonHeight
@@ -21,7 +21,7 @@ Rectangle {
 
   Process {
     id: wallpaperProc
-    command: [root.qsctl, "wallpaper", "get", Config.wallpaperDir]
+    command: [root.hushctl, "wallpaper", "get", Config.wallpaperDir]
     running: true
 
     stdout: SplitParser {
@@ -36,7 +36,7 @@ Rectangle {
 
   function refresh() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "get", Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "get", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 
@@ -50,7 +50,7 @@ Rectangle {
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "next", Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "next", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 

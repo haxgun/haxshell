@@ -31,7 +31,7 @@ PanelWindow {
   readonly property string mediaArtist: MprisController.stableArtist
   readonly property string mediaTitle: MprisController.stableTitle
 
-  readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
+  readonly property string hushctl: Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", "")
   readonly property var adapter: Bluetooth.defaultAdapter
   readonly property var bluetoothDevices: adapter && adapter.devices && adapter.devices.values ? adapter.devices.values : []
   readonly property var wifiDevice: {
@@ -84,28 +84,28 @@ PanelWindow {
 
   Process {
     id: brightnessProc
-    command: [root.qsctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
+    command: [root.hushctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
     running: true
     stdout: SplitParser { onRead: data => root.applyBrightnessState(data) }
   }
 
   Process {
     id: audioProc
-    command: [root.qsctl, "audio", "get"]
+    command: [root.hushctl, "audio", "get"]
     running: true
     stdout: SplitParser { onRead: data => root.applyAudioState(data) }
   }
 
   Process {
     id: batteryProc
-    command: [root.qsctl, "battery"]
+    command: [root.hushctl, "battery"]
     running: true
     stdout: SplitParser { onRead: data => root.applyBatteryState(data) }
   }
 
   Process {
     id: caffeineProc
-    command: [root.qsctl, "caffeine", "state"]
+    command: [root.hushctl, "caffeine", "state"]
     running: true
     stdout: SplitParser { onRead: data => root.applyCaffeineState(data) }
   }
@@ -125,10 +125,10 @@ PanelWindow {
     process.running = true
   }
 
-  function refreshBrightness() { restart(brightnessProc, [qsctl, "brightness", "get", activeBrightnessBus, Config.brightnessSleepMultiplier]) }
-  function refreshAudio() { restart(audioProc, [qsctl, "audio", "get"]) }
-  function refreshBattery() { restart(batteryProc, [qsctl, "battery"]) }
-  function refreshCaffeine() { restart(caffeineProc, [qsctl, "caffeine", "state"]) }
+  function refreshBrightness() { restart(brightnessProc, [hushctl, "brightness", "get", activeBrightnessBus, Config.brightnessSleepMultiplier]) }
+  function refreshAudio() { restart(audioProc, [hushctl, "audio", "get"]) }
+  function refreshBattery() { restart(batteryProc, [hushctl, "battery"]) }
+  function refreshCaffeine() { restart(caffeineProc, [hushctl, "caffeine", "state"]) }
 
   function applyBrightnessState(data) {
     try {
@@ -167,20 +167,20 @@ PanelWindow {
     let target = Math.max(0, Math.min(100, value))
     brightnessPercent = target
     if (osd) osd.showBrightness(target)
-    run([qsctl, "brightness", "set", target.toString(), activeBrightnessBus, Config.brightnessSleepMultiplier])
+    run([hushctl, "brightness", "set", target.toString(), activeBrightnessBus, Config.brightnessSleepMultiplier])
   }
-  function setAudio(action, value) { run([qsctl, "audio", action, value.toString()]) }
+  function setAudio(action, value) { run([hushctl, "audio", action, value.toString()]) }
   function openAudioPopup() {
     if (!audioPopup) return
     audioPopup.rightMargin = rightMargin
     audioPopup.isOpen = true
     isOpen = false
   }
-  function toggleCaffeine() { restart(caffeineProc, [qsctl, "caffeine", "toggle"]) }
+  function toggleCaffeine() { restart(caffeineProc, [hushctl, "caffeine", "toggle"]) }
   function cyclePowerProfile() {
     let profiles = ["power-saver", "balanced", "performance"]
     let next = profiles[(profiles.indexOf(powerProfile) + 1) % profiles.length]
-    restart(batteryProc, [qsctl, "battery", "set-profile", next])
+    restart(batteryProc, [hushctl, "battery", "set-profile", next])
   }
   function toggleWifi() { Networking.wifiEnabled = !Networking.wifiEnabled }
   function toggleBluetooth() { if (adapter) adapter.enabled = !adapter.enabled }
@@ -280,7 +280,7 @@ PanelWindow {
       }
 
       SettingsRow {
-        icon: root.batteryCharging ? Config.iconBatteryCharging : Config.iconBattery
+        icon: (root.batteryCharging || root.acOnline) ? Config.iconBatteryCharging : Config.iconBattery
         title: "Питание"
         subtitle: root.batteryPercent + "% · " + root.batterySubtitle()
         last: true

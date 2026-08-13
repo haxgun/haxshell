@@ -1,6 +1,13 @@
 # hush
 
+<p align="center"><img src="logo.svg" alt="Логотип hush" width="160"></p>
+
 [English](README.md) | [Русский](README.ru.md)
+
+[![Лицензия: MIT](https://img.shields.io/badge/Лицензия-MIT-6b8e23.svg)](LICENSE)
+[![Quickshell](https://img.shields.io/badge/Quickshell-QML-5c7cfa.svg)](https://quickshell.org/)
+[![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff.svg)](https://hyprland.org/)
+[![Go](https://img.shields.io/badge/Go-1.24-00ADD8.svg)](https://go.dev/)
 
 `hush` - оболочка рабочего стола Wayland на Quickshell и QML, рассчитанная на работу с Hyprland.
 
@@ -25,7 +32,12 @@
 ├── Modules/                  # Панель, всплывающие окна и настройки
 ├── Widgets/                  # Переиспользуемые QML-компоненты
 ├── Services/                 # QML-сервисы
-├── scripts/qsctl.go          # Исходный код вспомогательной утилиты
+├── core/                     # Go-модуль hushctl
+│   ├── cmd/hushctl/          # Точка входа команды hushctl
+│   ├── internal/hushctl/     # Реализация команд для оболочки
+│   ├── pkg/                  # Публичные Go-пакеты
+│   ├── go.mod
+│   └── go.sum
 ├── translations/             # Переводы интерфейса
 └── settings.json             # Сохраненные пользовательские настройки
 ```
@@ -46,7 +58,7 @@ ln -s "$(pwd)" ~/.config/quickshell
 
 ## Установка
 
-Встроенный установщик предназначен для Arch Linux с Hyprland. Он ставит зависимости из репозиториев и AUR, собирает `qsctl` и создаёт символьную ссылку на этот репозиторий в `~/.config/quickshell`, не заменяя существующую конфигурацию.
+Встроенный установщик предназначен для Arch Linux с Hyprland. Он ставит зависимости из репозиториев и AUR, собирает `hushctl` и создаёт символьную ссылку на этот репозиторий в `~/.config/quickshell`, не заменяя существующую конфигурацию.
 
 ```bash
 ./install.sh
@@ -54,15 +66,15 @@ ln -s "$(pwd)" ~/.config/quickshell
 
 Если Vicinae ещё не установлен, потребуется `yay` или `paru`: этот пакет устанавливается из AUR.
 
-## Сборка `qsctl`
+## Сборка `hushctl`
 
-`qsctl` используется QML-компонентами для системных операций: управления яркостью, звуком, обоями и другими функциями.
+`hushctl` используется QML-компонентами для системных операций: управления яркостью, звуком, погодой, обоями и другими функциями.
 
 ```bash
-go build -o scripts/qsctl scripts/qsctl.go
+go build -C core -o hushctl ./cmd/hushctl
 ```
 
-После изменения `scripts/qsctl.go` пересоберите утилиту и перезапустите Quickshell.
+После изменения файлов в `core/` пересоберите утилиту и перезапустите Quickshell.
 
 ## Настройка
 

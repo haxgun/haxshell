@@ -8,11 +8,11 @@ import "Common"
 Scope {
   id: root
 
-  readonly property string qsctl: Qt.resolvedUrl("scripts/qsctl").toString().replace("file://", "")
+  readonly property string hushctl: Qt.resolvedUrl("core/hushctl").toString().replace("file://", "")
 
   Process {
     id: loadSettingsProc
-    command: [root.qsctl, "settings"]
+    command: [root.hushctl, "settings"]
     running: true
 
     stdout: SplitParser {
@@ -51,6 +51,7 @@ Scope {
         Config.musicVisualizerEnabled = settings.musicVisualizerEnabled === "true"
         Config.mprisRightDisplayMode = Config.musicVisualizerEnabled ? "visualizer" : "progress"
       }
+      if (typeof settings.showWorkspaceNumbers === "string") Config.showWorkspaceNumbers = settings.showWorkspaceNumbers === "true"
       if (typeof settings.reduceMotion === "string") Config.reduceMotion = settings.reduceMotion === "true"
       if (settings.barPosition) Config.barPosition = settings.barPosition
     } catch(e) {}

@@ -19,7 +19,7 @@ PanelWindow {
   property int batteryCapacity: 0
   property double batteryTimeHours: 0
   property string powerProfile: "balanced"
-  readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
+  readonly property string hushctl: Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", "")
 
   visible: isOpen || container.opacity > 0.01
 
@@ -53,7 +53,7 @@ PanelWindow {
 
   Process {
     id: batteryProc
-    command: [root.qsctl, "battery"]
+    command: [root.hushctl, "battery"]
     running: true
     stdout: SplitParser { onRead: data => root.applyBatteryState(data) }
   }
@@ -69,13 +69,13 @@ PanelWindow {
 
   function refresh() {
     batteryProc.running = false
-    batteryProc.command = [root.qsctl, "battery"]
+    batteryProc.command = [root.hushctl, "battery"]
     batteryProc.running = true
   }
 
   function setProfile(profile) {
     batteryProc.running = false
-    batteryProc.command = [root.qsctl, "battery", "set-profile", profile]
+    batteryProc.command = [root.hushctl, "battery", "set-profile", profile]
     batteryProc.running = true
   }
 
@@ -174,8 +174,8 @@ PanelWindow {
         spacing: 10
 
         Text {
-          text: root.batteryCharging ? Config.iconBatteryCharging : Config.iconBattery
-          color: root.batteryCharging ? root.chargingIconColor() : Config.textWhite
+          text: (root.batteryCharging || root.acOnline) ? Config.iconBatteryCharging : Config.iconBattery
+          color: (root.batteryCharging || root.acOnline) ? root.chargingIconColor() : Config.textWhite
           font.pixelSize: Config.fontSizeTitle
           font.family: Config.fontIcon
           anchors.verticalCenter: parent.verticalCenter

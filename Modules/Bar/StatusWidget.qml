@@ -160,7 +160,7 @@ Rectangle {
   // Execute external system monitor python script
   Process {
     id: fetchSysProc
-    command: [Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", ""), "sys"]
+    command: [Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", ""), "sys"]
     running: true
 
     stdout: SplitParser {
@@ -211,7 +211,7 @@ Rectangle {
   // Execute external network monitor python script
   Process {
     id: fetchNetProc
-    command: [Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", ""), "net"]
+    command: [Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", ""), "net"]
     running: true
 
     stdout: SplitParser {
@@ -387,16 +387,41 @@ Rectangle {
         spacing: 6
         visible: !root.vertical
 
-        // CONDENSED VIEW: CPU% RAM% | Net speed
-        Row {
+        // CONDENSED VIEW: CPU, RAM, and network in one segmented surface.
+        Rectangle {
           id: condensedRow
-          spacing: 6
+          width: condensedMetrics.implicitWidth + 16
+          height: 24
+          radius: 8
+          color: "#151A1A1A"
+          border.color: Config.borderColor
+          border.width: Config.shellBordersEnabled ? 1 : 0
           visible: true
           anchors.verticalCenter: parent.verticalCenter
 
-          SysMetricPill { icon: Config.iconCpu; value: root.sysCpuPercent + "%"; cardWidth: 52; accent: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.textMuted); anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { icon: Config.iconRam; value: root.sysRamUsedGb.toFixed(1) + "G"; cardWidth: 52; accent: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.textMuted); anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { icon: Config.iconNet; value: root.sysNetRx.trim(); cardWidth: 74; accent: Config.textMuted; anchors.verticalCenter: parent.verticalCenter }
+          Row {
+            id: condensedMetrics
+            anchors.centerIn: parent
+            spacing: 8
+
+            Row {
+              spacing: 4
+              Text { text: Config.iconCpu; color: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.textMuted); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysCpuPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+            }
+            Rectangle { width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+            Row {
+              spacing: 4
+              Text { text: Config.iconRam; color: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.textMuted); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysRamUsedGb.toFixed(1) + "G"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+            }
+            Rectangle { width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+            Row {
+              spacing: 4
+              Text { text: Config.iconNet; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysNetRx.trim(); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+            }
+          }
         }
 
         // EXPANDED VIEW: Detailed metrics
@@ -643,7 +668,7 @@ Rectangle {
 
           Text {
             anchors.centerIn: parent
-            visible: root.batteryPopup && root.batteryPopup.batteryCharging
+            visible: root.batteryPopup && (root.batteryPopup.batteryCharging || root.batteryPopup.acOnline)
             text: Config.iconBatteryCharging
             color: root.chargingIconColor(batteryContainer.batteryPercent)
             font.pixelSize: 9

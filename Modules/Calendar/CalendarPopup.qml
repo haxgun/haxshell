@@ -70,7 +70,7 @@ PanelWindow {
 
   Process {
     id: weatherProc
-    command: ["curl", "-fsS", "--max-time", "5", "https://wttr.in/" + encodeURIComponent(Config.weatherLocation) + "?format=j1&lang=ru"]
+    command: [Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", ""), "weather"]
 
     stdout: SplitParser {
       onRead: data => root.applyWeather(data)
@@ -79,42 +79,31 @@ PanelWindow {
     onExited: root.weatherLoading = false
   }
 
-  Timer {
-    interval: Config.weatherRefreshIntervalMs
-    running: Config.weatherEnabled
-    repeat: true
-    onTriggered: root.refreshWeather()
-  }
-
   function refreshWeather() {
     if (!Config.weatherEnabled) return
     root.weatherLoading = true
     weatherProc.running = false
-    weatherProc.command = ["curl", "-fsS", "--max-time", "5", "https://wttr.in/" + encodeURIComponent(Config.weatherLocation) + "?format=j1&lang=ru"]
+    weatherProc.command = [Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", ""), "weather", "refresh"]
     weatherProc.running = true
   }
 
   function applyWeather(data) {
     try {
       let res = JSON.parse(data)
-      let current = res.current_condition && res.current_condition.length > 0 ? res.current_condition[0] : null
-      if (current) {
-        root.weatherTemp = (current.temp_C || "--") + "°"
-        root.weatherHumidity = (current.humidity || "--") + "%"
-        root.weatherCondition = current.lang_ru && current.lang_ru.length > 0 ? current.lang_ru[0].value : (current.weatherDesc && current.weatherDesc.length > 0 ? current.weatherDesc[0].value : "Погода")
-        root.weatherDetails = (Config.weatherLocation || "Текущий город") + " · влажность " + root.weatherHumidity
-      }
+      if (!res.ok) return
+      root.weatherTemp = Math.round(res.temperature) + "°"
+      root.weatherHumidity = res.humidity + "%"
+      root.weatherCondition = res.condition || "Погода"
+      root.weatherDetails = (res.name || Config.weatherLocation || "Текущий город") + " · влажность " + root.weatherHumidity
       forecastModel.clear()
-      let days = res.weather || []
+      let days = res.days || []
       for (let i = 0; i < Math.min(4, days.length); i++) {
         let day = days[i]
-        let hour = day.hourly && day.hourly.length > 4 ? day.hourly[4] : (day.hourly && day.hourly.length > 0 ? day.hourly[0] : {})
-        let desc = hour.lang_ru && hour.lang_ru.length > 0 ? hour.lang_ru[0].value : "Прогноз"
         forecastModel.append({
           dayLabel: root.forecastDayLabel(day.date, i),
-          temp: day.avgtempC + "°",
-          humidity: (hour.humidity || "--") + "%",
-          desc: desc
+          temp: Math.round(day.min) + "…" + Math.round(day.max) + "°",
+          humidity: "",
+          desc: day.condition || "Прогноз"
         })
       }
       for (let i = days.length; i < 4; i++) {
@@ -316,7 +305,6 @@ PanelWindow {
           }
         }
 
-        MouseArea { anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.refreshWeather() }
       }
 
       Rectangle { width: 1; height: calendarColumn.implicitHeight; color: Config.separatorColor; opacity: 0.7 }
@@ -326,18 +314,13 @@ PanelWindow {
         width: parent.width - 185
         spacing: 10
 
-        Row {
+        Item {
           width: parent.width
           height: 28
 
-          Row {
-            width: parent.width - 70
-            spacing: 8
-            anchors.verticalCenter: parent.verticalCenter
-            Text { text: Config.monthNamesRu[root.displayMonth].toUpperCase() + " " + root.displayYear; color: Config.textMuted; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 1.6; anchors.verticalCenter: parent.verticalCenter }
-          }
-
           Rectangle {
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
             width: 28
             height: 28
             radius: 7
@@ -347,12 +330,24 @@ PanelWindow {
           }
 
           Rectangle {
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
             width: 28
             height: 28
             radius: 7
             color: nextMouse.containsMouse ? Config.selectedBg : "#00000000"
             Text { anchors.centerIn: parent; text: Config.iconChevronRight; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
             MouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.nextMonth() }
+          }
+
+          Text {
+            anchors.centerIn: parent
+            text: Config.monthNamesRu[root.displayMonth].toUpperCase() + " " + root.displayYear
+            color: Config.textMuted
+            font.pixelSize: 10
+            font.weight: Font.Bold
+            font.family: Config.fontSans
+            font.letterSpacing: 1.6
           }
         }
 

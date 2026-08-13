@@ -10,7 +10,7 @@ import "."
 Singleton {
   id: root
 
-  readonly property string qsctl: Qt.resolvedUrl("../scripts/qsctl").toString().replace("file://", "")
+  readonly property string hushctl: Qt.resolvedUrl("../core/hushctl").toString().replace("file://", "")
   property var strings: ({})
 
   Component.onCompleted: reload()
@@ -27,7 +27,7 @@ Singleton {
 
   function reload() {
     loadProc.running = false
-    loadProc.command = [root.qsctl, "i18n", Config.language]
+    loadProc.command = [root.hushctl, "i18n", Config.language]
     loadProc.running = true
   }
 

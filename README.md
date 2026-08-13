@@ -1,6 +1,13 @@
 # hush
 
+<p align="center"><img src="logo.svg" alt="hush logo" width="160"></p>
+
 [English](README.md) | [Русский](README.ru.md)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-6b8e23.svg)](LICENSE)
+[![Quickshell](https://img.shields.io/badge/Quickshell-QML-5c7cfa.svg)](https://quickshell.org/)
+[![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff.svg)](https://hyprland.org/)
+[![Go](https://img.shields.io/badge/Go-1.24-00ADD8.svg)](https://go.dev/)
 
 `hush` is a Wayland desktop shell built with Quickshell and QML, designed for Hyprland.
 
@@ -25,7 +32,12 @@
 ├── Modules/                  # Bar, popups, and settings
 ├── Widgets/                  # Reusable QML components
 ├── Services/                 # QML services
-├── scripts/qsctl.go          # Helper utility source
+├── core/                     # Go module for hushctl
+│   ├── cmd/hushctl/          # hushctl command entry point
+│   ├── internal/hushctl/     # Shell-specific command implementation
+│   ├── pkg/                  # Public Go packages
+│   ├── go.mod
+│   └── go.sum
 ├── translations/             # UI translations
 └── settings.json             # Persisted user settings
 ```
@@ -46,7 +58,7 @@ ln -s "$(pwd)" ~/.config/quickshell
 
 ## Install
 
-The included installer targets Arch Linux with Hyprland. It installs repository and AUR dependencies, builds `qsctl`, and links this repository to `~/.config/quickshell` without replacing an existing configuration.
+The included installer targets Arch Linux with Hyprland. It installs repository and AUR dependencies, builds `hushctl`, and links this repository to `~/.config/quickshell` without replacing an existing configuration.
 
 ```bash
 ./install.sh
@@ -54,15 +66,15 @@ The included installer targets Arch Linux with Hyprland. It installs repository 
 
 `yay` or `paru` is required when Vicinae is not installed because it is installed from the AUR.
 
-## Build `qsctl`
+## Build `hushctl`
 
-`qsctl` is used by QML components for system operations including brightness, audio, and wallpaper control.
+`hushctl` is used by QML components for system operations including brightness, audio, weather, and wallpaper control.
 
 ```bash
-go build -o scripts/qsctl scripts/qsctl.go
+go build -C core -o hushctl ./cmd/hushctl
 ```
 
-Rebuild the utility and restart Quickshell after changing `scripts/qsctl.go`.
+Rebuild the utility and restart Quickshell after changing files under `core/`.
 
 ## Configuration
 

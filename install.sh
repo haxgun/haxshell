@@ -66,9 +66,9 @@ if ! command -v vicinae >/dev/null; then
   "$AUR_HELPER" -S --needed --noconfirm "${AUR_PACKAGES[@]}"
 fi
 
-printf 'Building qsctl...\n'
-go build -o "$PROJECT_DIR/scripts/qsctl" "$PROJECT_DIR/scripts/qsctl.go"
-chmod +x "$PROJECT_DIR/scripts/qsctl"
+printf 'Building hushctl...\n'
+go build -C "$PROJECT_DIR/core" -o hushctl ./cmd/hushctl
+chmod +x "$PROJECT_DIR/core/hushctl"
 
 if [[ -e "$CONFIG_DIR" && ! -L "$CONFIG_DIR" ]]; then
   die "$CONFIG_DIR already exists and is not a symbolic link; move it before installing hush"

@@ -13,7 +13,7 @@ PanelWindow {
   property string wallName: "Нет обоев"
   property int currentIndex: 0
   property var palette: []
-  readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
+  readonly property string hushctl: Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", "")
 
   visible: isOpen || container.opacity > 0.01
 
@@ -38,7 +38,7 @@ PanelWindow {
 
   Process {
     id: wallpaperProc
-    command: [root.qsctl, "wallpaper", "get", Config.wallpaperDir]
+    command: [root.hushctl, "wallpaper", "get", Config.wallpaperDir]
     running: true
     stdout: SplitParser { onRead: data => root.applyState(data) }
   }
@@ -52,19 +52,19 @@ PanelWindow {
 
   function refresh() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "get", Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "get", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "next", Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "next", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 
   function setWallpaper(index) {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.qsctl, "wallpaper", "set", index.toString(), Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "set", index.toString(), Config.wallpaperDir]
     wallpaperProc.running = true
   }
 

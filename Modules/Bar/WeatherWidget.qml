@@ -1,4 +1,4 @@
-// WeatherWidget.qml - Compact wttr.in weather pill for the status bar
+// WeatherWidget.qml - Compact cached Open-Meteo weather pill for the status bar
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -9,7 +9,7 @@ Rectangle {
 
   property string weatherText: "--"
   property bool loading: false
-  readonly property string weatherUrl: "https://wttr.in/" + encodeURIComponent(Config.weatherLocation) + "?format=%c+%t"
+  readonly property string hushctl: Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", "")
 
   visible: Config.weatherEnabled
   implicitWidth: weatherRow.implicitWidth + 12
@@ -19,13 +19,15 @@ Rectangle {
 
   Process {
     id: weatherProc
-    command: ["curl", "-fsS", "--max-time", "4", root.weatherUrl]
+    command: [root.hushctl, "weather"]
     running: Config.weatherEnabled
 
     stdout: SplitParser {
       onRead: data => {
-        let text = data.trim()
-        root.weatherText = text.length > 0 ? text : "--"
+        try {
+          let weather = JSON.parse(data)
+          root.weatherText = weather.ok ? (Math.round(weather.temperature) + "°") : "--"
+        } catch(e) { root.weatherText = "--" }
         root.loading = false
       }
     }
@@ -44,7 +46,7 @@ Rectangle {
     if (!Config.weatherEnabled) return
     root.loading = true
     weatherProc.running = false
-    weatherProc.command = ["curl", "-fsS", "--max-time", "4", root.weatherUrl]
+    weatherProc.command = [root.hushctl, "weather"]
     weatherProc.running = true
   }
 
@@ -74,11 +76,5 @@ Rectangle {
     }
   }
 
-  MouseArea {
-    id: weatherMouse
-    anchors.fill: parent
-    hoverEnabled: true
-    cursorShape: Qt.PointingHandCursor
-    onClicked: root.refresh()
-  }
+  MouseArea { id: weatherMouse; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton }
 }

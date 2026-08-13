@@ -12,7 +12,7 @@ PanelWindow {
   property int rightMargin: 16
   property string currentLayout: "??"
   property string currentName: "Unknown"
-  readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
+  readonly property string hushctl: Qt.resolvedUrl("../../core/hushctl").toString().replace("file://", "")
 
   signal layoutChanged(var state)
 
@@ -49,13 +49,13 @@ PanelWindow {
 
   function refresh() {
     keyboardProc.running = false
-    keyboardProc.command = [root.qsctl, "keyboard"]
+    keyboardProc.command = [root.hushctl, "keyboard"]
     keyboardProc.running = true
   }
 
   function setLayout(index) {
     setLayoutProc.running = false
-    setLayoutProc.command = [root.qsctl, "keyboard", "set", index.toString()]
+    setLayoutProc.command = [root.hushctl, "keyboard", "set", index.toString()]
     setLayoutProc.running = true
   }
 

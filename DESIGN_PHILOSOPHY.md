@@ -33,11 +33,8 @@ A comprehensive overview of the design aesthetics, modular architecture, central
 ### 1. Centralized Configuration System (`Config.qml` & `qmldir`)
 All theme tokens, design metrics, typography definitions, component behavior options, icon glyphs, and shell launcher commands are defined in a single QML singleton ([Config.qml](Config.qml)). Registered via [qmldir](qmldir), `Config` is accessible across all components without ad-hoc imports or duplicate hardcoded values.
 
-### 2. Externalized Real-Time System Monitoring Scripts
-System event monitoring and resource polling are decoupled from UI components into dedicated Python scripts located in `scripts/`:
-- **[sys_monitor.py](scripts/sys_monitor.py)**: Real-time CPU usage, RAM utilization, Network Rx/Tx bandwidth, `/` root disk, and `/mnt/storage` disk parser.
-- **[net_monitor.py](scripts/net_monitor.py)**: NetworkManager device state parser tracking active Wi-Fi, Ethernet, and connection progress.
-- **[app_scanner.py](scripts/app_scanner.py)**: Desktop application entry scanner building a sorted JSON list of installed applications.
+### 2. Externalized System Integration
+System integration and resource polling are decoupled from UI components into the `hushctl` Go command under `core/`.
 
 ### 3. Hyprland LayerShell Blur Rule Integration
 For the frosted glass effect to render seamlessly on Wayland, `hush` `Bar` and overlay windows set `WlrLayershell.namespace: "quickshell-bar"`. Hyprland matches this namespace in [windows_and_workspaces.lua](../../hypr/.config/hypr/windows_and_workspaces.lua):
@@ -74,8 +71,9 @@ appLauncher.command = ["setsid", "-f", "sh", "-c", commandStr]
 ├── CalendarPopup.qml       # Compact interactive month/year calendar overlay
 ├── BrightnessPopup.qml     # Hardware display brightness slider overlay
 ├── AppLauncher.qml         # Helper component for session-detached app spawning
-├── AppScanner.qml          # Process wrapper executing app_scanner.py
-└── scripts/
-    ├── qsctl.go             # Go source for the JSON system helper
-    └── qsctl                # Built helper executed by QML Process objects
+├── AppScanner.qml          # Process wrapper executing hushctl
+└── core/
+    ├── cmd/hushctl/         # Command entry point
+    ├── internal/hushctl/    # JSON system helper implementation
+    └── hushctl              # Built helper executed by QML Process objects
 ```
