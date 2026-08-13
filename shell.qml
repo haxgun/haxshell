@@ -88,6 +88,7 @@ Scope {
   // Display Brightness Control Overlay
   ControlCenterPopup {
     id: controlCenter
+    audioPopup: audio
   }
 
   BrightnessPopup {

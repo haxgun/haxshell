@@ -1,30 +1,22 @@
 // AudioDeviceList.qml - Select default audio input/output device
 import QtQuick
+import Quickshell.Services.Pipewire
 import "../../Common"
 
 Column {
   id: root
 
   property alias model: deviceRepeater.model
+  property PwNode currentDevice: null
   property string emptyText: ""
   property bool expanded: false
-  signal selectDevice(string name)
+  signal selectDevice(var device)
 
   spacing: 6
 
-  readonly property var currentDevice: {
-    let model = deviceRepeater.model
-    if (!model || typeof model.count === "undefined" || model.count === 0) return null
-    for (let i = 0; i < model.count; i++) {
-      let item = model.get(i)
-      if (item && item.isDefault) return item
-    }
-    return model.get(0)
-  }
-
   Text {
     width: parent.width
-    visible: deviceRepeater.count === 0
+    visible: !root.currentDevice
     text: root.emptyText
     color: Config.textMuted
     font.pixelSize: Config.fontSizeSmall
@@ -69,8 +61,8 @@ Column {
 
       Text {
         width: 44
-        text: root.currentDevice ? (root.currentDevice.volume + "%") : ""
-        color: root.currentDevice && root.currentDevice.muted ? Config.dangerRed : Config.textMuted
+        text: root.currentDevice && root.currentDevice.audio ? (Math.round(root.currentDevice.audio.volume * 100) + "%") : ""
+        color: root.currentDevice && root.currentDevice.audio && root.currentDevice.audio.muted ? Config.dangerRed : Config.textMuted
         font.pixelSize: Config.fontSizeSmall
         font.family: Config.fontMono
         horizontalAlignment: Text.AlignRight
@@ -105,11 +97,9 @@ Column {
         id: deviceRepeater
 
         Rectangle {
-          required property string name
-          required property string description
-          required property int volume
-          required property bool muted
-          required property bool isDefault
+          required property PwNode modelData
+          readonly property var device: modelData
+          readonly property bool isDefault: device === root.currentDevice
 
           width: root.width
           height: 38
@@ -125,8 +115,8 @@ Column {
             spacing: 8
 
             Text {
-              text: isDefault ? "●" : "○"
-              color: isDefault ? Config.textWhite : Config.textMuted
+              text: parent.parent.isDefault ? "●" : "○"
+              color: parent.parent.isDefault ? Config.textWhite : Config.textMuted
               font.pixelSize: Config.fontSizeSmall
               font.family: Config.fontSans
               anchors.verticalCenter: parent.verticalCenter
@@ -134,10 +124,10 @@ Column {
 
             Text {
               width: parent.width - 78
-              text: description || name
-              color: isDefault ? Config.textWhite : Config.textPrimary
+              text: parent.parent.device.description || parent.parent.device.name
+              color: parent.parent.isDefault ? Config.textWhite : Config.textPrimary
               font.pixelSize: Config.fontSizeSmall
-              font.weight: isDefault ? Font.Bold : Font.Medium
+              font.weight: parent.parent.isDefault ? Font.Bold : Font.Medium
               font.family: Config.fontSans
               elide: Text.ElideRight
               anchors.verticalCenter: parent.verticalCenter
@@ -145,8 +135,8 @@ Column {
 
             Text {
               width: 44
-              text: volume + "%"
-              color: muted ? Config.dangerRed : Config.textMuted
+              text: parent.parent.device.audio ? (Math.round(parent.parent.device.audio.volume * 100) + "%") : ""
+              color: parent.parent.device.audio && parent.parent.device.audio.muted ? Config.dangerRed : Config.textMuted
               font.pixelSize: Config.fontSizeSmall
               font.family: Config.fontMono
               horizontalAlignment: Text.AlignRight
@@ -160,7 +150,7 @@ Column {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-              root.selectDevice(name)
+              root.selectDevice(parent.device)
               root.expanded = false
             }
           }

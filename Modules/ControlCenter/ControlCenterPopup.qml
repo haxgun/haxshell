@@ -13,6 +13,7 @@ PanelWindow {
 
   property bool isOpen: false
   property int rightMargin: 16
+  property var audioPopup: null
   property string activeSection: "wifi"
   property int brightnessPercent: 100
   property string activeBrightnessBus: Config.brightnessMonitorBus
@@ -23,13 +24,13 @@ PanelWindow {
   property bool acOnline: false
   property string powerProfile: "balanced"
   property bool caffeineEnabled: false
-  property bool hasMedia: false
-  property bool isPlaying: false
-  property string mediaArtist: ""
-  property string mediaTitle: ""
+  readonly property var mediaPlayer: MprisController.activePlayer
+  readonly property bool hasMedia: mediaPlayer && !MprisController.isIdle(mediaPlayer)
+  readonly property bool isPlaying: mediaPlayer && mediaPlayer.isPlaying
+  readonly property string mediaArtist: MprisController.stableArtist
+  readonly property string mediaTitle: MprisController.stableTitle
 
   readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
-  readonly property string mediaSeparator: "\u001f"
   readonly property var adapter: Bluetooth.defaultAdapter
   readonly property var bluetoothDevices: adapter && adapter.devices && adapter.devices.values ? adapter.devices.values : []
   readonly property var wifiDevice: {
@@ -109,13 +110,6 @@ PanelWindow {
     stdout: SplitParser { onRead: data => root.applyCaffeineState(data) }
   }
 
-  Process {
-    id: mediaProc
-    command: ["playerctl", "metadata", "-F", "--format", "{{status}}" + root.mediaSeparator + "{{artist}}" + root.mediaSeparator + "{{title}}"]
-    running: true
-    stdout: SplitParser { onRead: data => root.applyMediaState(data) }
-  }
-
   Process { id: actionProc }
 
   function refreshAll() {
@@ -168,17 +162,15 @@ PanelWindow {
     try { caffeineEnabled = !!JSON.parse(data).enabled } catch(e) {}
   }
 
-  function applyMediaState(data) {
-    let parts = data.trim().split(mediaSeparator)
-    hasMedia = parts.length >= 3 && (parts[0] === "Playing" || parts[0] === "Paused")
-    isPlaying = parts[0] === "Playing"
-    mediaArtist = parts.length >= 3 ? parts[1] : ""
-    mediaTitle = parts.length >= 3 ? parts[2] : ""
-  }
-
   function run(command) { restart(actionProc, command) }
   function setBrightness(value) { run([qsctl, "brightness", "set", Math.max(0, Math.min(100, value)).toString(), activeBrightnessBus, Config.brightnessSleepMultiplier]) }
   function setAudio(action, value) { run([qsctl, "audio", action, value.toString()]) }
+  function openAudioPopup() {
+    if (!audioPopup) return
+    audioPopup.rightMargin = rightMargin
+    audioPopup.isOpen = true
+    isOpen = false
+  }
   function toggleCaffeine() { restart(caffeineProc, [qsctl, "caffeine", "toggle"]) }
   function cyclePowerProfile() {
     let profiles = ["power-saver", "balanced", "performance"]
@@ -278,7 +270,7 @@ PanelWindow {
         icon: root.volumeIcon()
         title: "Звук"
         subtitle: root.sinkMuted ? "Выключен" : (root.sinkVolume + "%")
-        onClicked: root.setAudio("set-sink-mute", root.sinkMuted ? "0" : "1")
+        onClicked: root.openAudioPopup()
         ToggleSwitch { checked: !root.sinkMuted; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setAudio("set-sink-mute", root.sinkMuted ? "0" : "1") }
       }
 
@@ -308,14 +300,14 @@ PanelWindow {
         title: root.hasMedia ? (root.mediaTitle || "Музыка") : "Музыка"
         subtitle: root.hasMedia ? (root.mediaArtist || "Неизвестный исполнитель") : "Нет активного плеера"
         last: true
-        onClicked: root.run(["playerctl", "play-pause"])
+        onClicked: if (root.mediaPlayer && root.mediaPlayer.canTogglePlaying) root.mediaPlayer.togglePlaying()
         Rectangle {
           width: 32
           height: 30
           radius: 8
           color: mediaMouse.containsMouse ? Config.hoverBg : Config.searchBg
           Text { anchors.centerIn: parent; text: root.isPlaying ? Config.iconPause : Config.iconPlay; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-          MouseArea { id: mediaMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.run(["playerctl", "play-pause"]) }
+          MouseArea { id: mediaMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.mediaPlayer && root.mediaPlayer.canTogglePlaying) root.mediaPlayer.togglePlaying() }
         }
       }
     }

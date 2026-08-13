@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Services.Pipewire
 import "."
 import "../../Common"
 
@@ -11,11 +12,14 @@ PanelWindow {
 
   property bool isOpen: false
   property int rightMargin: 16
-  property int sinkVolume: 0
-  property bool sinkMuted: false
-  property int sourceVolume: 0
-  property bool sourceMuted: false
-  readonly property string qsctl: Qt.resolvedUrl("../../scripts/qsctl").toString().replace("file://", "")
+  readonly property var sink: Pipewire.defaultAudioSink
+  readonly property var source: Pipewire.defaultAudioSource
+  readonly property int sinkVolume: sink && sink.audio ? Math.round(sink.audio.volume * 100) : 0
+  readonly property bool sinkMuted: sink && sink.audio ? sink.audio.muted : false
+  readonly property int sourceVolume: source && source.audio ? Math.round(source.audio.volume * 100) : 0
+  readonly property bool sourceMuted: source && source.audio ? source.audio.muted : false
+  property list<PwNode> sinks: []
+  property list<PwNode> sources: []
 
   visible: isOpen || container.opacity > 0.01
 
@@ -47,72 +51,46 @@ PanelWindow {
     function close() { root.isOpen = false }
   }
 
-  ListModel { id: sinksModel }
-  ListModel { id: sourcesModel }
-
-  Process {
-    id: fetchAudioProc
-    command: [root.qsctl, "audio", "get"]
-    running: true
-
-    stdout: SplitParser {
-      onRead: data => root.applyState(data)
+  function rebuildDevices() {
+    if (!Pipewire.ready || !Pipewire.nodes || !Pipewire.nodes.values) {
+      sinks = []
+      sources = []
+      return
     }
-  }
-
-  Process {
-    id: actionProc
-
-    stdout: SplitParser {
-      onRead: data => root.applyState(data)
+    let nextSinks = []
+    let nextSources = []
+    for (let node of Pipewire.nodes.values) {
+      if (!node || !node.audio || node.isStream) continue
+      if (node.isSink) nextSinks.push(node)
+      else nextSources.push(node)
     }
+    sinks = nextSinks
+    sources = nextSources
   }
 
-  Process {
-    id: pactlSubProc
-    command: ["pactl", "subscribe"]
-    running: true
-
-    stdout: SplitParser {
-      onRead: data => {
-        if (data.includes("sink") || data.includes("source") || data.includes("server")) {
-          root.refresh()
-        }
-      }
-    }
+  function setSink(node) {
+    if (node) Pipewire.preferredDefaultAudioSink = node
   }
 
-  onIsOpenChanged: if (isOpen) refresh()
-
-  function refresh() {
-    fetchAudioProc.running = false
-    fetchAudioProc.command = [root.qsctl, "audio", "get"]
-    fetchAudioProc.running = true
+  function setSource(node) {
+    if (node) Pipewire.preferredDefaultAudioSource = node
   }
 
-  function runAction(action, value) {
-    actionProc.running = false
-    actionProc.command = [root.qsctl, "audio", action, value.toString()]
-    actionProc.running = true
+  Component.onCompleted: rebuildDevices()
+
+  Connections {
+    target: Pipewire.nodes
+    function onValuesChanged() { root.rebuildDevices() }
   }
 
-  function replaceModel(model, items) {
-    model.clear()
-    if (!items) return
-    for (let i = 0; i < items.length; i++) model.append(items[i])
+  Connections {
+    target: Pipewire
+    function onReadyChanged() { root.rebuildDevices() }
   }
 
-  function applyState(data) {
-    try {
-      let res = JSON.parse(data)
-      if (!res.ok) return
-      root.sinkVolume = res.sinkVolume || 0
-      root.sinkMuted = !!res.sinkMuted
-      root.sourceVolume = res.sourceVolume || 0
-      root.sourceMuted = !!res.sourceMuted
-      replaceModel(sinksModel, res.sinks)
-      replaceModel(sourcesModel, res.sources)
-    } catch(e) {}
+  // Keep PipeWire nodes bound while the popup reads and modifies their audio state.
+  PwObjectTracker {
+    objects: Pipewire.nodes.values.filter(node => node && node.audio && !node.isStream)
   }
 
   Rectangle {
@@ -183,15 +161,16 @@ PanelWindow {
         iconText: root.sinkMuted ? Config.iconVolMuted : Config.iconVolHigh
         value: root.sinkVolume
         muted: root.sinkMuted
-        onApplyValue: val => root.runAction("set-sink-volume", val)
-        onToggleMute: root.runAction("set-sink-mute", root.sinkMuted ? "0" : "1")
+        onApplyValue: val => { if (root.sink && root.sink.audio) root.sink.audio.volume = val / 100 }
+        onToggleMute: if (root.sink && root.sink.audio) root.sink.audio.muted = !root.sink.audio.muted
       }
 
       AudioDeviceList {
         width: parent.width
-        model: sinksModel
+        model: root.sinks
+        currentDevice: root.sink
         emptyText: "Устройства вывода не найдены"
-        onSelectDevice: name => root.runAction("set-default-sink", name)
+        onSelectDevice: node => root.setSink(node)
       }
 
       Rectangle {
@@ -206,15 +185,16 @@ PanelWindow {
         iconText: Config.iconMic
         value: root.sourceVolume
         muted: root.sourceMuted
-        onApplyValue: val => root.runAction("set-source-volume", val)
-        onToggleMute: root.runAction("set-source-mute", root.sourceMuted ? "0" : "1")
+        onApplyValue: val => { if (root.source && root.source.audio) root.source.audio.volume = val / 100 }
+        onToggleMute: if (root.source && root.source.audio) root.source.audio.muted = !root.source.audio.muted
       }
 
       AudioDeviceList {
         width: parent.width
-        model: sourcesModel
+        model: root.sources
+        currentDevice: root.source
         emptyText: "Устройства ввода не найдены"
-        onSelectDevice: name => root.runAction("set-default-source", name)
+        onSelectDevice: node => root.setSource(node)
       }
     }
   }
