@@ -13,6 +13,7 @@ PanelWindow {
   property bool isOpen: false
   property int rightMargin: 16
   property string activeSection: "general"
+  property string pendingSection: "general"
   property string fontSearch: ""
   property bool languageDropdownOpen: false
   property real languageDropdownX: 0
@@ -32,6 +33,24 @@ PanelWindow {
   property real wallpaperGridContentY: 0
   property bool restoringWallpaperScroll: false
   property bool wallpaperSelectionInProgress: false
+
+  function selectSection(section) {
+    if (section === root.activeSection || sectionTransition.running) return
+    root.pendingSection = section
+    sectionTransition.restart()
+  }
+
+  SequentialAnimation {
+    id: sectionTransition
+    NumberAnimation { target: settingsFlickable; property: "opacity"; to: 0; duration: Config.reduceMotion ? 0 : 100; easing.type: Easing.OutCubic }
+    ScriptAction {
+      script: {
+        root.activeSection = root.pendingSection
+        settingsFlickable.contentY = 0
+      }
+    }
+    NumberAnimation { target: settingsFlickable; property: "opacity"; to: 1; duration: Config.reduceMotion ? 0 : 160; easing.type: Easing.OutCubic }
+  }
 
   Timer {
     id: wallpaperScrollRestoreTimer
@@ -384,7 +403,7 @@ PanelWindow {
                 Text { text: parent.parent.modelData.icon; color: parent.parent.active ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
                 Text { text: I18n.tr(parent.parent.modelData.title); color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight; width: 78; anchors.verticalCenter: parent.verticalCenter }
               }
-              MouseArea { id: sectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.activeSection = parent.modelData.key }
+              MouseArea { id: sectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSection(parent.modelData.key) }
             }
           }
         }
