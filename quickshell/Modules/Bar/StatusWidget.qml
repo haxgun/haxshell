@@ -393,7 +393,7 @@ Rectangle {
           width: condensedMetrics.implicitWidth + 16
           height: 24
           radius: 8
-          color: "#151A1A1A"
+          color: Config.controlIdleBg
           border.color: Config.borderColor
           border.width: Config.shellBordersEnabled ? 1 : 0
           visible: true
@@ -644,7 +644,7 @@ Rectangle {
           width: 22
           height: 14
           radius: 3
-          color: Config.isLightTheme ? "#2294a3b8" : "#30464646"
+          color: Config.meterTrack
           clip: true
 
           Rectangle {
@@ -865,7 +865,7 @@ Rectangle {
 
       Text {
         anchors.centerIn: parent
-        text: Config.iconSettings
+        text: Config.iconControlCenter
         color: (controlCenterContainer.isControlCenterActive || controlCenterMouse.containsMouse) ? Config.textWhite : Config.textPrimary
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon

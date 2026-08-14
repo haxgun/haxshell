@@ -27,7 +27,7 @@ Rectangle {
     anchors.left: parent.left
     anchors.leftMargin: 8
     anchors.verticalCenter: parent.verticalCenter
-    color: root.active ? Config.selectedBg : "#151A1A1A"
+    color: root.active ? Config.selectedBg : Config.controlIdleBg
     border.color: root.active ? Config.activeBorderColor : Config.borderColor
     border.width: 1
     Text { anchors.centerIn: parent; text: root.icon; color: root.active ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeIconLarge; font.family: Config.fontIcon }
