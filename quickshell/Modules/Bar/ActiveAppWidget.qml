@@ -11,6 +11,7 @@ Rectangle {
   readonly property var activeApp: CompositorService.activeApp
   readonly property string appClass: (activeApp.appId || "").toString()
   readonly property string appTitle: activeApp.title || ""
+  readonly property string appIconPath: activeApp.iconPath || ""
   readonly property var desktopEntry: lookupDesktopEntry()
   readonly property string appName: desktopEntry ? desktopEntry.name : prettyAppName(appClass)
   readonly property bool hasApp: appClass.length > 0 || appTitle.length > 0
@@ -57,6 +58,7 @@ Rectangle {
   }
 
   function iconSource() {
+    if (root.appIconPath) return root.appIconPath.indexOf("/") === 0 ? "file://" + root.appIconPath : root.appIconPath
     let icon = root.desktopEntry ? root.desktopEntry.icon : root.appClass
     if (!icon) return ""
     if (icon.indexOf("/") === 0) return "file://" + icon

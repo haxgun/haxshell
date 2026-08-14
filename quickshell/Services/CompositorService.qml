@@ -9,8 +9,34 @@ Singleton {
   id: root
 
   readonly property string backend: Quickshell.env("NIRI_SOCKET") ? "niri" : "hyprland"
-  property var niriWorkspaces: []
-  property var niriWindows: []
+  readonly property var niriBackend: niriBackendLoader.item
+  property var niriFallbackWorkspaces: []
+  property var niriFallbackWindows: []
+  readonly property bool niriPluginReady: niriBackend && niriBackend.connected
+  readonly property var niriFallbackNormalizedWorkspaces: {
+    let occupied = {}
+    for (let i = 0; i < niriFallbackWindows.length; i++) {
+      let window = niriFallbackWindows[i]
+      if (window && window.workspace_id !== undefined) occupied[window.workspace_id.toString()] = true
+    }
+    let result = []
+    for (let i = 0; i < niriFallbackWorkspaces.length; i++) {
+      let workspace = niriFallbackWorkspaces[i]
+      if (!workspace) continue
+      let key = workspace.id.toString()
+      result.push({
+        key: key,
+        label: workspace.name || workspace.idx.toString(),
+        output: workspace.output || "",
+        active: !!workspace.is_active,
+        occupied: !!occupied[key],
+        sortIndex: workspace.idx,
+        switchRef: workspace.name || workspace.idx.toString()
+      })
+    }
+    return result
+  }
+  readonly property var niriWorkspaces: niriPluginReady ? niriBackend.workspaces : niriFallbackNormalizedWorkspaces
   readonly property var hyprlandWorkspaces: {
     let result = []
     let list = Hyprland.workspaces && Hyprland.workspaces.values ? Hyprland.workspaces.values : []
@@ -29,35 +55,12 @@ Singleton {
     }
     return result
   }
-  readonly property var niriNormalizedWorkspaces: {
-    let occupied = {}
-    for (let i = 0; i < niriWindows.length; i++) {
-      let window = niriWindows[i]
-      if (window && window.workspace_id !== undefined) occupied[window.workspace_id.toString()] = true
-    }
-
-    let result = []
-    for (let i = 0; i < niriWorkspaces.length; i++) {
-      let workspace = niriWorkspaces[i]
-      if (!workspace) continue
-      let key = workspace.id.toString()
-      result.push({
-        key: key,
-        label: workspace.name || workspace.idx.toString(),
-        output: workspace.output || "",
-        active: !!workspace.is_active,
-        occupied: !!occupied[key],
-        sortIndex: workspace.idx,
-        switchRef: workspace.name || workspace.idx.toString()
-      })
-    }
-    return result
-  }
-  readonly property var workspaces: backend === "niri" ? niriNormalizedWorkspaces : hyprlandWorkspaces
+  readonly property var workspaces: backend === "niri" ? niriWorkspaces : hyprlandWorkspaces
   readonly property string focusedOutputName: {
     if (backend === "niri") {
-      for (let i = 0; i < niriWorkspaces.length; i++) {
-        if (niriWorkspaces[i] && niriWorkspaces[i].is_focused) return niriWorkspaces[i].output || ""
+      if (niriPluginReady) return niriBackend.focusedOutputName
+      for (let i = 0; i < niriFallbackWorkspaces.length; i++) {
+        if (niriFallbackWorkspaces[i] && niriFallbackWorkspaces[i].is_focused) return niriFallbackWorkspaces[i].output || ""
       }
       return ""
     }
@@ -65,8 +68,9 @@ Singleton {
   }
   readonly property var activeApp: {
     if (backend === "niri") {
-      for (let i = 0; i < niriWindows.length; i++) {
-        let window = niriWindows[i]
+      if (niriPluginReady) return niriBackend.activeApp
+      for (let i = 0; i < niriFallbackWindows.length; i++) {
+        let window = niriFallbackWindows[i]
         if (window && window.is_focused) return { appId: window.app_id || "", title: window.title || "" }
       }
       return { appId: "", title: "" }
@@ -79,6 +83,12 @@ Singleton {
     }
   }
   readonly property string exitCommand: backend === "niri" ? "niri msg action quit" : "hyprctl dispatch exit"
+
+  Loader {
+    id: niriBackendLoader
+    active: root.backend === "niri"
+    source: active ? "NiriBackend.qml" : ""
+  }
 
   Process {
     id: niriWorkspacesProc
@@ -96,28 +106,28 @@ Singleton {
 
   Timer {
     interval: 500
-    running: root.backend === "niri"
+    running: root.backend === "niri" && !root.niriPluginReady
     repeat: true
     triggeredOnStart: true
-    onTriggered: root.refreshNiri()
+    onTriggered: root.refreshNiriFallback()
   }
 
   function applyNiriWorkspaces(data) {
     try {
       let value = JSON.parse(data)
-      if (Array.isArray(value)) root.niriWorkspaces = value
+      if (Array.isArray(value)) niriFallbackWorkspaces = value
     } catch (error) {}
   }
 
   function applyNiriWindows(data) {
     try {
       let value = JSON.parse(data)
-      if (Array.isArray(value)) root.niriWindows = value
+      if (Array.isArray(value)) niriFallbackWindows = value
     } catch (error) {}
   }
 
-  function refreshNiri() {
-    if (backend !== "niri") return
+  function refreshNiriFallback() {
+    if (backend !== "niri" || niriPluginReady) return
     niriWorkspacesProc.running = false
     niriWindowsProc.running = false
     niriWorkspacesProc.running = true
@@ -137,6 +147,10 @@ Singleton {
     if (!workspace) return
     if (backend === "hyprland") {
       Hyprland.dispatch("hl.dsp.focus({ workspace = " + workspace.switchRef + " })")
+      return
+    }
+    if (niriPluginReady) {
+      niriBackend.focusWorkspaceById(Number(workspace.key))
       return
     }
     niriActionProc.running = false

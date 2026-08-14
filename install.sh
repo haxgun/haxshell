@@ -4,6 +4,7 @@ set -euo pipefail
 readonly PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 readonly SHELL_DIR="$PROJECT_DIR/quickshell"
 readonly CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell"
+COMPOSITOR="${HUSH_COMPOSITOR:-}"
 readonly PACKAGES=(
   awww
   blueman
@@ -13,6 +14,7 @@ readonly PACKAGES=(
   cava
   curl
   ffmpeg
+  grim
   go
   hyprland
   hyprlock
@@ -33,10 +35,16 @@ readonly PACKAGES=(
   zenity
 )
 readonly AUR_PACKAGES=(vicinae-bin)
+readonly NIRI_PACKAGES=(base-devel cmake git niri)
 
 die() {
   printf 'error: %s\n' "$*" >&2
   exit 1
+}
+
+usage() {
+  printf 'Usage: %s [--compositor hyprland|niri]\n' "$(basename -- "$0")"
+  exit "${1:-0}"
 }
 
 if [[ "$(uname -s)" != "Linux" ]]; then
@@ -51,8 +59,28 @@ if [[ "${EUID}" -eq 0 ]]; then
   die "run this script as a regular user, not root"
 fi
 
+if [[ $# -gt 0 ]]; then
+  if [[ "$1" == "--compositor" && $# -eq 2 ]]; then
+    COMPOSITOR="$2"
+  elif [[ "$1" == "--help" || "$1" == "-h" ]]; then
+    usage 0
+  else
+    usage 1
+  fi
+fi
+if [[ -z "$COMPOSITOR" ]]; then
+  COMPOSITOR=$([[ -n "${NIRI_SOCKET:-}" ]] && printf 'niri' || printf 'hyprland')
+fi
+if [[ "$COMPOSITOR" != "hyprland" && "$COMPOSITOR" != "niri" ]]; then
+  die "unsupported compositor: $COMPOSITOR"
+fi
+
 printf 'Installing repository dependencies...\n'
-sudo pacman -S --needed --noconfirm "${PACKAGES[@]}"
+if [[ "$COMPOSITOR" == "niri" ]]; then
+  sudo pacman -S --needed --noconfirm "${PACKAGES[@]}" "${NIRI_PACKAGES[@]}"
+else
+  sudo pacman -S --needed --noconfirm "${PACKAGES[@]}"
+fi
 
 if ! command -v quickshell >/dev/null; then
   die "quickshell was not installed; enable a repository that provides it, then rerun this script"
@@ -70,6 +98,16 @@ if ! command -v vicinae >/dev/null; then
   AUR_HELPER="$(command -v yay || command -v paru)"
   printf 'Installing AUR dependencies with %s...\n' "$(basename "$AUR_HELPER")"
   "$AUR_HELPER" -S --needed --noconfirm "${AUR_PACKAGES[@]}"
+fi
+
+if [[ "$COMPOSITOR" == "niri" ]]; then
+  readonly NIRI_BUILD_DIR="$(mktemp -d)"
+  trap 'rm -rf -- "$NIRI_BUILD_DIR"' EXIT
+  printf 'Building qml-niri QML module...\n'
+  git clone --depth 1 https://github.com/imiric/qml-niri.git "$NIRI_BUILD_DIR/qml-niri"
+  cmake -S "$NIRI_BUILD_DIR/qml-niri" -B "$NIRI_BUILD_DIR/qml-niri/build" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build "$NIRI_BUILD_DIR/qml-niri/build"
+  sudo cmake --install "$NIRI_BUILD_DIR/qml-niri/build"
 fi
 
 printf 'Building hushctl...\n'
@@ -94,4 +132,4 @@ else
 fi
 
 printf '\nhush is installed. Start it with:\n  quickshell --path %s\n' "$SHELL_DIR"
-printf 'Add this command to your Hyprland startup configuration to launch it automatically.\n'
+printf 'Add this command to your %s startup configuration to launch it automatically.\n' "$COMPOSITOR"
