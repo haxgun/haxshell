@@ -54,5 +54,7 @@
   "Не беспокоить": "Nicht stören",
   "Нет уведомлений": "Keine Benachrichtigungen",
   "Рабочие столы на всех экранах": "Arbeitsflächen auf allen Bildschirmen",
-  "На своих экранах": "Auf ihren eigenen Bildschirmen"
+  "На своих экранах": "Auf ihren eigenen Bildschirmen",
+  "About": "Info",
+  "Hush is a customizable Wayland desktop shell built with Quickshell, QML, and Go.": "Hush ist eine anpassbare Wayland-Desktop-Shell, entwickelt mit Quickshell, QML und Go."
 }

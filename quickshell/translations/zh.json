@@ -54,5 +54,7 @@
   "Не беспокоить": "勿扰模式",
   "Нет уведомлений": "没有通知",
   "Рабочие столы на всех экранах": "所有屏幕上的工作区",
-  "На своих экранах": "在各自屏幕上"
+  "На своих экранах": "在各自屏幕上",
+  "About": "关于 Hush",
+  "Hush is a customizable Wayland desktop shell built with Quickshell, QML, and Go.": "Hush 是一个使用 Quickshell、QML 和 Go 构建的可定制 Wayland 桌面外壳。"
 }

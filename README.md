@@ -7,21 +7,22 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-6b8e23.svg)](LICENSE)
 [![Quickshell](https://img.shields.io/badge/Quickshell-QML-5c7cfa.svg)](https://quickshell.org/)
 [![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff.svg)](https://hyprland.org/)
+[![Niri](https://img.shields.io/badge/Niri-Wayland-7c4dff.svg)](https://github.com/YaLTeR/niri)
 [![Go](https://img.shields.io/badge/Go-1.24-00ADD8.svg)](https://go.dev/)
 
-`hush` is a Wayland desktop shell built with Quickshell and QML, designed for Hyprland.
+`hush` is a customizable Wayland desktop shell built with Quickshell, QML, and Go for Hyprland and Niri.
 
 ## Features
 
 - Bar placement at the top, bottom, left, or right edge.
 - Workspace switcher and focused application indicator.
 - Popups for Wi-Fi, Bluetooth, brightness, audio, battery, calendar, media, and power.
-- Control center with quick settings.
+- Compact control center with quick settings, real-time brightness and volume sliders, power profiles, theme, airplane mode, and media controls.
 - Separate speaker and microphone volume controls with PipeWire device selection.
-- Shared MPRIS controller for media player widgets.
+- Shared MPRIS controller with album artwork, live playback progress, and bar metadata.
 - Notification toasts and notification center.
-- Wallpaper picker with a thumbnail grid.
-- Persistent settings for the theme, bar, fonts, and shell appearance.
+- Wallpaper picker with extracted color palettes and a dynamic theme that colors shell surfaces from the current wallpaper.
+- Persistent settings for the theme, bar, fonts, notifications, OSD, wallpaper behavior, and shell appearance.
 
 ## Structure
 
@@ -59,7 +60,7 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 ## Install
 
-The included installer targets Arch Linux with Hyprland. It installs repository and AUR dependencies, builds `hushctl`, and links this repository to `~/.config/quickshell` without replacing an existing configuration.
+The included installer targets Arch Linux. It installs repository and AUR dependencies, builds `hushctl`, and links this repository to `~/.config/quickshell` without replacing an existing configuration.
 
 ```bash
 ./install.sh
@@ -81,7 +82,8 @@ Rebuild the utility and restart Quickshell after changing files under `core/`.
 
 - Shared configuration is in `quickshell/Common/Config.qml`.
 - User settings are persisted by `quickshell/Common/SettingsStore.qml` in `quickshell/settings.json`.
-- Appearance settings: `shellBlurEnabled`, `shellBordersEnabled`, `shellShadowsEnabled`.
+- Appearance settings: blur, borders, shadows, palette, typography, bar geometry, notifications, OSD, and wallpaper rotation are available from the Settings popup.
+- Dynamic theme stores the extracted wallpaper palette in `dynamicPalette` and applies it to shell surfaces, controls, borders, tracks, and workspace indicators.
 
 ## Verification
 
