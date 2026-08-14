@@ -23,6 +23,10 @@ PanelWindow {
   WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
   anchors { top: true; left: true; right: true; bottom: true }
   color: "#00000000"
+  BackgroundEffect.blurRegion: Region {
+    item: Config.popupBlurEnabled ? container : null
+    radius: Math.round(container.radius)
+  }
 
   onIsOpenChanged: if (isOpen) refresh()
 
@@ -81,7 +85,7 @@ PanelWindow {
     y: root.isOpen ? Config.dropdownTopGap : -12
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
-    color: Config.glassBg
+    color: Config.popupGlassBg
 
     Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
     Behavior on opacity { NumberAnimation { duration: 160 } }

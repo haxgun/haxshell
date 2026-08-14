@@ -1,4 +1,5 @@
 ControlCenterPopup 1.0 ControlCenterPopup.qml
+QuickControlTile 1.0 QuickControlTile.qml
 AudioPopup 1.0 AudioPopup.qml
 AudioSlider 1.0 AudioSlider.qml
 AudioDeviceList 1.0 AudioDeviceList.qml

@@ -26,6 +26,10 @@ PanelWindow {
   WlrLayershell.keyboardFocus: isOpen && isTargetScreen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
   anchors { top: true; left: true; right: true; bottom: true }
   color: "#00000000"
+  BackgroundEffect.blurRegion: Region {
+    item: Config.popupBlurEnabled ? container : null
+    radius: Math.round(container.radius)
+  }
 
   MouseArea { anchors.fill: parent; enabled: panel.isOpen && panel.isTargetScreen; onClicked: panel.closeRequested() }
 
@@ -37,7 +41,7 @@ PanelWindow {
     anchors.rightMargin: panel.rightMargin
     y: panel.isOpen && panel.isTargetScreen ? Config.dropdownTopGap : -12
     opacity: panel.isOpen && panel.isTargetScreen ? 1.0 : 0.0
-    color: Config.glassBg
+    color: Config.popupGlassBg
     radius: Config.overlayRadius
 
     Rectangle {

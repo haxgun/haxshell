@@ -8,6 +8,8 @@ Item {
   property int value: 0
   property int from: 0
   property int to: 64
+  property int defaultValue: 0
+  property string suffix: "px"
   signal valueEdited(int value)
 
   implicitWidth: 194
@@ -92,11 +94,37 @@ Item {
 
   Text {
     id: unit
-    anchors.right: parent.right
+    anchors.right: resetButton.left
+    anchors.rightMargin: 6
     anchors.verticalCenter: parent.verticalCenter
-    text: "px"
+    text: root.suffix
     color: Config.textMuted
     font.pixelSize: Config.fontSizeSmall
     font.family: Config.fontMono
+  }
+
+  Rectangle {
+    id: resetButton
+    width: 28
+    height: parent.height
+    radius: Config.buttonRadius
+    anchors.right: parent.right
+    color: resetMouse.containsMouse ? Config.hoverBg : "#00000000"
+
+    Text {
+      anchors.centerIn: parent
+      text: Config.iconRefresh
+      color: resetMouse.containsMouse ? Config.textWhite : Config.textMuted
+      font.pixelSize: Config.fontSizeIconSmall
+      font.family: Config.fontIcon
+    }
+
+    MouseArea {
+      id: resetMouse
+      anchors.fill: parent
+      hoverEnabled: true
+      cursorShape: Qt.PointingHandCursor
+      onClicked: root.valueEdited(root.clamp(root.defaultValue))
+    }
   }
 }

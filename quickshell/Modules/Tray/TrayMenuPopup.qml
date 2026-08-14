@@ -23,6 +23,10 @@ PanelWindow {
 
   anchors { top: true; left: true; right: true; bottom: true }
   color: "#00000000"
+  BackgroundEffect.blurRegion: Region {
+    item: Config.popupBlurEnabled ? container : null
+    radius: Math.round(container.radius)
+  }
 
   QsMenuOpener {
     id: menuOpener
@@ -70,7 +74,7 @@ PanelWindow {
     y: root.isOpen ? root.clampedY() : root.clampedY() - 12
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
-    color: Config.glassBg
+    color: Config.popupGlassBg
     clip: true
 
     Rectangle {

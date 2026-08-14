@@ -127,6 +127,11 @@ func settingsDefaults() map[string]string {
 		"themeName":                   "dark",
 		"fontFamily":                  "Geist Mono",
 		"wallpaperDir":                "~/wallpapers/animated",
+		"wallpaperFillMode":           "fill",
+		"wallpaperTransition":         "fade",
+		"wallpaperCyclingEnabled":     "false",
+		"wallpaperCyclingInterval":    "300",
+		"blurWallpaperOnOverview":     "false",
 		"weatherLocation":             "",
 		"dynamicAccent":               "#e2e8f0",
 		"manualAccent":                "#e2e8f0",
@@ -138,18 +143,29 @@ func settingsDefaults() map[string]string {
 		"musicVisualizerEnabled":      "true",
 		"showWorkspaceNumbers":        "true",
 		"showWorkspacesOnAllMonitors": "false",
+		"workspaceIndicatorStyle":     "tint",
 		"uiScale":                     "1.0",
 		"reduceMotion":                "false",
 		"weatherEnabled":              "true",
 		"brightnessMonitorBus":        "auto",
 		"brightnessSleepMultiplier":   ".2",
 		"barPosition":                 "top",
+		"barThickness":                "40",
 		"barTopMargin":                "6",
 		"barHorizontalMargin":         "12",
 		"barRadius":                   "14",
+		"barFrostOpacity":             "56",
+		"popupRadius":                 "18",
+		"popupBackgroundOpacity":      "56",
+		"barBlurEnabled":              "true",
+		"popupBlurEnabled":            "true",
 		"shellBlurEnabled":            "true",
 		"shellBordersEnabled":         "true",
 		"shellShadowsEnabled":         "true",
+		"doNotDisturb":                "false",
+		"notificationPosition":        "top-right",
+		"notificationTimeoutMs":       "15000",
+		"osdPosition":                 "bottom-center",
 	}
 }
 
@@ -1316,15 +1332,134 @@ func palette(path string) []string {
 	return colors
 }
 
+func wallpaperResize(mode string) string {
+	switch mode {
+	case "stretch":
+		return "stretch"
+	case "fit":
+		return "fit"
+	case "pad", "tile", "tile-v", "tile-h":
+		return "no"
+	default:
+		return "crop"
+	}
+}
+
+func wallpaperTransition(effect string) string {
+	switch effect {
+	case "none", "fade", "wipe", "wave", "grow", "center", "outer", "random":
+		return effect
+	case "disc":
+		return "center"
+	case "stripes":
+		return "wave"
+	case "iris-bloom":
+		return "grow"
+	case "pixelate":
+		return "simple"
+	case "portal":
+		return "outer"
+	default:
+		return "fade"
+	}
+}
+
+type wallpaperOutput struct {
+	name   string
+	width  string
+	height string
+}
+
+var wallpaperOutputPattern = regexp.MustCompile(`(?m)^:\s+(.+?):\s+(\d+)x(\d+),`)
+
+func wallpaperOutputs() []wallpaperOutput {
+	out, code := run(3*time.Second, "awww", "query")
+	if code != 0 {
+		return nil
+	}
+	matches := wallpaperOutputPattern.FindAllStringSubmatch(out, -1)
+	outputs := make([]wallpaperOutput, 0, len(matches))
+	for _, match := range matches {
+		outputs = append(outputs, wallpaperOutput{name: match[1], width: match[2], height: match[3]})
+	}
+	return outputs
+}
+
+func tiledWallpaper(path string, output wallpaperOutput, mode string) string {
+	sum := sha1.Sum([]byte(path + output.name + output.width + output.height + mode))
+	target := filepath.Join(homeDir, ".cache/quickshell/wallpaper-tiles", hex.EncodeToString(sum[:])[:16]+".png")
+	if _, err := os.Stat(target); err == nil {
+		return target
+	}
+	_ = os.MkdirAll(filepath.Dir(target), 0o755)
+	source := path
+	resize := ""
+	if mode == "tile-v" {
+		resize = output.width + "x"
+	} else if mode == "tile-h" {
+		resize = "x" + output.height
+	}
+	if resize != "" {
+		source = target + ".source.png"
+		if _, code := run(12*time.Second, "magick", path, "-auto-orient", "-resize", resize, source); code != 0 {
+			return ""
+		}
+		defer os.Remove(source)
+	}
+	if _, code := run(12*time.Second, "magick", "-size", output.width+"x"+output.height, "tile:"+source, target); code != 0 {
+		return ""
+	}
+	return target
+}
+
 func applyWall(path string) {
 	if commandExists("awww-daemon") {
 		_ = exec.Command("awww-daemon").Start()
 	}
 	if commandExists("awww") {
-		if _, code := run(5*time.Second, "awww", "img", path); code == 0 {
+		settings := readSettings()
+		mode := settings["wallpaperFillMode"]
+		transition := wallpaperTransition(settings["wallpaperTransition"])
+		if (mode == "tile" || mode == "tile-v" || mode == "tile-h") && imageExt[strings.ToLower(filepath.Ext(path))] && commandExists("magick") {
+			outputs := wallpaperOutputs()
+			applied := len(outputs) > 0
+			for _, output := range outputs {
+				tile := tiledWallpaper(path, output, mode)
+				if tile == "" {
+					applied = false
+					break
+				}
+				if _, code := run(8*time.Second, "awww", "img", tile, "--outputs", output.name, "--resize", "stretch", "--transition-type", transition, "--transition-duration", "1"); code != 0 {
+					applied = false
+					break
+				}
+			}
+			if applied {
+				return
+			}
+		}
+		args := []string{"img", path, "--resize", wallpaperResize(mode), "--transition-type", transition, "--transition-duration", "1"}
+		if _, code := run(5*time.Second, "awww", args...); code == 0 {
 			return
 		}
 		run(5*time.Second, "awww", path)
+	}
+}
+
+func applyOverviewBlur(dir string, enabled bool) {
+	items := wallItems(wallDir(dir))
+	if len(items) == 0 {
+		return
+	}
+	path := items[cacheIndex(len(items))]
+	if !enabled || !imageExt[strings.ToLower(filepath.Ext(path))] || !commandExists("magick") {
+		applyWall(path)
+		return
+	}
+	target := filepath.Join(homeDir, ".cache/quickshell/wallpaper-overview-blur.png")
+	_ = os.MkdirAll(filepath.Dir(target), 0o755)
+	if _, code := run(15*time.Second, "magick", path, "-auto-orient", "-blur", "0x16", target); code == 0 {
+		applyWall(target)
 	}
 }
 
@@ -1355,6 +1490,15 @@ func cmdWallpaper(args []string) {
 	if action == "config" && len(args) > 1 {
 		writeJSONFile(wallutilPath(), map[string]string{"wallDir": args[1]})
 		wallState(args[1])
+		return
+	}
+	if action == "overview-blur" {
+		dir := ""
+		if len(args) > 2 {
+			dir = args[2]
+		}
+		applyOverviewBlur(dir, len(args) > 1 && args[1] == "on")
+		wallState(dir)
 		return
 	}
 	override := ""

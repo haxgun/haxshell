@@ -8,7 +8,10 @@ import "../../Common"
 Rectangle {
   id: root
 
-  readonly property var trayItems: SystemTray.items && SystemTray.items.values ? SystemTray.items.values : []
+  readonly property var trayItems: {
+    let items = SystemTray.items && SystemTray.items.values ? SystemTray.items.values : []
+    return items.filter(item => !root.isNetworkManagerItem(item))
+  }
   readonly property int trayCount: trayItems.length
   property bool expanded: false
   property var trayMenuPopup: null
@@ -27,6 +30,12 @@ Rectangle {
     if (!icon) return ""
     if (icon === "hwloc" || icon === "preferences-system-network") return ""
     return icon.indexOf("/") >= 0 || icon.indexOf(":") >= 0 ? icon : "image://icon/" + icon
+  }
+
+  function isNetworkManagerItem(item) {
+    if (!item) return false
+    let identity = [item.id, item.title, item.icon].join(" ").toLowerCase()
+    return identity.includes("nm_applet") || identity.includes("nm-applet") || identity.includes("networkmanager")
   }
 
   function openContextMenu(item, itemRect) {

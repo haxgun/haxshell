@@ -20,7 +20,7 @@ PanelWindow {
   readonly property int innerBorderRadius: Config.overlayRadius - 2
 
   // Color Palette Tokens
-  readonly property color glassBgColor: Config.glassBg
+  readonly property color glassBgColor: Config.popupGlassBg
   readonly property color searchBgColor: Config.searchBg
   readonly property color borderColor: Config.borderColor
   readonly property color activeBorderColor: Config.activeBorderColor
@@ -54,6 +54,10 @@ PanelWindow {
   }
 
   color: "#00000000"
+  BackgroundEffect.blurRegion: Region {
+    item: Config.popupBlurEnabled ? container : null
+    radius: Math.round(container.radius)
+  }
 
   // Background dismiss handler
   MouseArea {

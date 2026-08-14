@@ -13,6 +13,9 @@ PanelWindow {
   property string label: "Громкость"
   property int value: 0
   property bool muted: false
+  readonly property bool osdAtTop: Config.osdPosition.indexOf("top-") === 0
+  readonly property bool osdAtLeft: Config.osdPosition.indexOf("left") >= 0
+  readonly property bool osdAtCenter: Config.osdPosition.indexOf("center") >= 0
 
   visible: visibleOsd || container.opacity > 0.01
   WlrLayershell.namespace: "quickshell-osd"
@@ -21,6 +24,10 @@ PanelWindow {
   WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
   anchors { top: true; left: true; right: true; bottom: true }
   color: "#00000000"
+  BackgroundEffect.blurRegion: Region {
+    item: Config.popupBlurEnabled ? container : null
+    radius: Math.round(container.radius)
+  }
 
   IpcHandler {
     target: "osd"
@@ -57,11 +64,17 @@ PanelWindow {
     id: container
     width: 260
     height: 76
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 72
+    anchors.top: root.osdAtTop ? parent.top : undefined
+    anchors.topMargin: root.osdAtTop ? 72 : 0
+    anchors.bottom: root.osdAtTop ? undefined : parent.bottom
+    anchors.bottomMargin: root.osdAtTop ? 0 : 72
+    anchors.left: root.osdAtLeft ? parent.left : undefined
+    anchors.leftMargin: root.osdAtLeft ? 24 : 0
+    anchors.right: root.osdAtLeft || root.osdAtCenter ? undefined : parent.right
+    anchors.rightMargin: root.osdAtLeft || root.osdAtCenter ? 0 : 24
+    anchors.horizontalCenter: root.osdAtCenter ? parent.horizontalCenter : undefined
     radius: Config.overlayRadius
-    color: Config.glassBg
+    color: Config.popupGlassBg
     opacity: root.visibleOsd ? 1 : 0
     scale: root.visibleOsd ? 1 : 0.94
 

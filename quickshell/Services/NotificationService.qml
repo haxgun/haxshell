@@ -5,6 +5,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Services.Notifications
+import "../Common"
 
 Singleton {
   id: root
@@ -13,7 +14,7 @@ Singleton {
   readonly property int notificationCount: notifications.length
   property var historyList: []
   readonly property int historyLimit: 80
-  property bool doNotDisturb: false
+  property bool doNotDisturb: Config.doNotDisturb
 
   signal notificationReceived(var notification)
 
@@ -39,6 +40,11 @@ Singleton {
 
   function isScreenFocused(screen) {
     return CompositorService.isScreenFocused(screen)
+  }
+
+  function setDoNotDisturb(enabled) {
+    Config.doNotDisturb = enabled
+    SettingsStore.setValue("doNotDisturb", enabled ? "true" : "false")
   }
 
   function notificationImageSource(notification) {

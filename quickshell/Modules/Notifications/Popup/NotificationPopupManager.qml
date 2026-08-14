@@ -13,7 +13,10 @@ PanelWindow {
   property int rightMargin: 16
   property var toastItems: []
   readonly property bool isTargetScreen: NotificationService.isScreenFocused(targetScreen)
-  readonly property int toastTimeoutMs: 15000
+  readonly property int toastTimeoutMs: Config.notificationTimeoutMs
+  readonly property bool toastAtTop: Config.notificationPosition.indexOf("top-") === 0
+  readonly property bool toastAtLeft: Config.notificationPosition.indexOf("left") >= 0
+  readonly property bool toastAtCenter: Config.notificationPosition.indexOf("center") >= 0
 
   signal centerRequested()
 
@@ -26,6 +29,10 @@ PanelWindow {
   anchors { top: true; left: true; right: true; bottom: true }
   mask: Region { item: toastColumn }
   color: "#00000000"
+  BackgroundEffect.blurRegion: Region {
+    item: Config.popupBlurEnabled ? toastColumn : null
+    radius: Config.overlayRadius
+  }
 
   Connections {
     target: NotificationService
@@ -62,10 +69,15 @@ PanelWindow {
     id: toastColumn
     width: 360
     height: implicitHeight
-    anchors.top: parent.top
-    anchors.topMargin: 8
-    anchors.right: parent.right
-    anchors.rightMargin: panel.rightMargin
+    anchors.top: panel.toastAtTop ? parent.top : undefined
+    anchors.topMargin: panel.toastAtTop ? 8 : 0
+    anchors.bottom: panel.toastAtTop ? undefined : parent.bottom
+    anchors.bottomMargin: panel.toastAtTop ? 0 : 8
+    anchors.left: panel.toastAtLeft ? parent.left : undefined
+    anchors.leftMargin: panel.toastAtLeft ? panel.rightMargin : 0
+    anchors.right: panel.toastAtLeft || panel.toastAtCenter ? undefined : parent.right
+    anchors.rightMargin: panel.toastAtLeft || panel.toastAtCenter ? 0 : panel.rightMargin
+    anchors.horizontalCenter: panel.toastAtCenter ? parent.horizontalCenter : undefined
     spacing: 10
 
     Repeater {

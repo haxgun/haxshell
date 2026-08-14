@@ -24,6 +24,10 @@ PanelWindow {
 
   anchors { top: true; left: true; right: true; bottom: true }
   color: "#00000000"
+  BackgroundEffect.blurRegion: Region {
+    item: Config.popupBlurEnabled ? container : null
+    radius: Math.round(container.radius)
+  }
 
   MouseArea { anchors.fill: parent; enabled: root.isOpen; onClicked: root.isOpen = false }
 
@@ -89,7 +93,7 @@ PanelWindow {
     anchors.rightMargin: 16
     y: root.isOpen ? Config.dropdownTopGap : -12
     opacity: root.isOpen ? 1.0 : 0.0
-    color: Config.glassBg
+    color: Config.popupGlassBg
     radius: Config.overlayRadius
 
     Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }

@@ -1,3 +1,5 @@
 singleton NotificationService 1.0 NotificationService.qml
 singleton CompositorService 1.0 CompositorService.qml
+WallpaperCyclingService 1.0 WallpaperCyclingService.qml
+WallpaperOverviewService 1.0 WallpaperOverviewService.qml
 AppScanner 1.0 AppScanner.qml

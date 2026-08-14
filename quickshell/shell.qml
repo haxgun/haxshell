@@ -4,6 +4,7 @@ import Quickshell
 import QtQuick
 import Quickshell.Io
 import "Common"
+import "Services"
 
 Scope {
   id: root
@@ -31,6 +32,11 @@ Scope {
       if (settings.themeName) Config.themeName = settings.themeName
       if (settings.fontFamily) Config.fontFamily = settings.fontFamily
       if (settings.wallpaperDir) Config.wallpaperDir = settings.wallpaperDir
+      if (settings.wallpaperFillMode) Config.wallpaperFillMode = settings.wallpaperFillMode
+      if (settings.wallpaperTransition) Config.wallpaperTransition = settings.wallpaperTransition
+      if (typeof settings.wallpaperCyclingEnabled === "string") Config.wallpaperCyclingEnabled = settings.wallpaperCyclingEnabled === "true"
+      if (settings.wallpaperCyclingInterval) Config.wallpaperCyclingInterval = parseInt(settings.wallpaperCyclingInterval)
+      if (typeof settings.blurWallpaperOnOverview === "string") Config.blurWallpaperOnOverview = settings.blurWallpaperOnOverview === "true"
       if (typeof settings.weatherLocation === "string") Config.weatherLocation = settings.weatherLocation
       if (settings.dynamicAccent) Config.dynamicAccent = settings.dynamicAccent
       if (settings.manualAccent) Config.manualAccent = settings.manualAccent
@@ -43,19 +49,32 @@ Scope {
       if (settings.brightnessMonitorBus) Config.brightnessMonitorBus = settings.brightnessMonitorBus
       if (settings.brightnessSleepMultiplier) Config.brightnessSleepMultiplier = settings.brightnessSleepMultiplier
       if (typeof settings.shellBlurEnabled === "string") Config.shellBlurEnabled = settings.shellBlurEnabled === "true"
+      if (typeof settings.barBlurEnabled === "string") Config.barBlurEnabled = settings.barBlurEnabled === "true"
+      else if (typeof settings.shellBlurEnabled === "string") Config.barBlurEnabled = settings.shellBlurEnabled === "true"
+      if (typeof settings.popupBlurEnabled === "string") Config.popupBlurEnabled = settings.popupBlurEnabled === "true"
+      else if (typeof settings.shellBlurEnabled === "string") Config.popupBlurEnabled = settings.shellBlurEnabled === "true"
       if (typeof settings.shellBordersEnabled === "string") Config.shellBordersEnabled = settings.shellBordersEnabled === "true"
       if (typeof settings.shellShadowsEnabled === "string") Config.shellShadowsEnabled = settings.shellShadowsEnabled === "true"
+      if (typeof settings.doNotDisturb === "string") Config.doNotDisturb = settings.doNotDisturb === "true"
+      if (settings.notificationPosition) Config.notificationPosition = settings.notificationPosition
+      if (settings.notificationTimeoutMs) Config.notificationTimeoutMs = parseInt(settings.notificationTimeoutMs)
+      if (settings.osdPosition) Config.osdPosition = settings.osdPosition
       if (typeof settings.musicVisualizerEnabled === "string") {
         Config.musicVisualizerEnabled = settings.musicVisualizerEnabled === "true"
         Config.mprisRightDisplayMode = Config.musicVisualizerEnabled ? "visualizer" : "progress"
       }
       if (typeof settings.showWorkspaceNumbers === "string") Config.showWorkspaceNumbers = settings.showWorkspaceNumbers === "true"
       if (typeof settings.showWorkspacesOnAllMonitors === "string") Config.showWorkspacesOnAllMonitors = settings.showWorkspacesOnAllMonitors === "true"
+      if (settings.workspaceIndicatorStyle) Config.workspaceIndicatorStyle = settings.workspaceIndicatorStyle
       if (typeof settings.reduceMotion === "string") Config.reduceMotion = settings.reduceMotion === "true"
       if (settings.barPosition) Config.barPosition = settings.barPosition
+      if (settings.barThickness) Config.barThickness = parseInt(settings.barThickness)
       if (settings.barTopMargin) Config.barTopMargin = parseInt(settings.barTopMargin)
       if (settings.barHorizontalMargin) Config.barHorizontalMargin = parseInt(settings.barHorizontalMargin)
       if (settings.barRadius) Config.barRadius = parseInt(settings.barRadius)
+      if (settings.barFrostOpacity) Config.barFrostOpacity = parseInt(settings.barFrostOpacity)
+      if (settings.popupRadius) Config.popupRadius = parseInt(settings.popupRadius)
+      if (settings.popupBackgroundOpacity) Config.popupBackgroundOpacity = parseInt(settings.popupBackgroundOpacity)
     } catch(e) {}
   }
 
@@ -79,6 +98,9 @@ Scope {
     osd: osd
   }
 
+  WallpaperCyclingService { }
+  WallpaperOverviewService { }
+
   // Application Drawer Overlay
   AppDrawer {
     id: drawer
@@ -94,6 +116,11 @@ Scope {
     id: controlCenter
     audioPopup: audio
     osd: osd
+    wifiPopup: wifi
+    bluetoothPopup: bluetooth
+    batteryPopup: battery
+    settingsPopup: settings
+    powerPopup: power
   }
 
   BrightnessPopup {

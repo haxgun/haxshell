@@ -48,7 +48,7 @@ Singleton {
         active: !!workspace.is_active,
         occupied: !!occupied[key],
         sortIndex: workspace.idx,
-        switchRef: workspace.name || workspace.id.toString()
+        switchRef: workspace.name || workspace.idx.toString()
       })
     }
     return result

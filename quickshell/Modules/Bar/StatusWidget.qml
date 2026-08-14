@@ -863,69 +863,12 @@ Rectangle {
 
       Behavior on color { ColorAnimation { duration: 150 } }
 
-      Item {
+      Text {
         anchors.centerIn: parent
-        width: 18
-        height: 16
-
-        readonly property color iconColor: (controlCenterContainer.isControlCenterActive || controlCenterMouse.containsMouse) ? Config.textWhite : Config.textPrimary
-
-        Rectangle {
-          x: 0
-          y: 1
-          width: 18
-          height: 3
-          radius: 2
-          color: parent.iconColor
-          opacity: 0.9
-        }
-
-        Rectangle {
-          x: 0
-          y: 6
-          width: 18
-          height: 3
-          radius: 2
-          color: parent.iconColor
-          opacity: 0.9
-        }
-
-        Rectangle {
-          x: 0
-          y: 11
-          width: 18
-          height: 3
-          radius: 2
-          color: parent.iconColor
-          opacity: 0.9
-        }
-
-        Rectangle {
-          x: 12
-          y: 0
-          width: 6
-          height: 6
-          radius: 3
-          color: parent.iconColor
-        }
-
-        Rectangle {
-          x: 2
-          y: 5
-          width: 6
-          height: 6
-          radius: 3
-          color: parent.iconColor
-        }
-
-        Rectangle {
-          x: 8
-          y: 10
-          width: 6
-          height: 6
-          radius: 3
-          color: parent.iconColor
-        }
+        text: Config.iconSettings
+        color: (controlCenterContainer.isControlCenterActive || controlCenterMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        font.pixelSize: Config.fontSizeIconMedium
+        font.family: Config.fontIcon
       }
 
       MouseArea {

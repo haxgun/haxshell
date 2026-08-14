@@ -27,7 +27,7 @@ Rectangle {
   width: 360
   implicitHeight: Math.max(toastThumb.visible ? toastThumb.height : 0, toastText.implicitHeight) + 24
   radius: Config.overlayRadius
-  color: Config.glassBg
+  color: Config.popupGlassBg
   clip: true
   opacity: shown && !closing ? 1.0 : 0.0
   x: 0

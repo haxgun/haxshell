@@ -17,16 +17,22 @@ QtObject {
   property string manualAccent: "#e2e8f0"
   property bool manualDark: true
   property bool shellBlurEnabled: true
+  property bool barBlurEnabled: true
+  property bool popupBlurEnabled: true
   property bool shellBordersEnabled: true
   property bool shellShadowsEnabled: true
+  property bool doNotDisturb: false
+  property string notificationPosition: "top-right"
+  property int notificationTimeoutMs: 15000
+  property string osdPosition: "bottom-center"
   readonly property bool isDynamicTheme: themeName === "dynamic"
   readonly property bool isManualTheme: themeName === "manual"
   readonly property bool isLightTheme: themeName === "light" || (isManualTheme && !manualDark)
   readonly property color themeAccent: isManualTheme ? manualAccent : (isDynamicTheme ? dynamicAccent : (isLightTheme ? "#64748b" : "#e2e8f0"))
 
-  readonly property color glassBg: shellBlurEnabled ? (isLightTheme ? "#b8f8fafc" : "#901A1A1A") : (isLightTheme ? "#f3f8fc" : "#1b1b1b")
-  readonly property color glassHoverBg: shellBlurEnabled ? (isLightTheme ? "#d2f8fafc" : "#c01A1A1A") : (isLightTheme ? "#eef4fa" : "#242424")
-  readonly property color searchBg: shellBlurEnabled ? (isLightTheme ? "#90e2e8f0" : "#251A1A1A") : (isLightTheme ? "#dde7f0" : "#2a2a2a")
+  readonly property color glassBg: popupBlurEnabled ? (isLightTheme ? "#b8f8fafc" : "#901A1A1A") : (isLightTheme ? "#f3f8fc" : "#1b1b1b")
+  readonly property color glassHoverBg: popupBlurEnabled ? (isLightTheme ? "#d2f8fafc" : "#c01A1A1A") : (isLightTheme ? "#eef4fa" : "#242424")
+  readonly property color searchBg: popupBlurEnabled ? (isLightTheme ? "#90e2e8f0" : "#251A1A1A") : (isLightTheme ? "#dde7f0" : "#2a2a2a")
   readonly property color borderColor: shellBordersEnabled ? (isLightTheme ? "#8094a3b8" : "#80464646") : "#00000000"
   readonly property color activeBorderColor: shellBordersEnabled ? Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, 0.55) : "#00000000"
   readonly property color separatorColor: isLightTheme ? "#6094a3b8" : "#5064748b"
@@ -58,17 +64,23 @@ QtObject {
   property real uiScale: 1.0
   property bool reduceMotion: false
 
-  readonly property int barHeight: Math.round(40 * uiScale)
+  property int barThickness: 40
   property int barTopMargin: 6
   property int barHorizontalMargin: 12
   property int barRadius: 14
+  property int barFrostOpacity: 56
+  property int popupRadius: 18
+  property int popupBackgroundOpacity: 56
+  readonly property int barHeight: Math.round(barThickness * uiScale)
   readonly property int scaledBarTopMargin: Math.round(barTopMargin * uiScale)
   readonly property int barMargin: Math.round(barHorizontalMargin * uiScale)
   readonly property int scaledBarRadius: Math.round(barRadius * uiScale)
+  readonly property color barBackgroundBg: barBlurEnabled ? Qt.rgba(glassBg.r, glassBg.g, glassBg.b, barFrostOpacity / 100) : (isLightTheme ? "#f3f8fc" : "#1b1b1b")
+  readonly property color popupGlassBg: popupBlurEnabled ? Qt.rgba(glassBg.r, glassBg.g, glassBg.b, popupBackgroundOpacity / 100) : glassBg
   readonly property int barPadding: Math.round(16 * uiScale)
 
   readonly property int widgetRadius: Math.round(14 * uiScale)
-  readonly property int overlayRadius: Math.round(18 * uiScale)
+  readonly property int overlayRadius: Math.round(popupRadius * uiScale)
   readonly property int cardRadius: Math.round(10 * uiScale)
   readonly property int innerBorderRadius: Math.round(12 * uiScale)
   readonly property int innerBorderMargin: 2
@@ -140,6 +152,11 @@ QtObject {
   property string brightnessMonitorBus: "auto"
   property string brightnessSleepMultiplier: ".2"
   property string wallpaperDir: "~/wallpapers/animated"
+  property string wallpaperFillMode: "fill"
+  property string wallpaperTransition: "fade"
+  property bool wallpaperCyclingEnabled: false
+  property int wallpaperCyclingInterval: 300
+  property bool blurWallpaperOnOverview: false
 
   // ==========================================
   // 🇷🇺 SECTION 5: RUSSIAN LOCALIZATION

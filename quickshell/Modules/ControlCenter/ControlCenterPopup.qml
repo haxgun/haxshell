@@ -5,8 +5,10 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Networking
 import Quickshell.Bluetooth
+import "."
 import "../../Common"
 import "../../Widgets"
+import "../../Services"
 
 PanelWindow {
   id: root
@@ -15,6 +17,11 @@ PanelWindow {
   property int rightMargin: 16
   property var audioPopup: null
   property var osd: null
+  property var wifiPopup: null
+  property var bluetoothPopup: null
+  property var batteryPopup: null
+  property var settingsPopup: null
+  property var powerPopup: null
   property string activeSection: "wifi"
   property int brightnessPercent: 100
   property string activeBrightnessBus: Config.brightnessMonitorBus
@@ -56,6 +63,10 @@ PanelWindow {
   WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
   anchors { top: true; left: true; right: true; bottom: true }
   color: "#00000000"
+  BackgroundEffect.blurRegion: Region {
+    item: Config.popupBlurEnabled ? container : null
+    radius: Math.round(container.radius)
+  }
 
   MouseArea { anchors.fill: parent; enabled: root.isOpen; onClicked: root.isOpen = false }
 
@@ -176,6 +187,12 @@ PanelWindow {
     audioPopup.isOpen = true
     isOpen = false
   }
+  function openPopup(popup) {
+    if (!popup) return
+    popup.rightMargin = rightMargin
+    popup.isOpen = true
+    isOpen = false
+  }
   function toggleCaffeine() { restart(caffeineProc, [hushctl, "caffeine", "toggle"]) }
   function cyclePowerProfile() {
     let profiles = ["power-saver", "balanced", "performance"]
@@ -193,14 +210,14 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 430
+    width: 550
     height: Math.min(content.implicitHeight + 28, root.height - 32)
     anchors.right: parent.right
     anchors.rightMargin: root.rightMargin
     y: root.isOpen ? Config.dropdownTopGap : -12
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
-    color: Config.glassBg
+    color: Config.popupGlassBg
     clip: false
 
     Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
@@ -221,96 +238,68 @@ PanelWindow {
         width: parent.width
         height: 30
         spacing: 10
-        Text { text: "☷"; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.weight: Font.Bold; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+        Text { text: Config.iconSettings; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
         Text { text: "Центр управления"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+        Item { width: parent.width - 270; height: 1 }
+        Rectangle {
+          width: 30; height: 30; radius: 8; color: settingsMouse.containsMouse ? Config.hoverBg : "#151A1A1A"; border.color: Config.borderColor; border.width: 1
+          Text { anchors.centerIn: parent; text: Config.iconSettings; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+          MouseArea { id: settingsMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openPopup(root.settingsPopup) }
+        }
+        Rectangle {
+          width: 30; height: 30; radius: 8; color: powerMouse.containsMouse ? Config.hoverBg : "#151A1A1A"; border.color: Config.borderColor; border.width: 1
+          Text { anchors.centerIn: parent; text: Config.iconPower; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+          MouseArea { id: powerMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openPopup(root.powerPopup) }
+        }
       }
 
-      Text { width: parent.width; height: 28; verticalAlignment: Text.AlignBottom; text: "Подключения"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
-
-      SettingsRow {
-        icon: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected
-        title: "Wi-Fi"
-        subtitle: root.wifiSubtitle()
-        onClicked: { root.activeSection = "wifi"; root.toggleWifi() }
-        ToggleSwitch { checked: Networking.wifiEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.toggleWifi() }
-      }
-
-      SettingsRow {
-        icon: Config.iconBluetooth
-        title: "Bluetooth"
-        subtitle: root.bluetoothSubtitle()
-        onClicked: { root.activeSection = "bluetooth"; root.toggleBluetooth() }
-        ToggleSwitch { checked: root.adapter && root.adapter.enabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.toggleBluetooth() }
-      }
-
-      Text { width: parent.width; height: 28; verticalAlignment: Text.AlignBottom; text: "Устройство"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
-
-      SettingsRow {
-        icon: root.brightnessIcon()
-        title: "Яркость"
-        subtitle: root.brightnessPercent + "%"
-        Row {
-          anchors.verticalCenter: parent.verticalCenter
-          spacing: 6
+      Row {
+        width: parent.width
+        height: 76
+        spacing: 8
+        Repeater {
+          model: [{ icon: root.volumeIcon(), title: "Громкость", value: root.sinkVolume, muted: root.sinkMuted, brightness: false }, { icon: root.brightnessIcon(), title: "Яркость", value: root.brightnessPercent, muted: false, brightness: true }]
           Rectangle {
-            width: 28
-            height: 28
-            radius: 8
-            color: minusMouse.containsMouse ? Config.hoverBg : Config.searchBg
-            Text { anchors.centerIn: parent; text: "−"; color: Config.textPrimary; font.pixelSize: Config.fontSizeLarge; font.family: Config.fontSans }
-            MouseArea { id: minusMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.setBrightness(root.brightnessPercent - 5) }
-          }
-          Rectangle {
-            width: 28
-            height: 28
-            radius: 8
-            color: plusMouse.containsMouse ? Config.hoverBg : Config.searchBg
-            Text { anchors.centerIn: parent; text: "+"; color: Config.textPrimary; font.pixelSize: Config.fontSizeLarge; font.family: Config.fontSans }
-            MouseArea { id: plusMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.setBrightness(root.brightnessPercent + 5) }
+            id: sliderCard
+            required property var modelData
+            width: (parent.width - 8) / 2; height: parent.height; radius: Config.cardRadius; color: Config.searchBg; border.color: Config.borderColor; border.width: 1
+            Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.top: parent.top; anchors.topMargin: 9; text: sliderCard.modelData.icon; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+            Text { anchors.left: parent.left; anchors.leftMargin: 36; anchors.top: parent.top; anchors.topMargin: 10; text: sliderCard.modelData.title; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+            Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.top: parent.top; anchors.topMargin: 10; text: sliderCard.modelData.muted ? "Выкл." : sliderCard.modelData.value + "%"; color: Config.textMuted; font.pixelSize: 10; font.family: Config.fontMono }
+            Rectangle {
+              id: sliderTrack
+              anchors.left: parent.left; anchors.right: parent.right; anchors.leftMargin: 10; anchors.rightMargin: 10; anchors.bottom: parent.bottom; anchors.bottomMargin: 14; height: 7; radius: 4; color: Config.searchBg
+              Rectangle { width: parent.width * Math.min(1, sliderCard.modelData.value / 100); height: parent.height; radius: parent.radius; color: sliderCard.modelData.muted ? Config.textMuted : Config.textPrimary }
+              MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: mouse => { let value = Math.round(Math.max(0, Math.min(100, mouse.x / width * 100))); if (sliderCard.modelData.brightness) root.setBrightness(value); else root.setAudio("set-sink-volume", value) } }
+            }
           }
         }
       }
 
-      SettingsRow {
-        icon: root.volumeIcon()
-        title: "Звук"
-        subtitle: root.sinkMuted ? "Выключен" : (root.sinkVolume + "%")
-        onClicked: root.openAudioPopup()
-        ToggleSwitch { checked: !root.sinkMuted; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setAudio("set-sink-mute", root.sinkMuted ? "0" : "1") }
+      Grid {
+        width: parent.width
+        columns: 2
+        columnSpacing: 8
+        rowSpacing: 8
+        QuickControlTile { icon: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected; title: "Wi-Fi"; subtitle: root.wifiSubtitle(); active: Networking.wifiEnabled; onToggled: root.toggleWifi(); onDetailsRequested: root.openPopup(root.wifiPopup) }
+        QuickControlTile { icon: Config.iconBluetooth; title: "Bluetooth"; subtitle: root.bluetoothSubtitle(); active: root.adapter && root.adapter.enabled; onToggled: root.toggleBluetooth(); onDetailsRequested: root.openPopup(root.bluetoothPopup) }
+        QuickControlTile { icon: root.volumeIcon(); title: "Звук"; subtitle: root.sinkMuted ? "Выключен" : root.sinkVolume + "%"; active: !root.sinkMuted; onToggled: root.setAudio("set-sink-mute", root.sinkMuted ? "0" : "1"); onDetailsRequested: root.openAudioPopup() }
+        QuickControlTile { icon: (root.batteryCharging || root.acOnline) ? Config.iconBatteryCharging : Config.iconBattery; title: "Питание"; subtitle: root.batteryPercent + "% · " + root.profileName(root.powerProfile); active: root.acOnline || root.batteryCharging; onToggled: root.cyclePowerProfile(); onDetailsRequested: root.openPopup(root.batteryPopup) }
+        QuickControlTile { icon: Config.iconCoffee; title: "Не спать"; subtitle: root.caffeineEnabled ? "Включено" : "Выключено"; active: root.caffeineEnabled; onToggled: root.toggleCaffeine(); onDetailsRequested: root.toggleCaffeine() }
+        QuickControlTile { icon: Config.iconNotificationsActive; title: "Не беспокоить"; subtitle: NotificationService.doNotDisturb ? "Включено" : "Выключено"; active: NotificationService.doNotDisturb; onToggled: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb); onDetailsRequested: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb) }
       }
 
-      SettingsRow {
-        icon: (root.batteryCharging || root.acOnline) ? Config.iconBatteryCharging : Config.iconBattery
-        title: "Питание"
-        subtitle: root.batteryPercent + "% · " + root.batterySubtitle()
-        last: true
-        onClicked: root.cyclePowerProfile()
-      }
-
-      Text { width: parent.width; height: 28; verticalAlignment: Text.AlignBottom; text: "Система"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
-
-      SettingsRow {
-        icon: Config.iconCoffee
-        title: "Не спать"
-        subtitle: root.caffeineEnabled ? "Сон и idle заблокированы" : "Обычный режим сна"
-        last: true
-        onClicked: root.toggleCaffeine()
-        ToggleSwitch { checked: root.caffeineEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.toggleCaffeine() }
-      }
-
-      Text { width: parent.width; height: 28; verticalAlignment: Text.AlignBottom; text: "Медиа"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
-
-      SettingsRow {
-        icon: Config.iconMusic
-        title: root.hasMedia ? (root.mediaTitle || "Музыка") : "Музыка"
-        subtitle: root.hasMedia ? (root.mediaArtist || "Неизвестный исполнитель") : "Нет активного плеера"
-        last: true
-        onClicked: if (root.mediaPlayer && root.mediaPlayer.canTogglePlaying) root.mediaPlayer.togglePlaying()
+      Rectangle {
+        width: parent.width; height: 62; radius: Config.cardRadius; color: Config.searchBg; border.color: Config.borderColor; border.width: 1
+        Text { anchors.left: parent.left; anchors.leftMargin: 14; anchors.verticalCenter: parent.verticalCenter; text: Config.iconMusic; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconLarge; font.family: Config.fontIcon }
+        Column {
+          anchors.left: parent.left; anchors.leftMargin: 50; anchors.right: mediaButton.left; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+          Text { width: parent.width; text: root.hasMedia ? (root.mediaTitle || "Музыка") : "Музыка"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
+          Text { width: parent.width; text: root.hasMedia ? (root.mediaArtist || "Неизвестный исполнитель") : "Нет активного плеера"; color: Config.textMuted; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight }
+        }
         Rectangle {
-          width: 32
-          height: 30
-          radius: 8
-          color: mediaMouse.containsMouse ? Config.hoverBg : Config.searchBg
+          id: mediaButton
+          width: 36; height: 36; radius: 9; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; color: mediaMouse.containsMouse ? Config.hoverBg : "#151A1A1A"
           Text { anchors.centerIn: parent; text: root.isPlaying ? Config.iconPause : Config.iconPlay; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
           MouseArea { id: mediaMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.mediaPlayer && root.mediaPlayer.canTogglePlaying) root.mediaPlayer.togglePlaying() }
         }

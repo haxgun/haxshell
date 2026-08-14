@@ -57,6 +57,10 @@ Scope {
       // Wayland LayerShell Integration
       WlrLayershell.namespace: "quickshell-bar"
       WlrLayershell.layer: WlrLayer.Top
+      BackgroundEffect.blurRegion: Region {
+        item: Config.barBlurEnabled ? barSurface : null
+        radius: Math.round(barSurface.radius)
+      }
 
       anchors {
         top: window.vertical || window.posTop
@@ -77,7 +81,7 @@ Scope {
         width: vertical ? Config.barHeight : parent.width - Config.barMargin * 2
         height: vertical ? parent.height - Config.scaledBarTopMargin : Config.barHeight
         radius: Config.scaledBarRadius
-        color: Config.glassBg
+        color: Config.barBackgroundBg
 
         Rectangle {
           visible: Config.shellShadowsEnabled
