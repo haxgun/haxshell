@@ -51,6 +51,11 @@ Singleton {
     return image.indexOf("/") === 0 ? "file://" + image : image
   }
 
+  function historyImageSource(notification) {
+    let image = notificationImageSource(notification)
+    return image.indexOf("file://") === 0 ? image : ""
+  }
+
   function notificationIconSource(notification) {
     let icon = notification && notification.appIcon ? notification.appIcon : ""
     if (!icon && notification && notification.desktopEntry) icon = notification.desktopEntry
@@ -92,7 +97,7 @@ Singleton {
       appName: notification.appName || "",
       appIcon: notification.appIcon || "",
       desktopEntry: notification.desktopEntry || "",
-      imageSource: notificationImageSource(notification),
+      imageSource: historyImageSource(notification),
       iconSource: notificationIconSource(notification),
       urgency: notification.urgency || 0,
       timestamp: Date.now()
