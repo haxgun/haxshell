@@ -22,7 +22,7 @@ PanelWindow {
   // Color Palette Tokens
   readonly property color glassBgColor: Config.popupGlassBg
   readonly property color searchBgColor: Config.searchBg
-  readonly property color borderColor: Config.borderColor
+  readonly property color borderColor: Config.popupBorderColor
   readonly property color activeBorderColor: Config.activeBorderColor
   readonly property color highlightColor: Config.selectedBg
   readonly property color textPrimaryColor: Config.textPrimary
@@ -165,7 +165,7 @@ PanelWindow {
     radius: root.containerRadius
 
     Rectangle {
-      visible: Config.shellShadowsEnabled
+      visible: Config.popupShadowsEnabled
       x: 0
       y: Config.shellShadowOffsetY
       width: parent.width
@@ -187,7 +187,7 @@ PanelWindow {
       radius: root.innerBorderRadius
       color: "#00000000"
       border.color: root.borderColor
-      border.width: Config.shellBordersEnabled ? 1 : 0
+      border.width: Config.popupBordersEnabled ? 1 : 0
     }
 
     Column {

@@ -92,10 +92,12 @@ PanelWindow {
     id: container
     width: 340
     implicitHeight: columnLayout.implicitHeight + 28
-    anchors.right: parent.right
+    anchors.left: Config.popupsAtLeft ? parent.left : undefined
+    anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
+    anchors.right: Config.popupsAtLeft ? undefined : parent.right
     anchors.rightMargin: root.rightMargin
 
-    y: root.isOpen ? Config.dropdownTopGap : -12
+    y: root.isOpen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
     opacity: root.isOpen ? 1.0 : 0.0
 
     Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
@@ -114,8 +116,8 @@ PanelWindow {
       anchors.margins: Config.innerBorderMargin
       radius: Config.overlayRadius - 2
       color: "#00000000"
-      border.color: Config.borderColor
-      border.width: 1
+      border.color: Config.popupBorderColor
+      border.width: Config.popupBordersEnabled ? 1 : 0
     }
 
     Column {

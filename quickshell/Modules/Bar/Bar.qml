@@ -70,7 +70,7 @@ Scope {
       }
 
       implicitWidth: window.vertical ? Config.barHeight + Config.barMargin : 0
-      implicitHeight: window.vertical ? 0 : Config.barHeight + (window.posTop ? Config.scaledBarTopMargin : 0)
+      implicitHeight: window.vertical ? 0 : Config.barHeight + (window.posTop ? Config.scaledBarTopMargin : (window.posBottom ? Config.scaledBarBottomMargin : 0))
       color: "#00000000"
 
       Rectangle {
@@ -79,12 +79,12 @@ Scope {
         x: vertical ? (window.posLeft ? Config.barMargin : 0) : Config.barMargin
         y: vertical ? Config.scaledBarTopMargin : (window.posTop ? Config.scaledBarTopMargin : 0)
         width: vertical ? Config.barHeight : parent.width - Config.barMargin * 2
-        height: vertical ? parent.height - Config.scaledBarTopMargin : Config.barHeight
+        height: vertical ? parent.height - Config.scaledBarTopMargin - Config.scaledBarBottomMargin : Config.barHeight
         radius: Config.scaledBarRadius
         color: Config.barBackgroundBg
 
         Rectangle {
-          visible: Config.shellShadowsEnabled
+          visible: Config.barShadowsEnabled
           x: 0
           y: Config.shellShadowOffsetY
           width: parent.width
@@ -100,8 +100,8 @@ Scope {
           anchors.margins: Config.innerBorderMargin
           radius: Math.max(0, barSurface.radius - Config.innerBorderMargin)
           color: "#00000000"
-          border.color: Config.borderColor
-          border.width: Config.shellBordersEnabled ? 1 : 0
+          border.color: Config.barBorderColor
+          border.width: Config.barBordersEnabled ? 1 : 0
         }
 
         TapHandler {

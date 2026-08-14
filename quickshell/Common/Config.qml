@@ -21,7 +21,11 @@ QtObject {
   property bool barBlurEnabled: true
   property bool popupBlurEnabled: true
   property bool shellBordersEnabled: true
+  property bool barBordersEnabled: true
+  property bool popupBordersEnabled: true
   property bool shellShadowsEnabled: true
+  property bool barShadowsEnabled: true
+  property bool popupShadowsEnabled: true
   property bool doNotDisturb: false
   property string notificationPosition: "top-right"
   property int notificationTimeoutMs: 15000
@@ -38,7 +42,10 @@ QtObject {
   readonly property color glassBg: isDynamicTheme ? Qt.rgba(dynamicSurface.r, dynamicSurface.g, dynamicSurface.b, popupBlurEnabled ? 0.78 : 1) : (popupBlurEnabled ? (isLightTheme ? "#b8f8fafc" : "#901A1A1A") : (isLightTheme ? "#f3f8fc" : "#1b1b1b"))
   readonly property color glassHoverBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, popupBlurEnabled ? 0.86 : 1) : (popupBlurEnabled ? (isLightTheme ? "#d2f8fafc" : "#c01A1A1A") : (isLightTheme ? "#eef4fa" : "#242424"))
   readonly property color searchBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, popupBlurEnabled ? 0.62 : 1) : (popupBlurEnabled ? (isLightTheme ? "#90e2e8f0" : "#251A1A1A") : (isLightTheme ? "#dde7f0" : "#2a2a2a"))
-  readonly property color borderColor: shellBordersEnabled ? (isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.58) : (isLightTheme ? "#8094a3b8" : "#80464646")) : "#00000000"
+  readonly property color surfaceBorderColor: isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.58) : (isLightTheme ? "#8094a3b8" : "#80464646")
+  readonly property color borderColor: shellBordersEnabled ? surfaceBorderColor : "#00000000"
+  readonly property color barBorderColor: barBordersEnabled ? surfaceBorderColor : "#00000000"
+  readonly property color popupBorderColor: popupBordersEnabled ? surfaceBorderColor : "#00000000"
   readonly property color activeBorderColor: shellBordersEnabled ? Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, 0.7) : "#00000000"
   readonly property color separatorColor: isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.5) : (isLightTheme ? "#6094a3b8" : "#5064748b")
   readonly property color controlIdleBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, 0.42) : "#151A1A1A"
@@ -47,6 +54,7 @@ QtObject {
   readonly property color workspaceOccupiedBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, 0.42) : "#18e2e8f0"
   readonly property color workspaceOccupiedBorder: isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.62) : "#50e2e8f0"
   readonly property color shellShadowColor: isLightTheme ? "#2864748b" : "#50000000"
+  readonly property color popupInputBg: Qt.rgba(searchBg.r, searchBg.g, searchBg.b, searchBg.a * popupBackgroundOpacity / 100)
 
   // Element State Colors
   readonly property color hoverBg: Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, isLightTheme ? 0.15 : 0.13)
@@ -98,6 +106,7 @@ QtObject {
 
   property int barThickness: 40
   property int barTopMargin: 6
+  property int barBottomMargin: 6
   property int barHorizontalMargin: 12
   property int barRadius: 14
   property int barFrostOpacity: 56
@@ -105,10 +114,11 @@ QtObject {
   property int popupBackgroundOpacity: 56
   readonly property int barHeight: Math.round(barThickness * uiScale)
   readonly property int scaledBarTopMargin: Math.round(barTopMargin * uiScale)
+  readonly property int scaledBarBottomMargin: Math.round(barBottomMargin * uiScale)
   readonly property int barMargin: Math.round(barHorizontalMargin * uiScale)
   readonly property int scaledBarRadius: Math.round(barRadius * uiScale)
-  readonly property color barBackgroundBg: barBlurEnabled ? Qt.rgba(glassBg.r, glassBg.g, glassBg.b, barFrostOpacity / 100) : (isLightTheme ? "#f3f8fc" : "#1b1b1b")
-  readonly property color popupGlassBg: popupBlurEnabled ? Qt.rgba(glassBg.r, glassBg.g, glassBg.b, popupBackgroundOpacity / 100) : glassBg
+  readonly property color barBackgroundBg: Qt.rgba(glassBg.r, glassBg.g, glassBg.b, barFrostOpacity / 100)
+  readonly property color popupGlassBg: Qt.rgba(glassBg.r, glassBg.g, glassBg.b, popupBackgroundOpacity / 100)
   readonly property int barPadding: Math.round(16 * uiScale)
 
   readonly property int widgetRadius: Math.round(14 * uiScale)
@@ -116,12 +126,15 @@ QtObject {
   readonly property int cardRadius: Math.round(10 * uiScale)
   readonly property int innerBorderRadius: Math.round(12 * uiScale)
   readonly property int innerBorderMargin: 2
-  readonly property int popupTopGap: 2
-  readonly property int dropdownTopGap: popupTopGap
+  readonly property int popupGap: 2
   readonly property int shellShadowOffsetY: Math.round(3 * uiScale)
   property string barPosition: "top"
+  property string popupVerticalAlign: "top"
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property int barRotation: barPosition === "left" ? -90 : (barPosition === "right" ? 90 : 0)
+  readonly property bool popupsAtBottom: barPosition === "bottom" || (isBarVertical && popupVerticalAlign === "bottom")
+  readonly property bool popupsAtLeft: barPosition === "left"
+  readonly property bool popupsAtRight: barPosition === "right"
 
   readonly property int buttonHeight: Math.round(28 * uiScale)
   readonly property int buttonWidth: Math.round(28 * uiScale)
@@ -177,6 +190,9 @@ QtObject {
   property int sysCheckIntervalMs: 3000
   property int netCheckIntervalMs: 5000
   property bool weatherEnabled: true
+  property bool barDateTimeEnabled: true
+  property bool barWeatherEnabled: true
+  property bool barColorPickerEnabled: true
   property string weatherLocation: ""
   property int weatherRefreshIntervalMs: 900000
   property string weatherText: "--"
@@ -195,12 +211,17 @@ QtObject {
   // ==========================================
   readonly property var weekdayShortNamesRu: ["вс", "пн", "вт", "ср", "чт", "пт", "сб"]
   readonly property var weekdayBarNamesRu: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
+  readonly property var weekdayFullNamesRu: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
   readonly property var calendarWeekdayNamesRu: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
   readonly property var monthShortNamesRu: ["янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"]
   readonly property var monthBarNamesRu: ["янв.", "февр.", "мар.", "апр.", "мая", "июн.", "июл.", "авг.", "сент.", "окт.", "нояб.", "дек."]
   readonly property var monthNamesRu: [
     "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
     "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+  ]
+  readonly property var monthGenitiveNamesRu: [
+    "января", "февраля", "марта", "апреля", "мая", "июня",
+    "июля", "августа", "сентября", "октября", "ноября", "декабря"
   ]
 
   function formatShortDateRu(date) {
@@ -218,6 +239,13 @@ QtObject {
 
   function formatBarDateTimeRu(date) {
     return weekdayBarNamesRu[date.getDay()] + ", " + date.getDate() + " " + monthBarNamesRu[date.getMonth()] + " " + formatBarTime(date)
+  }
+
+  function formatLongDate(date) {
+    if (language === "ru") {
+      return weekdayFullNamesRu[date.getDay()] + ", " + date.getDate() + " " + monthGenitiveNamesRu[date.getMonth()]
+    }
+    return Qt.formatDateTime(date, "dddd, MMMM d")
   }
 
   // ==========================================

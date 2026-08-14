@@ -94,9 +94,11 @@ PanelWindow {
     id: container
     width: 340
     implicitHeight: columnLayout.implicitHeight + 28
-    anchors.right: parent.right
+    anchors.left: Config.popupsAtLeft ? parent.left : undefined
+    anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
+    anchors.right: Config.popupsAtLeft ? undefined : parent.right
     anchors.rightMargin: 16
-    y: root.isOpen ? Config.dropdownTopGap : -12
+    y: root.isOpen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
     opacity: root.isOpen ? 1.0 : 0.0
     color: Config.popupGlassBg
     radius: Config.overlayRadius
@@ -105,7 +107,7 @@ PanelWindow {
     Behavior on opacity { NumberAnimation { duration: 160 } }
 
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
-    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
+    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
     Column {
       id: columnLayout

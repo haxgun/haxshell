@@ -81,7 +81,7 @@ PanelWindow {
     Behavior on opacity { NumberAnimation { duration: Config.reduceMotion ? 0 : 80 } }
     Behavior on scale { NumberAnimation { duration: Config.reduceMotion ? 0 : 100; easing.type: Easing.OutCubic } }
 
-    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: parent.radius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: Config.shellBordersEnabled ? 1 : 0 }
+    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: parent.radius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
     Row {
       anchors.fill: parent

@@ -44,7 +44,7 @@ PanelWindow {
   }
 
   function clampedY() {
-    return Math.min(Math.max(root.anchorY + 2, Config.popupTopGap), Math.max(Config.popupTopGap, root.height - container.implicitHeight - 16))
+    return Math.min(Math.max(root.anchorY + 2, Config.popupGap), Math.max(Config.popupGap, root.height - container.implicitHeight - 16))
   }
 
   function openMenu(menu, x, y, width) {
@@ -78,7 +78,7 @@ PanelWindow {
     clip: true
 
     Rectangle {
-      visible: Config.shellShadowsEnabled
+      visible: Config.popupShadowsEnabled
       x: 0
       y: Config.shellShadowOffsetY
       width: parent.width
@@ -103,8 +103,8 @@ PanelWindow {
       anchors.margins: Config.innerBorderMargin
       radius: Config.overlayRadius - 2
       color: "#00000000"
-      border.color: Config.borderColor
-      border.width: Config.shellBordersEnabled ? 1 : 0
+      border.color: Config.popupBorderColor
+      border.width: Config.popupBordersEnabled ? 1 : 0
     }
 
     Flickable {

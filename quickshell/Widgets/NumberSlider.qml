@@ -71,7 +71,7 @@ Item {
     radius: Config.buttonRadius
     anchors.right: unit.left
     anchors.rightMargin: 5
-    color: Config.searchBg
+    color: Config.popupInputBg
     border.color: valueInput.activeFocus ? Config.themeAccent : Config.borderColor
     border.width: 1
 

@@ -37,21 +37,30 @@ Singleton {
   property alias uiScale: adapter.uiScale
   property alias reduceMotion: adapter.reduceMotion
   property alias weatherEnabled: adapter.weatherEnabled
+  property alias barDateTimeEnabled: adapter.barDateTimeEnabled
+  property alias barWeatherEnabled: adapter.barWeatherEnabled
+  property alias barColorPickerEnabled: adapter.barColorPickerEnabled
   property alias brightnessMonitorBus: adapter.brightnessMonitorBus
   property alias brightnessSleepMultiplier: adapter.brightnessSleepMultiplier
   property alias barPosition: adapter.barPosition
   property alias barThickness: adapter.barThickness
   property alias barTopMargin: adapter.barTopMargin
+  property alias barBottomMargin: adapter.barBottomMargin
   property alias barHorizontalMargin: adapter.barHorizontalMargin
   property alias barRadius: adapter.barRadius
   property alias barFrostOpacity: adapter.barFrostOpacity
+  property alias popupVerticalAlign: adapter.popupVerticalAlign
   property alias popupRadius: adapter.popupRadius
   property alias popupBackgroundOpacity: adapter.popupBackgroundOpacity
   property alias barBlurEnabled: adapter.barBlurEnabled
   property alias popupBlurEnabled: adapter.popupBlurEnabled
   property alias shellBlurEnabled: adapter.shellBlurEnabled
   property alias shellBordersEnabled: adapter.shellBordersEnabled
+  property alias barBordersEnabled: adapter.barBordersEnabled
+  property alias popupBordersEnabled: adapter.popupBordersEnabled
   property alias shellShadowsEnabled: adapter.shellShadowsEnabled
+  property alias barShadowsEnabled: adapter.barShadowsEnabled
+  property alias popupShadowsEnabled: adapter.popupShadowsEnabled
   property alias doNotDisturb: adapter.doNotDisturb
   property alias notificationPosition: adapter.notificationPosition
   property alias notificationTimeoutMs: adapter.notificationTimeoutMs
@@ -109,21 +118,30 @@ Singleton {
       property string uiScale: "1.0"
       property string reduceMotion: "false"
       property string weatherEnabled: "true"
+      property string barDateTimeEnabled: "true"
+      property string barWeatherEnabled: "true"
+      property string barColorPickerEnabled: "true"
       property string brightnessMonitorBus: "auto"
       property string brightnessSleepMultiplier: ".2"
       property string barPosition: "top"
       property string barThickness: "40"
       property string barTopMargin: "6"
+      property string barBottomMargin: "6"
       property string barHorizontalMargin: "12"
       property string barRadius: "14"
       property string barFrostOpacity: "56"
+      property string popupVerticalAlign: "top"
       property string popupRadius: "18"
       property string popupBackgroundOpacity: "56"
       property string barBlurEnabled: "true"
       property string popupBlurEnabled: "true"
       property string shellBlurEnabled: "true"
       property string shellBordersEnabled: "true"
+      property string barBordersEnabled: "true"
+      property string popupBordersEnabled: "true"
       property string shellShadowsEnabled: "true"
+      property string barShadowsEnabled: "true"
+      property string popupShadowsEnabled: "true"
       property string doNotDisturb: "false"
       property string notificationPosition: "top-right"
       property string notificationTimeoutMs: "15000"
@@ -164,21 +182,30 @@ Singleton {
       uiScale: adapter.uiScale,
       reduceMotion: adapter.reduceMotion,
       weatherEnabled: adapter.weatherEnabled,
+      barDateTimeEnabled: adapter.barDateTimeEnabled,
+      barWeatherEnabled: adapter.barWeatherEnabled,
+      barColorPickerEnabled: adapter.barColorPickerEnabled,
       brightnessMonitorBus: adapter.brightnessMonitorBus,
       brightnessSleepMultiplier: adapter.brightnessSleepMultiplier,
       barPosition: adapter.barPosition,
       barThickness: adapter.barThickness,
       barTopMargin: adapter.barTopMargin,
+      barBottomMargin: adapter.barBottomMargin,
       barHorizontalMargin: adapter.barHorizontalMargin,
       barRadius: adapter.barRadius,
       barFrostOpacity: adapter.barFrostOpacity,
+      popupVerticalAlign: adapter.popupVerticalAlign,
       popupRadius: adapter.popupRadius,
       popupBackgroundOpacity: adapter.popupBackgroundOpacity,
       barBlurEnabled: adapter.barBlurEnabled,
       popupBlurEnabled: adapter.popupBlurEnabled,
       shellBlurEnabled: adapter.shellBlurEnabled,
       shellBordersEnabled: adapter.shellBordersEnabled,
+      barBordersEnabled: adapter.barBordersEnabled,
+      popupBordersEnabled: adapter.popupBordersEnabled,
       shellShadowsEnabled: adapter.shellShadowsEnabled,
+      barShadowsEnabled: adapter.barShadowsEnabled,
+      popupShadowsEnabled: adapter.popupShadowsEnabled,
       doNotDisturb: adapter.doNotDisturb,
       notificationPosition: adapter.notificationPosition,
       notificationTimeoutMs: adapter.notificationTimeoutMs,

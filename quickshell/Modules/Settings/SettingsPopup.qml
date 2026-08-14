@@ -210,6 +210,15 @@ PanelWindow {
     Config.barTopMargin = margin
     saveSetting("barTopMargin", margin)
   }
+  function applyBarBottomMargin(value) {
+    let margin = Math.max(0, Math.min(64, Math.round(value)))
+    Config.barBottomMargin = margin
+    saveSetting("barBottomMargin", margin)
+  }
+  function applyPopupVerticalAlign(value) {
+    Config.popupVerticalAlign = value
+    saveSetting("popupVerticalAlign", value)
+  }
   function applyBarHorizontalMargin(value) {
     let margin = Math.max(0, Math.min(64, Math.round(value)))
     Config.barHorizontalMargin = margin
@@ -274,8 +283,15 @@ PanelWindow {
     if (key === "blurWallpaperOnOverview") Config.blurWallpaperOnOverview = value
     if (key === "reduceMotion") Config.reduceMotion = value
     if (key === "shellBordersEnabled") Config.shellBordersEnabled = value
+    if (key === "barBordersEnabled") Config.barBordersEnabled = value
+    if (key === "popupBordersEnabled") Config.popupBordersEnabled = value
     if (key === "shellShadowsEnabled") Config.shellShadowsEnabled = value
+    if (key === "barShadowsEnabled") Config.barShadowsEnabled = value
+    if (key === "popupShadowsEnabled") Config.popupShadowsEnabled = value
     if (key === "weatherEnabled") Config.weatherEnabled = value
+    if (key === "barDateTimeEnabled") Config.barDateTimeEnabled = value
+    if (key === "barWeatherEnabled") Config.barWeatherEnabled = value
+    if (key === "barColorPickerEnabled") Config.barColorPickerEnabled = value
     saveSetting(key, value ? "true" : "false")
   }
   function applyChoice(key, value) {
@@ -442,16 +458,18 @@ PanelWindow {
     id: container
     width: 620
     height: Math.min(480, root.height - 32)
-    anchors.right: parent.right
+    anchors.left: Config.popupsAtLeft ? parent.left : undefined
+    anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
+    anchors.right: Config.popupsAtLeft ? undefined : parent.right
     anchors.rightMargin: root.rightMargin
-    y: root.isOpen ? Config.dropdownTopGap : -12
+    y: root.isOpen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
     color: Config.popupGlassBg
     clip: false
 
     Rectangle {
-      visible: Config.shellShadowsEnabled
+      visible: Config.popupShadowsEnabled
       x: 0
       y: Config.shellShadowOffsetY
       width: parent.width
@@ -466,7 +484,7 @@ PanelWindow {
     Behavior on opacity { NumberAnimation { duration: 100 } }
 
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
-    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: Config.shellBordersEnabled ? 1 : 0 }
+    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
     Column {
       id: contentRoot
@@ -501,7 +519,7 @@ PanelWindow {
               { key: "notifications", icon: Config.iconNotifications, title: "Уведомления" },
               { key: "osd", icon: Config.iconSettings, title: "OSD" },
               { key: "wallpaper", icon: Config.iconWallpaper, title: "Обои" },
-              { key: "location", icon: Config.iconWeather, title: "Локация" },
+              { key: "location", icon: Config.iconWeather, title: "Время и локация" },
               { key: "monitoring", icon: Config.iconCpu, title: "Мониторинг" },
               { key: "about", icon: Config.iconInfo, title: "About" }
             ]
@@ -688,56 +706,6 @@ PanelWindow {
                   }
                 }
               }
-            }
-
-            SettingsRow {
-              icon: Config.iconSettings
-              title: I18n.tr("Границы оболочки")
-              subtitle: Config.shellBordersEnabled ? I18n.tr("Включены") : I18n.tr("Выключены")
-              ToggleSwitch { checked: Config.shellBordersEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("shellBordersEnabled", !Config.shellBordersEnabled) }
-            }
-            SettingsRow {
-              icon: Config.iconSettings
-              title: I18n.tr("Тени оболочки")
-              subtitle: Config.shellShadowsEnabled ? I18n.tr("Включены") : I18n.tr("Выключены")
-              last: true
-              ToggleSwitch { checked: Config.shellShadowsEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("shellShadowsEnabled", !Config.shellShadowsEnabled) }
-            }
-
-            Text { text: I18n.tr("Часы и медиа"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
-
-            SettingsRow {
-              icon: Config.iconClock
-              title: I18n.tr("Формат времени")
-              subtitle: Config.timeFormat === "12" ? I18n.tr("12-часовой формат") : I18n.tr("24-часовой формат")
-              Row {
-                width: 154
-                height: 30
-                spacing: 6
-                anchors.verticalCenter: parent.verticalCenter
-                Repeater {
-                  model: [{ key: "24", label: "24ч" }, { key: "12", label: "12ч" }]
-                  Rectangle {
-                    required property var modelData
-                    width: 74
-                    height: 30
-                    radius: Config.cardRadius
-                    readonly property bool active: Config.timeFormat === modelData.key
-                    color: active ? Config.selectedBg : (timeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
-                    border.color: active ? Config.activeBorderColor : Config.borderColor
-                    border.width: 1
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
-                    MouseArea { id: timeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyTimeFormat(parent.modelData.key) }
-                  }
-                }
-              }
-            }
-
-            SettingsRow {
-              icon: Config.iconStopwatch
-              title: I18n.tr("Секунды в часах")
-              subtitle: Config.showSeconds ? I18n.tr("Показываются") : I18n.tr("Скрыты")
-              ToggleSwitch { checked: Config.showSeconds; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showSeconds", !Config.showSeconds) }
             }
 
             SettingsRow {
@@ -1235,6 +1203,44 @@ PanelWindow {
             }
             SettingsRow {
               icon: Config.iconSettings
+              title: I18n.tr("Отступ снизу")
+              subtitle: I18n.tr("Расстояние от нижнего края")
+              NumberSlider {
+                value: Config.barBottomMargin
+                from: 0
+                to: 64
+                defaultValue: 6
+                onValueEdited: root.applyBarBottomMargin(value)
+              }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Положение всплывающих панелей")
+              subtitle: I18n.tr("Выбор для левой и правой панели")
+              Row {
+                width: 154
+                height: 30
+                spacing: 6
+                anchors.verticalCenter: parent.verticalCenter
+                Repeater {
+                  model: [{ key: "top", label: "Верх" }, { key: "bottom", label: "Низ" }]
+                  Rectangle {
+                    required property var modelData
+                    width: 74
+                    height: 30
+                    radius: Config.cardRadius
+                    readonly property bool active: Config.popupVerticalAlign === modelData.key
+                    color: active ? Config.selectedBg : (popupSideMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+                    border.color: active ? Config.activeBorderColor : Config.borderColor
+                    border.width: 1
+                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+                    MouseArea { id: popupSideMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyPopupVerticalAlign(parent.modelData.key) }
+                  }
+                }
+              }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
               title: I18n.tr("Отступы слева и справа")
               subtitle: I18n.tr("Одинаковое расстояние от боковых краёв")
               NumberSlider {
@@ -1271,6 +1277,30 @@ PanelWindow {
             }
             SettingsRow {
               icon: Config.iconSettings
+              title: I18n.tr("Обводка бара")
+              subtitle: Config.barBordersEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              onClicked: root.setBoolSetting("barBordersEnabled", !Config.barBordersEnabled)
+              ToggleSwitch {
+                z: 1
+                checked: Config.barBordersEnabled
+                anchors.verticalCenter: parent.verticalCenter
+                onToggled: root.setBoolSetting("barBordersEnabled", !Config.barBordersEnabled)
+              }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Тень бара")
+              subtitle: Config.barShadowsEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              onClicked: root.setBoolSetting("barShadowsEnabled", !Config.barShadowsEnabled)
+              ToggleSwitch {
+                z: 1
+                checked: Config.barShadowsEnabled
+                anchors.verticalCenter: parent.verticalCenter
+                onToggled: root.setBoolSetting("barShadowsEnabled", !Config.barShadowsEnabled)
+              }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
               title: I18n.tr("Непрозрачность фона")
               subtitle: I18n.tr("Непрозрачность фона панели")
               NumberSlider {
@@ -1282,6 +1312,27 @@ PanelWindow {
                 onValueEdited: root.applyBarFrostOpacity(value)
               }
             }
+            SettingsRow {
+              icon: Config.iconColorPicker
+              title: I18n.tr("Пипетка цвета")
+              subtitle: Config.barColorPickerEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              onClicked: root.setBoolSetting("barColorPickerEnabled", !Config.barColorPickerEnabled)
+              ToggleSwitch { z: 1; checked: Config.barColorPickerEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barColorPickerEnabled", !Config.barColorPickerEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconClock
+              title: I18n.tr("Дата и время")
+              subtitle: Config.barDateTimeEnabled ? I18n.tr("Показываются в панели") : I18n.tr("Скрыты из панели")
+              onClicked: root.setBoolSetting("barDateTimeEnabled", !Config.barDateTimeEnabled)
+              ToggleSwitch { z: 1; checked: Config.barDateTimeEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barDateTimeEnabled", !Config.barDateTimeEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconWeather
+              title: I18n.tr("Погода")
+              subtitle: Config.barWeatherEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              onClicked: root.setBoolSetting("barWeatherEnabled", !Config.barWeatherEnabled)
+              ToggleSwitch { z: 1; checked: Config.barWeatherEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barWeatherEnabled", !Config.barWeatherEnabled) }
+            }
             Text { text: I18n.tr("Всплывающие панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconSettings
@@ -1289,6 +1340,20 @@ PanelWindow {
               subtitle: Config.popupBlurEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")
               onClicked: root.setBoolSetting("popupBlurEnabled", !Config.popupBlurEnabled)
               ToggleSwitch { z: 1; checked: Config.popupBlurEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupBlurEnabled", !Config.popupBlurEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Обводка всплывающих панелей")
+              subtitle: Config.popupBordersEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              onClicked: root.setBoolSetting("popupBordersEnabled", !Config.popupBordersEnabled)
+              ToggleSwitch { z: 1; checked: Config.popupBordersEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupBordersEnabled", !Config.popupBordersEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Тень всплывающих панелей")
+              subtitle: Config.popupShadowsEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              onClicked: root.setBoolSetting("popupShadowsEnabled", !Config.popupShadowsEnabled)
+              ToggleSwitch { z: 1; checked: Config.popupShadowsEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupShadowsEnabled", !Config.popupShadowsEnabled) }
             }
             SettingsRow {
               icon: Config.iconSettings
@@ -1414,7 +1479,39 @@ PanelWindow {
             visible: root.activeSection === "location"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Локация"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Время и локация"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconClock
+              title: I18n.tr("Формат времени")
+              subtitle: Config.timeFormat === "12" ? I18n.tr("12-часовой формат") : I18n.tr("24-часовой формат")
+              Row {
+                width: 154
+                height: 30
+                spacing: 6
+                anchors.verticalCenter: parent.verticalCenter
+                Repeater {
+                  model: [{ key: "24", label: "24ч" }, { key: "12", label: "12ч" }]
+                  Rectangle {
+                    required property var modelData
+                    width: 74
+                    height: 30
+                    radius: Config.cardRadius
+                    readonly property bool active: Config.timeFormat === modelData.key
+                    color: active ? Config.selectedBg : (timeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+                    border.color: active ? Config.activeBorderColor : Config.borderColor
+                    border.width: 1
+                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+                    MouseArea { id: timeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyTimeFormat(parent.modelData.key) }
+                  }
+                }
+              }
+            }
+            SettingsRow {
+              icon: Config.iconStopwatch
+              title: I18n.tr("Секунды в часах")
+              subtitle: Config.showSeconds ? I18n.tr("Показываются") : I18n.tr("Скрыты")
+              ToggleSwitch { checked: Config.showSeconds; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showSeconds", !Config.showSeconds) }
+            }
             SettingsRow {
               icon: Config.iconWeather
               title: I18n.tr("Погода на панели")

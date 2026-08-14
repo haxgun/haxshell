@@ -37,15 +37,17 @@ PanelWindow {
     id: container
     width: Config.notificationsWidth
     implicitHeight: columnLayout.implicitHeight + 28
-    anchors.right: parent.right
+    anchors.left: Config.popupsAtLeft ? parent.left : undefined
+    anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
+    anchors.right: Config.popupsAtLeft ? undefined : parent.right
     anchors.rightMargin: panel.rightMargin
-    y: panel.isOpen && panel.isTargetScreen ? Config.dropdownTopGap : -12
+    y: panel.isOpen && panel.isTargetScreen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
     opacity: panel.isOpen && panel.isTargetScreen ? 1.0 : 0.0
     color: Config.popupGlassBg
     radius: Config.overlayRadius
 
     Rectangle {
-      visible: Config.shellShadowsEnabled
+      visible: Config.popupShadowsEnabled
       x: 0
       y: Config.shellShadowOffsetY
       width: parent.width
@@ -60,7 +62,7 @@ PanelWindow {
     Behavior on opacity { NumberAnimation { duration: 160 } }
 
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
-    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: Config.shellBordersEnabled ? 1 : 0 }
+    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
     Column {
       id: columnLayout

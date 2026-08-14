@@ -33,7 +33,7 @@ Rectangle {
   x: 0
 
   Rectangle {
-    visible: Config.shellShadowsEnabled
+    visible: Config.popupShadowsEnabled
     x: 0
     y: Config.shellShadowOffsetY
     width: parent.width
@@ -70,7 +70,7 @@ Rectangle {
     if (n) n.dismiss()
   }
 
-  Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: Config.shellBordersEnabled ? 1 : 0 }
+  Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
   MouseArea {
     id: toastDragArea

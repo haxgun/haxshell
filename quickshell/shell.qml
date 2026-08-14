@@ -49,6 +49,9 @@ Scope {
       if (settings.language) Config.language = settings.language
       if (typeof settings.showSeconds === "string") Config.showSeconds = settings.showSeconds === "true"
       if (typeof settings.weatherEnabled === "string") Config.weatherEnabled = settings.weatherEnabled === "true"
+      if (typeof settings.barDateTimeEnabled === "string") Config.barDateTimeEnabled = settings.barDateTimeEnabled === "true"
+      if (typeof settings.barWeatherEnabled === "string") Config.barWeatherEnabled = settings.barWeatherEnabled === "true"
+      if (typeof settings.barColorPickerEnabled === "string") Config.barColorPickerEnabled = settings.barColorPickerEnabled === "true"
       if (settings.brightnessMonitorBus) Config.brightnessMonitorBus = settings.brightnessMonitorBus
       if (settings.brightnessSleepMultiplier) Config.brightnessSleepMultiplier = settings.brightnessSleepMultiplier
       if (typeof settings.shellBlurEnabled === "string") Config.shellBlurEnabled = settings.shellBlurEnabled === "true"
@@ -57,7 +60,13 @@ Scope {
       if (typeof settings.popupBlurEnabled === "string") Config.popupBlurEnabled = settings.popupBlurEnabled === "true"
       else if (typeof settings.shellBlurEnabled === "string") Config.popupBlurEnabled = settings.shellBlurEnabled === "true"
       if (typeof settings.shellBordersEnabled === "string") Config.shellBordersEnabled = settings.shellBordersEnabled === "true"
+      if (typeof settings.barBordersEnabled === "string") Config.barBordersEnabled = settings.barBordersEnabled === "true"
+      if (typeof settings.popupBordersEnabled === "string") Config.popupBordersEnabled = settings.popupBordersEnabled === "true"
       if (typeof settings.shellShadowsEnabled === "string") Config.shellShadowsEnabled = settings.shellShadowsEnabled === "true"
+      if (typeof settings.barShadowsEnabled === "string") Config.barShadowsEnabled = settings.barShadowsEnabled === "true"
+      else if (typeof settings.shellShadowsEnabled === "string") Config.barShadowsEnabled = settings.shellShadowsEnabled === "true"
+      if (typeof settings.popupShadowsEnabled === "string") Config.popupShadowsEnabled = settings.popupShadowsEnabled === "true"
+      else if (typeof settings.shellShadowsEnabled === "string") Config.popupShadowsEnabled = settings.shellShadowsEnabled === "true"
       if (typeof settings.doNotDisturb === "string") Config.doNotDisturb = settings.doNotDisturb === "true"
       if (settings.notificationPosition) Config.notificationPosition = settings.notificationPosition
       if (settings.notificationTimeoutMs) Config.notificationTimeoutMs = parseInt(settings.notificationTimeoutMs)
@@ -72,10 +81,12 @@ Scope {
       if (typeof settings.reduceMotion === "string") Config.reduceMotion = settings.reduceMotion === "true"
       if (settings.barPosition) Config.barPosition = settings.barPosition
       if (settings.barThickness) Config.barThickness = parseInt(settings.barThickness)
-      if (settings.barTopMargin) Config.barTopMargin = parseInt(settings.barTopMargin)
+      if (typeof settings.barTopMargin === "string") Config.barTopMargin = parseInt(settings.barTopMargin)
+      if (typeof settings.barBottomMargin === "string") Config.barBottomMargin = parseInt(settings.barBottomMargin)
       if (settings.barHorizontalMargin) Config.barHorizontalMargin = parseInt(settings.barHorizontalMargin)
       if (settings.barRadius) Config.barRadius = parseInt(settings.barRadius)
       if (settings.barFrostOpacity) Config.barFrostOpacity = parseInt(settings.barFrostOpacity)
+      if (settings.popupVerticalAlign) Config.popupVerticalAlign = settings.popupVerticalAlign
       if (settings.popupRadius) Config.popupRadius = parseInt(settings.popupRadius)
       if (settings.popupBackgroundOpacity) Config.popupBackgroundOpacity = parseInt(settings.popupBackgroundOpacity)
     } catch(e) {}
