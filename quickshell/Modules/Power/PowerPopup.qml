@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import "../../Common"
+import "../../Services"
 
 PanelWindow {
   id: root
@@ -81,7 +82,7 @@ PanelWindow {
         model: [
           { label: "Заблокировать", icon: Config.iconLock, command: "loginctl lock-session" },
           { label: "Сон", icon: Config.iconSuspend, command: "systemctl suspend" },
-          { label: "Выйти", icon: Config.iconLogout, command: "hyprctl dispatch exit" },
+          { label: "Выйти", icon: Config.iconLogout, command: CompositorService.exitCommand },
           { label: "Перезагрузка", icon: Config.iconRestart, command: "systemctl reboot" },
           { label: "Выключить", icon: Config.iconPower, command: "systemctl poweroff", danger: true }
         ]

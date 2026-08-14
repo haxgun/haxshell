@@ -1,20 +1,19 @@
 // ActiveAppWidget.qml - Focused Hyprland application indicator
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Widgets
 import "../../Common"
+import "../../Services"
 
 Rectangle {
   id: root
 
-  readonly property var activeWindow: Hyprland.activeToplevel
-  readonly property var ipc: activeWindow ? activeWindow.lastIpcObject : ({})
-  readonly property string appClass: (ipc.class || ipc.initialClass || ipc.initialTitle || "").toString()
-  readonly property string appTitle: activeWindow ? (activeWindow.title || ipc.title || "") : ""
+  readonly property var activeApp: CompositorService.activeApp
+  readonly property string appClass: (activeApp.appId || "").toString()
+  readonly property string appTitle: activeApp.title || ""
   readonly property var desktopEntry: lookupDesktopEntry()
   readonly property string appName: desktopEntry ? desktopEntry.name : prettyAppName(appClass)
-  readonly property bool hasApp: !!activeWindow
+  readonly property bool hasApp: appClass.length > 0 || appTitle.length > 0
 
   visible: hasApp
   implicitWidth: root.vertical ? Config.buttonWidth : Math.min(appRow.implicitWidth + 14, 360)
@@ -31,8 +30,7 @@ Rectangle {
       names.push(root.appClass + ".desktop")
       names.push(root.appClass.toLowerCase() + ".desktop")
     }
-    if (root.ipc.initialClass) names.push(root.ipc.initialClass)
-    if (root.ipc.title) names.push(root.ipc.title)
+    if (root.appTitle) names.push(root.appTitle)
 
     for (let i = 0; i < names.length; i++) {
       let entry = DesktopEntries.byId(names[i])

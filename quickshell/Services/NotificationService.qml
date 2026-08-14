@@ -4,7 +4,6 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 
 Singleton {
@@ -39,10 +38,7 @@ Singleton {
   }
 
   function isScreenFocused(screen) {
-    let monitor = Hyprland.monitorFor(screen)
-    if (!monitor) return Quickshell.screens.length === 0 || screen === Quickshell.screens[0]
-    if (Hyprland.focusedMonitor) return Hyprland.focusedMonitor.name === monitor.name
-    return monitor.focused
+    return CompositorService.isScreenFocused(screen)
   }
 
   function notificationImageSource(notification) {

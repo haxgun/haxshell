@@ -1,9 +1,9 @@
-// WorkspaceWidget.qml - Hyprland Workspace Switcher & Launcher Button
+// WorkspaceWidget.qml - Workspace switcher and launcher button
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Io
 import "../../Common"
+import "../../Services"
 
 Rectangle {
   id: root
@@ -43,68 +43,26 @@ Rectangle {
   // Options: "dot" (Bottom Dot), "tint" (Soft Translucent Tint), "border" (Subtle Border Ring)
   property string indicatorStyle: Config.workspaceIndicatorStyle
 
-  // Active workspace ID from Hyprland
   property string monitorName: ""
   readonly property bool showAllWorkspaces: Config.showWorkspacesOnAllMonitors
 
   function isOnMonitor(ws) {
     if (!ws) return false
     if (root.monitorName.length === 0) return true
-    return ws.monitor && ws.monitor.name === root.monitorName
-  }
-
-  // The workspace currently active on this monitor
-  readonly property int activeWsId: {
-    let best = 0
-    if (Hyprland.workspaces && Hyprland.workspaces.values) {
-      let list = Hyprland.workspaces.values
-      for (let i = 0; i < list.length; i++) {
-        let ws = list[i]
-        if (!ws || ws.id <= 0 || !root.isOnMonitor(ws)) continue
-        if (best === 0 || ws.id < best) best = ws.id
-        if (ws.active) return ws.id
-      }
-    }
-    let fw = Hyprland.focusedWorkspace
-    if (fw && fw.id > 0 && root.isOnMonitor(fw)) return fw.id
-    if (best > 0) return best
-    return 1
+    return ws.output === root.monitorName
   }
 
   // Only show occupied workspaces and the active workspace on this monitor.
   readonly property var workspaceList: {
     let arr = []
-    if (Hyprland.workspaces && Hyprland.workspaces.values) {
-      let list = Hyprland.workspaces.values
-      for (let i = 0; i < list.length; i++) {
-        let ws = list[i]
-        if (!ws || ws.id <= 0 || (!root.showAllWorkspaces && !root.isOnMonitor(ws))) continue
-        let occupied = ws.toplevels ? ws.toplevels.values.length > 0 : true
-        if (occupied || ws.id === root.activeWsId) arr.push(ws.id)
-      }
+    let list = CompositorService.workspaces
+    for (let i = 0; i < list.length; i++) {
+      let ws = list[i]
+      if (!ws || (!root.showAllWorkspaces && !root.isOnMonitor(ws))) continue
+      if (ws.occupied || ws.active) arr.push(ws)
     }
-    if (arr.indexOf(root.activeWsId) < 0) arr.push(root.activeWsId)
-    arr.sort((a, b) => a - b)
+    arr.sort((a, b) => a.sortIndex - b.sortIndex)
     return arr
-  }
-
-  // Check if a given workspace ID is occupied
-  function isWorkspaceOccupied(wsId) {
-    if (Hyprland.workspaces && Hyprland.workspaces.values) {
-      let list = Hyprland.workspaces.values
-      for (let i = 0; i < list.length; i++) {
-        if (list[i] && list[i].id === wsId) {
-          return list[i].toplevels ? list[i].toplevels.values.length > 0 : true
-        }
-      }
-    }
-    return false
-  }
-
-  function switchToWorkspace(wsId) {
-    if (typeof Hyprland !== "undefined" && Hyprland.dispatch) {
-      Hyprland.dispatch("hl.dsp.focus({ workspace = " + wsId + " })")
-    }
   }
 
   Grid {
@@ -165,7 +123,7 @@ Rectangle {
 
       Rectangle {
         id: itemRect
-        required property int modelData
+        required property var modelData
         required property int index
 
         width: 32
@@ -173,8 +131,8 @@ Rectangle {
         radius: Config.buttonRadius
 
         // Workspace States
-        readonly property bool isActive: root.activeWsId === modelData
-        readonly property bool isOccupied: root.isWorkspaceOccupied(modelData)
+        readonly property bool isActive: modelData.active
+        readonly property bool isOccupied: modelData.occupied
         readonly property bool isHovered: mouseArea.containsMouse
 
         // Configurable Background Color
@@ -191,7 +149,7 @@ Rectangle {
         Text {
           anchors.centerIn: parent
           anchors.verticalCenterOffset: (!itemRect.isActive && itemRect.isOccupied && root.indicatorStyle === "dot") ? -2 : 0
-          text: modelData.toString()
+          text: modelData.label
           visible: Config.showWorkspaceNumbers
           color: itemRect.isActive ? Config.textWhite : (itemRect.isOccupied ? Config.textPrimary : (itemRect.isHovered ? Config.textSubtle : Config.textPlaceholder))
           font.pixelSize: Config.fontSizeMedium
@@ -217,7 +175,7 @@ Rectangle {
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
           onClicked: {
-            root.switchToWorkspace(modelData)
+            CompositorService.switchWorkspace(modelData)
           }
         }
       }
