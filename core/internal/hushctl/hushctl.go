@@ -63,6 +63,10 @@ func commandExists(name string) bool {
 	return err == nil
 }
 
+func isNiriSession() bool {
+	return os.Getenv("NIRI_SOCKET") != "" && commandExists("niri")
+}
+
 func readText(path string) string {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -242,7 +246,7 @@ func applyTheme(theme string, manualDark bool, reduceMotion bool) {
 	if commandExists("gsettings") {
 		_, _ = run(2*time.Second, "gsettings", "set", "org.gnome.desktop.interface", "color-scheme", map[bool]string{true: "prefer-dark", false: "prefer-light"}[dark])
 	}
-	if commandExists("hyprctl") {
+	if !isNiriSession() && commandExists("hyprctl") {
 		commands := [][]string{
 			{"keyword", "general:col.active_border", activeBorder},
 			{"keyword", "general:col.inactive_border", inactiveBorder},
@@ -923,7 +927,26 @@ func keyboardLayoutName(code string) string {
 	}
 }
 
-func keyboardState() (string, int, []keyboardLayout, bool) {
+func niriKeyboardState() (string, int, []keyboardLayout, bool) {
+	out, code := run(3*time.Second, "niri", "msg", "--json", "keyboard-layouts")
+	if code != 0 {
+		return "", 0, nil, false
+	}
+	var parsed struct {
+		Names      []string `json:"names"`
+		CurrentIdx int      `json:"current_idx"`
+	}
+	if json.Unmarshal([]byte(out), &parsed) != nil || parsed.CurrentIdx < 0 || parsed.CurrentIdx >= len(parsed.Names) {
+		return "", 0, nil, false
+	}
+	layouts := make([]keyboardLayout, 0, len(parsed.Names))
+	for index, name := range parsed.Names {
+		layouts = append(layouts, keyboardLayout{Index: index, Layout: keyboardShortName(name), Name: name, Active: index == parsed.CurrentIdx})
+	}
+	return parsed.Names[parsed.CurrentIdx], parsed.CurrentIdx, layouts, true
+}
+
+func hyprlandKeyboardState() (string, int, []keyboardLayout, bool) {
 	out, code := run(3*time.Second, "hyprctl", "devices", "-j")
 	if code != 0 {
 		return "", 0, nil, false
@@ -966,6 +989,27 @@ func keyboardState() (string, int, []keyboardLayout, bool) {
 	return active, activeIndex, layouts, active != ""
 }
 
+func keyboardState() (string, int, []keyboardLayout, bool) {
+	if isNiriSession() {
+		return niriKeyboardState()
+	}
+	return hyprlandKeyboardState()
+}
+
+func setKeyboardLayout(target, activeIndex int, layouts []keyboardLayout) {
+	if isNiriSession() {
+		if len(layouts) == 0 {
+			return
+		}
+		steps := (target - activeIndex + len(layouts)) % len(layouts)
+		for range steps {
+			_, _ = run(3*time.Second, "niri", "msg", "action", "switch-layout", "next")
+		}
+		return
+	}
+	_, _ = run(3*time.Second, "hyprctl", "switchxkblayout", "all", strconv.Itoa(target))
+}
+
 func cmdKeyboard(args []string) {
 	active, activeIndex, layouts, ok := keyboardState()
 	if len(args) > 0 && args[0] == "next" && ok {
@@ -975,12 +1019,12 @@ func cmdKeyboard(args []string) {
 		} else if activeIndex == 0 {
 			target = 1
 		}
-		_, _ = run(3*time.Second, "hyprctl", "switchxkblayout", "all", strconv.Itoa(target))
+		setKeyboardLayout(target, activeIndex, layouts)
 		active, activeIndex, layouts, ok = keyboardState()
 	} else if len(args) > 1 && args[0] == "set" && ok {
 		target, err := strconv.Atoi(args[1])
 		if err == nil && target >= 0 {
-			_, _ = run(3*time.Second, "hyprctl", "switchxkblayout", "all", strconv.Itoa(target))
+			setKeyboardLayout(target, activeIndex, layouts)
 			active, activeIndex, layouts, ok = keyboardState()
 		}
 	}
