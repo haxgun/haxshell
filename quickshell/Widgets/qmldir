@@ -1,4 +1,5 @@
 SettingsRow 1.0 SettingsRow.qml
+NumberSlider 1.0 NumberSlider.qml
 SystemDial 1.0 SystemDial.qml
 SysMetricPill 1.0 SysMetricPill.qml
 SpeedGauge 1.0 SpeedGauge.qml
