@@ -404,7 +404,7 @@ PanelWindow {
                 width: (parent.width - 8) / 2
                 height: 28
                 radius: 8
-                color: cancelMouse.containsMouse ? Config.hoverBg : "#151A1A1A"
+                color: cancelMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                 border.color: Config.borderColor
                 border.width: 1
 

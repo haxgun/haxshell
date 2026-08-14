@@ -38,7 +38,7 @@ Item {
       let full = 270 * Math.PI / 180
       ctx.lineCap = "round"
       ctx.lineWidth = lineWidth
-      ctx.strokeStyle = Config.isLightTheme ? "rgba(15, 23, 42, 0.14)" : "rgba(226, 232, 240, 0.13)"
+      ctx.strokeStyle = Config.meterTrack
       ctx.beginPath()
       ctx.arc(cx, cy, radius, start, start + full, false)
       ctx.stroke()

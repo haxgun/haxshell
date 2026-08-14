@@ -82,8 +82,8 @@ PanelWindow {
           width: 36
           height: 28
           radius: 8
-          color: clearMouse.containsMouse ? "#35f87171" : "#151A1A1A"
-          border.color: "#30464646"
+          color: clearMouse.containsMouse ? "#35f87171" : Config.controlIdleBg
+          border.color: Config.subtleBorder
           border.width: 1
           opacity: notificationCount > 0 ? 1.0 : 0.45
 

@@ -40,7 +40,7 @@ Rectangle {
       width: visible ? 42 : 0
       height: 42
       radius: 10
-      color: "#151A1A1A"
+      color: Config.controlIdleBg
       clip: true
       visible: imageSource.length > 0 || iconSource.length > 0 || appName.length > 0
       anchors.left: parent.left
@@ -72,7 +72,7 @@ Rectangle {
           width: 26
           height: 26
           radius: 8
-          color: centerCloseMouse.containsMouse ? "#35f87171" : "#151A1A1A"
+          color: centerCloseMouse.containsMouse ? "#35f87171" : Config.controlIdleBg
           border.color: centerCloseMouse.containsMouse ? Config.dangerRed : Config.borderColor
           border.width: 1
           Behavior on color { ColorAnimation { duration: Config.reduceMotion ? 0 : 120 } }
@@ -96,8 +96,8 @@ Rectangle {
             height: 26
             implicitWidth: actionText.implicitWidth + 18
             radius: 7
-            color: actionMouse.containsMouse ? Config.activeHoverBg : "#151A1A1A"
-            border.color: "#30464646"
+            color: actionMouse.containsMouse ? Config.activeHoverBg : Config.controlIdleBg
+            border.color: Config.subtleBorder
             border.width: 1
             Text { id: actionText; anchors.centerIn: parent; text: modelData.text; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
             MouseArea { id: actionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: modelData.invoke() }

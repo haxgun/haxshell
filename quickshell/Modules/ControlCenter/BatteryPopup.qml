@@ -213,7 +213,7 @@ PanelWindow {
         width: parent.width
         height: 52
         radius: Config.cardRadius
-        color: "#151A1A1A"
+        color: Config.controlIdleBg
         border.color: Config.borderColor
         border.width: 1
 
@@ -248,7 +248,7 @@ PanelWindow {
             width: parent.width
             height: 10
             radius: height / 2
-            color: Config.isLightTheme ? "#3094a3b8" : "#30464646"
+            color: Config.meterTrack
             clip: true
 
             Rectangle {
@@ -299,8 +299,8 @@ PanelWindow {
             height: 42
             radius: Config.cardRadius
             opacity: available ? 1.0 : 0.35
-            color: active ? Config.selectedBg : (profileMouse.containsMouse && available ? Config.hoverBg : "#151A1A1A")
-            border.color: active ? Config.activeBorderColor : "#30464646"
+            color: active ? Config.selectedBg : (profileMouse.containsMouse && available ? Config.hoverBg : Config.controlIdleBg)
+            border.color: active ? Config.activeBorderColor : Config.subtleBorder
             border.width: 1
 
             Column {

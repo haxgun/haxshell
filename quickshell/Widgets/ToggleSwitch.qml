@@ -12,7 +12,7 @@ Rectangle {
   width: 46
   height: 22
   radius: height / 2
-  color: checked ? Config.selectedBg : "#151A1A1A"
+  color: checked ? Config.selectedBg : Config.controlIdleBg
   border.color: checked ? Config.activeBorderColor : Config.borderColor
   border.width: 1
 
@@ -39,7 +39,7 @@ Rectangle {
     x: root.checked ? root.width - width - 3 : 3
     anchors.verticalCenter: parent.verticalCenter
     color: root.checked ? Config.textWhite : Config.textMuted
-    border.color: root.checked ? Config.textWhite : "#30464646"
+    border.color: root.checked ? Config.textWhite : Config.subtleBorder
     border.width: 1
 
     Behavior on x { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }

@@ -306,7 +306,7 @@ PanelWindow {
         height: 28
         radius: 7
         readonly property bool active: picker.currentValue === modelData.key
-        color: active ? Config.selectedBg : (positionMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
+        color: active ? Config.selectedBg : (positionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
         border.color: active ? Config.activeBorderColor : Config.borderColor
         border.width: 1
         Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontSans }
@@ -399,9 +399,10 @@ PanelWindow {
       root.wallName = res.name || "Нет обоев"
       root.currentWallpaperIndex = res.index || 0
       root.palette = res.palette || []
-      if (root.palette.length > 0 && Config.dynamicAccent !== root.palette[0]) {
-        Config.dynamicAccent = root.palette[0]
-        saveSettingAlt("dynamicAccent", root.palette[0])
+        if (root.palette.length > 0) {
+          Config.applyDynamicPalette(root.palette)
+          saveSettingAlt("dynamicAccent", Config.dynamicAccent)
+          saveSettingAlt("dynamicPalette", JSON.stringify(Config.dynamicPalette))
       }
       if (!root.wallpaperSelectionInProgress) {
         wallpapersModel.clear()
@@ -502,7 +503,7 @@ PanelWindow {
               { key: "wallpaper", icon: Config.iconWallpaper, title: "Обои" },
               { key: "location", icon: Config.iconWeather, title: "Локация" },
               { key: "monitoring", icon: Config.iconCpu, title: "Мониторинг" },
-              { key: "about", icon: Config.iconSettings, title: "О shell" }
+              { key: "about", icon: Config.iconInfo, title: "About" }
             ]
             Rectangle {
               required property var modelData
@@ -510,8 +511,8 @@ PanelWindow {
               height: 34
               radius: Config.cardRadius
               readonly property bool active: root.activeSection === modelData.key
-              color: active ? Config.selectedBg : (sectionMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
-              border.color: active ? Config.activeBorderColor : "#30464646"
+              color: active ? Config.selectedBg : (sectionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+              border.color: active ? Config.activeBorderColor : Config.subtleBorder
               border.width: 1
 
               Row {
@@ -722,7 +723,7 @@ PanelWindow {
                     height: 30
                     radius: Config.cardRadius
                     readonly property bool active: Config.timeFormat === modelData.key
-                    color: active ? Config.selectedBg : (timeMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
+                    color: active ? Config.selectedBg : (timeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
                     border.color: active ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
                     Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
@@ -763,7 +764,7 @@ PanelWindow {
                   anchors.right: parent.right
                   height: 30
                   radius: 9
-                  color: languageButtonMouse.containsMouse ? Config.hoverBg : "#151A1A1A"
+                  color: languageButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                   border.color: root.languageDropdownOpen ? Config.activeBorderColor : Config.borderColor
                   border.width: 1
 
@@ -854,7 +855,7 @@ PanelWindow {
                 width: 32
                 height: 32
                 radius: 9
-                color: backMouse.containsMouse ? Config.hoverBg : "#151A1A1A"
+                color: backMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                 border.color: Config.borderColor
                 border.width: 1
                 Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
@@ -995,7 +996,7 @@ PanelWindow {
                   id: wallpaperModeButton
                   anchors.fill: parent
                   radius: 9
-                  color: wallpaperModeButtonMouse.containsMouse ? Config.hoverBg : "#151A1A1A"
+                  color: wallpaperModeButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                   border.color: root.wallpaperModeDropdownOpen ? Config.activeBorderColor : Config.borderColor
                   border.width: 1
                   Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperFillModes, Config.wallpaperFillMode); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
@@ -1028,7 +1029,7 @@ PanelWindow {
                   id: wallpaperTransitionButton
                   anchors.fill: parent
                   radius: 9
-                  color: wallpaperTransitionButtonMouse.containsMouse ? Config.hoverBg : "#151A1A1A"
+                  color: wallpaperTransitionButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                   border.color: root.wallpaperTransitionDropdownOpen ? Config.activeBorderColor : Config.borderColor
                   border.width: 1
                   Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperTransitions, Config.wallpaperTransition); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
@@ -1201,7 +1202,7 @@ PanelWindow {
                     height: 30
                     radius: 8
                     readonly property bool active: Config.barPosition === modelData.key
-                    color: active ? Config.selectedBg : (barSectionMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
+                    color: active ? Config.selectedBg : (barSectionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
                     Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: 9; font.family: Config.fontSans }
                     MouseArea { id: barSectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarPosition(parent.modelData.key) }
                   }
@@ -1353,7 +1354,7 @@ PanelWindow {
                     height: parent.height
                     radius: 8
                     readonly property bool active: Config.workspaceIndicatorStyle === modelData.key
-                    color: active ? Config.selectedBg : (indicatorMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
+                    color: active ? Config.selectedBg : (indicatorMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
                     border.color: active ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
                     Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontSans }
@@ -1513,10 +1514,10 @@ PanelWindow {
             visible: root.activeSection === "about"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("О shell"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("About"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Rectangle {
               width: parent.width
-              height: 104
+              height: 124
               radius: Config.cardRadius
               color: Config.searchBg
               border.color: Config.borderColor
@@ -1526,19 +1527,20 @@ PanelWindow {
                 anchors.margins: 12
                 spacing: 12
                 Image {
-                  width: 64
-                  height: 64
+                  width: 72
+                  height: 72
                   source: Qt.resolvedUrl("../../logo.svg")
                   fillMode: Image.PreserveAspectFit
                   asynchronous: true
                   anchors.verticalCenter: parent.verticalCenter
                 }
                 Column {
-                  width: parent.width - 76
+                  width: parent.width - 84
                   anchors.verticalCenter: parent.verticalCenter
                   spacing: 5
                   Text { text: "hush"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans }
-                  Text { text: "Wayland shell на Quickshell и QML для Hyprland."; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
+                  Text { text: I18n.tr("Hush is a customizable Wayland desktop shell built with Quickshell, QML, and Go."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
+                  Text { text: "Quickshell · QML · Go · Hyprland · Niri"; color: Config.textSubtle; font.pixelSize: 10; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
                 }
               }
             }

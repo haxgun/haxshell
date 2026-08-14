@@ -229,8 +229,8 @@ PanelWindow {
           width: parent.width
           height: 30
           radius: 8
-          color: discoverMouse.containsMouse ? Config.hoverBg : (root.adapter && root.adapter.discoverable ? Config.selectedBg : "#151A1A1A")
-          border.color: root.adapter && root.adapter.discoverable ? Config.activeBorderColor : "#30464646"
+          color: discoverMouse.containsMouse ? Config.hoverBg : (root.adapter && root.adapter.discoverable ? Config.selectedBg : Config.controlIdleBg)
+          border.color: root.adapter && root.adapter.discoverable ? Config.activeBorderColor : Config.subtleBorder
           border.width: 1
 
           Text {

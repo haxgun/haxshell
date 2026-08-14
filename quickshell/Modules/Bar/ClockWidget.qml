@@ -312,7 +312,7 @@ Rectangle {
           width: 44
           height: 4
           radius: 2
-          color: "#35464646"
+          color: Config.meterTrack
           visible: root.rightDisplayMode === "progress"
           anchors.verticalCenter: parent.verticalCenter
 

@@ -65,7 +65,7 @@ Rectangle {
 
   Rectangle {
     anchors.fill: parent
-    color: root.thumbnail ? "#30000000" : "#151A1A1A"
+    color: root.thumbnail ? "#30000000" : Config.controlIdleBg
   }
 
   Text {

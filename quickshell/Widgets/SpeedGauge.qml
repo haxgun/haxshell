@@ -42,7 +42,7 @@ Item {
       let span = Math.PI
 
       ctx.beginPath()
-      ctx.strokeStyle = Config.isLightTheme ? "#3894a3b8" : "#30464646"
+      ctx.strokeStyle = Config.subtleBorder
       ctx.arc(cx, cy, radius, start, start + span, false)
       ctx.stroke()
 

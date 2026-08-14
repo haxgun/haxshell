@@ -13,7 +13,7 @@ Rectangle {
   width: cardWidth
   height: 22
   radius: 7
-  color: "#151A1A1A"
+  color: Config.controlIdleBg
   border.color: Config.borderColor
   border.width: 1
 

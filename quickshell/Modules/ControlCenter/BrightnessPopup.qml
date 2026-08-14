@@ -217,7 +217,7 @@ PanelWindow {
           height: 6
           radius: 3
           color: Config.searchBg
-          border.color: "#40464646"
+          border.color: Config.subtleBorder
           border.width: 1
           anchors.verticalCenter: parent.verticalCenter
 
@@ -284,8 +284,8 @@ PanelWindow {
             height: 26
             radius: 7
             readonly property bool isSelected: root.brightnessPercent === modelData
-            color: isSelected ? Config.selectedBg : (presetMouse.containsMouse ? Config.hoverBg : "#151A1A1A")
-            border.color: isSelected ? Config.activeBorderColor : "#30464646"
+            color: isSelected ? Config.selectedBg : (presetMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+            border.color: isSelected ? Config.activeBorderColor : Config.subtleBorder
             border.width: 1
 
             Behavior on color { ColorAnimation { duration: 120 } }

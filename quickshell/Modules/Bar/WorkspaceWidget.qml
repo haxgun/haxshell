@@ -136,10 +136,10 @@ Rectangle {
         readonly property bool isHovered: mouseArea.containsMouse
 
         // Configurable Background Color
-        color: isActive ? Config.selectedBg : (isHovered ? Config.hoverBg : (!isActive && isOccupied && root.indicatorStyle === "tint" ? "#18e2e8f0" : "#00000000"))
+        color: isActive ? Config.selectedBg : (isHovered ? Config.hoverBg : (!isActive && isOccupied && root.indicatorStyle === "tint" ? Config.workspaceOccupiedBg : "#00000000"))
 
         // Configurable Inset Border
-        border.color: (!isActive && isOccupied && root.indicatorStyle === "border") ? "#50e2e8f0" : "#00000000"
+        border.color: (!isActive && isOccupied && root.indicatorStyle === "border") ? Config.workspaceOccupiedBorder : "#00000000"
         border.width: (!isActive && isOccupied && root.indicatorStyle === "border") ? 1 : 0
 
         Behavior on color {

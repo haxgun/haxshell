@@ -14,6 +14,7 @@ QtObject {
   // ==========================================
   property string themeName: "dark"
   property string dynamicAccent: "#e2e8f0"
+  property var dynamicPalette: ["#e2e8f0", "#334155", "#64748b", "#94a3b8"]
   property string manualAccent: "#e2e8f0"
   property bool manualDark: true
   property bool shellBlurEnabled: true
@@ -27,15 +28,24 @@ QtObject {
   property string osdPosition: "bottom-center"
   readonly property bool isDynamicTheme: themeName === "dynamic"
   readonly property bool isManualTheme: themeName === "manual"
-  readonly property bool isLightTheme: themeName === "light" || (isManualTheme && !manualDark)
+  readonly property color dynamicSurface: paletteColor(1, dynamicAccent)
+  readonly property color dynamicLayer: paletteColor(2, dynamicAccent)
+  readonly property color dynamicHighlight: paletteColor(3, dynamicAccent)
+  readonly property bool dynamicIsLight: colorLuminance(dynamicSurface) > 0.52
+  readonly property bool isLightTheme: themeName === "light" || (isManualTheme && !manualDark) || (isDynamicTheme && dynamicIsLight)
   readonly property color themeAccent: isManualTheme ? manualAccent : (isDynamicTheme ? dynamicAccent : (isLightTheme ? "#64748b" : "#e2e8f0"))
 
-  readonly property color glassBg: popupBlurEnabled ? (isLightTheme ? "#b8f8fafc" : "#901A1A1A") : (isLightTheme ? "#f3f8fc" : "#1b1b1b")
-  readonly property color glassHoverBg: popupBlurEnabled ? (isLightTheme ? "#d2f8fafc" : "#c01A1A1A") : (isLightTheme ? "#eef4fa" : "#242424")
-  readonly property color searchBg: popupBlurEnabled ? (isLightTheme ? "#90e2e8f0" : "#251A1A1A") : (isLightTheme ? "#dde7f0" : "#2a2a2a")
-  readonly property color borderColor: shellBordersEnabled ? (isLightTheme ? "#8094a3b8" : "#80464646") : "#00000000"
-  readonly property color activeBorderColor: shellBordersEnabled ? Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, 0.55) : "#00000000"
-  readonly property color separatorColor: isLightTheme ? "#6094a3b8" : "#5064748b"
+  readonly property color glassBg: isDynamicTheme ? Qt.rgba(dynamicSurface.r, dynamicSurface.g, dynamicSurface.b, popupBlurEnabled ? 0.78 : 1) : (popupBlurEnabled ? (isLightTheme ? "#b8f8fafc" : "#901A1A1A") : (isLightTheme ? "#f3f8fc" : "#1b1b1b"))
+  readonly property color glassHoverBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, popupBlurEnabled ? 0.86 : 1) : (popupBlurEnabled ? (isLightTheme ? "#d2f8fafc" : "#c01A1A1A") : (isLightTheme ? "#eef4fa" : "#242424"))
+  readonly property color searchBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, popupBlurEnabled ? 0.62 : 1) : (popupBlurEnabled ? (isLightTheme ? "#90e2e8f0" : "#251A1A1A") : (isLightTheme ? "#dde7f0" : "#2a2a2a"))
+  readonly property color borderColor: shellBordersEnabled ? (isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.58) : (isLightTheme ? "#8094a3b8" : "#80464646")) : "#00000000"
+  readonly property color activeBorderColor: shellBordersEnabled ? Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, 0.7) : "#00000000"
+  readonly property color separatorColor: isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.5) : (isLightTheme ? "#6094a3b8" : "#5064748b")
+  readonly property color controlIdleBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, 0.42) : "#151A1A1A"
+  readonly property color subtleBorder: isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.48) : "#30464646"
+  readonly property color meterTrack: isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.35) : "#35464646"
+  readonly property color workspaceOccupiedBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, 0.42) : "#18e2e8f0"
+  readonly property color workspaceOccupiedBorder: isDynamicTheme ? Qt.rgba(dynamicHighlight.r, dynamicHighlight.g, dynamicHighlight.b, 0.62) : "#50e2e8f0"
   readonly property color shellShadowColor: isLightTheme ? "#2864748b" : "#50000000"
 
   // Element State Colors
@@ -45,18 +55,40 @@ QtObject {
   readonly property color pressedBg: Qt.rgba(themeAccent.r, themeAccent.g, themeAccent.b, isLightTheme ? 0.14 : 0.19)
 
   // Text & Content Palette
-  readonly property color textPrimary: isLightTheme ? "#0f172a" : "#e2e8f0"
-  readonly property color textMuted: isLightTheme ? "#475569" : "#94a3b8"
-  readonly property color textPlaceholder: isLightTheme ? "#64748b" : "#64748b"
-  readonly property color textSubtle: isLightTheme ? "#334155" : "#cbd5e1"
-  readonly property color textDark: isLightTheme ? "#94a3b8" : "#475569"
-  readonly property color textWhite: isLightTheme ? "#020617" : "#ffffff"
+  readonly property color textPrimary: isDynamicTheme ? dynamicOnSurface : (isLightTheme ? "#0f172a" : "#e2e8f0")
+  readonly property color textMuted: isDynamicTheme ? Qt.rgba(dynamicOnSurface.r, dynamicOnSurface.g, dynamicOnSurface.b, 0.68) : (isLightTheme ? "#475569" : "#94a3b8")
+  readonly property color textPlaceholder: isDynamicTheme ? Qt.rgba(dynamicOnSurface.r, dynamicOnSurface.g, dynamicOnSurface.b, 0.45) : "#64748b"
+  readonly property color textSubtle: isDynamicTheme ? Qt.rgba(dynamicOnSurface.r, dynamicOnSurface.g, dynamicOnSurface.b, 0.82) : (isLightTheme ? "#334155" : "#cbd5e1")
+  readonly property color textDark: isDynamicTheme ? Qt.rgba(dynamicOnSurface.r, dynamicOnSurface.g, dynamicOnSurface.b, 0.5) : (isLightTheme ? "#94a3b8" : "#475569")
+  readonly property color textWhite: isDynamicTheme ? dynamicOnSurface : (isLightTheme ? "#020617" : "#ffffff")
 
   // Accent & Status Colors
   readonly property color accentGreen: "#1db954"       // Spotify & Success green
   readonly property color accentBlue: isLightTheme ? "#2563eb" : "#60a5fa"
   readonly property color warningAmber: "#f59e0b"      // High usage / Connecting amber
   readonly property color dangerRed: "#f87171"         // Mute / Critical usage / Power red
+
+  readonly property color dynamicOnSurface: dynamicIsLight ? "#101418" : "#ffffff"
+
+  function colorLuminance(color) {
+    return color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722
+  }
+
+  function paletteColor(index, fallback) {
+    let value = dynamicPalette && dynamicPalette.length > index ? dynamicPalette[index] : fallback
+    return /^#[0-9A-Fa-f]{6}$/.test(value) ? value : fallback
+  }
+
+  function applyDynamicPalette(colors) {
+    let next = []
+    for (let i = 0; i < colors.length; i++) {
+      let color = colors[i]
+      if (/^#[0-9A-Fa-f]{6}$/.test(color) && next.indexOf(color) < 0) next.push(color)
+    }
+    if (next.length === 0) return
+    dynamicPalette = next
+    dynamicAccent = next[0]
+  }
 
   // ==========================================
   // 📐 SECTION 2: DIMENSIONS & GEOMETRY
@@ -229,6 +261,11 @@ QtObject {
   readonly property string iconNotificationsActive: "󰂞"
   readonly property string iconTrash: "󰆴"
   readonly property string iconSettings: "󰒓"
+  readonly property string iconInfo: "󰋽"
+  readonly property string iconControlCenter: "󰕮"
+  readonly property string iconAirplane: "󰀝"
+  readonly property string iconMoon: "󰖔"
+  readonly property string iconSun: "󰖙"
   readonly property string iconTheme: "󰔎"
   readonly property string iconVpnShield: "󰒃"
   readonly property string iconColorPicker: "󰈋"

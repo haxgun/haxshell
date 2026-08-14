@@ -74,7 +74,7 @@ Column {
       height: 6
       radius: 3
       color: Config.searchBg
-      border.color: "#40464646"
+      border.color: Config.subtleBorder
       border.width: 1
       anchors.verticalCenter: parent.verticalCenter
 

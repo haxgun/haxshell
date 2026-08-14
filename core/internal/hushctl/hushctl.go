@@ -134,6 +134,7 @@ func settingsDefaults() map[string]string {
 		"blurWallpaperOnOverview":     "false",
 		"weatherLocation":             "",
 		"dynamicAccent":               "#e2e8f0",
+		"dynamicPalette":              "[\"#e2e8f0\",\"#334155\",\"#64748b\",\"#94a3b8\"]",
 		"manualAccent":                "#e2e8f0",
 		"manualDark":                  "true",
 		"caffeineEnabled":             "false",

@@ -101,7 +101,7 @@ Rectangle {
       width: visible ? 44 : 0
       height: 44
       radius: 11
-      color: "#151A1A1A"
+      color: Config.controlIdleBg
       clip: true
       visible: toast.toastImageSource.length > 0 || toast.toastIconSource.length > 0 || toast.toastAppName.length > 0
       anchors.left: parent.left

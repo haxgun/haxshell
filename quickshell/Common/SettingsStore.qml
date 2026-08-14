@@ -23,6 +23,7 @@ Singleton {
   property alias blurWallpaperOnOverview: adapter.blurWallpaperOnOverview
   property alias weatherLocation: adapter.weatherLocation
   property alias dynamicAccent: adapter.dynamicAccent
+  property alias dynamicPalette: adapter.dynamicPalette
   property alias manualAccent: adapter.manualAccent
   property alias manualDark: adapter.manualDark
   property alias caffeineEnabled: adapter.caffeineEnabled
@@ -94,6 +95,7 @@ Singleton {
       property string blurWallpaperOnOverview: "false"
       property string weatherLocation: ""
       property string dynamicAccent: "#e2e8f0"
+      property string dynamicPalette: "[\"#e2e8f0\",\"#334155\",\"#64748b\",\"#94a3b8\"]"
       property string manualAccent: "#e2e8f0"
       property string manualDark: "true"
       property string caffeineEnabled: "false"
@@ -148,6 +150,7 @@ Singleton {
       blurWallpaperOnOverview: adapter.blurWallpaperOnOverview,
       weatherLocation: adapter.weatherLocation,
       dynamicAccent: adapter.dynamicAccent,
+      dynamicPalette: adapter.dynamicPalette,
       manualAccent: adapter.manualAccent,
       manualDark: adapter.manualDark,
       caffeineEnabled: adapter.caffeineEnabled,

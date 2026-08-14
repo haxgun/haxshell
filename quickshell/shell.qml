@@ -39,6 +39,9 @@ Scope {
       if (typeof settings.blurWallpaperOnOverview === "string") Config.blurWallpaperOnOverview = settings.blurWallpaperOnOverview === "true"
       if (typeof settings.weatherLocation === "string") Config.weatherLocation = settings.weatherLocation
       if (settings.dynamicAccent) Config.dynamicAccent = settings.dynamicAccent
+      if (settings.dynamicPalette) {
+        try { Config.applyDynamicPalette(JSON.parse(settings.dynamicPalette)) } catch(e) {}
+      }
       if (settings.manualAccent) Config.manualAccent = settings.manualAccent
       if (typeof settings.manualDark === "string") Config.manualDark = settings.manualDark === "true"
       if (settings.timeFormat) Config.timeFormat = settings.timeFormat

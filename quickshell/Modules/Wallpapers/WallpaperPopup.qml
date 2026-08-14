@@ -79,6 +79,11 @@ PanelWindow {
       root.wallName = res.name || "Нет обоев"
       root.currentIndex = res.index || 0
       root.palette = res.palette || []
+      if (root.palette.length > 0) {
+        Config.applyDynamicPalette(root.palette)
+        SettingsStore.setValue("dynamicAccent", Config.dynamicAccent)
+        SettingsStore.setValue("dynamicPalette", JSON.stringify(Config.dynamicPalette))
+      }
       wallpapersModel.clear()
       let items = res.items || []
       for (let i = 0; i < items.length; i++) wallpapersModel.append(items[i])
@@ -115,7 +120,7 @@ PanelWindow {
         height: 120
         radius: Config.cardRadius
         clip: true
-        color: "#151A1A1A"
+        color: Config.controlIdleBg
 
         Image { anchors.fill: parent; source: root.thumbnail; fillMode: Image.PreserveAspectCrop; visible: root.thumbnail.length > 0; asynchronous: true }
         Rectangle { anchors.fill: parent; color: "#50000000" }
