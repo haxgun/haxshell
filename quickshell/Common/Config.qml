@@ -59,7 +59,12 @@ QtObject {
   property bool reduceMotion: false
 
   readonly property int barHeight: Math.round(40 * uiScale)
-  readonly property int barMargin: Math.round(12 * uiScale)
+  property int barTopMargin: 6
+  property int barHorizontalMargin: 12
+  property int barRadius: 14
+  readonly property int scaledBarTopMargin: Math.round(barTopMargin * uiScale)
+  readonly property int barMargin: Math.round(barHorizontalMargin * uiScale)
+  readonly property int scaledBarRadius: Math.round(barRadius * uiScale)
   readonly property int barPadding: Math.round(16 * uiScale)
 
   readonly property int widgetRadius: Math.round(14 * uiScale)

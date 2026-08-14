@@ -167,6 +167,21 @@ PanelWindow {
     Config.barPosition = value
     saveSetting("barPosition", value)
   }
+  function applyBarTopMargin(value) {
+    let margin = Math.max(0, Math.min(64, Math.round(value)))
+    Config.barTopMargin = margin
+    saveSetting("barTopMargin", margin)
+  }
+  function applyBarHorizontalMargin(value) {
+    let margin = Math.max(0, Math.min(64, Math.round(value)))
+    Config.barHorizontalMargin = margin
+    saveSetting("barHorizontalMargin", margin)
+  }
+  function applyBarRadius(value) {
+    let radius = Math.max(0, Math.min(32, Math.round(value)))
+    Config.barRadius = radius
+    saveSetting("barRadius", radius)
+  }
   function applyFont(value) { Config.fontFamily = value; saveSetting("fontFamily", value) }
   function applyWeatherLocation(value) { let location = value.trim(); Config.weatherLocation = location; saveSetting("weatherLocation", location) }
   function applyTimeFormat(value) { Config.timeFormat = value; saveSetting("timeFormat", value) }
@@ -985,6 +1000,39 @@ PanelWindow {
                     MouseArea { id: barSectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarPosition(parent.modelData.key) }
                   }
                 }
+              }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Отступ сверху")
+              subtitle: I18n.tr("Расстояние от верхнего края")
+              NumberSlider {
+                value: Config.barTopMargin
+                from: 0
+                to: 64
+                onValueEdited: root.applyBarTopMargin(value)
+              }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Отступы слева и справа")
+              subtitle: I18n.tr("Одинаковое расстояние от боковых краёв")
+              NumberSlider {
+                value: Config.barHorizontalMargin
+                from: 0
+                to: 64
+                onValueEdited: root.applyBarHorizontalMargin(value)
+              }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Закругление бара")
+              subtitle: I18n.tr("Радиус углов панели")
+              NumberSlider {
+                value: Config.barRadius
+                from: 0
+                to: 32
+                onValueEdited: root.applyBarRadius(value)
               }
             }
             SettingsRow {

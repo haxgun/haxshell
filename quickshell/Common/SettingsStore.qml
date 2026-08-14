@@ -33,6 +33,9 @@ Singleton {
   property alias brightnessMonitorBus: adapter.brightnessMonitorBus
   property alias brightnessSleepMultiplier: adapter.brightnessSleepMultiplier
   property alias barPosition: adapter.barPosition
+  property alias barTopMargin: adapter.barTopMargin
+  property alias barHorizontalMargin: adapter.barHorizontalMargin
+  property alias barRadius: adapter.barRadius
   property alias shellBlurEnabled: adapter.shellBlurEnabled
   property alias shellBordersEnabled: adapter.shellBordersEnabled
   property alias shellShadowsEnabled: adapter.shellShadowsEnabled
@@ -85,6 +88,9 @@ Singleton {
       property string brightnessMonitorBus: "auto"
       property string brightnessSleepMultiplier: ".2"
       property string barPosition: "top"
+      property string barTopMargin: "6"
+      property string barHorizontalMargin: "12"
+      property string barRadius: "14"
       property string shellBlurEnabled: "true"
       property string shellBordersEnabled: "true"
       property string shellShadowsEnabled: "true"
@@ -120,6 +126,9 @@ Singleton {
       brightnessMonitorBus: adapter.brightnessMonitorBus,
       brightnessSleepMultiplier: adapter.brightnessSleepMultiplier,
       barPosition: adapter.barPosition,
+      barTopMargin: adapter.barTopMargin,
+      barHorizontalMargin: adapter.barHorizontalMargin,
+      barRadius: adapter.barRadius,
       shellBlurEnabled: adapter.shellBlurEnabled,
       shellBordersEnabled: adapter.shellBordersEnabled,
       shellShadowsEnabled: adapter.shellShadowsEnabled

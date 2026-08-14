@@ -66,17 +66,17 @@ Scope {
       }
 
       implicitWidth: window.vertical ? Config.barHeight + Config.barMargin : 0
-      implicitHeight: window.vertical ? 0 : Config.barHeight + Config.barMargin
+      implicitHeight: window.vertical ? 0 : Config.barHeight + (window.posTop ? Config.scaledBarTopMargin : 0)
       color: "#00000000"
 
       Rectangle {
         id: barSurface
         readonly property bool vertical: window.vertical
-        x: vertical ? (parent.width - Config.barHeight) / 2 : Config.barMargin
-        y: vertical ? Config.barMargin : (parent.height - Config.barHeight) / 2
+        x: vertical ? (window.posLeft ? Config.barMargin : 0) : Config.barMargin
+        y: vertical ? Config.scaledBarTopMargin : (window.posTop ? Config.scaledBarTopMargin : 0)
         width: vertical ? Config.barHeight : parent.width - Config.barMargin * 2
-        height: vertical ? parent.height - Config.barMargin * 2 : Config.barHeight
-        radius: Config.widgetRadius
+        height: vertical ? parent.height - Config.scaledBarTopMargin : Config.barHeight
+        radius: Config.scaledBarRadius
         color: Config.glassBg
 
         Rectangle {
@@ -94,7 +94,7 @@ Scope {
         Rectangle {
           anchors.fill: parent
           anchors.margins: Config.innerBorderMargin
-          radius: Config.innerBorderRadius
+          radius: Math.max(0, barSurface.radius - Config.innerBorderMargin)
           color: "#00000000"
           border.color: Config.borderColor
           border.width: Config.shellBordersEnabled ? 1 : 0

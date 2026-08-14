@@ -53,6 +53,9 @@ Scope {
       if (typeof settings.showWorkspacesOnAllMonitors === "string") Config.showWorkspacesOnAllMonitors = settings.showWorkspacesOnAllMonitors === "true"
       if (typeof settings.reduceMotion === "string") Config.reduceMotion = settings.reduceMotion === "true"
       if (settings.barPosition) Config.barPosition = settings.barPosition
+      if (settings.barTopMargin) Config.barTopMargin = parseInt(settings.barTopMargin)
+      if (settings.barHorizontalMargin) Config.barHorizontalMargin = parseInt(settings.barHorizontalMargin)
+      if (settings.barRadius) Config.barRadius = parseInt(settings.barRadius)
     } catch(e) {}
   }
 
