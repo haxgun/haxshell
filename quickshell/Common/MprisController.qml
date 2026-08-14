@@ -27,6 +27,7 @@ Singleton {
     function onTrackArtistChanged() { root.syncMetadata() }
     function onTrackAlbumChanged() { root.syncMetadata() }
     function onLengthChanged() { root.syncMetadata() }
+    function onLengthSupportedChanged() { root.syncMetadata() }
     function onPlaybackStateChanged() { root.resolveActivePlayer(); root.syncMetadata() }
   }
 
@@ -42,6 +43,14 @@ Singleton {
       function onTrackAlbumChanged() { root.syncMetadata() }
       function onMetadataChanged() { root.resolveActivePlayer(); root.syncMetadata() }
     }
+  }
+
+  // MPRIS position does not emit changes while a track plays; poll it for live progress.
+  Timer {
+    interval: 1000
+    repeat: true
+    running: root.activePlayer && root.activePlayer.isPlaying && root.activePlayer.positionSupported
+    onTriggered: root.activePlayer.positionChanged()
   }
 
   function isIdle(player) {
@@ -71,7 +80,7 @@ Singleton {
     if (player.trackTitle) stableTitle = player.trackTitle
     if (player.trackArtist) stableArtist = player.trackArtist
     if (player.trackAlbum) stableAlbum = player.trackAlbum
-    if (player.lengthSupported && player.length > 1) stableLength = player.length
+    stableLength = player.lengthSupported && player.length > 1 ? player.length : 0
   }
 
   function previousOrRewind() {

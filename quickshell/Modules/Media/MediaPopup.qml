@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
+import QtQuick.Effects
 import "../../Common"
 
 PanelWindow {
@@ -28,10 +29,6 @@ PanelWindow {
   WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
   anchors { top: true; left: true; right: true; bottom: true }
   color: "#00000000"
-  BackgroundEffect.blurRegion: Region {
-    item: Config.popupBlurEnabled ? container : null
-    radius: Math.round(container.radius)
-  }
 
   MouseArea { anchors.fill: parent; enabled: root.isOpen; onClicked: root.isOpen = false }
 
@@ -58,7 +55,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 330
+    width: 390
     implicitHeight: content.implicitHeight + 28
     anchors.right: parent.right
     anchors.rightMargin: root.rightMargin
@@ -66,6 +63,34 @@ PanelWindow {
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
     color: Config.popupGlassBg
+
+    ClippingRectangle {
+      anchors.fill: parent
+      radius: parent.radius
+      color: Config.popupGlassBg
+      Image {
+        id: backgroundArtwork
+        anchors.fill: parent
+        source: root.artUrl
+        fillMode: Image.PreserveAspectCrop
+        asynchronous: true
+        cache: false
+        visible: false
+      }
+      MultiEffect {
+        anchors.fill: parent
+        source: backgroundArtwork
+        visible: root.artUrl.length > 0
+        blurEnabled: true
+        blur: 1.0
+        blurMax: 128
+        saturation: 1.15
+      }
+      Rectangle {
+        anchors.fill: parent
+        color: "#82000000"
+      }
+    }
 
     Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
     Behavior on opacity { NumberAnimation { duration: 160 } }
@@ -79,70 +104,80 @@ PanelWindow {
       anchors.top: parent.top
       anchors.topMargin: 14
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 12
-
-      Rectangle {
+      Row {
         width: parent.width
-        height: 170
-        radius: Config.cardRadius
-        clip: true
-        color: Config.searchBg
-        ClippingRectangle {
-          anchors.fill: parent
-          radius: parent.radius
-          color: "transparent"
-          Image { anchors.fill: parent; source: root.artUrl; fillMode: Image.PreserveAspectCrop; asynchronous: true; cache: false; visible: root.artUrl.length > 0 }
+        height: 140
+        spacing: 16
+
+        Rectangle {
+          width: 120
+          height: 120
+          radius: Config.cardRadius
+          color: Config.searchBg
+          ClippingRectangle {
+            anchors.fill: parent
+            radius: parent.radius
+            color: "transparent"
+            Image { anchors.fill: parent; source: root.artUrl; fillMode: Image.PreserveAspectCrop; asynchronous: true; cache: false; visible: root.artUrl.length > 0 }
+          }
+          Text { anchors.centerIn: parent; visible: root.artUrl.length === 0; text: Config.iconPlay; color: Config.textMuted; font.pixelSize: 36; font.family: Config.fontIcon }
+          Rectangle { anchors.fill: parent; radius: parent.radius; color: "#00000000"; border.color: "#80ffffff"; border.width: 1 }
         }
-        Rectangle { anchors.fill: parent; color: "#50000000" }
-        Text { anchors.centerIn: parent; visible: root.artUrl.length === 0; text: Config.iconPlay; color: Config.textMuted; font.pixelSize: 44; font.family: Config.fontIcon }
-        Rectangle { anchors.fill: parent; radius: parent.radius; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
-      }
 
-      Column {
-        width: parent.width
-        spacing: 3
-        Text { width: parent.width; text: root.title || "Нет трека"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
-        Text { width: parent.width; text: root.artist || "Неизвестный артист"; color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; elide: Text.ElideRight }
-        Text { width: parent.width; text: root.album || ""; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; visible: text.length > 0 }
-      }
+        Column {
+          width: parent.width - 196
+          height: parent.height
+          spacing: 4
 
-      Rectangle {
-        width: parent.width
-        height: 5
-        radius: 3
-        color: Config.searchBg
-        Rectangle { width: parent.width * (root.durationSec > 0 ? Math.min(1, root.positionSec / root.durationSec) : 0); height: parent.height; radius: parent.radius; color: Config.textPrimary }
-      }
+          Item { width: 1; height: 6 }
+          Text { width: parent.width; text: root.title || "Нет трека"; color: "#ffffff"; font.pixelSize: Config.fontSizeTitle; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
+          Text { width: parent.width; text: root.artist || "Неизвестный артист"; color: "#e8ffffff"; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; elide: Text.ElideRight }
+          Text { width: parent.width; text: root.album || ""; color: "#b8ffffff"; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; visible: text.length > 0 }
+          Item { width: 1; height: 6 }
 
-      Row {
-        width: parent.width
-        Text { text: root.fmt(root.positionSec); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono }
-        Item { width: parent.width - 76; height: 1 }
-        Text { text: root.fmt(root.durationSec); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono }
-      }
+          Item {
+            width: parent.width
+            height: 16
+            Row {
+              anchors.left: parent.left
+              anchors.verticalCenter: parent.verticalCenter
+              spacing: 17
+              Repeater {
+                model: [
+                  { icon: Config.iconPrevTrack, action: "previous" },
+                  { icon: root.isPlaying ? Config.iconPause : Config.iconPlay, action: "play-pause", primary: true },
+                  { icon: Config.iconNextTrack, action: "next" }
+                ]
+                Rectangle {
+                  required property var modelData
+                  width: 36
+                  height: 36
+                  color: "transparent"
+                  Text { anchors.centerIn: parent; text: parent.modelData.icon; color: mediaButtonMouse.containsMouse ? "#c8ffffff" : "#ffffff"; font.pixelSize: Config.fontSizeIconLarge; font.family: Config.fontIcon }
+                  MouseArea { id: mediaButtonMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { if (!root.player) return; if (parent.modelData.action === "previous") MprisController.previousOrRewind(); else if (parent.modelData.action === "next") MprisController.next(); else if (root.player.canTogglePlaying) root.player.togglePlaying() } }
+                }
+              }
+            }
+          }
+          Item { width: 1; height: 5 }
 
-      Row {
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 12
-        Repeater {
-          model: [
-            { icon: Config.iconPrevTrack, action: "previous" },
-            { icon: root.isPlaying ? Config.iconPause : Config.iconPlay, action: "play-pause", primary: true },
-            { icon: Config.iconNextTrack, action: "next" }
-          ]
           Rectangle {
-            required property var modelData
-            width: modelData.primary ? 42 : 34
-            height: modelData.primary ? 42 : 34
-            radius: height / 2
-            color: mediaButtonMouse.containsMouse ? Config.activeHoverBg : (modelData.primary ? Config.selectedBg : Config.searchBg)
-            border.color: Config.borderColor
-            border.width: 1
-            Text { anchors.centerIn: parent; text: parent.modelData.icon; color: Config.textWhite; font.pixelSize: parent.modelData.primary ? Config.fontSizeIconLarge : Config.fontSizeIconMedium; font.family: Config.fontIcon }
-            MouseArea { id: mediaButtonMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { if (!root.player) return; if (parent.modelData.action === "previous") MprisController.previousOrRewind(); else if (parent.modelData.action === "next") MprisController.next(); else if (root.player.canTogglePlaying) root.player.togglePlaying() } }
+            width: parent.width
+            height: 5
+            radius: 3
+            color: "#55ffffff"
+            Rectangle { width: parent.width * (root.durationSec > 0 ? Math.min(1, root.positionSec / root.durationSec) : 0); height: parent.height; radius: parent.radius; color: "#ffffff" }
+          }
+
+          Item {
+            width: parent.width
+            height: 14
+            Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: root.fmt(root.positionSec); color: "#c8ffffff"; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono }
+            Text { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; text: root.fmt(root.durationSec); color: "#c8ffffff"; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono }
           }
         }
       }
+
     }
   }
 }

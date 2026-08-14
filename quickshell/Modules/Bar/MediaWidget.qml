@@ -15,6 +15,10 @@ Rectangle {
   readonly property string title: MprisController.stableTitle
   readonly property string artist: MprisController.stableArtist
   readonly property string artUrl: normalizeArtUrl(player && player.trackArtUrl ? player.trackArtUrl : "")
+  readonly property string trackLabel: {
+    if (artist && title) return artist + " — " + title
+    return title || artist
+  }
 
   visible: Config.musicVisualizerEnabled && root.hasMedia
   height: Config.buttonHeight
@@ -51,15 +55,33 @@ Rectangle {
       Rectangle { anchors.fill: parent; radius: parent.radius; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
     }
 
-    Text {
-      width: Math.min(150, implicitWidth)
-      text: root.title || root.artist
-      color: Config.textPrimary
-      font.pixelSize: Config.fontSizeSmall
-      font.weight: Font.Medium
-      font.family: Config.fontSans
-      elide: Text.ElideRight
+    Item {
+      id: trackViewport
+      width: Math.min(150, trackText.implicitWidth)
+      height: 22
+      clip: true
       anchors.verticalCenter: parent.verticalCenter
+
+      Text {
+        id: trackText
+        anchors.verticalCenter: parent.verticalCenter
+        text: root.trackLabel
+        color: Config.textPrimary
+        font.pixelSize: Config.fontSizeSmall
+        font.weight: Font.Medium
+        font.family: Config.fontSans
+      }
+
+      SequentialAnimation {
+        id: trackMarquee
+        running: trackText.implicitWidth > trackViewport.width
+        loops: Animation.Infinite
+        PauseAnimation { duration: 1200 }
+        NumberAnimation { target: trackText; property: "x"; from: 0; to: -(trackText.implicitWidth - trackViewport.width); duration: Math.max(1800, (trackText.implicitWidth - trackViewport.width) * 28); easing.type: Easing.InOutSine }
+        PauseAnimation { duration: 1000 }
+        NumberAnimation { target: trackText; property: "x"; to: 0; duration: Math.max(1200, (trackText.implicitWidth - trackViewport.width) * 20); easing.type: Easing.InOutSine }
+        onRunningChanged: if (!running) trackText.x = 0
+      }
     }
   }
 
