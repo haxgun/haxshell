@@ -35,7 +35,7 @@ Rectangle {
     if (root.ipc.title) names.push(root.ipc.title)
 
     for (let i = 0; i < names.length; i++) {
-      let entry = DesktopEntries.byId(names[i]) || DesktopEntries.heuristicLookup(names[i])
+      let entry = DesktopEntries.byId(names[i])
       if (entry) return entry
     }
 
