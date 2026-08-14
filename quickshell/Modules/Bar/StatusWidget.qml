@@ -494,7 +494,7 @@ Rectangle {
         anchors.topMargin: 4
         anchors.rightMargin: 4
         visible: notificationContainer.notificationCount > 0
-        color: Config.isLightTheme ? Config.textWhite : "#020617"
+        color: Config.dangerRed
         border.color: Config.textPrimary
         border.width: 1
       }
