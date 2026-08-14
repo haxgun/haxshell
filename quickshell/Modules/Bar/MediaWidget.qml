@@ -14,7 +14,7 @@ Rectangle {
   readonly property bool isPlaying: player && player.isPlaying
   readonly property string title: MprisController.stableTitle
   readonly property string artist: MprisController.stableArtist
-  readonly property string artUrl: normalizeArtUrl(player && player.trackArtUrl ? player.trackArtUrl : "")
+  readonly property string artUrl: normalizeArtUrl(MprisController.stableArtUrl)
   readonly property string trackLabel: {
     if (artist && title) return artist + " — " + title
     return title || artist

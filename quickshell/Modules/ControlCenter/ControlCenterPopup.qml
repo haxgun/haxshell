@@ -40,7 +40,7 @@ PanelWindow {
   readonly property bool isPlaying: mediaPlayer && mediaPlayer.isPlaying
   readonly property string mediaArtist: MprisController.stableArtist
   readonly property string mediaTitle: MprisController.stableTitle
-  readonly property string mediaArtUrl: normalizeArtUrl(mediaPlayer && mediaPlayer.trackArtUrl ? mediaPlayer.trackArtUrl : "")
+  readonly property string mediaArtUrl: normalizeArtUrl(MprisController.stableArtUrl)
 
   readonly property string hushctl: Config.hushctl
   readonly property var adapter: Bluetooth.defaultAdapter

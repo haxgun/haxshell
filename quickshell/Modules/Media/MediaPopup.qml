@@ -18,7 +18,7 @@ PanelWindow {
   readonly property string artist: MprisController.stableArtist
   readonly property string album: MprisController.stableAlbum
   readonly property string title: MprisController.stableTitle
-  readonly property string artUrl: normalizeArtUrl(player && player.trackArtUrl ? player.trackArtUrl : "")
+  readonly property string artUrl: normalizeArtUrl(MprisController.stableArtUrl)
   readonly property int positionSec: player ? Math.floor(player.position) : 0
   readonly property int durationSec: Math.floor(MprisController.stableLength)
 

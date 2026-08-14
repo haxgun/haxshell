@@ -16,9 +16,13 @@ Singleton {
   property string stableTitle: ""
   property string stableArtist: ""
   property string stableAlbum: ""
+  property string stableArtUrl: ""
 
   onAvailablePlayersChanged: resolveActivePlayer()
-  onActivePlayerChanged: syncMetadata()
+  onActivePlayerChanged: {
+    stableArtUrl = ""
+    syncMetadata()
+  }
   Component.onCompleted: resolveActivePlayer()
 
   Connections {
@@ -26,6 +30,7 @@ Singleton {
     function onTrackTitleChanged() { root.syncMetadata() }
     function onTrackArtistChanged() { root.syncMetadata() }
     function onTrackAlbumChanged() { root.syncMetadata() }
+    function onTrackArtUrlChanged() { root.syncMetadata() }
     function onLengthChanged() { root.syncMetadata() }
     function onLengthSupportedChanged() { root.syncMetadata() }
     function onPlaybackStateChanged() { root.resolveActivePlayer(); root.syncMetadata() }
@@ -41,6 +46,7 @@ Singleton {
       function onTrackTitleChanged() { root.resolveActivePlayer(); root.syncMetadata() }
       function onTrackArtistChanged() { root.resolveActivePlayer(); root.syncMetadata() }
       function onTrackAlbumChanged() { root.syncMetadata() }
+      function onTrackArtUrlChanged() { root.syncMetadata() }
       function onMetadataChanged() { root.resolveActivePlayer(); root.syncMetadata() }
     }
   }
@@ -74,12 +80,14 @@ Singleton {
       stableTitle = ""
       stableArtist = ""
       stableAlbum = ""
+      stableArtUrl = ""
       stableLength = 0
       return
     }
     if (player.trackTitle) stableTitle = player.trackTitle
     if (player.trackArtist) stableArtist = player.trackArtist
     if (player.trackAlbum) stableAlbum = player.trackAlbum
+    if (player.trackArtUrl) stableArtUrl = player.trackArtUrl
     stableLength = player.lengthSupported && player.length > 1 ? player.length : 0
   }
 
