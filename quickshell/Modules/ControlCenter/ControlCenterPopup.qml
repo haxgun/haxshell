@@ -34,7 +34,9 @@ PanelWindow {
   property bool caffeineEnabled: false
   property string nightLightBackend: ""
   property bool nightLightEnabled: false
-  readonly property string userName: Quickshell.env("USER") || "Пользователь"
+  property int sysCpuPercent: 0
+  property int sysRamPercent: 0
+  property int sysDiskPercent: 0
   readonly property var mediaPlayer: MprisController.activePlayer
   readonly property bool hasMedia: mediaPlayer && !MprisController.isIdle(mediaPlayer)
   readonly property bool isPlaying: mediaPlayer && mediaPlayer.isPlaying
@@ -99,6 +101,11 @@ PanelWindow {
     }
   }
 
+  SystemClock {
+    id: clock
+    precision: Config.showSeconds ? SystemClock.Seconds : SystemClock.Minutes
+  }
+
   Process {
     id: brightnessProc
     command: [root.hushctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
@@ -127,6 +134,13 @@ PanelWindow {
     stdout: SplitParser { onRead: data => root.applyCaffeineState(data) }
   }
 
+  Process {
+    id: sysProc
+    command: [root.hushctl, "sys"]
+    running: true
+    stdout: SplitParser { onRead: data => root.applySystemState(data) }
+  }
+
   Process { id: actionProc }
 
   Process {
@@ -141,6 +155,7 @@ PanelWindow {
     refreshAudio()
     refreshBattery()
     refreshCaffeine()
+    refreshSystem()
   }
 
   function restart(process, command) {
@@ -153,6 +168,7 @@ PanelWindow {
   function refreshAudio() { restart(audioProc, [hushctl, "audio", "get"]) }
   function refreshBattery() { restart(batteryProc, [hushctl, "battery"]) }
   function refreshCaffeine() { restart(caffeineProc, [hushctl, "caffeine", "state"]) }
+  function refreshSystem() { restart(sysProc, [hushctl, "sys"]) }
 
   function applyBrightnessState(data) {
     try {
@@ -184,6 +200,15 @@ PanelWindow {
 
   function applyCaffeineState(data) {
     try { caffeineEnabled = !!JSON.parse(data).enabled } catch(e) {}
+  }
+
+  function applySystemState(data) {
+    try {
+      let state = JSON.parse(data)
+      sysCpuPercent = state.cpu || 0
+      sysRamPercent = state.ram_pct || 0
+      sysDiskPercent = state.root_disk && state.root_disk.exists ? state.root_disk.percent || 0 : 0
+    } catch(e) {}
   }
 
   function run(command) { restart(actionProc, command) }
@@ -233,6 +258,15 @@ PanelWindow {
     Config.themeName = theme
     SettingsStore.setValue("themeName", theme)
   }
+  function takeScreenshot() {
+    let delay = root.isOpen ? "0.5" : "0"
+    root.isOpen = false
+    if (CompositorService.backend === "niri") {
+      run(["sh", "-lc", "sleep " + delay + " && mkdir -p \"$HOME/Pictures\" && niri msg action screenshot --path \"$HOME/Pictures/Screenshot-$(date +%Y%m%d-%H%M%S).png\""])
+    } else {
+      run(["sh", "-lc", "sleep " + delay + " && mkdir -p \"$HOME/Pictures\" && grim \"$HOME/Pictures/Screenshot-$(date +%Y%m%d-%H%M%S).png\""])
+    }
+  }
   function normalizeArtUrl(value) {
     let url = (value || "").trim()
     if (url.length === 0) return ""
@@ -249,9 +283,11 @@ PanelWindow {
     id: container
     width: 410
     height: Math.min(content.implicitHeight + 28, root.height - 32)
-    anchors.right: parent.right
+    anchors.left: Config.popupsAtLeft ? parent.left : undefined
+    anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
+    anchors.right: Config.popupsAtLeft ? undefined : parent.right
     anchors.rightMargin: root.rightMargin
-    y: root.isOpen ? Config.dropdownTopGap : -12
+    y: root.isOpen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
     color: Config.popupGlassBg
@@ -261,7 +297,7 @@ PanelWindow {
     Behavior on opacity { NumberAnimation { duration: 160 } }
 
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
-    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
+    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
     Column {
       id: content
@@ -273,23 +309,127 @@ PanelWindow {
 
       Row {
         width: parent.width
-        height: 42
+        height: 56
         spacing: 8
-        Rectangle {
-          width: 40; height: 40; radius: 20; color: Config.selectedBg; border.color: Config.activeBorderColor; border.width: 1
-          Text { anchors.centerIn: parent; text: root.userName.charAt(0).toUpperCase(); color: Config.textWhite; font.pixelSize: Config.fontSizeMedium; font.weight: Font.Bold; font.family: Config.fontSans }
+
+        Column {
+          width: parent.width - 138
+          anchors.verticalCenter: parent.verticalCenter
+          spacing: 1
+          Text { text: Config.formatBarTime(clock.date); color: Config.textPrimary; font.pixelSize: 30; font.weight: Font.Bold; font.family: Config.fontSans }
+          Text { text: Config.formatLongDate(clock.date); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
         }
-        Text { width: 180; text: root.userName; color: Config.textWhite; font.pixelSize: Config.fontSizeMedium; font.weight: Font.Bold; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter; elide: Text.ElideRight }
-        Item { width: parent.width - 328; height: 1 }
         Rectangle {
-          width: 38; height: 38; radius: 10; color: settingsMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg; border.color: Config.borderColor; border.width: 1
+          width: 38; height: 38; radius: 19; anchors.verticalCenter: parent.verticalCenter; color: settingsMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
           Text { anchors.centerIn: parent; text: Config.iconSettings; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
           MouseArea { id: settingsMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openPopup(root.settingsPopup) }
         }
         Rectangle {
-          width: 38; height: 38; radius: 10; color: powerMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg; border.color: Config.borderColor; border.width: 1
+          width: 38; height: 38; radius: 19; anchors.verticalCenter: parent.verticalCenter; color: themeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+          Text { anchors.centerIn: parent; text: Config.iconTheme; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+          MouseArea { id: themeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.toggleTheme() }
+        }
+        Rectangle {
+          width: 38; height: 38; radius: 19; anchors.verticalCenter: parent.verticalCenter; color: powerMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
           Text { anchors.centerIn: parent; text: Config.iconPower; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
           MouseArea { id: powerMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openPopup(root.powerPopup) }
+        }
+      }
+
+      Column {
+        width: parent.width
+        spacing: 8
+        Row {
+          width: parent.width
+          spacing: 8
+          QuickControlTile { icon: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected; title: "Wi-Fi"; subtitle: root.wifiSubtitle(); active: Networking.wifiEnabled; onToggled: root.toggleWifi(); onDetailsRequested: root.openPopup(root.wifiPopup) }
+          QuickControlTile { icon: Config.iconBluetooth; title: "Bluetooth"; subtitle: root.bluetoothSubtitle(); active: root.adapter && root.adapter.enabled; onToggled: root.toggleBluetooth(); onDetailsRequested: root.openPopup(root.bluetoothPopup) }
+        }
+        Row {
+          width: parent.width
+          spacing: 8
+          QuickControlTile { icon: Config.iconNotificationsActive; title: "Не беспокоить"; subtitle: NotificationService.doNotDisturb ? "Включено" : "Выключено"; active: NotificationService.doNotDisturb; onToggled: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb); onDetailsRequested: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb) }
+          QuickControlTile { icon: Config.iconCoffee; title: "Не спать"; subtitle: root.caffeineEnabled ? "Включено" : "Выключено"; active: root.caffeineEnabled; onToggled: root.toggleCaffeine(); onDetailsRequested: root.toggleCaffeine() }
+        }
+        QuickControlTile { wide: true; icon: "󰹑"; title: "Снимок экрана"; subtitle: "Полный снимок экрана"; onToggled: root.takeScreenshot(); onDetailsRequested: root.takeScreenshot() }
+      }
+
+      Column {
+        width: parent.width
+        spacing: 8
+        QuickControlSlider { width: parent.width; value: root.sinkMuted ? 0 : root.sinkVolume; minimumIcon: root.volumeIcon(); onValueEdited: value => root.setAudio("set-sink-volume", value) }
+        QuickControlSlider { width: parent.width; value: root.brightnessPercent; minimumIcon: root.brightnessIcon(); onValueEdited: value => root.setBrightness(value) }
+      }
+
+      Rectangle {
+        width: parent.width
+        height: 72
+        radius: Config.cardRadius
+        color: Config.controlIdleBg
+
+        Row {
+          anchors.centerIn: parent
+          spacing: 0
+
+          Item {
+            width: 120
+            height: 52
+            Column {
+              anchors.centerIn: parent
+              spacing: 4
+              Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 5
+                Text { text: Config.iconCpu; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+                Text { text: root.sysCpuPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeMedium; font.weight: Font.Bold; font.family: Config.fontMono }
+              }
+              Rectangle {
+                width: 30; height: 3; radius: 2; anchors.horizontalCenter: parent.horizontalCenter; color: Config.separatorColor
+                Rectangle { width: parent.width * root.sysCpuPercent / 100; height: parent.height; radius: parent.radius; color: Config.themeAccent }
+              }
+              Text { text: "CPU"; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontSans; anchors.horizontalCenter: parent.horizontalCenter }
+            }
+          }
+          Rectangle { width: 1; height: 40; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+          Item {
+            width: 120
+            height: 52
+            Column {
+              anchors.centerIn: parent
+              spacing: 4
+              Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 5
+                Text { text: Config.iconRam; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+                Text { text: root.sysRamPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeMedium; font.weight: Font.Bold; font.family: Config.fontMono }
+              }
+              Rectangle {
+                width: 30; height: 3; radius: 2; anchors.horizontalCenter: parent.horizontalCenter; color: Config.separatorColor
+                Rectangle { width: parent.width * root.sysRamPercent / 100; height: parent.height; radius: parent.radius; color: Config.themeAccent }
+              }
+              Text { text: "RAM"; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontSans; anchors.horizontalCenter: parent.horizontalCenter }
+            }
+          }
+          Rectangle { width: 1; height: 40; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+          Item {
+            width: 120
+            height: 52
+            Column {
+              anchors.centerIn: parent
+              spacing: 4
+              Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 5
+                Text { text: Config.iconDisk; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+                Text { text: root.sysDiskPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeMedium; font.weight: Font.Bold; font.family: Config.fontMono }
+              }
+              Rectangle {
+                width: 30; height: 3; radius: 2; anchors.horizontalCenter: parent.horizontalCenter; color: Config.separatorColor
+                Rectangle { width: parent.width * root.sysDiskPercent / 100; height: parent.height; radius: parent.radius; color: Config.themeAccent }
+              }
+              Text { text: "Диск"; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontSans; anchors.horizontalCenter: parent.horizontalCenter }
+            }
+          }
         }
       }
 
@@ -301,47 +441,28 @@ PanelWindow {
           Text { anchors.centerIn: parent; visible: root.mediaArtUrl.length === 0; text: Config.iconMusic; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
         }
         Column {
-          anchors.left: parent.left; anchors.leftMargin: 62; anchors.right: mediaButton.left; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+          anchors.left: parent.left; anchors.leftMargin: 62; anchors.right: mediaControls.left; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; spacing: 3
           Text { width: parent.width; text: root.hasMedia ? (root.mediaTitle || "Музыка") : "Музыка"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
           Text { width: parent.width; text: root.hasMedia ? (root.mediaArtist || "Неизвестный исполнитель") : "Нет активного плеера"; color: Config.textMuted; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight }
         }
-        Rectangle {
-          id: mediaButton
-          width: 36; height: 36; radius: 9; anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; color: mediaMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
-          Text { anchors.centerIn: parent; text: root.isPlaying ? Config.iconPause : Config.iconPlay; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-          MouseArea { id: mediaMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.mediaPlayer && root.mediaPlayer.canTogglePlaying) root.mediaPlayer.togglePlaying() }
-        }
-      }
-
-      Grid {
-        width: parent.width
-        columns: 2
-        columnSpacing: 8
-        rowSpacing: 8
-        QuickControlTile { icon: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected; title: "Wi-Fi"; subtitle: root.wifiSubtitle(); active: Networking.wifiEnabled; onToggled: root.toggleWifi(); onDetailsRequested: root.openPopup(root.wifiPopup) }
-        QuickControlTile { icon: Config.iconBluetooth; title: "Bluetooth"; subtitle: root.bluetoothSubtitle(); active: root.adapter && root.adapter.enabled; onToggled: root.toggleBluetooth(); onDetailsRequested: root.openPopup(root.bluetoothPopup) }
-        QuickControlTile { icon: Config.iconCoffee; title: "Не спать"; subtitle: root.caffeineEnabled ? "Включено" : "Выключено"; active: root.caffeineEnabled; onToggled: root.toggleCaffeine(); onDetailsRequested: root.toggleCaffeine() }
-        QuickControlTile { icon: Config.iconNotificationsActive; title: "Не беспокоить"; subtitle: NotificationService.doNotDisturb ? "Включено" : "Выключено"; active: NotificationService.doNotDisturb; onToggled: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb); onDetailsRequested: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb) }
-        QuickControlTile { visible: root.nightLightAvailable; icon: Config.iconMoon; title: "Ночной свет"; subtitle: root.nightLightEnabled ? "Включён" : "Выключен"; active: root.nightLightEnabled; onToggled: root.toggleNightLight(); onDetailsRequested: root.toggleNightLight() }
-        QuickControlTile { visible: root.wifiDevice || root.adapter; icon: Config.iconAirplane; title: "Авиарежим"; subtitle: root.airplaneModeEnabled ? "Включён" : "Выключен"; active: root.airplaneModeEnabled; onToggled: root.toggleAirplaneMode(); onDetailsRequested: root.toggleAirplaneMode() }
-        QuickControlTile { icon: Config.isLightTheme ? Config.iconSun : Config.iconMoon; title: "Тема"; subtitle: Config.isLightTheme ? "Светлая" : "Тёмная"; active: Config.isLightTheme; onToggled: root.toggleTheme(); onDetailsRequested: root.toggleTheme() }
-        QuickControlTile { icon: root.powerProfile === "performance" ? Config.iconPerformance : (root.powerProfile === "power-saver" ? Config.iconPowerSaver : Config.iconBalanced); title: "Режим питания"; subtitle: root.profileName(root.powerProfile); active: root.powerProfile !== "balanced"; onToggled: root.cyclePowerProfile(); onDetailsRequested: root.cyclePowerProfile() }
-      }
-
-      Column {
-        width: parent.width
-        spacing: 8
-        Rectangle {
-          width: parent.width; height: 68; radius: Config.cardRadius; color: Config.searchBg; border.color: Config.borderColor; border.width: 1
-          Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 10; text: "Громкость"; color: Config.textMuted; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.7 }
-          Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 10; text: root.sinkMuted ? "Выкл." : root.sinkVolume + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontMono }
-          QuickControlSlider { anchors.left: parent.left; anchors.leftMargin: 12; anchors.right: parent.right; anchors.rightMargin: 12; anchors.bottom: parent.bottom; anchors.bottomMargin: 9; value: root.sinkVolume; minimumIcon: Config.iconVolLow; maximumIcon: Config.iconVolHigh; onValueEdited: value => root.setAudio("set-sink-volume", value) }
-        }
-        Rectangle {
-          width: parent.width; height: 68; radius: Config.cardRadius; color: Config.searchBg; border.color: Config.borderColor; border.width: 1
-          Text { anchors.left: parent.left; anchors.leftMargin: 12; anchors.top: parent.top; anchors.topMargin: 10; text: "Яркость"; color: Config.textMuted; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.7 }
-          Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.top: parent.top; anchors.topMargin: 10; text: root.brightnessPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontMono }
-          QuickControlSlider { anchors.left: parent.left; anchors.leftMargin: 12; anchors.right: parent.right; anchors.rightMargin: 12; anchors.bottom: parent.bottom; anchors.bottomMargin: 9; value: root.brightnessPercent; minimumIcon: Config.iconBrightLow; maximumIcon: Config.iconBrightHigh; onValueEdited: value => root.setBrightness(value) }
+        Row {
+          id: mediaControls
+          anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; spacing: 4
+          Rectangle {
+            width: 30; height: 30; radius: 8; color: prevMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+            Text { anchors.centerIn: parent; text: Config.iconPrevTrack; color: root.hasMedia ? Config.textPrimary : Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+            MouseArea { id: prevMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: MprisController.previousOrRewind() }
+          }
+          Rectangle {
+            width: 30; height: 30; radius: 8; color: mediaMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+            Text { anchors.centerIn: parent; text: root.isPlaying ? Config.iconPause : Config.iconPlay; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+            MouseArea { id: mediaMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (root.mediaPlayer && root.mediaPlayer.canTogglePlaying) root.mediaPlayer.togglePlaying() }
+          }
+          Rectangle {
+            width: 30; height: 30; radius: 8; color: nextMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+            Text { anchors.centerIn: parent; text: Config.iconNextTrack; color: root.hasMedia ? Config.textPrimary : Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+            MouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: MprisController.next() }
+          }
         }
       }
     }

@@ -12,73 +12,65 @@ Item {
   property string maximumIcon: ""
   signal valueEdited(int value)
 
-  implicitHeight: 34
+  implicitHeight: 48
 
   function setFromPosition(position) {
     let ratio = Math.max(0, Math.min(1, position / Math.max(track.width, 1)))
     valueEdited(Math.round(from + ratio * (to - from)))
   }
 
-  Text {
-    id: minimumIconText
-    anchors.left: parent.left
-    anchors.verticalCenter: parent.verticalCenter
-    width: 24
-    horizontalAlignment: Text.AlignHCenter
-    text: root.minimumIcon
-    color: Config.textMuted
-    font.pixelSize: Config.fontSizeIconMedium
-    font.family: Config.fontIcon
-  }
-
   Rectangle {
-    id: track
-    anchors.left: minimumIconText.right
-    anchors.leftMargin: 8
-    anchors.right: maximumIconText.left
-    anchors.rightMargin: 8
-    anchors.verticalCenter: parent.verticalCenter
-    height: 4
-    radius: 2
-    color: Config.separatorColor
+    anchors.fill: parent
+    radius: height / 2
+    color: Config.controlIdleBg
 
     Rectangle {
-      width: Math.max(0, handle.x + handle.width / 2)
-      height: parent.height
-      radius: parent.radius
-      color: Config.themeAccent
-    }
-
-    Rectangle {
-      id: handle
-      width: 12
-      height: 12
-      radius: 6
-      x: (root.value - root.from) / Math.max(root.to - root.from, 1) * (track.width - width)
+      id: track
+      anchors.left: parent.left
+      anchors.leftMargin: 48
+      anchors.right: valueText.left
+      anchors.rightMargin: 12
       anchors.verticalCenter: parent.verticalCenter
-      color: Config.textWhite
-      border.color: Config.themeAccent
-      border.width: 2
+      height: parent.height - 10
+      radius: height / 2
+      color: Config.searchBg
+
+      Rectangle {
+        width: Math.max(0, parent.width * (root.value - root.from) / Math.max(root.to - root.from, 1))
+        height: parent.height
+        radius: parent.radius
+        color: Config.selectedBg
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        anchors.margins: -8
+        cursorShape: Qt.PointingHandCursor
+        onPressed: mouse => root.setFromPosition(mouse.x + anchors.margins)
+        onPositionChanged: mouse => { if (pressed) root.setFromPosition(mouse.x + anchors.margins) }
+      }
     }
 
-    MouseArea {
-      anchors.fill: parent
-      anchors.margins: -8
-      cursorShape: Qt.PointingHandCursor
-      onPressed: mouse => root.setFromPosition(mouse.x + anchors.margins)
-      onPositionChanged: mouse => { if (pressed) root.setFromPosition(mouse.x + anchors.margins) }
+    Text {
+      anchors.left: parent.left
+      anchors.leftMargin: 16
+      anchors.verticalCenter: parent.verticalCenter
+      text: root.minimumIcon
+      color: Config.textPrimary
+      font.pixelSize: Config.fontSizeIconMedium
+      font.family: Config.fontIcon
     }
-  }
 
-  Text {
-    id: maximumIconText
-    anchors.right: parent.right
-    anchors.verticalCenter: parent.verticalCenter
-    width: 24
-    horizontalAlignment: Text.AlignHCenter
-    text: root.maximumIcon
-    color: Config.textMuted
-    font.pixelSize: Config.fontSizeIconMedium
-    font.family: Config.fontIcon
+    Text {
+      id: valueText
+      anchors.right: parent.right
+      anchors.rightMargin: 16
+      anchors.verticalCenter: parent.verticalCenter
+      text: root.value + "%"
+      color: Config.textPrimary
+      font.pixelSize: Config.fontSizeSmall
+      font.weight: Font.Bold
+      font.family: Config.fontMono
+    }
   }
 }

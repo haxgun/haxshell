@@ -1,5 +1,6 @@
 // MediaPopup.qml - detailed MPRIS now-playing controls
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -20,8 +21,6 @@ PanelWindow {
   readonly property string artUrl: normalizeArtUrl(MprisController.stableArtUrl)
   readonly property int positionSec: player ? Math.floor(player.position) : 0
   readonly property int durationSec: Math.floor(MprisController.stableLength)
-  property color artworkPrimary: Config.popupGlassBg
-  property color artworkSecondary: Config.popupGlassBg
 
   visible: isOpen || container.opacity > 0.01
   WlrLayershell.namespace: "quickshell-bar"
@@ -54,23 +53,15 @@ PanelWindow {
     return m + ":" + (s < 10 ? "0" + s : s)
   }
 
-  function resetArtworkColors() {
-    artworkPrimary = Config.popupGlassBg
-    artworkSecondary = Config.popupGlassBg
-  }
-
-  onArtUrlChanged: {
-    resetArtworkColors()
-    if (artUrl.length > 0) artworkPalette.loadImage(artUrl)
-  }
-
   Rectangle {
     id: container
     width: 390
     implicitHeight: content.implicitHeight + content.anchors.topMargin * 2
-    anchors.right: parent.right
+    anchors.left: Config.popupsAtLeft ? parent.left : undefined
+    anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
+    anchors.right: Config.popupsAtLeft ? undefined : parent.right
     anchors.rightMargin: root.rightMargin
-    y: root.isOpen ? Config.dropdownTopGap : -12
+    y: root.isOpen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
     color: Config.popupGlassBg
@@ -80,75 +71,28 @@ PanelWindow {
       radius: parent.radius
       color: Config.popupGlassBg
 
-      Canvas {
-        id: artworkPalette
-        width: 32
-        height: 32
+      Image {
+        id: backgroundArtwork
+        anchors.fill: parent
+        source: root.artUrl
+        fillMode: Image.PreserveAspectCrop
+        asynchronous: true
+        cache: false
         visible: false
-        renderTarget: Canvas.Image
-        Component.onCompleted: if (root.artUrl.length > 0) loadImage(root.artUrl)
-        onImageLoaded: requestPaint()
-
-        onPaint: {
-          if (!root.artUrl || !isImageLoaded(root.artUrl)) return
-
-          let context = getContext("2d")
-          context.clearRect(0, 0, width, height)
-          context.drawImage(root.artUrl, 0, 0, width, height)
-          let pixels = context.getImageData(0, 0, width, height).data
-          let buckets = {}
-
-          for (let i = 0; i < pixels.length; i += 4) {
-            if (pixels[i + 3] < 192) continue
-            let key = Math.floor(pixels[i] / 32) + ":" + Math.floor(pixels[i + 1] / 32) + ":" + Math.floor(pixels[i + 2] / 32)
-            let bucket = buckets[key]
-            if (!bucket) bucket = buckets[key] = { count: 0, red: 0, green: 0, blue: 0 }
-            bucket.count += 1
-            bucket.red += pixels[i]
-            bucket.green += pixels[i + 1]
-            bucket.blue += pixels[i + 2]
-          }
-
-          let primary = null
-          let secondary = null
-          let keys = Object.keys(buckets)
-          for (let i = 0; i < keys.length; i++) {
-            let bucket = buckets[keys[i]]
-            if (!primary || bucket.count > primary.count) primary = bucket
-          }
-          if (!primary) return
-
-          let primaryRed = primary.red / primary.count
-          let primaryGreen = primary.green / primary.count
-          let primaryBlue = primary.blue / primary.count
-          for (let i = 0; i < keys.length; i++) {
-            let bucket = buckets[keys[i]]
-            let red = bucket.red / bucket.count
-            let green = bucket.green / bucket.count
-            let blue = bucket.blue / bucket.count
-            let distance = Math.abs(red - primaryRed) + Math.abs(green - primaryGreen) + Math.abs(blue - primaryBlue)
-            if (distance >= 48 && (!secondary || bucket.count > secondary.count)) secondary = bucket
-          }
-
-          root.artworkPrimary = Qt.rgba(primaryRed / 255, primaryGreen / 255, primaryBlue / 255, 1)
-          root.artworkSecondary = secondary
-            ? Qt.rgba(secondary.red / secondary.count / 255, secondary.green / secondary.count / 255, secondary.blue / secondary.count / 255, 1)
-            : root.artworkPrimary
-        }
       }
-
-      Rectangle {
+      MultiEffect {
         anchors.fill: parent
+        source: backgroundArtwork
         visible: root.artUrl.length > 0
-        gradient: Gradient {
-          GradientStop { position: 0.0; color: root.artworkPrimary }
-          GradientStop { position: 1.0; color: root.artworkSecondary }
-        }
+        blurEnabled: true
+        blur: 1.0
+        blurMax: 128
+        saturation: 1.15
       }
 
       Rectangle {
         anchors.fill: parent
-        color: "#8a000000"
+        color: "#82000000"
       }
     }
 
@@ -156,7 +100,7 @@ PanelWindow {
     Behavior on opacity { NumberAnimation { duration: 160 } }
 
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
-    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
+    Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
     Column {
       id: content

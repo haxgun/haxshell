@@ -20,7 +20,7 @@ Rectangle {
     return title || artist
   }
 
-  visible: Config.musicVisualizerEnabled && root.hasMedia
+  visible: root.hasMedia
   height: Config.buttonHeight
   implicitWidth: mediaRow.implicitWidth + 12
   radius: Config.buttonRadius
