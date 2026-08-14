@@ -14,12 +14,12 @@
 
 ## Features
 
-- Bar placement at the top, bottom, left, or right edge.
-- Workspace switcher and focused application indicator.
-- Popups for Wi-Fi, Bluetooth, brightness, audio, battery, calendar, media, and power.
-- Compact control center with quick settings, real-time brightness and volume sliders, power profiles, theme, airplane mode, and media controls.
+- Bar placement at the top, bottom, left, or right edge with configurable margins.
+- Workspace switcher, focused application indicator, and a weather widget on the bar.
+- Popups for Wi-Fi, Bluetooth, brightness, audio, battery, calendar, media, power, and settings, anchored to the bar so they follow its position on any edge.
+- Compact control center with pill quick actions (Wi-Fi, Bluetooth, Do Not Disturb, keep screen on), a screenshot button, brightness and volume sliders, CPU/RAM/disk stats, power profiles, theme, and media controls with track switching.
 - Separate speaker and microphone volume controls with PipeWire device selection.
-- Shared MPRIS controller with album artwork, live playback progress, and bar metadata.
+- Shared MPRIS controller with album artwork, live playback progress, bar metadata, and a media popup with a blurred artwork backdrop.
 - Notification toasts and notification center.
 - Wallpaper picker with extracted color palettes and a dynamic theme that colors shell surfaces from the current wallpaper.
 - Persistent settings for the theme, bar, fonts, notifications, OSD, wallpaper behavior, and shell appearance.
@@ -66,6 +66,12 @@ The included installer targets Arch Linux. It installs repository and AUR depend
 ./install.sh
 ```
 
+For Niri, install the event-driven `qml-niri` integration as a required dependency:
+
+```bash
+./install.sh --compositor niri
+```
+
 `yay` or `paru` is required when Vicinae is not installed because it is installed from the AUR.
 
 ## Build `hushctl`
@@ -82,7 +88,8 @@ Rebuild the utility and restart Quickshell after changing files under `core/`.
 
 - Shared configuration is in `quickshell/Common/Config.qml`.
 - User settings are persisted by `quickshell/Common/SettingsStore.qml` in `quickshell/settings.json`.
-- Appearance settings: blur, borders, shadows, palette, typography, bar geometry, notifications, OSD, and wallpaper rotation are available from the Settings popup.
+- Appearance settings: blur, borders, shadows, palette, typography, bar geometry and margins, popup positioning, notifications, OSD, and wallpaper rotation are available from the Settings popup.
+- Screenshots are taken with the compositor tooling (`niri msg action screenshot` on Niri, `grim` on Hyprland).
 - Dynamic theme stores the extracted wallpaper palette in `dynamicPalette` and applies it to shell surfaces, controls, borders, tracks, and workspace indicators.
 
 ## Verification
