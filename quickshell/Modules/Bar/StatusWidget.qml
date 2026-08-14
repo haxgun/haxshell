@@ -71,7 +71,7 @@ Rectangle {
 
   function positionPopupFor(name, item, popup) {
     if (!item || !popup) return
-    if (name !== "system" && name !== "controlCenter") {
+    if (name !== "system") {
       popup.rightMargin = 16
       return
     }
@@ -882,29 +882,73 @@ Rectangle {
 
     Rectangle {
       id: dateTimeContainer
-      height: Config.buttonHeight
-      implicitWidth: root.vertical ? 58 : dateTimeText.implicitWidth + 14
-      radius: Config.buttonRadius
+      height: 24
+      implicitWidth: root.vertical ? 58 : dateTimeRow.implicitWidth + 16
+      radius: 8
+      visible: Config.barDateTimeEnabled || (Config.weatherEnabled && Config.barWeatherEnabled)
       readonly property bool isCalendarActive: root.calendarPopup && root.calendarPopup.isOpen
-      color: (isCalendarActive || dateTimeMouse.containsMouse) ? Config.activeHoverBg : "#00000000"
+      color: (isCalendarActive || dateTimeMouse.containsMouse) ? Config.activeHoverBg : Config.controlIdleBg
+      border.color: Config.barBorderColor
+      border.width: Config.barBordersEnabled ? 1 : 0
 
       Behavior on color { ColorAnimation { duration: 150 } }
 
-      Text {
-        id: dateTimeText
+      Row {
+        id: dateTimeRow
         anchors.centerIn: parent
-        text: root.vertical ? Config.formatTime24(statusClock.date) : Config.formatBarDateTimeRu(statusClock.date)
-        color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.textPrimary
-        font.pixelSize: Config.fontSizeNormal
-        font.weight: Font.Medium
-        font.family: Config.fontSans
+        spacing: 8
+
+        Item {
+          visible: !root.vertical && Config.barDateTimeEnabled
+          width: clockIcon.implicitWidth
+          height: 20
+          anchors.verticalCenter: parent.verticalCenter
+
+          Text {
+            id: clockIcon
+            anchors.centerIn: parent
+            text: Config.iconClock
+            color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.textMuted
+            font.pixelSize: Config.fontSizeIconSmall
+            font.family: Config.fontIcon
+          }
+        }
+
+        Text {
+          visible: Config.barDateTimeEnabled
+          height: 20
+          text: root.vertical ? Config.formatTime24(statusClock.date) : Config.formatBarDateTimeRu(statusClock.date)
+          color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+          font.pixelSize: Config.fontSizeSmall
+          font.weight: Font.Medium
+          font.family: Config.fontSans
+          verticalAlignment: Text.AlignVCenter
+          anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Rectangle {
+          visible: !root.vertical && Config.barDateTimeEnabled && weatherWidget.visible
+          width: 1
+          height: 16
+          color: Config.separatorColor
+          anchors.verticalCenter: parent.verticalCenter
+        }
+
+        WeatherWidget {
+          id: weatherWidget
+          visible: !root.vertical && Config.weatherEnabled && Config.barWeatherEnabled
+          embedded: true
+          iconOnRight: true
+          anchors.verticalCenter: parent.verticalCenter
+        }
       }
 
       MouseArea {
         id: dateTimeMouse
         anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
+        enabled: Config.barDateTimeEnabled
+        hoverEnabled: enabled
+        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {
           if (root.calendarPopup) {
             root.positionPopupFor("calendar", dateTimeContainer, root.calendarPopup)
@@ -946,6 +990,7 @@ Rectangle {
       width: pickerIcon.implicitWidth + root.iconButtonPadding * 2
       height: Config.buttonHeight
       radius: Config.buttonRadius
+      visible: Config.barColorPickerEnabled
       color: pickerMouse.containsMouse ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }

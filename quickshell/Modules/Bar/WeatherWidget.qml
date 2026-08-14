@@ -8,11 +8,14 @@ Rectangle {
   id: root
 
   property string weatherText: "--"
+  property int weatherCode: -1
+  property bool embedded: false
+  property bool iconOnRight: false
   visible: Config.weatherEnabled
-  implicitWidth: weatherRow.implicitWidth + 12
+  implicitWidth: weatherRow.implicitWidth + (embedded ? 0 : 12)
   implicitHeight: Config.buttonHeight
   radius: Config.buttonRadius
-  color: weatherMouse.containsMouse ? Config.hoverBg : "#00000000"
+  color: embedded ? "#00000000" : (weatherMouse.containsMouse ? Config.hoverBg : "#00000000")
 
   Process {
     id: weatherProc
@@ -24,6 +27,7 @@ Rectangle {
         try {
           let weather = JSON.parse(data)
           root.weatherText = weather.ok ? (Math.round(weather.temperature) + "°") : "--"
+          root.weatherCode = weather.ok ? weather.code : -1
         } catch(e) { root.weatherText = "--" }
       }
     }
@@ -43,26 +47,65 @@ Rectangle {
     weatherProc.running = true
   }
 
+  function weatherIcon(code) {
+    if (code === 0) return "󰖙"
+    if (code === 1 || code === 2) return "󰖕"
+    if (code === 3) return "󰖐"
+    if (code === 45 || code === 48) return "󰖑"
+    if (code >= 51 && code <= 57) return "󰖗"
+    if (code >= 61 && code <= 67) return "󰖖"
+    if (code >= 71 && code <= 77) return "󰖘"
+    if (code >= 80 && code <= 82) return "󰖖"
+    if (code >= 95) return "󰖓"
+    return Config.iconWeather
+  }
+
   Row {
     id: weatherRow
     anchors.centerIn: parent
     spacing: 5
 
-    Text {
-      text: Config.iconWeather
-      color: Config.textMuted
-      font.pixelSize: Config.fontSizeIconSmall
-      font.family: Config.fontIcon
+    Item {
+      visible: !root.iconOnRight
+      width: weatherIconLeft.implicitWidth
+      height: 20
       anchors.verticalCenter: parent.verticalCenter
+
+      Text {
+        id: weatherIconLeft
+        anchors.centerIn: parent
+        text: root.weatherIcon(root.weatherCode)
+        color: Config.textMuted
+        font.pixelSize: Config.fontSizeIconSmall
+        font.family: Config.fontIcon
+      }
     }
 
     Text {
+      height: 20
       text: root.weatherText
       color: Config.textPrimary
       font.pixelSize: Config.fontSizeSmall
       font.weight: Font.Medium
       font.family: Config.fontSans
+      verticalAlignment: Text.AlignVCenter
       anchors.verticalCenter: parent.verticalCenter
+    }
+
+    Item {
+      visible: root.iconOnRight
+      width: weatherIconRight.implicitWidth
+      height: 20
+      anchors.verticalCenter: parent.verticalCenter
+
+      Text {
+        id: weatherIconRight
+        anchors.centerIn: parent
+        text: root.weatherIcon(root.weatherCode)
+        color: Config.textMuted
+        font.pixelSize: Config.fontSizeIconSmall
+        font.family: Config.fontIcon
+      }
     }
   }
 
