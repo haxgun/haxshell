@@ -13,6 +13,9 @@
 [![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff.svg)](https://hyprland.org/)
 [![Niri](https://img.shields.io/badge/Niri-Wayland-7c4dff.svg)](https://github.com/YaLTeR/niri)
 [![Go](https://img.shields.io/badge/Go-1.25-00ADD8.svg)](https://go.dev/)
+[![Stars](https://img.shields.io/github/stars/haxgun/vey?style=flat&color=green)](https://github.com/ValoryLabs/Valory/stargazers)
+[![Forks](https://img.shields.io/github/forks/haxgun/vey?style=flat&color=green)](https://github.com/ValoryLabs/Valory/forks)
+[![Issues](https://img.shields.io/github/issues/haxgun/vey?style=flat)](https://github.com/ValoryLabs/Valory/issues)
 ![GitHub last commit](https://img.shields.io/github/last-commit/haxgun/vey)
 
 </div>
@@ -141,6 +144,10 @@ git diff --check
 quickshell --path quickshell
 ```
 
+## Stats
+
+![Alt](https://repobeats.axiom.co/api/embed/3caf808ce8401c6c39d1913e45a21c801fd6263a.svg "Repobeats analytics image")
+
 <div align="center">
     <a href="https://github.com/haxgun/vey/graphs/contributors" target="_blank">
       <table>
@@ -152,7 +159,3 @@ quickshell --path quickshell
       </table>
     </a>
 </div>
-
-## Stats
-
-![Alt](https://repobeats.axiom.co/api/embed/3caf808ce8401c6c39d1913e45a21c801fd6263a.svg "Repobeats analytics image")

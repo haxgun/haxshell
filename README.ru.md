@@ -8,11 +8,14 @@
 
 [English](README.md) · **Русский**
 
-[![Лицензия: MIT](https://img.shields.io/badge/Лицензия-MIT-6b8e23.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-6b8e23.svg)](LICENSE)
 [![Quickshell](https://img.shields.io/badge/Quickshell-QML-5c7cfa.svg)](https://quickshell.org/)
 [![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff.svg)](https://hyprland.org/)
 [![Niri](https://img.shields.io/badge/Niri-Wayland-7c4dff.svg)](https://github.com/YaLTeR/niri)
 [![Go](https://img.shields.io/badge/Go-1.25-00ADD8.svg)](https://go.dev/)
+[![Stars](https://img.shields.io/github/stars/ValoryLabs/Valory?style=flat&color=green)](https://github.com/ValoryLabs/Valory/stargazers)
+[![Forks](https://img.shields.io/github/forks/ValoryLabs/Valory?style=flat&color=green)](https://github.com/ValoryLabs/Valory/forks)
+[![Issues](https://img.shields.io/github/issues/ValoryLabs/Valory?style=flat)](https://github.com/ValoryLabs/Valory/issues)
 ![GitHub last commit](https://img.shields.io/github/last-commit/haxgun/vey)
 
 </div>
@@ -141,6 +144,10 @@ git diff --check
 quickshell --path quickshell
 ```
 
+## Статистика
+
+![Alt](https://repobeats.axiom.co/api/embed/3caf808ce8401c6c39d1913e45a21c801fd6263a.svg "Repobeats analytics image")
+
 <div align="center">
     <a href="https://github.com/haxgun/vey/graphs/contributors" target="_blank">
       <table>
@@ -152,7 +159,3 @@ quickshell --path quickshell
       </table>
     </a>
 </div>
-
-## Статистика
-
-![Alt](https://repobeats.axiom.co/api/embed/3caf808ce8401c6c39d1913e45a21c801fd6263a.svg "Repobeats analytics image")
