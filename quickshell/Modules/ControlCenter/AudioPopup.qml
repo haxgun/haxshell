@@ -168,8 +168,8 @@ PanelWindow {
         iconText: root.sinkMuted ? Config.iconVolMuted : Config.iconVolHigh
         value: root.sinkVolume
         muted: root.sinkMuted
-        onApplyValue: val => { if (root.sink && root.sink.audio) { root.sink.audio.volume = val / 100; if (root.osd) root.osd.showVolume(val, false) } }
-        onToggleMute: if (root.sink && root.sink.audio) { root.sink.audio.muted = !root.sink.audio.muted; if (root.osd) root.osd.showVolume(root.sinkVolume, !root.sinkMuted) }
+        onApplyValue: val => { if (root.sink && root.sink.audio) { if (root.osd) root.osd.suppressOnce(); root.sink.audio.volume = val / 100 } }
+        onToggleMute: if (root.sink && root.sink.audio) { if (root.osd) root.osd.suppressOnce(); root.sink.audio.muted = !root.sink.audio.muted }
       }
 
       AudioDeviceList {

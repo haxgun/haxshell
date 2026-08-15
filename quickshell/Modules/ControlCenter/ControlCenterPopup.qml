@@ -196,10 +196,11 @@ PanelWindow {
   function setBrightness(value) {
     let target = Math.max(0, Math.min(100, value))
     brightnessPercent = target
-    if (osd) osd.showBrightness(target)
+    if (osd) osd.suppressOnce()
     run([veyctl, "brightness", "set", target.toString(), activeBrightnessBus, Config.brightnessSleepMultiplier])
   }
   function setAudio(action, value) {
+    if (osd) osd.suppressOnce()
     if (action === "set-sink-volume") sinkVolume = Math.max(0, Math.min(100, Math.round(value)))
     if (action === "set-sink-mute") sinkMuted = value.toString() === "1"
     run([veyctl, "audio", action, value.toString()])
@@ -290,7 +291,7 @@ PanelWindow {
 
       Row {
         width: parent.width
-        height: 56
+        height: 60
         spacing: 8
 
         Column {

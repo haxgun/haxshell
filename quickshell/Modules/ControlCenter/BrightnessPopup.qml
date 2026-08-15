@@ -114,6 +114,7 @@ PanelWindow {
     let target = Math.max(0, Math.min(100, Math.round(val)))
     if (target === root.lastAppliedBrightness && setBrightnessProc.running) return
     root.lastAppliedBrightness = target
+    if (root.osd) root.osd.suppressOnce()
     root.brightnessPercent = target
     setBrightnessProc.running = false
     setBrightnessProc.command = [root.veyctl, "brightness", "set", target.toString(), root.activeBrightnessBus, Config.brightnessSleepMultiplier]

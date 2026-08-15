@@ -13,6 +13,7 @@ PanelWindow {
   property string label: "Громкость"
   property int value: 0
   property bool muted: false
+  property bool suppressed: false
   readonly property bool osdAtTop: Config.osdPosition.indexOf("top-") === 0
   readonly property bool osdAtLeft: Config.osdPosition.indexOf("left") >= 0
   readonly property bool osdAtCenter: Config.osdPosition.indexOf("center") >= 0
@@ -42,7 +43,20 @@ PanelWindow {
     onTriggered: root.visibleOsd = false
   }
 
+  Timer {
+    id: suppressTimer
+    interval: 500
+    repeat: false
+    onTriggered: root.suppressed = false
+  }
+
+  function suppressOnce() {
+    suppressed = true
+    suppressTimer.restart()
+  }
+
   function showVolume(nextValue, isMuted) {
+    if (root.suppressed) return
     value = Math.max(0, Math.min(150, Math.round(nextValue)))
     muted = isMuted
     label = muted ? "Звук выключен" : "Громкость"
@@ -52,6 +66,7 @@ PanelWindow {
   }
 
   function showBrightness(nextValue) {
+    if (root.suppressed) return
     value = Math.max(0, Math.min(100, Math.round(nextValue)))
     muted = false
     label = "Яркость"
