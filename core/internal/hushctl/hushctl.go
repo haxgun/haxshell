@@ -6,6 +6,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"image"
+	"image/jpeg"
 	"io/fs"
 	"math"
 	"net/url"
@@ -16,8 +18,11 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
+
+	"golang.org/x/image/draw"
 )
 
 var homeDir, _ = os.UserHomeDir()
@@ -58,9 +63,24 @@ func run(timeout time.Duration, name string, args ...string) (string, int) {
 	return string(out), 0
 }
 
+var commandExistsCache = struct {
+	sync.Mutex
+	m map[string]bool
+}{m: map[string]bool{}}
+
 func commandExists(name string) bool {
+	commandExistsCache.Lock()
+	if v, ok := commandExistsCache.m[name]; ok {
+		commandExistsCache.Unlock()
+		return v
+	}
+	commandExistsCache.Unlock()
 	_, err := exec.LookPath(name)
-	return err == nil
+	v := err == nil
+	commandExistsCache.Lock()
+	commandExistsCache.m[name] = v
+	commandExistsCache.Unlock()
+	return v
 }
 
 func isNiriSession() bool {
@@ -129,6 +149,7 @@ func settingsDefaults() map[string]string {
 		"wallpaperDir":                "~/wallpapers/animated",
 		"wallpaperFillMode":           "fill",
 		"wallpaperTransition":         "fade",
+		"wallpaperPaletteScheme":      "vibrant",
 		"wallpaperCyclingEnabled":     "false",
 		"wallpaperCyclingInterval":    "300",
 		"blurWallpaperOnOverview":     "false",
@@ -502,43 +523,71 @@ func formatBandwidth(bps float64) string {
 	return fmt.Sprintf("%4.0fB/s", bps)
 }
 
-func cpuTemp() int {
+var cpuTempSensorPath string
+
+func discoverCpuTempSensor() string {
 	for _, label := range []string{"Tdie", "Package id 0", "Tctl"} {
 		matches, _ := filepath.Glob("/sys/class/hwmon/hwmon*/temp*_label")
 		for _, labelPath := range matches {
 			if readText(labelPath) == label {
-				value := readInt(strings.TrimSuffix(labelPath, "_label") + "_input")
-				if value > 1000 {
-					value /= 1000
-				}
-				if value > 0 && value < 130 {
-					return int(value)
-				}
+				return strings.TrimSuffix(labelPath, "_label") + "_input"
 			}
 		}
 	}
-	candidates := []string{}
-	matches, _ := filepath.Glob("/sys/class/hwmon/hwmon*/temp1_input")
-	candidates = append(candidates, matches...)
+	if matches, _ := filepath.Glob("/sys/class/hwmon/hwmon*/temp1_input"); len(matches) > 0 {
+		return matches[0]
+	}
+	var found string
 	_ = filepath.WalkDir("/sys/class/thermal", func(path string, d fs.DirEntry, err error) error {
 		if err == nil && !d.IsDir() && d.Name() == "temp" {
-			candidates = append(candidates, path)
+			found = path
+			return fs.SkipAll
 		}
 		return nil
 	})
-	for _, path := range candidates {
-		value := readInt(path)
-		if value > 1000 {
-			value /= 1000
-		}
-		if value > 0 && value < 130 {
-			return int(value)
-		}
+	return found
+}
+
+func cpuTemp() int {
+	if cpuTempSensorPath == "" {
+		cpuTempSensorPath = discoverCpuTempSensor()
+	}
+	if cpuTempSensorPath == "" {
+		return 0
+	}
+	value := readInt(cpuTempSensorPath)
+	if value > 1000 {
+		value /= 1000
+	}
+	if value > 0 && value < 130 {
+		return int(value)
 	}
 	return 0
 }
 
 func gpuInfo() map[string]any {
+	gpuCache.Lock()
+	if time.Since(gpuCache.at) < 5*time.Second {
+		info := gpuCache.info
+		gpuCache.Unlock()
+		return info
+	}
+	gpuCache.Unlock()
+	info := gpuInfoUncached()
+	gpuCache.Lock()
+	gpuCache.at = time.Now()
+	gpuCache.info = info
+	gpuCache.Unlock()
+	return info
+}
+
+var gpuCache = struct {
+	sync.Mutex
+	at   time.Time
+	info map[string]any
+}{}
+
+func gpuInfoUncached() map[string]any {
 	info := map[string]any{"has": false, "vendor": "none", "load": 0, "temp": 0, "has_vram": false, "vram_used": 0.0, "vram_total": 0.0}
 	if commandExists("nvidia-smi") {
 		out, code := run(3*time.Second, "nvidia-smi", "--query-gpu=utilization.gpu,temperature.gpu,memory.used,memory.total", "--format=csv,noheader,nounits")
@@ -1290,6 +1339,46 @@ func thumbPath(path string) string {
 	return filepath.Join(homeDir, ".cache/quickshell/wallpaper-thumbs", hex.EncodeToString(sum[:])[:16]+".jpg")
 }
 
+// makeImageThumb decodes and downscales an image in-process, avoiding an
+// ImageMagick subprocess spawn. Returns the target path on success.
+func makeImageThumb(path, target string, tw, th int) bool {
+	f, err := os.Open(path)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+	src, _, err := image.Decode(f)
+	if err != nil {
+		return false
+	}
+	b := src.Bounds()
+	sw, sh := b.Dx(), b.Dy()
+	if sw <= 0 || sh <= 0 {
+		return false
+	}
+	// Cover-crop to the target aspect ratio, then scale.
+	srcRatio := float64(sw) / float64(sh)
+	dstRatio := float64(tw) / float64(th)
+	var cropW, cropH int
+	if srcRatio > dstRatio {
+		cropH = sh
+		cropW = int(math.Round(float64(sh) * dstRatio))
+	} else {
+		cropW = sw
+		cropH = int(math.Round(float64(sw) / dstRatio))
+	}
+	cropX := (sw - cropW) / 2
+	cropY := (sh - cropH) / 2
+	dst := image.NewRGBA(image.Rect(0, 0, tw, th))
+	draw.ApproxBiLinear.Scale(dst, dst.Bounds(), src, image.Rect(b.Min.X+cropX, b.Min.Y+cropY, b.Min.X+cropX+cropW, b.Min.Y+cropY+cropH), draw.Over, nil)
+	out, err := os.Create(target)
+	if err != nil {
+		return false
+	}
+	defer out.Close()
+	return jpeg.Encode(out, dst, &jpeg.Options{Quality: 80}) == nil
+}
+
 func makeThumb(path string) string {
 	if path == "" {
 		return ""
@@ -1301,6 +1390,9 @@ func makeThumb(path string) string {
 		if src, err2 := os.Stat(path); err2 == nil && st.ModTime().After(src.ModTime()) {
 			return fileURI(target)
 		}
+	}
+	if imageExt[ext] && makeImageThumb(path, target, 360, 220) {
+		return fileURI(target)
 	}
 	if imageExt[ext] && commandExists("magick") {
 		if _, code := run(8*time.Second, "magick", path, "-auto-orient", "-thumbnail", "360x220^", "-gravity", "center", "-extent", "360x220", target); code == 0 {
@@ -1319,27 +1411,10 @@ func makeThumb(path string) string {
 }
 
 func palette(path string) []string {
-	if path == "" || !imageExt[strings.ToLower(filepath.Ext(path))] || !commandExists("magick") {
+	if path == "" || !imageExt[strings.ToLower(filepath.Ext(path))] {
 		return []string{}
 	}
-	out, code := run(4*time.Second, "magick", path, "-resize", "6x1!", "-depth", "8", "txt:-")
-	if code != 0 {
-		return []string{}
-	}
-	seen := map[string]bool{}
-	colors := []string{}
-	re := regexp.MustCompile(`#([0-9A-Fa-f]{6})`)
-	for _, m := range re.FindAllStringSubmatch(out, -1) {
-		c := "#" + m[1]
-		if !seen[c] {
-			seen[c] = true
-			colors = append(colors, c)
-		}
-		if len(colors) >= 6 {
-			break
-		}
-	}
-	return colors
+	return extractInProcessPalette(path)
 }
 
 func wallpaperResize(mode string) string {
@@ -1357,7 +1432,7 @@ func wallpaperResize(mode string) string {
 
 func wallpaperTransition(effect string) string {
 	switch effect {
-	case "none", "fade", "wipe", "wave", "grow", "center", "outer", "random":
+	case "none", "simple", "fade", "left", "right", "top", "bottom", "wipe", "wave", "grow", "center", "any", "outer", "random":
 		return effect
 	case "disc":
 		return "center"
@@ -1481,10 +1556,19 @@ func wallState(override string) {
 	if len(items) > 0 {
 		current = items[idx]
 	}
-	list := []map[string]any{}
+	// Generate thumbnails concurrently; makeThumb is cached on disk so only
+	// genuinely new wallpapers pay the ImageMagick/ffmpeg cost, and doing them
+	// in parallel keeps a large directory from stalling the UI.
+	list := make([]map[string]any, len(items))
+	var wg sync.WaitGroup
 	for i, item := range items {
-		list = append(list, map[string]any{"wallIndex": i, "name": filepath.Base(item), "path": item, "thumbnail": makeThumb(item)})
+		wg.Add(1)
+		go func(i int, item string) {
+			defer wg.Done()
+			list[i] = map[string]any{"wallIndex": i, "name": filepath.Base(item), "path": item, "thumbnail": makeThumb(item)}
+		}(i, item)
 	}
+	wg.Wait()
 	name := "Нет обоев"
 	if current != "" {
 		name = filepath.Base(current)
@@ -1517,6 +1601,10 @@ func cmdWallpaper(args []string) {
 	}
 	if action == "set" && len(args) > 2 {
 		override = args[2]
+	}
+	paletteSchemeOverride = ""
+	if last := args[len(args)-1]; paletteSchemePresets[last] && (action == "get" || action == "next" || action == "set") {
+		paletteSchemeOverride = last
 	}
 	items := wallItems(wallDir(override))
 	idx := cacheIndex(len(items))
