@@ -1,4 +1,4 @@
-package hushctl
+package veyctl
 
 import (
 	"encoding/json"

@@ -61,7 +61,7 @@ PanelWindow {
 
   Process {
     id: sysProc
-    command: [Config.hushctl, "sys"]
+    command: [Config.veyctl, "sys"]
     running: false
     stdout: SplitParser { onRead: data => root.applyState(data) }
   }

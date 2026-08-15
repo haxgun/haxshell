@@ -12,7 +12,7 @@ PanelWindow {
   property int rightMargin: 16
   property string currentLayout: "??"
   property string currentName: "Unknown"
-  readonly property string hushctl: Config.hushctl
+  readonly property string veyctl: Config.veyctl
 
   signal layoutChanged(var state)
 
@@ -53,13 +53,13 @@ PanelWindow {
 
   function refresh() {
     keyboardProc.running = false
-    keyboardProc.command = [root.hushctl, "keyboard"]
+    keyboardProc.command = [root.veyctl, "keyboard"]
     keyboardProc.running = true
   }
 
   function setLayout(index) {
     setLayoutProc.running = false
-    setLayoutProc.command = [root.hushctl, "keyboard", "set", index.toString()]
+    setLayoutProc.command = [root.veyctl, "keyboard", "set", index.toString()]
     setLayoutProc.running = true
   }
 

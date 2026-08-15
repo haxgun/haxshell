@@ -13,7 +13,7 @@ Item {
   // Scanner process execution
   Process {
     id: scannerProcess
-    command: [Config.hushctl, "app-scanner"]
+    command: [Config.veyctl, "app-scanner"]
     running: true
 
     stdout: SplitParser {

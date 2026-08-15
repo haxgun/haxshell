@@ -7,7 +7,7 @@ import Quickshell
 QtObject {
   id: root
 
-  readonly property string hushctl: Quickshell.shellDir + "/hushctl"
+  readonly property string veyctl: Quickshell.shellDir + "/veyctl"
 
   // ==========================================
   // 🎨 SECTION 1: COLOR PALETTE & THEMING

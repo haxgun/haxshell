@@ -1,4 +1,4 @@
-module github.com/haxgun/hush/core
+module github.com/haxgun/vey/core
 
 go 1.25.0
 

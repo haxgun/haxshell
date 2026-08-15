@@ -4,8 +4,8 @@ Guidelines for AI agents and contributors working in this repository.
 
 ## Project
 
-`hush` is a customizable Wayland desktop shell for Hyprland and Niri, built with
-Quickshell, QML, and a small Go helper (`hushctl`).
+`vey` is a customizable Wayland desktop shell for Hyprland and Niri, built with
+Quickshell, QML, and a small Go helper (`veyctl`).
 
 ## Layout
 
@@ -17,9 +17,9 @@ quickshell/            Quickshell configuration (QML)
   Widgets/             reusable components (registered in Widgets/qmldir)
   Services/            QML services (compositor, niri, wallpaper cycling)
   translations/        UI strings (de/en/ja/ru/zh)
-core/                  Go module for hushctl
-  cmd/hushctl/         command entry point
-  internal/hushctl/    implementation
+core/                  Go module for veyctl
+  cmd/veyctl/         command entry point
+  internal/veyctl/    implementation
   pkg/                 public packages
 install.sh             Arch Linux installer
 ```
@@ -29,7 +29,7 @@ install.sh             Arch Linux installer
 Build the Go helper (rebuild and restart Quickshell after changing `core/`):
 
 ```bash
-go build -C core -o ../quickshell/hushctl ./cmd/hushctl
+go build -C core -o ../quickshell/veyctl ./cmd/veyctl
 ```
 
 Run the shell:
@@ -64,8 +64,8 @@ manual `quickshell` run.
 
 ### Go
 
-- Idiomatic Go; the helper is one package under `core/internal/hushctl`.
-- System integration lives in the helper, not QML: QML calls `hushctl`
+- Idiomatic Go; the helper is one package under `core/internal/veyctl`.
+- System integration lives in the helper, not QML: QML calls `veyctl`
   subcommands via Process objects and consumes JSON output.
 - Prefer the standard library; add a dependency only when it removes a
   subprocess dependency (e.g. `golang.org/x/image` for in-process webp/bmp

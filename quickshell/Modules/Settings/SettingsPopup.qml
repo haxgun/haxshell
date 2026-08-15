@@ -102,7 +102,7 @@ PanelWindow {
   readonly property real manualHue: manualAccentColor.hslHue >= 0 ? manualAccentColor.hslHue : 0
   readonly property real manualSat: manualAccentColor.hslSaturation
   readonly property string currentManualHex: colorToHex(manualAccentColor)
-  readonly property string hushctl: Config.hushctl
+  readonly property string veyctl: Config.veyctl
 
   onIsOpenChanged: if (isOpen) {
     wallpaperDirInput.text = Config.wallpaperDir
@@ -373,7 +373,7 @@ PanelWindow {
     Config.wallpaperDir = nextDir
     saveSetting("wallpaperDir", nextDir)
     wallpaperProc.running = false
-    wallpaperProc.command = [root.hushctl, "wallpaper", "config", nextDir]
+    wallpaperProc.command = [root.veyctl, "wallpaper", "config", nextDir]
     wallpaperProc.running = true
   }
   function applyWallpaperFillMode(value) { Config.wallpaperFillMode = value; saveSetting("wallpaperFillMode", value); root.wallpaperModeDropdownOpen = false }
@@ -387,7 +387,7 @@ PanelWindow {
 
   function refreshFonts() {
     fontProc.running = false
-    fontProc.command = [root.hushctl, "fonts"]
+    fontProc.command = [root.veyctl, "fonts"]
     fontProc.running = true
   }
 
@@ -412,19 +412,19 @@ PanelWindow {
 
   function pickWallpaperDir() {
     folderProc.running = false
-    folderProc.command = [root.hushctl, "pick-folder", Config.wallpaperDir]
+    folderProc.command = [root.veyctl, "pick-folder", Config.wallpaperDir]
     folderProc.running = true
   }
 
   function refreshWallpapers() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.hushctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.veyctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.hushctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.veyctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
@@ -432,7 +432,7 @@ PanelWindow {
     wallpaperGridContentY = wallpaperGrid.contentY
     wallpaperSelectionInProgress = true
     wallpaperProc.running = false
-    wallpaperProc.command = [root.hushctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.veyctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
@@ -1868,8 +1868,8 @@ PanelWindow {
                   width: parent.width - 84
                   anchors.verticalCenter: parent.verticalCenter
                   spacing: 5
-                  Text { text: "hush"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans }
-                  Text { text: I18n.tr("Hush is a customizable Wayland desktop shell built with Quickshell, QML, and Go."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
+                  Text { text: "vey"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans }
+                  Text { text: I18n.tr("Vey is a customizable Wayland desktop shell built with Quickshell, QML, and Go."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
                   Text { text: "Quickshell · QML · Go · Hyprland · Niri"; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
                 }
               }

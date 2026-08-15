@@ -11,7 +11,7 @@ Scope {
 
   Process {
     id: loadSettingsProc
-    command: [Config.hushctl, "settings"]
+    command: [Config.veyctl, "settings"]
     running: true
 
     stdout: SplitParser {

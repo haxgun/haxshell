@@ -161,7 +161,7 @@ Rectangle {
   // Execute external system monitor python script
   Process {
     id: fetchSysProc
-    command: [Config.hushctl, "sys"]
+    command: [Config.veyctl, "sys"]
     running: true
 
     stdout: SplitParser {
@@ -212,7 +212,7 @@ Rectangle {
   // Execute external network monitor python script
   Process {
     id: fetchNetProc
-    command: [Config.hushctl, "net"]
+    command: [Config.veyctl, "net"]
     running: true
 
     stdout: SplitParser {

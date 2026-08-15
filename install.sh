@@ -4,7 +4,7 @@ set -euo pipefail
 readonly PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 readonly SHELL_DIR="$PROJECT_DIR/quickshell"
 readonly CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell"
-COMPOSITOR="${HUSH_COMPOSITOR:-}"
+COMPOSITOR="${VEY_COMPOSITOR:-}"
 readonly PACKAGES=(
   awww
   blueman
@@ -48,7 +48,7 @@ usage() {
 }
 
 if [[ "$(uname -s)" != "Linux" ]]; then
-  die "hush is supported only on Linux"
+  die "vey is supported only on Linux"
 fi
 
 if ! command -v pacman >/dev/null; then
@@ -110,12 +110,12 @@ if [[ "$COMPOSITOR" == "niri" ]]; then
   sudo cmake --install "$NIRI_BUILD_DIR/qml-niri/build"
 fi
 
-printf 'Building hushctl...\n'
-go build -C "$PROJECT_DIR/core" -o "$SHELL_DIR/hushctl" ./cmd/hushctl
-chmod +x "$SHELL_DIR/hushctl"
+printf 'Building veyctl...\n'
+go build -C "$PROJECT_DIR/core" -o "$SHELL_DIR/veyctl" ./cmd/veyctl
+chmod +x "$SHELL_DIR/veyctl"
 
 if [[ -e "$CONFIG_DIR" && ! -L "$CONFIG_DIR" ]]; then
-  die "$CONFIG_DIR already exists and is not a symbolic link; move it before installing hush"
+  die "$CONFIG_DIR already exists and is not a symbolic link; move it before installing vey"
 fi
 
 mkdir -p "$(dirname "$CONFIG_DIR")"
@@ -125,11 +125,11 @@ if [[ -L "$CONFIG_DIR" ]]; then
     rm "$CONFIG_DIR"
     ln -s "$SHELL_DIR" "$CONFIG_DIR"
   elif [[ "$current_target" != "$SHELL_DIR" ]]; then
-    die "$CONFIG_DIR points to $current_target; replace it manually if you want to use hush"
+    die "$CONFIG_DIR points to $current_target; replace it manually if you want to use vey"
   fi
 else
   ln -s "$SHELL_DIR" "$CONFIG_DIR"
 fi
 
-printf '\nhush is installed. Start it with:\n  quickshell --path %s\n' "$SHELL_DIR"
+printf '\nvey is installed. Start it with:\n  quickshell --path %s\n' "$SHELL_DIR"
 printf 'Add this command to your %s startup configuration to launch it automatically.\n' "$COMPOSITOR"

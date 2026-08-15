@@ -26,7 +26,7 @@ Singleton {
 
   function reload() {
     loadProc.running = false
-    loadProc.command = [Config.hushctl, "i18n", Config.language]
+    loadProc.command = [Config.veyctl, "i18n", Config.language]
     loadProc.running = true
   }
 

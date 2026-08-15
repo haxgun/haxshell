@@ -27,7 +27,7 @@ Rectangle {
 
   Process {
     id: layoutProc
-    command: [Config.hushctl, "keyboard"]
+    command: [Config.veyctl, "keyboard"]
     running: true
 
     stdout: SplitParser {

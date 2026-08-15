@@ -1,5 +1,5 @@
-// Package hushctl implements the system helper used by the hush QML shell.
-package hushctl
+// Package veyctl implements the system helper used by the vey QML shell.
+package veyctl
 
 import (
 	"crypto/sha1"
@@ -1754,7 +1754,7 @@ func cmdWeather(args []string) {
 	output(result)
 }
 
-// Run dispatches hushctl commands from the process arguments.
+// Run dispatches veyctl commands from the process arguments.
 func Run() {
 	if len(os.Args) < 2 {
 		output(map[string]any{"ok": false, "error": "missing command"})

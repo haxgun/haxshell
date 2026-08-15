@@ -1,6 +1,6 @@
-# hush
+# vey
 
-<p align="center"><img src="logo.svg" alt="Логотип hush" width="160"></p>
+<p align="center"><img src="quickshell/logo.svg" alt="Логотип vey" width="160"></p>
 
 [English](README.md) | [Русский](README.ru.md)
 
@@ -10,7 +10,7 @@
 [![Niri](https://img.shields.io/badge/Niri-Wayland-7c4dff.svg)](https://github.com/YaLTeR/niri)
 [![Go](https://img.shields.io/badge/Go-1.25-00ADD8.svg)](https://go.dev/)
 
-`hush` - настраиваемая Wayland-оболочка рабочего стола на Quickshell, QML и Go для Hyprland и Niri.
+`vey` - настраиваемая Wayland-оболочка рабочего стола на Quickshell, QML и Go для Hyprland и Niri.
 
 ## Возможности
 
@@ -35,9 +35,9 @@
 │   ├── Widgets/              # Переиспользуемые QML-компоненты
 │   ├── Services/             # QML-сервисы
 │   └── translations/         # Переводы интерфейса
-├── core/                     # Go-модуль hushctl
-│   ├── cmd/hushctl/          # Точка входа команды hushctl
-│   ├── internal/hushctl/     # Реализация команд для оболочки
+├── core/                     # Go-модуль veyctl
+│   ├── cmd/veyctl/          # Точка входа команды veyctl
+│   ├── internal/veyctl/     # Реализация команд для оболочки
 │   ├── pkg/                  # Публичные Go-пакеты
 │   ├── go.mod
 │   └── go.sum
@@ -60,7 +60,7 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 ## Установка
 
-Встроенный установщик предназначен для Arch Linux. Он ставит зависимости из репозиториев и AUR, собирает `hushctl` и создаёт символьную ссылку на этот репозиторий в `~/.config/quickshell`, не заменяя существующую конфигурацию.
+Встроенный установщик предназначен для Arch Linux. Он ставит зависимости из репозиториев и AUR, собирает `veyctl` и создаёт символьную ссылку на этот репозиторий в `~/.config/quickshell`, не заменяя существующую конфигурацию.
 
 ```bash
 ./install.sh
@@ -74,12 +74,12 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 Если Vicinae ещё не установлен, потребуется `yay` или `paru`: этот пакет устанавливается из AUR.
 
-## Сборка `hushctl`
+## Сборка `veyctl`
 
-`hushctl` используется QML-компонентами для системных операций: управления яркостью, звуком, погодой, обоями и другими функциями.
+`veyctl` используется QML-компонентами для системных операций: управления яркостью, звуком, погодой, обоями и другими функциями.
 
 ```bash
-go build -C core -o ../quickshell/hushctl ./cmd/hushctl
+go build -C core -o ../quickshell/veyctl ./cmd/veyctl
 ```
 
 После изменения файлов в `core/` пересоберите утилиту и перезапустите Quickshell.

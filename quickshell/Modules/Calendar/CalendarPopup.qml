@@ -73,7 +73,7 @@ PanelWindow {
 
   Process {
     id: weatherProc
-    command: [Config.hushctl, "weather"]
+    command: [Config.veyctl, "weather"]
 
     stdout: SplitParser {
       onRead: data => root.applyWeather(data)
@@ -84,7 +84,7 @@ PanelWindow {
   function refreshWeather() {
     if (!Config.weatherEnabled) return
     weatherProc.running = false
-    weatherProc.command = [Config.hushctl, "weather", "refresh"]
+    weatherProc.command = [Config.veyctl, "weather", "refresh"]
     weatherProc.running = true
   }
 

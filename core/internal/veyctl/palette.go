@@ -1,4 +1,4 @@
-package hushctl
+package veyctl
 
 import (
 	"crypto/sha1"
@@ -53,7 +53,7 @@ var paletteCache = struct {
 }{}
 
 // paletteCachePath returns a stable on-disk cache location for a wallpaper's
-// palette. hushctl is invoked as a fresh process per query, so the in-memory
+// palette. veyctl is invoked as a fresh process per query, so the in-memory
 // cache above never survives between calls; persisting the result to disk keyed
 // by path + mtime + scheme avoids re-decoding the full image on every request.
 func paletteCachePath(path, scheme string, mtime time.Time) string {

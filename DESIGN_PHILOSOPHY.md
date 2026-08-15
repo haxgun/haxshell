@@ -1,6 +1,6 @@
-# hush Design Philosophy
+# vey Design Philosophy
 
-The aesthetic and technical rationale behind `hush` — the "why", not the "how to
+The aesthetic and technical rationale behind `vey` — the "why", not the "how to
 build it". See `AGENTS.md` for structure, commands, and contribution conventions.
 
 ---
@@ -63,8 +63,8 @@ edit in a single file.
 ### Externalized system integration
 
 Anything that touches the system — brightness, audio, weather, wallpaper
-scanning, palette extraction — lives in the `hushctl` Go helper, not in QML. QML
-invokes `hushctl` subcommands through `Process` objects and consumes JSON. The
+scanning, palette extraction — lives in the `veyctl` Go helper, not in QML. QML
+invokes `veyctl` subcommands through `Process` objects and consumes JSON. The
 Go side decodes images in-process (`golang.org/x/image` for webp/bmp) and keeps
 ImageMagick/ffmpeg only as a fallback, which removes subprocess spawns from the
 hot wallpaper path and lets thumbnails generate concurrently.
