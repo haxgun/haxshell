@@ -61,6 +61,7 @@ PanelWindow {
   property string weatherCondition: "Погода недоступна"
   property string weatherDetails: "Погода недоступна"
   property string weatherHumidity: "--"
+  property var holidaysMap: ({})
 
   onIsOpenChanged: {
     if (isOpen) {
@@ -68,6 +69,7 @@ PanelWindow {
       displayMonth = today.getMonth()
       updateCalendarGrid()
       refreshWeather()
+      refreshHolidays()
     }
   }
 
@@ -79,6 +81,31 @@ PanelWindow {
       onRead: data => root.applyWeather(data)
     }
 
+  }
+
+  Process {
+    id: holidaysProc
+    stdout: SplitParser { onRead: data => root.applyHolidays(data) }
+  }
+
+  function refreshHolidays() {
+    holidaysProc.running = false
+    holidaysProc.command = [Config.veyctl, "holidays", root.displayYear.toString()]
+    holidaysProc.running = true
+  }
+
+  function applyHolidays(data) {
+    try {
+      let res = JSON.parse(data)
+      let map = {}
+      let list = res.holidays || []
+      for (let i = 0; i < list.length; i++) {
+        let h = list[i]
+        if (h.date) map[h.date] = h.name || ""
+      }
+      root.holidaysMap = map
+      root.updateCalendarGrid()
+    } catch(e) {}
   }
 
   function refreshWeather() {
@@ -139,6 +166,10 @@ PanelWindow {
     id: forecastModel
   }
 
+  function holidayKey(y, m, d) {
+    return y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0")
+  }
+
   function updateCalendarGrid() {
     calendarModel.clear()
 
@@ -156,7 +187,8 @@ PanelWindow {
       calendarModel.append({
         dayNumber: dayNum,
         inMonth: false,
-        isToday: false
+        isToday: false,
+        holidayName: ""
       })
     }
 
@@ -166,7 +198,8 @@ PanelWindow {
       calendarModel.append({
         dayNumber: d,
         inMonth: true,
-        isToday: isToday
+        isToday: isToday,
+        holidayName: root.holidaysMap[root.holidayKey(displayYear, displayMonth, d)] || ""
       })
     }
 
@@ -176,7 +209,8 @@ PanelWindow {
       calendarModel.append({
         dayNumber: n,
         inMonth: false,
-        isToday: false
+        isToday: false,
+        holidayName: ""
       })
     }
   }
@@ -186,6 +220,7 @@ PanelWindow {
   }
 
   function prevMonth() {
+    let yearChanged = displayMonth === 0
     if (displayMonth === 0) {
       displayMonth = 11
       displayYear--
@@ -193,9 +228,11 @@ PanelWindow {
       displayMonth--
     }
     updateCalendarGrid()
+    if (yearChanged) refreshHolidays()
   }
 
   function nextMonth() {
+    let yearChanged = displayMonth === 11
     if (displayMonth === 11) {
       displayMonth = 0
       displayYear++
@@ -203,6 +240,20 @@ PanelWindow {
       displayMonth++
     }
     updateCalendarGrid()
+    if (yearChanged) refreshHolidays()
+  }
+
+  function showHolidayTip(target, name) {
+    holidayTipText.text = name
+    let pos = target.mapToItem(container, 0, 0)
+    let tipW = holidayTip.width
+    holidayTip.x = Math.max(6, Math.min(container.width - tipW - 6, pos.x + target.width / 2 - tipW / 2))
+    holidayTip.y = Math.max(6, Math.min(container.height - holidayTip.height - 6, pos.y + target.height + 4))
+    holidayTip.visible = true
+  }
+
+  function hideHolidayTip() {
+    holidayTip.visible = false
   }
 
   // Floating Compact Container Box
@@ -313,7 +364,7 @@ PanelWindow {
 
       Column {
         id: calendarColumn
-        width: parent.width - 185
+        width: parent.width - 199
         spacing: 10
 
         Item {
@@ -383,6 +434,7 @@ PanelWindow {
               required property int dayNumber
               required property bool inMonth
               required property bool isToday
+              required property string holidayName
 
               width: calendarColumn.width / 7
               height: 30
@@ -398,9 +450,49 @@ PanelWindow {
               }
 
               Text { anchors.centerIn: parent; text: dayNumber.toString(); color: isToday ? Config.textWhite : (inMonth ? Config.textSubtle : Config.textDark); font.pixelSize: Config.fontSizeNormal; font.weight: isToday ? Font.Bold : Font.Normal; font.family: Config.fontSans }
+
+              Rectangle {
+                visible: holidayName.length > 0
+                width: 4
+                height: 4
+                radius: 2
+                color: Config.activeBorderColor
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 2
+              }
+
+              MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: holidayName.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                onEntered: if (holidayName.length > 0) root.showHolidayTip(parent, holidayName)
+                onExited: root.hideHolidayTip()
+              }
             }
           }
         }
+      }
+    }
+
+    Rectangle {
+      id: holidayTip
+      visible: false
+      z: 20
+      width: holidayTipText.implicitWidth + 24
+      height: 28
+      radius: 8
+      color: Config.popupGlassBg
+      border.color: Config.popupBorderColor
+      border.width: 1
+
+      Text {
+        id: holidayTipText
+        anchors.centerIn: parent
+        text: ""
+        color: Config.textPrimary
+        font.pixelSize: Config.fontSizeSmall
+        font.family: Config.fontSans
       }
     }
   }

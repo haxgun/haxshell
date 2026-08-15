@@ -1551,7 +1551,7 @@ func applyOverviewBlur(dir string, enabled bool) {
 	}
 }
 
-func wallState(override string) {
+func wallState(override string, pendingPalette []string) {
 	dir := wallDir(override)
 	items := wallItems(dir)
 	idx := cacheIndex(len(items))
@@ -1576,7 +1576,11 @@ func wallState(override string) {
 	if current != "" {
 		name = filepath.Base(current)
 	}
-	output(map[string]any{"ok": current != "", "path": current, "name": name, "thumbnail": makeThumb(current), "palette": palette(current), "count": len(items), "index": idx, "items": list})
+	pal := pendingPalette
+	if pal == nil {
+		pal = palette(current)
+	}
+	output(map[string]any{"ok": current != "", "path": current, "name": name, "thumbnail": makeThumb(current), "palette": pal, "count": len(items), "index": idx, "items": list})
 }
 
 func cmdWallpaper(args []string) {
@@ -1586,7 +1590,7 @@ func cmdWallpaper(args []string) {
 	}
 	if action == "config" && len(args) > 1 {
 		writeJSONFile(wallutilPath(), map[string]string{"wallDir": args[1]})
-		wallState(args[1])
+		wallState(args[1], nil)
 		return
 	}
 	if action == "overview-blur" {
@@ -1595,7 +1599,7 @@ func cmdWallpaper(args []string) {
 			dir = args[2]
 		}
 		applyOverviewBlur(dir, len(args) > 1 && args[1] == "on")
-		wallState(dir)
+		wallState(dir, nil)
 		return
 	}
 	override := ""
@@ -1611,12 +1615,15 @@ func cmdWallpaper(args []string) {
 	}
 	items := wallItems(wallDir(override))
 	idx := cacheIndex(len(items))
+	var pending []string
 	if action == "next" && len(items) > 0 {
 		idx = (idx + 1) % len(items)
 		writeJSONFile(wallCachePath(), map[string]int{"wallIndex": idx})
+		pending = palette(items[idx])
 		applyWall(items[idx])
 	}
 	if action == "apply" && len(items) > 0 {
+		pending = palette(items[idx])
 		applyWall(items[idx])
 	}
 	if action == "set" && len(args) > 1 && len(items) > 0 {
@@ -1628,9 +1635,10 @@ func cmdWallpaper(args []string) {
 			idx = len(items) - 1
 		}
 		writeJSONFile(wallCachePath(), map[string]int{"wallIndex": idx})
+		pending = palette(items[idx])
 		applyWall(items[idx])
 	}
-	wallState(override)
+	wallState(override, pending)
 }
 
 func weatherDescription(code int) string {
@@ -1821,6 +1829,79 @@ func cmdAbout() {
 	output(map[string]any{"ok": true, "version": version, "latest": latest, "contributors": contributors})
 }
 
+func holidaysCachePath() string { return filepath.Join(homeDir, ".cache/veyctl/holidays.json") }
+
+func geocodeCountry(location string) string {
+	raw, code := run(6*time.Second, "curl", "-fsS", "--max-time", "5", "https://geocoding-api.open-meteo.com/v1/search?name="+url.QueryEscape(location)+"&count=1&language=ru&format=json")
+	if code != 0 {
+		return ""
+	}
+	var geo struct {
+		Results []struct {
+			CountryCode string `json:"country_code"`
+		} `json:"results"`
+	}
+	if json.Unmarshal([]byte(raw), &geo) != nil || len(geo.Results) == 0 {
+		return ""
+	}
+	return geo.Results[0].CountryCode
+}
+
+func cmdHolidays(args []string) {
+	year := time.Now().Year()
+	if len(args) > 0 {
+		if y, err := strconv.Atoi(args[0]); err == nil {
+			year = y
+		}
+	}
+	location := strings.TrimSpace(readSettings()["weatherLocation"])
+	if location == "" {
+		output(map[string]any{"ok": false, "holidays": []any{}})
+		return
+	}
+	var cached map[string]any
+	if raw, err := os.ReadFile(holidaysCachePath()); err == nil {
+		_ = json.Unmarshal(raw, &cached)
+	}
+	if cached != nil {
+		cachedLocation, _ := cached["location"].(string)
+		cachedYear, _ := cached["year"].(float64)
+		if cachedLocation == location && int(cachedYear) == year {
+			output(cached)
+			return
+		}
+	}
+	country := geocodeCountry(location)
+	if country == "" {
+		output(map[string]any{"ok": false, "holidays": []any{}})
+		return
+	}
+	raw, code := run(8*time.Second, "curl", "-fsS", "--max-time", "7", fmt.Sprintf("https://date.nager.at/api/v3/PublicHolidays/%d/%s", year, country))
+	if code != 0 {
+		if cached != nil {
+			output(cached)
+			return
+		}
+		output(map[string]any{"ok": false, "holidays": []any{}})
+		return
+	}
+	var items []struct {
+		Date      string `json:"date"`
+		LocalName string `json:"localName"`
+	}
+	if json.Unmarshal([]byte(raw), &items) != nil {
+		output(map[string]any{"ok": false, "holidays": []any{}})
+		return
+	}
+	holidays := make([]map[string]any, 0, len(items))
+	for _, h := range items {
+		holidays = append(holidays, map[string]any{"date": h.Date, "name": h.LocalName})
+	}
+	result := map[string]any{"ok": true, "location": location, "year": year, "holidays": holidays}
+	writeJSONFile(holidaysCachePath(), result)
+	output(result)
+}
+
 // Run dispatches veyctl commands from the process arguments.
 func Run() {
 	if len(os.Args) < 2 {
@@ -1843,6 +1924,8 @@ func Run() {
 		cmdCaffeine(args)
 	case "fonts":
 		cmdFonts()
+	case "holidays":
+		cmdHolidays(args)
 	case "i18n":
 		cmdI18n(args)
 	case "keyboard":
