@@ -75,7 +75,7 @@ Rectangle {
         id: weatherIconLeft
         anchors.centerIn: parent
         text: root.weatherIcon(root.weatherCode)
-        color: Config.textMuted
+        color: Config.iconColor
         font.pixelSize: Config.fontSizeIconSmall
         font.family: Config.fontIcon
       }
@@ -102,7 +102,7 @@ Rectangle {
         id: weatherIconRight
         anchors.centerIn: parent
         text: root.weatherIcon(root.weatherCode)
-        color: Config.textMuted
+        color: Config.iconColor
         font.pixelSize: Config.fontSizeIconSmall
         font.family: Config.fontIcon
       }

@@ -9,6 +9,7 @@ Rectangle {
 
   property var mediaPopup: null
   property var closeFlyouts: null
+  property var tooltip: null
   readonly property var player: MprisController.activePlayer
   readonly property bool hasMedia: player && !MprisController.isIdle(player)
   readonly property bool isPlaying: player && player.isPlaying
@@ -20,7 +21,7 @@ Rectangle {
     return title || artist
   }
 
-  visible: root.hasMedia
+  visible: root.hasMedia && Config.barMediaEnabled
   height: Config.buttonHeight
   implicitWidth: mediaRow.implicitWidth + 12
   radius: Config.buttonRadius
@@ -51,7 +52,7 @@ Rectangle {
         color: "transparent"
         Image { anchors.fill: parent; source: root.artUrl; fillMode: Image.PreserveAspectCrop; asynchronous: true; cache: false; visible: root.artUrl.length > 0 }
       }
-      Text { anchors.centerIn: parent; visible: root.artUrl.length === 0; text: root.isPlaying ? Config.iconPause : Config.iconPlay; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+      Text { anchors.centerIn: parent; visible: root.artUrl.length === 0; text: root.isPlaying ? Config.iconPause : Config.iconPlay; color: Config.iconColor; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
       Rectangle { anchors.fill: parent; radius: parent.radius; color: "#00000000"; border.color: Config.borderColor; border.width: 1 }
     }
 
@@ -90,6 +91,8 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
+    onEntered: if (root.tooltip) root.tooltip.show(root, I18n.tr("Медиаплеер"))
+    onExited: if (root.tooltip) root.tooltip.hide()
     onClicked: {
       if (root.mediaPopup) {
         let statusRoot = root.parent ? root.parent.parent : null

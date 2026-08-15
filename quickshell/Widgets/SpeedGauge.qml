@@ -62,7 +62,7 @@ Item {
       anchors.horizontalCenter: parent.horizontalCenter
       text: root.primary
       color: Config.textWhite
-      font.pixelSize: 20
+      font.pixelSize: Config.fontMonoSizeTitle
       font.weight: Font.Bold
       font.family: Config.fontMono
     }
@@ -83,7 +83,7 @@ Item {
     anchors.bottom: parent.bottom
     text: root.secondary
     color: Config.textSubtle
-    font.pixelSize: Config.fontSizeSmall
+    font.pixelSize: Config.fontMonoSizeSmall
     font.weight: Font.Bold
     font.family: Config.fontMono
   }

@@ -15,9 +15,13 @@ Singleton {
 
   property alias themeName: adapter.themeName
   property alias fontFamily: adapter.fontFamily
+  property alias fontMonoFamily: adapter.fontMonoFamily
+  property alias fontScale: adapter.fontScale
+  property alias fontMonoScale: adapter.fontMonoScale
   property alias wallpaperDir: adapter.wallpaperDir
   property alias wallpaperFillMode: adapter.wallpaperFillMode
   property alias wallpaperTransition: adapter.wallpaperTransition
+  property alias wallpaperPaletteScheme: adapter.wallpaperPaletteScheme
   property alias wallpaperCyclingEnabled: adapter.wallpaperCyclingEnabled
   property alias wallpaperCyclingInterval: adapter.wallpaperCyclingInterval
   property alias blurWallpaperOnOverview: adapter.blurWallpaperOnOverview
@@ -30,7 +34,6 @@ Singleton {
   property alias timeFormat: adapter.timeFormat
   property alias showSeconds: adapter.showSeconds
   property alias language: adapter.language
-  property alias musicVisualizerEnabled: adapter.musicVisualizerEnabled
   property alias showWorkspaceNumbers: adapter.showWorkspaceNumbers
   property alias showWorkspacesOnAllMonitors: adapter.showWorkspacesOnAllMonitors
   property alias workspaceIndicatorStyle: adapter.workspaceIndicatorStyle
@@ -40,6 +43,22 @@ Singleton {
   property alias barDateTimeEnabled: adapter.barDateTimeEnabled
   property alias barWeatherEnabled: adapter.barWeatherEnabled
   property alias barColorPickerEnabled: adapter.barColorPickerEnabled
+  property alias barWorkspacesEnabled: adapter.barWorkspacesEnabled
+  property alias barLauncherEnabled: adapter.barLauncherEnabled
+  property alias barActiveAppEnabled: adapter.barActiveAppEnabled
+  property alias barMediaEnabled: adapter.barMediaEnabled
+  property alias barTrayEnabled: adapter.barTrayEnabled
+  property alias barKeyboardLayoutEnabled: adapter.barKeyboardLayoutEnabled
+  property alias barSystemEnabled: adapter.barSystemEnabled
+  property alias barNotificationsEnabled: adapter.barNotificationsEnabled
+  property alias barVolumeEnabled: adapter.barVolumeEnabled
+  property alias barBrightnessEnabled: adapter.barBrightnessEnabled
+  property alias barBatteryEnabled: adapter.barBatteryEnabled
+  property alias barBluetoothEnabled: adapter.barBluetoothEnabled
+  property alias barNetworkEnabled: adapter.barNetworkEnabled
+  property alias barControlCenterEnabled: adapter.barControlCenterEnabled
+  property alias barVpnEnabled: adapter.barVpnEnabled
+  property alias barPowerEnabled: adapter.barPowerEnabled
   property alias brightnessMonitorBus: adapter.brightnessMonitorBus
   property alias brightnessSleepMultiplier: adapter.brightnessSleepMultiplier
   property alias barPosition: adapter.barPosition
@@ -96,9 +115,13 @@ Singleton {
       id: adapter
       property string themeName: "dark"
       property string fontFamily: "Geist Mono"
+      property string fontMonoFamily: "Geist Mono"
+      property string fontScale: "1.0"
+      property string fontMonoScale: "1.0"
       property string wallpaperDir: "~/wallpapers/animated"
       property string wallpaperFillMode: "fill"
       property string wallpaperTransition: "fade"
+      property string wallpaperPaletteScheme: "vibrant"
       property string wallpaperCyclingEnabled: "false"
       property string wallpaperCyclingInterval: "300"
       property string blurWallpaperOnOverview: "false"
@@ -111,7 +134,6 @@ Singleton {
       property string timeFormat: "24"
       property string showSeconds: "false"
       property string language: "ru"
-      property string musicVisualizerEnabled: "true"
       property string showWorkspaceNumbers: "true"
       property string showWorkspacesOnAllMonitors: "false"
       property string workspaceIndicatorStyle: "tint"
@@ -121,6 +143,22 @@ Singleton {
       property string barDateTimeEnabled: "true"
       property string barWeatherEnabled: "true"
       property string barColorPickerEnabled: "true"
+      property string barWorkspacesEnabled: "true"
+      property string barLauncherEnabled: "true"
+      property string barActiveAppEnabled: "true"
+      property string barMediaEnabled: "true"
+      property string barTrayEnabled: "true"
+      property string barKeyboardLayoutEnabled: "true"
+      property string barSystemEnabled: "true"
+      property string barNotificationsEnabled: "true"
+      property string barVolumeEnabled: "true"
+      property string barBrightnessEnabled: "true"
+      property string barBatteryEnabled: "true"
+      property string barBluetoothEnabled: "true"
+      property string barNetworkEnabled: "true"
+      property string barControlCenterEnabled: "true"
+      property string barVpnEnabled: "true"
+      property string barPowerEnabled: "true"
       property string brightnessMonitorBus: "auto"
       property string brightnessSleepMultiplier: ".2"
       property string barPosition: "top"
@@ -160,9 +198,13 @@ Singleton {
     return {
       themeName: adapter.themeName,
       fontFamily: adapter.fontFamily,
+      fontMonoFamily: adapter.fontMonoFamily,
+      fontScale: adapter.fontScale,
+      fontMonoScale: adapter.fontMonoScale,
       wallpaperDir: adapter.wallpaperDir,
       wallpaperFillMode: adapter.wallpaperFillMode,
       wallpaperTransition: adapter.wallpaperTransition,
+      wallpaperPaletteScheme: adapter.wallpaperPaletteScheme,
       wallpaperCyclingEnabled: adapter.wallpaperCyclingEnabled,
       wallpaperCyclingInterval: adapter.wallpaperCyclingInterval,
       blurWallpaperOnOverview: adapter.blurWallpaperOnOverview,
@@ -175,7 +217,6 @@ Singleton {
       timeFormat: adapter.timeFormat,
       showSeconds: adapter.showSeconds,
       language: adapter.language,
-      musicVisualizerEnabled: adapter.musicVisualizerEnabled,
       showWorkspaceNumbers: adapter.showWorkspaceNumbers,
       showWorkspacesOnAllMonitors: adapter.showWorkspacesOnAllMonitors,
       workspaceIndicatorStyle: adapter.workspaceIndicatorStyle,
@@ -185,6 +226,22 @@ Singleton {
       barDateTimeEnabled: adapter.barDateTimeEnabled,
       barWeatherEnabled: adapter.barWeatherEnabled,
       barColorPickerEnabled: adapter.barColorPickerEnabled,
+      barWorkspacesEnabled: adapter.barWorkspacesEnabled,
+      barLauncherEnabled: adapter.barLauncherEnabled,
+      barActiveAppEnabled: adapter.barActiveAppEnabled,
+      barMediaEnabled: adapter.barMediaEnabled,
+      barTrayEnabled: adapter.barTrayEnabled,
+      barKeyboardLayoutEnabled: adapter.barKeyboardLayoutEnabled,
+      barSystemEnabled: adapter.barSystemEnabled,
+      barNotificationsEnabled: adapter.barNotificationsEnabled,
+      barVolumeEnabled: adapter.barVolumeEnabled,
+      barBrightnessEnabled: adapter.barBrightnessEnabled,
+      barBatteryEnabled: adapter.barBatteryEnabled,
+      barBluetoothEnabled: adapter.barBluetoothEnabled,
+      barNetworkEnabled: adapter.barNetworkEnabled,
+      barControlCenterEnabled: adapter.barControlCenterEnabled,
+      barVpnEnabled: adapter.barVpnEnabled,
+      barPowerEnabled: adapter.barPowerEnabled,
       brightnessMonitorBus: adapter.brightnessMonitorBus,
       brightnessSleepMultiplier: adapter.brightnessSleepMultiplier,
       barPosition: adapter.barPosition,

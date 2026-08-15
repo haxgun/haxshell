@@ -13,10 +13,14 @@ Rectangle {
   signal toggled()
   signal detailsRequested()
 
+  readonly property color activeBg: Config.isLightTheme ? "#0f172a" : "#ffffff"
+  readonly property color activeFg: Config.isLightTheme ? "#ffffff" : "#0f172a"
+  readonly property color activeMuted: Config.isLightTheme ? "#b0ffffff" : "#660f172a"
+
   width: wide ? (parent ? parent.width : 250) : (parent ? (parent.width - 8) / 2 : 250)
   height: wide ? 62 : 64
   radius: height / 2
-  color: root.active ? Config.selectedBg : (bodyMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+  color: root.active ? root.activeBg : (bodyMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
 
   Rectangle {
     id: iconTile
@@ -26,8 +30,8 @@ Rectangle {
     anchors.left: parent.left
     anchors.leftMargin: 10
     anchors.verticalCenter: parent.verticalCenter
-    color: root.active ? Config.glassBg : Config.searchBg
-    Text { anchors.centerIn: parent; text: root.icon; color: root.active ? Config.themeAccent : Config.textMuted; font.pixelSize: Config.fontSizeIconLarge; font.family: Config.fontIcon }
+    color: root.active ? root.activeFg : Config.searchBg
+    Text { anchors.centerIn: parent; text: root.icon; color: root.active ? root.activeBg : Config.textMuted; font.pixelSize: Config.fontSizeIconLarge; font.family: Config.fontIcon }
     MouseArea { anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.toggled() }
   }
 
@@ -38,8 +42,8 @@ Rectangle {
     anchors.rightMargin: 10
     anchors.verticalCenter: parent.verticalCenter
     spacing: 2
-    Text { width: parent.width; text: root.title; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
-    Text { width: parent.width; text: root.subtitle; color: Config.textMuted; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight }
+    Text { width: parent.width; text: root.title; color: root.active ? root.activeFg : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+    Text { width: parent.width; text: root.subtitle; color: root.active ? root.activeMuted : Config.textMuted; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight }
   }
 
   MouseArea {

@@ -56,19 +56,19 @@ PanelWindow {
 
   function refresh() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.hushctl, "wallpaper", "get", Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.hushctl, "wallpaper", "next", Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
   function setWallpaper(index) {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.hushctl, "wallpaper", "set", index.toString(), Config.wallpaperDir]
+    wallpaperProc.command = [root.hushctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 

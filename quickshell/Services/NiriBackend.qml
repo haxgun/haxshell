@@ -6,16 +6,20 @@ Item {
 
   property var workspaces: []
   property string focusedOutputName: ""
-  property var activeApp: ({ appId: "", title: "", iconPath: "" })
+  property var activeApp: ({ appId: "", title: "", iconPath: "", output: "" })
   property bool connected: false
 
   function refreshState() {
     let nextWorkspaces = []
     let focusedOutput = ""
+    let focusedActiveWindowId = 0
     for (let i = 0; i < niri.workspaces.count; i++) {
       let workspace = niri.workspaces.get(i)
       if (!workspace || workspace.id === undefined) continue
-      if (workspace.isFocused) focusedOutput = workspace.output || ""
+      if (workspace.isFocused) {
+        focusedOutput = workspace.output || ""
+        focusedActiveWindowId = workspace.activeWindowId || 0
+      }
       nextWorkspaces.push({
         key: workspace.id.toString(),
         label: workspace.name || workspace.index.toString(),
@@ -29,10 +33,21 @@ Item {
     workspaces = nextWorkspaces
     focusedOutputName = focusedOutput
 
+    // The focused workspace's active_window_id is the authoritative source of
+    // truth. Only trust niri.focusedWindow when its id matches it; otherwise
+    // (empty workspace, or a stale focused window in the plugin) show nothing.
     let window = niri.focusedWindow
-    activeApp = window
-      ? { appId: window.appId || "", title: window.title || "", iconPath: window.iconPath || "" }
-      : { appId: "", title: "", iconPath: "" }
+    if (window && focusedActiveWindowId > 0 && window.id === focusedActiveWindowId) {
+      let output = ""
+      let wsIdx = niri.workspaces.indexOfId(window.workspaceId)
+      if (wsIdx >= 0) {
+        let ws = niri.workspaces.get(wsIdx)
+        output = ws ? (ws.output || "") : ""
+      }
+      activeApp = { appId: window.appId || "", title: window.title || "", iconPath: window.iconPath || "", output: output }
+    } else {
+      activeApp = { appId: "", title: "", iconPath: "", output: "" }
+    }
   }
 
   function focusWorkspaceById(id) {

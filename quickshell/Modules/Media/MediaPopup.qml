@@ -175,8 +175,8 @@ PanelWindow {
             Item {
               width: parent.width
               height: 14
-              Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: root.fmt(root.positionSec); color: "#c8ffffff"; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono }
-              Text { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; text: root.fmt(root.durationSec); color: "#c8ffffff"; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono }
+              Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: root.fmt(root.positionSec); color: "#c8ffffff"; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
+              Text { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; text: root.fmt(root.durationSec); color: "#c8ffffff"; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
             }
         }
       }

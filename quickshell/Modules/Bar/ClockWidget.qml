@@ -164,7 +164,7 @@ Rectangle {
           width: leftSideItem.width - 38
           text: root.trackLabel
           color: Config.textPrimary
-          font.pixelSize: Config.fontSizeNormal
+          font.pixelSize: Config.fontMonoSizeNormal
           font.weight: Font.Medium
           font.family: Config.fontMono
           elide: Text.ElideRight
@@ -302,7 +302,7 @@ Rectangle {
         Text {
           text: root.formatTime(root.positionSec)
           color: Config.textMuted
-          font.pixelSize: Config.fontSizeNormal
+          font.pixelSize: Config.fontMonoSizeNormal
           font.family: Config.fontMono
           anchors.verticalCenter: parent.verticalCenter
         }
@@ -352,7 +352,7 @@ Rectangle {
         Text {
           text: root.formatTime(root.durationSec)
           color: Config.textMuted
-          font.pixelSize: Config.fontSizeNormal
+          font.pixelSize: Config.fontMonoSizeNormal
           font.family: Config.fontMono
           anchors.verticalCenter: parent.verticalCenter
         }

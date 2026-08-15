@@ -17,6 +17,19 @@ QtObject {
   property var dynamicPalette: ["#e2e8f0", "#334155", "#64748b", "#94a3b8"]
   property string manualAccent: "#e2e8f0"
   property bool manualDark: true
+
+  // Animated color state. These mirror the palette-derived colors and are the
+  // single source of truth for rendering; applyDynamicPalette writes to them and
+  // the Behavior below smoothly interpolates between the old and new palette.
+  property color animatedAccent: "#e2e8f0"
+  property color animatedSurface: "#334155"
+  property color animatedLayer: "#64748b"
+  property color animatedHighlight: "#94a3b8"
+
+  Behavior on animatedAccent { ColorAnimation { duration: Config.reduceMotion ? 0 : 400; easing.type: Easing.InOutQuad } }
+  Behavior on animatedSurface { ColorAnimation { duration: Config.reduceMotion ? 0 : 400; easing.type: Easing.InOutQuad } }
+  Behavior on animatedLayer { ColorAnimation { duration: Config.reduceMotion ? 0 : 400; easing.type: Easing.InOutQuad } }
+  Behavior on animatedHighlight { ColorAnimation { duration: Config.reduceMotion ? 0 : 400; easing.type: Easing.InOutQuad } }
   property bool shellBlurEnabled: true
   property bool barBlurEnabled: true
   property bool popupBlurEnabled: true
@@ -32,12 +45,12 @@ QtObject {
   property string osdPosition: "bottom-center"
   readonly property bool isDynamicTheme: themeName === "dynamic"
   readonly property bool isManualTheme: themeName === "manual"
-  readonly property color dynamicSurface: paletteColor(1, dynamicAccent)
-  readonly property color dynamicLayer: paletteColor(2, dynamicAccent)
-  readonly property color dynamicHighlight: paletteColor(3, dynamicAccent)
+  readonly property color dynamicSurface: animatedSurface
+  readonly property color dynamicLayer: animatedLayer
+  readonly property color dynamicHighlight: animatedHighlight
   readonly property bool dynamicIsLight: colorLuminance(dynamicSurface) > 0.52
   readonly property bool isLightTheme: themeName === "light" || (isManualTheme && !manualDark) || (isDynamicTheme && dynamicIsLight)
-  readonly property color themeAccent: isManualTheme ? manualAccent : (isDynamicTheme ? dynamicAccent : (isLightTheme ? "#64748b" : "#e2e8f0"))
+  readonly property color themeAccent: isManualTheme ? manualAccent : (isDynamicTheme ? animatedAccent : (isLightTheme ? "#64748b" : "#e2e8f0"))
 
   readonly property color glassBg: isDynamicTheme ? Qt.rgba(dynamicSurface.r, dynamicSurface.g, dynamicSurface.b, popupBlurEnabled ? 0.78 : 1) : (popupBlurEnabled ? (isLightTheme ? "#b8f8fafc" : "#901A1A1A") : (isLightTheme ? "#f3f8fc" : "#1b1b1b"))
   readonly property color glassHoverBg: isDynamicTheme ? Qt.rgba(dynamicLayer.r, dynamicLayer.g, dynamicLayer.b, popupBlurEnabled ? 0.86 : 1) : (popupBlurEnabled ? (isLightTheme ? "#d2f8fafc" : "#c01A1A1A") : (isLightTheme ? "#eef4fa" : "#242424"))
@@ -70,6 +83,10 @@ QtObject {
   readonly property color textDark: isDynamicTheme ? Qt.rgba(dynamicOnSurface.r, dynamicOnSurface.g, dynamicOnSurface.b, 0.5) : (isLightTheme ? "#94a3b8" : "#475569")
   readonly property color textWhite: isDynamicTheme ? dynamicOnSurface : (isLightTheme ? "#020617" : "#ffffff")
 
+  // Icon color used by bar widgets: pure white in dark themes so every glyph
+  // reads uniformly, near-black in light themes.
+  readonly property color iconColor: isDynamicTheme ? dynamicOnSurface : (isLightTheme ? "#0f172a" : "#ffffff")
+
   // Accent & Status Colors
   readonly property color accentGreen: "#1db954"       // Spotify & Success green
   readonly property color accentBlue: isLightTheme ? "#2563eb" : "#60a5fa"
@@ -96,6 +113,10 @@ QtObject {
     if (next.length === 0) return
     dynamicPalette = next
     dynamicAccent = next[0]
+    animatedAccent = next[0]
+    animatedSurface = paletteColor(1, dynamicAccent)
+    animatedLayer = paletteColor(2, dynamicAccent)
+    animatedHighlight = paletteColor(3, dynamicAccent)
   }
 
   // ==========================================
@@ -151,19 +172,28 @@ QtObject {
   // 🔤 SECTION 3: TYPOGRAPHY SYSTEM
   // ==========================================
   property string fontFamily: "Geist Mono"
+  property string fontMonoFamily: "Geist Mono"
+  property real fontScale: 1.0
+  property real fontMonoScale: 1.0
   property var availableFonts: ["Geist Mono", "JetBrains Mono", "Inter", "Noto Sans", "Cantarell", "Sans Serif"]
   readonly property string fontSans: fontFamily
-  readonly property string fontMono: fontFamily
+  readonly property string fontMono: fontMonoFamily
   readonly property string fontIcon: "JetBrainsMono Nerd Font"
 
-  readonly property int fontSizeSmall: Math.round(12 * uiScale)
-  readonly property int fontSizeNormal: Math.round(13 * uiScale)
-  readonly property int fontSizeMedium: Math.round(14 * uiScale)
-  readonly property int fontSizeLarge: Math.round(15 * uiScale)
-  readonly property int fontSizeTitle: Math.round(18 * uiScale)
+  readonly property int fontSizeSmall: Math.round(12 * uiScale * fontScale)
+  readonly property int fontSizeNormal: Math.round(13 * uiScale * fontScale)
+  readonly property int fontSizeMedium: Math.round(14 * uiScale * fontScale)
+  readonly property int fontSizeLarge: Math.round(15 * uiScale * fontScale)
+  readonly property int fontSizeTitle: Math.round(18 * uiScale * fontScale)
   readonly property int fontSizeIconSmall: Math.round(14 * uiScale)
   readonly property int fontSizeIconMedium: Math.round(16 * uiScale)
   readonly property int fontSizeIconLarge: Math.round(22 * uiScale)
+
+  readonly property int fontMonoSizeSmall: Math.round(12 * uiScale * fontMonoScale)
+  readonly property int fontMonoSizeNormal: Math.round(13 * uiScale * fontMonoScale)
+  readonly property int fontMonoSizeMedium: Math.round(14 * uiScale * fontMonoScale)
+  readonly property int fontMonoSizeLarge: Math.round(15 * uiScale * fontMonoScale)
+  readonly property int fontMonoSizeTitle: Math.round(18 * uiScale * fontMonoScale)
 
   // ==========================================
   // ⚙️ SECTION 4: COMPONENT CONFIGURATION
@@ -182,7 +212,6 @@ QtObject {
   // MPRIS Media Player Options
   // Options: "progress" (Linear Progress Bar) or "visualizer" (Animated Soundwave)
   property string mprisRightDisplayMode: "visualizer"
-  property bool musicVisualizerEnabled: true
   property int mprisVisualizerBarCount: 8
   property int mprisTargetSideWidth: 190
 
@@ -193,6 +222,22 @@ QtObject {
   property bool barDateTimeEnabled: true
   property bool barWeatherEnabled: true
   property bool barColorPickerEnabled: true
+  property bool barWorkspacesEnabled: true
+  property bool barLauncherEnabled: true
+  property bool barActiveAppEnabled: true
+  property bool barMediaEnabled: true
+  property bool barTrayEnabled: true
+  property bool barKeyboardLayoutEnabled: true
+  property bool barSystemEnabled: true
+  property bool barNotificationsEnabled: true
+  property bool barVolumeEnabled: true
+  property bool barBrightnessEnabled: true
+  property bool barBatteryEnabled: true
+  property bool barBluetoothEnabled: true
+  property bool barNetworkEnabled: true
+  property bool barControlCenterEnabled: true
+  property bool barVpnEnabled: true
+  property bool barPowerEnabled: true
   property string weatherLocation: ""
   property int weatherRefreshIntervalMs: 900000
   property string weatherText: "--"
@@ -202,6 +247,7 @@ QtObject {
   property string wallpaperDir: "~/wallpapers/animated"
   property string wallpaperFillMode: "fill"
   property string wallpaperTransition: "fade"
+  property string wallpaperPaletteScheme: "vibrant"
   property bool wallpaperCyclingEnabled: false
   property int wallpaperCyclingInterval: 300
   property bool blurWallpaperOnOverview: false

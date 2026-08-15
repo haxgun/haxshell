@@ -96,7 +96,7 @@ PanelWindow {
         Row {
           width: parent.width
           Text { text: root.label; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; width: parent.width - 46 }
-          Text { text: root.muted ? "Выкл." : root.value + "%"; color: root.muted ? Config.dangerRed : Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontMono; width: 46; horizontalAlignment: Text.AlignRight }
+          Text { text: root.muted ? "Выкл." : root.value + "%"; color: root.muted ? Config.dangerRed : Config.textWhite; font.pixelSize: Config.fontMonoSizeSmall; font.weight: Font.Bold; font.family: Config.fontMono; width: 46; horizontalAlignment: Text.AlignRight }
         }
         Rectangle {
           width: parent.width

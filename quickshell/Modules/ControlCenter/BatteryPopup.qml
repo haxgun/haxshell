@@ -240,7 +240,7 @@ PanelWindow {
               text: root.percent() + "%"
               color: Config.textWhite
               horizontalAlignment: Text.AlignRight
-              font.pixelSize: Config.fontSizeSmall
+              font.pixelSize: Config.fontMonoSizeSmall
               font.weight: Font.Bold
               font.family: Config.fontMono
             }

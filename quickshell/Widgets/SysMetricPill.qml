@@ -7,7 +7,7 @@ Rectangle {
 
   property string icon: ""
   property string value: "--"
-  property color accent: Config.textMuted
+  property color accent: Config.iconColor
   property int cardWidth: 58
 
   width: cardWidth
@@ -32,7 +32,7 @@ Rectangle {
     Text {
       text: root.value
       color: Config.textPrimary
-      font.pixelSize: Config.fontSizeSmall
+      font.pixelSize: Config.fontMonoSizeSmall
       font.weight: Font.Medium
       font.family: Config.fontMono
       anchors.verticalCenter: parent.verticalCenter

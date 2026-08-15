@@ -56,7 +56,7 @@ Column {
       width: 42
       text: root.value + "%"
       color: root.muted ? Config.dangerRed : Config.textMuted
-      font.pixelSize: Config.fontSizeMedium
+      font.pixelSize: Config.fontMonoSizeMedium
       font.weight: Font.Bold
       font.family: Config.fontMono
       horizontalAlignment: Text.AlignRight

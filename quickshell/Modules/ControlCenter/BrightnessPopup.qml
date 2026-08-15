@@ -201,7 +201,7 @@ PanelWindow {
           anchors.verticalCenter: parent.verticalCenter
           text: root.brightnessPercent + "%"
           color: Config.textMuted
-          font.pixelSize: Config.fontSizeMedium
+          font.pixelSize: Config.fontMonoSizeMedium
           font.weight: Font.Bold
           font.family: Config.fontMono
         }
@@ -296,7 +296,7 @@ PanelWindow {
               anchors.centerIn: parent
               text: presetBtn.modelData + "%"
               color: presetBtn.isSelected ? Config.textWhite : Config.textSubtle
-              font.pixelSize: Config.fontSizeSmall
+              font.pixelSize: Config.fontMonoSizeSmall
               font.weight: presetBtn.isSelected ? Font.Bold : Font.Medium
               font.family: Config.fontMono
             }

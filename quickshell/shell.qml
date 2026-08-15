@@ -31,9 +31,13 @@ Scope {
       let settings = typeof data === "string" ? JSON.parse(data) : data
       if (settings.themeName) Config.themeName = settings.themeName
       if (settings.fontFamily) Config.fontFamily = settings.fontFamily
+      if (settings.fontMonoFamily) Config.fontMonoFamily = settings.fontMonoFamily
+      if (settings.fontScale) Config.fontScale = parseFloat(settings.fontScale)
+      if (settings.fontMonoScale) Config.fontMonoScale = parseFloat(settings.fontMonoScale)
       if (settings.wallpaperDir) Config.wallpaperDir = settings.wallpaperDir
       if (settings.wallpaperFillMode) Config.wallpaperFillMode = settings.wallpaperFillMode
       if (settings.wallpaperTransition) Config.wallpaperTransition = settings.wallpaperTransition
+      if (settings.wallpaperPaletteScheme) Config.wallpaperPaletteScheme = settings.wallpaperPaletteScheme
       if (typeof settings.wallpaperCyclingEnabled === "string") Config.wallpaperCyclingEnabled = settings.wallpaperCyclingEnabled === "true"
       if (settings.wallpaperCyclingInterval) Config.wallpaperCyclingInterval = parseInt(settings.wallpaperCyclingInterval)
       if (typeof settings.blurWallpaperOnOverview === "string") Config.blurWallpaperOnOverview = settings.blurWallpaperOnOverview === "true"
@@ -52,6 +56,23 @@ Scope {
       if (typeof settings.barDateTimeEnabled === "string") Config.barDateTimeEnabled = settings.barDateTimeEnabled === "true"
       if (typeof settings.barWeatherEnabled === "string") Config.barWeatherEnabled = settings.barWeatherEnabled === "true"
       if (typeof settings.barColorPickerEnabled === "string") Config.barColorPickerEnabled = settings.barColorPickerEnabled === "true"
+      if (typeof settings.barWorkspacesEnabled === "string") Config.barWorkspacesEnabled = settings.barWorkspacesEnabled === "true"
+      if (typeof settings.barLauncherEnabled === "string") Config.barLauncherEnabled = settings.barLauncherEnabled === "true"
+      if (typeof settings.barActiveAppEnabled === "string") Config.barActiveAppEnabled = settings.barActiveAppEnabled === "true"
+      if (typeof settings.barMediaEnabled === "string") Config.barMediaEnabled = settings.barMediaEnabled === "true"
+      if (typeof settings.barTrayEnabled === "string") Config.barTrayEnabled = settings.barTrayEnabled === "true"
+      if (typeof settings.barKeyboardLayoutEnabled === "string") Config.barKeyboardLayoutEnabled = settings.barKeyboardLayoutEnabled === "true"
+      if (typeof settings.barSystemEnabled === "string") Config.barSystemEnabled = settings.barSystemEnabled === "true"
+      if (typeof settings.barNotificationsEnabled === "string") Config.barNotificationsEnabled = settings.barNotificationsEnabled === "true"
+      if (typeof settings.barVolumeEnabled === "string") Config.barVolumeEnabled = settings.barVolumeEnabled === "true"
+      if (typeof settings.barBrightnessEnabled === "string") Config.barBrightnessEnabled = settings.barBrightnessEnabled === "true"
+      if (typeof settings.barBatteryEnabled === "string") Config.barBatteryEnabled = settings.barBatteryEnabled === "true"
+      if (typeof settings.barBluetoothEnabled === "string") Config.barBluetoothEnabled = settings.barBluetoothEnabled === "true"
+      if (typeof settings.barNetworkEnabled === "string") Config.barNetworkEnabled = settings.barNetworkEnabled === "true"
+      else if (typeof settings.barEthernetEnabled === "string" || typeof settings.barWifiEnabled === "string") Config.barNetworkEnabled = (settings.barEthernetEnabled !== "false" || settings.barWifiEnabled !== "false")
+      if (typeof settings.barControlCenterEnabled === "string") Config.barControlCenterEnabled = settings.barControlCenterEnabled === "true"
+      if (typeof settings.barVpnEnabled === "string") Config.barVpnEnabled = settings.barVpnEnabled === "true"
+      if (typeof settings.barPowerEnabled === "string") Config.barPowerEnabled = settings.barPowerEnabled === "true"
       if (settings.brightnessMonitorBus) Config.brightnessMonitorBus = settings.brightnessMonitorBus
       if (settings.brightnessSleepMultiplier) Config.brightnessSleepMultiplier = settings.brightnessSleepMultiplier
       if (typeof settings.shellBlurEnabled === "string") Config.shellBlurEnabled = settings.shellBlurEnabled === "true"
@@ -71,10 +92,6 @@ Scope {
       if (settings.notificationPosition) Config.notificationPosition = settings.notificationPosition
       if (settings.notificationTimeoutMs) Config.notificationTimeoutMs = parseInt(settings.notificationTimeoutMs)
       if (settings.osdPosition) Config.osdPosition = settings.osdPosition
-      if (typeof settings.musicVisualizerEnabled === "string") {
-        Config.musicVisualizerEnabled = settings.musicVisualizerEnabled === "true"
-        Config.mprisRightDisplayMode = Config.musicVisualizerEnabled ? "visualizer" : "progress"
-      }
       if (typeof settings.showWorkspaceNumbers === "string") Config.showWorkspaceNumbers = settings.showWorkspaceNumbers === "true"
       if (typeof settings.showWorkspacesOnAllMonitors === "string") Config.showWorkspacesOnAllMonitors = settings.showWorkspacesOnAllMonitors === "true"
       if (settings.workspaceIndicatorStyle) Config.workspaceIndicatorStyle = settings.workspaceIndicatorStyle

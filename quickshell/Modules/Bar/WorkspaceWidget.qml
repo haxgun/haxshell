@@ -12,6 +12,7 @@ Rectangle {
   implicitHeight: root.vertical ? rowLayout.implicitHeight + 16 : Config.barHeight
   property bool embeddedInBar: false
   property bool vertical: false
+  property var tooltip: null
 
   Behavior on implicitWidth {
     NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
@@ -67,7 +68,9 @@ Rectangle {
 
   Grid {
     id: rowLayout
-    anchors.centerIn: parent
+    anchors.left: parent.left
+    anchors.leftMargin: 8
+    anchors.verticalCenter: parent.verticalCenter
     spacing: 2
     rows: root.vertical ? 0 : 1
     columns: root.vertical ? 1 : 0
@@ -78,6 +81,7 @@ Rectangle {
       width: 32
       height: Config.buttonHeight
       radius: Config.buttonRadius
+      visible: Config.barLauncherEnabled
       readonly property bool isDrawerActive: (root.appDrawer && root.appDrawer.isOpen)
       color: (isDrawerActive || launcherMouse.containsMouse) ? Config.activeHoverBg : "#00000000"
 
@@ -88,7 +92,7 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         text: Config.iconLauncher
-        color: (launcherBtn.isDrawerActive || launcherMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        color: (launcherBtn.isDrawerActive || launcherMouse.containsMouse) ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
@@ -98,6 +102,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(launcherBtn, I18n.tr("Меню приложений"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           launcherProc.running = false
           launcherProc.running = true
@@ -109,6 +115,7 @@ Rectangle {
     Item {
       width: root.vertical ? 16 : 6
       height: launcherBtn.height
+      visible: Config.barLauncherEnabled && Config.barWorkspacesEnabled
 
       Rectangle {
         anchors.centerIn: parent
@@ -126,6 +133,7 @@ Rectangle {
         required property var modelData
         required property int index
 
+        visible: Config.barWorkspacesEnabled
         width: 32
         height: Config.buttonHeight
         radius: Config.buttonRadius
@@ -162,7 +170,7 @@ Rectangle {
           width: 4
           height: 4
           radius: 2
-          color: Config.textPrimary
+          color: Config.iconColor
           anchors.horizontalCenter: parent.horizontalCenter
           anchors.bottom: parent.bottom
           anchors.bottomMargin: 3
@@ -174,6 +182,8 @@ Rectangle {
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
+          onEntered: if (root.tooltip) root.tooltip.show(itemRect, I18n.tr("Рабочий стол") + " " + modelData.label)
+          onExited: if (root.tooltip) root.tooltip.hide()
           onClicked: {
             CompositorService.switchWorkspace(modelData)
           }

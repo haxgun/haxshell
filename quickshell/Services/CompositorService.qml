@@ -71,15 +71,23 @@ Singleton {
       if (niriPluginReady) return niriBackend.activeApp
       for (let i = 0; i < niriFallbackWindows.length; i++) {
         let window = niriFallbackWindows[i]
-        if (window && window.is_focused) return { appId: window.app_id || "", title: window.title || "" }
+        if (window && window.is_focused) {
+          let output = ""
+          for (let j = 0; j < niriFallbackWorkspaces.length; j++) {
+            let ws = niriFallbackWorkspaces[j]
+            if (ws && ws.id === window.workspace_id) { output = ws.output || ""; break }
+          }
+          return { appId: window.app_id || "", title: window.title || "", output: output }
+        }
       }
-      return { appId: "", title: "" }
+      return { appId: "", title: "", output: "" }
     }
     let window = Hyprland.activeToplevel
     let ipc = window ? window.lastIpcObject : ({})
     return {
       appId: (ipc.class || ipc.initialClass || ipc.initialTitle || "").toString(),
-      title: window ? (window.title || ipc.title || "") : ""
+      title: window ? (window.title || ipc.title || "") : "",
+      output: window && window.monitor ? (window.monitor.name || "") : ""
     }
   }
   readonly property string exitCommand: backend === "niri" ? "niri msg action quit" : "hyprctl dispatch exit"

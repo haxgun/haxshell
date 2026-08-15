@@ -21,7 +21,7 @@ Column {
   Text {
     text: root.value
     color: Config.textPrimary
-    font.pixelSize: Config.fontSizeNormal
+    font.pixelSize: Config.fontMonoSizeNormal
     font.weight: Font.Bold
     font.family: Config.fontMono
     elide: Text.ElideRight

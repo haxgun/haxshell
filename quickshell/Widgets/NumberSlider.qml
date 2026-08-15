@@ -83,7 +83,7 @@ Item {
       verticalAlignment: Text.AlignVCenter
       text: root.value.toString()
       color: Config.textPrimary
-      font.pixelSize: Config.fontSizeSmall
+      font.pixelSize: Config.fontMonoSizeSmall
       font.family: Config.fontMono
       inputMethodHints: Qt.ImhDigitsOnly
       selectByMouse: true
@@ -99,7 +99,7 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     text: root.suffix
     color: Config.textMuted
-    font.pixelSize: Config.fontSizeSmall
+    font.pixelSize: Config.fontMonoSizeSmall
     font.family: Config.fontMono
   }
 

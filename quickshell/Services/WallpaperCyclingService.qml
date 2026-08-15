@@ -31,7 +31,7 @@ Item {
 
   function nextWallpaper() {
     cycleProc.running = false
-    cycleProc.command = [Config.hushctl, "wallpaper", "next", Config.wallpaperDir]
+    cycleProc.command = [Config.hushctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     cycleProc.running = true
   }
 }

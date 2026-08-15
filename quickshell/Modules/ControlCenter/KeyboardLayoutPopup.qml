@@ -130,7 +130,7 @@ PanelWindow {
             anchors.leftMargin: 10
             anchors.rightMargin: 10
             spacing: 10
-            Text { width: 28; text: parent.parent.layout; color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+            Text { width: 28; text: parent.parent.layout; color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.weight: Font.Bold; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             Text { width: parent.width - 38; text: parent.parent.name; color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
           }
 

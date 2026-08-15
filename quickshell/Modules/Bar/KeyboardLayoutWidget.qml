@@ -11,6 +11,7 @@ Rectangle {
   property string layoutName: "Unknown"
   property var keyboardLayoutPopup: null
   property var closeFlyouts: null
+  property var tooltip: null
   implicitWidth: keyRow.implicitWidth + 12
   implicitHeight: Config.buttonHeight
   radius: Config.buttonRadius
@@ -48,7 +49,7 @@ Rectangle {
 
     Text {
       text: Config.iconKeyboard
-      color: Config.textMuted
+      color: Config.iconColor
       font.pixelSize: Config.fontSizeIconSmall
       font.family: Config.fontIcon
       anchors.verticalCenter: parent.verticalCenter
@@ -57,7 +58,7 @@ Rectangle {
     Text {
       text: root.layout
       color: Config.textPrimary
-      font.pixelSize: Config.fontSizeSmall
+      font.pixelSize: Config.fontMonoSizeSmall
       font.weight: Font.Bold
       font.family: Config.fontMono
       anchors.verticalCenter: parent.verticalCenter
@@ -70,6 +71,8 @@ Rectangle {
     hoverEnabled: true
     acceptedButtons: Qt.LeftButton
     cursorShape: Qt.PointingHandCursor
+    onEntered: if (root.tooltip) root.tooltip.show(root, root.layoutName)
+    onExited: if (root.tooltip) root.tooltip.hide()
     onClicked: {
       if (!root.keyboardLayoutPopup) return
       let statusRoot = root.parent ? root.parent.parent : null

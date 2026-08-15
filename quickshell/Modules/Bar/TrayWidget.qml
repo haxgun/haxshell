@@ -16,9 +16,10 @@ Rectangle {
   property bool expanded: false
   property var trayMenuPopup: null
   property var closeFlyouts: null
+  property var tooltip: null
   readonly property bool hovered: trayHover.hovered || arrowMouse.containsMouse || iconMouse.containsMouse
 
-  visible: trayCount > 0
+  visible: trayCount > 0 && Config.barTrayEnabled
   implicitWidth: visible ? trayRow.implicitWidth + 0 : 0
   implicitHeight: Config.buttonHeight
   radius: Config.buttonRadius
@@ -73,6 +74,8 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.NoButton
+    onEntered: if (root.tooltip) root.tooltip.show(root, I18n.tr("Системный трей"))
+    onExited: if (root.tooltip) root.tooltip.hide()
   }
 
   Row {
@@ -170,7 +173,7 @@ Rectangle {
       Text {
         anchors.centerIn: parent
         text: root.expanded ? Config.iconChevronRight : Config.iconChevronLeft
-        color: arrowMouse.containsMouse ? Config.textWhite : Config.textPrimary
+        color: arrowMouse.containsMouse ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
 

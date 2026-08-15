@@ -63,7 +63,7 @@ Column {
         width: 44
         text: root.currentDevice && root.currentDevice.audio ? (Math.round(root.currentDevice.audio.volume * 100) + "%") : ""
         color: root.currentDevice && root.currentDevice.audio && root.currentDevice.audio.muted ? Config.dangerRed : Config.textMuted
-        font.pixelSize: Config.fontSizeSmall
+        font.pixelSize: Config.fontMonoSizeSmall
         font.family: Config.fontMono
         horizontalAlignment: Text.AlignRight
         anchors.verticalCenter: parent.verticalCenter
@@ -137,7 +137,7 @@ Column {
               width: 44
               text: parent.parent.device.audio ? (Math.round(parent.parent.device.audio.volume * 100) + "%") : ""
               color: parent.parent.device.audio && parent.parent.device.audio.muted ? Config.dangerRed : Config.textMuted
-              font.pixelSize: Config.fontSizeSmall
+              font.pixelSize: Config.fontMonoSizeSmall
               font.family: Config.fontMono
               horizontalAlignment: Text.AlignRight
               anchors.verticalCenter: parent.verticalCenter

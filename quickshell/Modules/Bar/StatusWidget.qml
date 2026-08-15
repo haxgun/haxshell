@@ -16,6 +16,7 @@ Rectangle {
   implicitHeight: root.vertical ? rowLayout.implicitHeight + 12 : Config.barHeight
   property bool embeddedInBar: false
   property bool vertical: false
+  property var tooltip: null
 
   // Frosted Glass Tint & Border
   color: embeddedInBar ? "#00000000" : Config.glassBg
@@ -228,7 +229,7 @@ Rectangle {
 
   Process {
     id: fetchVpnProc
-    command: ["sh", "-c", "nmcli -t -f TYPE,STATE connection show --active 2>/dev/null | grep -q '^vpn:activated$' && echo yes || echo no"]
+    command: ["sh", "-c", "nmcli -t -f TYPE,STATE connection show --active 2>/dev/null | grep -Eq '^(vpn|tun|wireguard|ip-tunnel):activated$' && echo yes || echo no"]
     running: true
 
     stdout: SplitParser {
@@ -347,21 +348,26 @@ Rectangle {
     MediaWidget {
       mediaPopup: root.mediaPopup
       closeFlyouts: root.closeFlyouts
+      tooltip: root.tooltip
     }
 
     TrayWidget {
       trayMenuPopup: root.trayMenuPopup
       closeFlyouts: root.closeFlyouts
+      tooltip: root.tooltip
     }
 
     KeyboardLayoutWidget {
       keyboardLayoutPopup: root.keyboardLayoutPopup
       closeFlyouts: root.closeFlyouts
+      tooltip: root.tooltip
+      visible: Config.barKeyboardLayoutEnabled
     }
 
     // Expandable System Resources Pill (CPU, RAM, Net Speed, Disks)
     Rectangle {
       id: sysContainer
+      visible: Config.barSystemEnabled
       height: Config.buttonHeight
       implicitWidth: root.vertical ? Config.buttonWidth : sysRow.implicitWidth + 12
       radius: Config.buttonRadius
@@ -376,7 +382,7 @@ Rectangle {
         anchors.centerIn: parent
         visible: root.vertical
         text: Config.iconCpu
-        color: (sysContainer.isSystemActive || sysMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        color: (sysContainer.isSystemActive || sysMouse.containsMouse) ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
@@ -406,20 +412,20 @@ Rectangle {
 
             Row {
               spacing: 4
-              Text { text: Config.iconCpu; color: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.textMuted); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-              Text { text: root.sysCpuPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: Config.iconCpu; color: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysCpuPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             }
             Rectangle { width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
             Row {
               spacing: 4
-              Text { text: Config.iconRam; color: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.textMuted); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-              Text { text: root.sysRamUsedGb.toFixed(1) + "G"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: Config.iconRam; color: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysRamUsedGb.toFixed(1) + "G"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             }
             Rectangle { width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
             Row {
               spacing: 4
-              Text { text: Config.iconNet; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-              Text { text: root.sysNetRx.trim(); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: Config.iconNet; color: Config.iconColor; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysNetRx.trim(); color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             }
           }
         }
@@ -431,14 +437,14 @@ Rectangle {
           visible: false
           anchors.verticalCenter: parent.verticalCenter
 
-          SysMetricPill { icon: Config.iconCpu; value: root.sysCpuPercent + "%"; cardWidth: 52; accent: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.textMuted); anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { icon: "󰔏"; value: root.sysCpuTemp > 0 ? (root.sysCpuTemp + "C") : "--C"; cardWidth: 58; accent: root.sysCpuTemp > 85 ? Config.dangerRed : (root.sysCpuTemp > 70 ? Config.warningAmber : Config.textMuted); anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { icon: "󰓅"; value: root.sysLoad1.toFixed(2); cardWidth: 58; accent: Config.textMuted; anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { icon: "󰅐"; value: root.sysUptime; cardWidth: 70; accent: Config.textMuted; anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { icon: Config.iconRam; value: root.sysRamUsedGb + "/" + root.sysRamTotalGb + "Г"; cardWidth: 98; accent: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.textMuted); anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { icon: Config.iconNet; value: "↓" + root.sysNetRx.trim() + " ↑" + root.sysNetTx.trim(); cardWidth: 118; accent: Config.textMuted; anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { visible: root.sysRootDiskExists; icon: Config.iconDisk; value: "/ " + root.sysRootPercent + "%"; cardWidth: 58; accent: root.sysRootPercent > 85 ? Config.dangerRed : Config.textMuted; anchors.verticalCenter: parent.verticalCenter }
-          SysMetricPill { visible: root.sysStorageDiskExists; icon: Config.iconDisk; value: "/mnt " + root.sysStoragePercent + "%"; cardWidth: 76; accent: root.sysStoragePercent > 85 ? Config.dangerRed : Config.textMuted; anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { icon: Config.iconCpu; value: root.sysCpuPercent + "%"; cardWidth: 52; accent: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.iconColor); anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { icon: "󰔏"; value: root.sysCpuTemp > 0 ? (root.sysCpuTemp + "C") : "--C"; cardWidth: 58; accent: root.sysCpuTemp > 85 ? Config.dangerRed : (root.sysCpuTemp > 70 ? Config.warningAmber : Config.iconColor); anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { icon: "󰓅"; value: root.sysLoad1.toFixed(2); cardWidth: 58; accent: Config.iconColor; anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { icon: "󰅐"; value: root.sysUptime; cardWidth: 70; accent: Config.iconColor; anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { icon: Config.iconRam; value: root.sysRamUsedGb + "/" + root.sysRamTotalGb + "Г"; cardWidth: 98; accent: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.iconColor); anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { icon: Config.iconNet; value: "↓" + root.sysNetRx.trim() + " ↑" + root.sysNetTx.trim(); cardWidth: 118; accent: Config.iconColor; anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { visible: root.sysRootDiskExists; icon: Config.iconDisk; value: "/ " + root.sysRootPercent + "%"; cardWidth: 58; accent: root.sysRootPercent > 85 ? Config.dangerRed : Config.iconColor; anchors.verticalCenter: parent.verticalCenter }
+          SysMetricPill { visible: root.sysStorageDiskExists; icon: Config.iconDisk; value: "/mnt " + root.sysStoragePercent + "%"; cardWidth: 76; accent: root.sysStoragePercent > 85 ? Config.dangerRed : Config.iconColor; anchors.verticalCenter: parent.verticalCenter }
         }
       }
 
@@ -447,6 +453,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(sysContainer, I18n.tr("Мониторинг системы"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: root.toggleAnchoredFlyout("system", root.systemPopup, sysContainer)
       }
     }
@@ -468,6 +476,7 @@ Rectangle {
     // Notification Center Button
     Rectangle {
       id: notificationContainer
+      visible: Config.barNotificationsEnabled
       height: Config.buttonHeight
       width: Config.buttonWidth
       radius: Config.buttonRadius
@@ -480,7 +489,7 @@ Rectangle {
       Text {
         anchors.centerIn: parent
         text: notificationContainer.notificationCount > 0 ? Config.iconNotificationsActive : Config.iconNotifications
-        color: (notificationContainer.isNotificationActive || notificationMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        color: (notificationContainer.isNotificationActive || notificationMouse.containsMouse) ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
@@ -504,6 +513,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(notificationContainer, I18n.tr("Уведомления"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: root.toggleAnchoredFlyout("notifications", root.notificationPopup, notificationContainer)
       }
     }
@@ -511,6 +522,7 @@ Rectangle {
     // Volume Control Button
     Rectangle {
       id: volContainer
+      visible: Config.barVolumeEnabled
       height: Config.buttonHeight
       implicitWidth: root.vertical ? Config.buttonWidth : volRow.implicitWidth + 12
       radius: Config.buttonRadius
@@ -527,7 +539,7 @@ Rectangle {
 
         Text {
           text: root.isMuted ? Config.iconVolMuted : (root.volumePercent >= 70 ? Config.iconVolHigh : (root.volumePercent >= 30 ? Config.iconVolMedium : Config.iconVolLow))
-          color: root.isMuted ? Config.dangerRed : ((volContainer.isAudioActive || volMouse.containsMouse) ? Config.textWhite : Config.textPrimary)
+          color: root.isMuted ? Config.dangerRed : ((volContainer.isAudioActive || volMouse.containsMouse) ? Config.textWhite : Config.iconColor)
           font.pixelSize: Config.fontSizeIconMedium
           font.family: Config.fontIcon
           anchors.verticalCenter: parent.verticalCenter
@@ -571,12 +583,16 @@ Rectangle {
           root.sink.audio.muted = false
           root.sink.audio.volume = nextVolume / 100
         }
+
+        onEntered: if (root.tooltip) root.tooltip.show(volContainer, I18n.tr("Громкость"))
+        onExited: if (root.tooltip) root.tooltip.hide()
       }
     }
 
     // Brightness Control Button
     Rectangle {
       id: brightContainer
+      visible: Config.barBrightnessEnabled
       width: Config.buttonWidth
       height: Config.buttonHeight
       radius: Config.buttonRadius
@@ -589,7 +605,7 @@ Rectangle {
       Text {
         anchors.centerIn: parent
         text: root.brightnessPercent >= 75 ? Config.iconBrightHigh : (root.brightnessPercent >= 35 ? Config.iconBrightMedium : (root.brightnessPercent > 0 ? Config.iconBrightLow : Config.iconBrightOff))
-        color: (brightContainer.isBrightnessActive || brightMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        color: (brightContainer.isBrightnessActive || brightMouse.containsMouse) ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
@@ -613,12 +629,16 @@ Rectangle {
             brightnessDebounceTimer.restart()
           }
         }
+
+        onEntered: if (root.tooltip) root.tooltip.show(brightContainer, I18n.tr("Яркость"))
+        onExited: if (root.tooltip) root.tooltip.hide()
       }
     }
 
     // Battery Status Button
     Rectangle {
       id: batteryContainer
+      visible: Config.barBatteryEnabled
       width: Config.buttonWidth
       height: Config.buttonHeight
       radius: Config.buttonRadius
@@ -662,7 +682,7 @@ Rectangle {
             anchors.fill: parent
             radius: parent.radius
             color: "#00000000"
-            border.color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+            border.color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
             border.width: 1
           }
 
@@ -683,7 +703,7 @@ Rectangle {
           anchors.left: batteryBody.right
           anchors.leftMargin: 1
           anchors.verticalCenter: batteryBody.verticalCenter
-          color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+          color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
         }
       }
 
@@ -692,6 +712,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(batteryContainer, I18n.tr("Батарея"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: root.toggleAnchoredFlyout("battery", root.batteryPopup, batteryContainer)
       }
     }
@@ -699,6 +721,7 @@ Rectangle {
     // Bluetooth Icon Button
     Rectangle {
       id: btContainer
+      visible: Config.barBluetoothEnabled
       width: btIcon.implicitWidth + root.iconButtonPadding * 2
       height: Config.buttonHeight
       radius: Config.buttonRadius
@@ -711,7 +734,7 @@ Rectangle {
         id: btIcon
         anchors.centerIn: parent
         text: Config.iconBluetooth
-        color: (btContainer.isBluetoothActive || btMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        color: (btContainer.isBluetoothActive || btMouse.containsMouse) ? Config.textWhite : Config.iconColor
         opacity: root.bluetoothEnabled ? 1 : 0.38
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
@@ -723,7 +746,7 @@ Rectangle {
         radius: 1
         anchors.centerIn: btIcon
         rotation: -38
-        color: (btContainer.isBluetoothActive || btMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        color: (btContainer.isBluetoothActive || btMouse.containsMouse) ? Config.textWhite : Config.iconColor
         opacity: root.bluetoothEnabled ? 0 : 0.45
       }
 
@@ -732,6 +755,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(btContainer, I18n.tr("Bluetooth"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           if (!root.toggleAnchoredFlyout("bluetooth", root.bluetoothPopup, btContainer)) {
             bluetoothProc.running = true
@@ -740,79 +765,48 @@ Rectangle {
       }
     }
 
-    // Ethernet Status Button
+    // Network Status Button (Ethernet + Wi-Fi merged)
     Rectangle {
-      id: ethContainer
-      width: ethIcon.implicitWidth + root.iconButtonPadding * 2
+      id: netContainer
+      width: netIcon.implicitWidth + root.iconButtonPadding * 2
       height: Config.buttonHeight
       radius: Config.buttonRadius
-      visible: root.ethConnected
+      visible: Config.barNetworkEnabled
       readonly property bool isNetworkActive: (root.wifiPopup && root.wifiPopup.isOpen)
-      color: (isNetworkActive || ethMouse.containsMouse) ? Config.pressedBg : "#00000000"
+      color: (isNetworkActive || netMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
 
       Text {
-        id: ethIcon
+        id: netIcon
         anchors.centerIn: parent
-        text: Config.iconEthernet
-        color: (ethContainer.isNetworkActive || ethMouse.containsMouse) ? Config.textWhite : Config.textPrimary
-        font.pixelSize: Config.fontSizeIconMedium
-        font.family: Config.fontIcon
-      }
-
-      MouseArea {
-        id: ethMouse
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-          if (!root.toggleAnchoredFlyout("wifi", root.wifiPopup, ethContainer)) {
-            networkProc.running = true
-          }
-        }
-      }
-    }
-
-    // Wi-Fi Status Button
-    Rectangle {
-      id: wifiContainer
-      width: wifiIcon.implicitWidth + root.iconButtonPadding * 2
-      height: Config.buttonHeight
-      radius: Config.buttonRadius
-      visible: !root.ethConnected || !root.wifiEnabled || root.wifiConnected || root.netConnecting
-      readonly property bool isNetworkActive: (root.wifiPopup && root.wifiPopup.isOpen)
-      color: (isNetworkActive || wifiMouse.containsMouse) ? Config.pressedBg : "#00000000"
-
-      Behavior on color { ColorAnimation { duration: 150 } }
-
-      Text {
-        id: wifiIcon
-        anchors.centerIn: parent
-        text: !root.wifiEnabled ? Config.iconWifiDisconnected : (root.netConnecting && !root.wifiConnected ? Config.iconWifiConnecting : (root.wifiConnected ? Config.iconWifiConnected : Config.iconWifiDisconnected))
-        color: root.wifiEnabled && root.netConnecting && !root.wifiConnected ? Config.warningAmber : ((wifiContainer.isNetworkActive || wifiMouse.containsMouse) ? Config.textWhite : Config.textPrimary)
-        opacity: root.wifiEnabled ? 1 : 0.38
+        text: root.ethConnected ? Config.iconEthernet : (!root.wifiEnabled ? Config.iconWifiDisconnected : (root.netConnecting && !root.wifiConnected ? Config.iconWifiConnecting : (root.wifiConnected ? Config.iconWifiConnected : Config.iconWifiDisconnected)))
+        color: root.ethConnected ? ((netContainer.isNetworkActive || netMouse.containsMouse) ? Config.textWhite : Config.iconColor) : (root.wifiEnabled && root.netConnecting && !root.wifiConnected ? Config.warningAmber : ((netContainer.isNetworkActive || netMouse.containsMouse) ? Config.textWhite : Config.iconColor))
+        opacity: root.ethConnected ? 1 : (root.wifiEnabled ? 1 : 0.38)
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
 
       Rectangle {
-        width: wifiIcon.implicitWidth + 4
+        width: netIcon.implicitWidth + 4
         height: 2
         radius: 1
-        anchors.centerIn: wifiIcon
+        anchors.centerIn: netIcon
         rotation: -38
-        color: (wifiContainer.isNetworkActive || wifiMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        visible: !root.ethConnected
+        color: (netContainer.isNetworkActive || netMouse.containsMouse) ? Config.textWhite : Config.iconColor
         opacity: root.wifiEnabled ? 0 : 0.45
       }
 
       MouseArea {
-        id: wifiMouse
+        id: netMouse
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(netContainer, I18n.tr("Сеть"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
-          if (!root.toggleAnchoredFlyout("wifi", root.wifiPopup, wifiContainer)) {
+          if (!root.toggleAnchoredFlyout("wifi", root.wifiPopup, netContainer)) {
             networkProc.running = true
           }
         }
@@ -855,6 +849,7 @@ Rectangle {
 
     Rectangle {
       id: controlCenterContainer
+      visible: Config.barControlCenterEnabled
       height: Config.buttonHeight
       width: Config.buttonWidth + 4
       radius: Config.buttonRadius
@@ -866,7 +861,7 @@ Rectangle {
       Text {
         anchors.centerIn: parent
         text: Config.iconControlCenter
-        color: (controlCenterContainer.isControlCenterActive || controlCenterMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+        color: (controlCenterContainer.isControlCenterActive || controlCenterMouse.containsMouse) ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
@@ -876,6 +871,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(controlCenterContainer, I18n.tr("Центр управления"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: root.openControlCenter("wifi", controlCenterContainer)
       }
     }
@@ -908,7 +905,7 @@ Rectangle {
             id: clockIcon
             anchors.centerIn: parent
             text: Config.iconClock
-            color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.textMuted
+            color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.iconColor
             font.pixelSize: Config.fontSizeIconSmall
             font.family: Config.fontIcon
           }
@@ -949,6 +946,8 @@ Rectangle {
         enabled: Config.barDateTimeEnabled
         hoverEnabled: enabled
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onEntered: if (root.tooltip) root.tooltip.show(dateTimeContainer, I18n.tr("Дата и время"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           if (root.calendarPopup) {
             root.positionPopupFor("calendar", dateTimeContainer, root.calendarPopup)
@@ -963,7 +962,7 @@ Rectangle {
       width: vpnIcon.implicitWidth + root.iconButtonPadding * 2
       height: Config.buttonHeight
       radius: Config.buttonRadius
-      visible: root.vpnConnected
+      visible: Config.barVpnEnabled && root.vpnConnected
       color: vpnMouse.containsMouse ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -972,7 +971,7 @@ Rectangle {
         id: vpnIcon
         anchors.centerIn: parent
         text: Config.iconVpnShield
-        color: vpnMouse.containsMouse ? Config.textWhite : Config.textPrimary
+        color: vpnMouse.containsMouse ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
@@ -982,6 +981,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
+        onEntered: if (root.tooltip) root.tooltip.show(vpnContainer, I18n.tr("VPN"))
+        onExited: if (root.tooltip) root.tooltip.hide()
       }
     }
 
@@ -999,7 +1000,7 @@ Rectangle {
         id: pickerIcon
         anchors.centerIn: parent
         text: Config.iconColorPicker
-        color: pickerMouse.containsMouse ? Config.textWhite : Config.textPrimary
+        color: pickerMouse.containsMouse ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
@@ -1009,6 +1010,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(pickerContainer, I18n.tr("Пипетка цвета"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           pickerProc.running = false
           pickerProc.running = true
@@ -1019,6 +1022,7 @@ Rectangle {
     // Power Button Icon
     Rectangle {
       id: powerContainer
+      visible: Config.barPowerEnabled
       width: powerIcon.implicitWidth + root.iconButtonPadding * 2
       height: Config.buttonHeight
       radius: Config.buttonRadius
@@ -1031,7 +1035,7 @@ Rectangle {
         id: powerIcon
         anchors.centerIn: parent
         text: Config.iconPower
-        color: (powerContainer.isPowerActive || pwrMouse.containsMouse) ? Config.dangerRed : Config.textPrimary
+        color: (powerContainer.isPowerActive || pwrMouse.containsMouse) ? Config.dangerRed : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
       }
@@ -1041,6 +1045,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onEntered: if (root.tooltip) root.tooltip.show(powerContainer, I18n.tr("Питание"))
+        onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           root.toggleAnchoredFlyout("power", root.powerPopup, powerContainer)
         }

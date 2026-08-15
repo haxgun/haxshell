@@ -34,9 +34,6 @@ PanelWindow {
   property bool caffeineEnabled: false
   property string nightLightBackend: ""
   property bool nightLightEnabled: false
-  property int sysCpuPercent: 0
-  property int sysRamPercent: 0
-  property int sysDiskPercent: 0
   readonly property var mediaPlayer: MprisController.activePlayer
   readonly property bool hasMedia: mediaPlayer && !MprisController.isIdle(mediaPlayer)
   readonly property bool isPlaying: mediaPlayer && mediaPlayer.isPlaying
@@ -135,13 +132,8 @@ PanelWindow {
   }
 
   Process {
-    id: sysProc
-    command: [root.hushctl, "sys"]
-    running: true
-    stdout: SplitParser { onRead: data => root.applySystemState(data) }
+    id: actionProc
   }
-
-  Process { id: actionProc }
 
   Process {
     id: nightLightDetectProc
@@ -155,7 +147,6 @@ PanelWindow {
     refreshAudio()
     refreshBattery()
     refreshCaffeine()
-    refreshSystem()
   }
 
   function restart(process, command) {
@@ -168,7 +159,6 @@ PanelWindow {
   function refreshAudio() { restart(audioProc, [hushctl, "audio", "get"]) }
   function refreshBattery() { restart(batteryProc, [hushctl, "battery"]) }
   function refreshCaffeine() { restart(caffeineProc, [hushctl, "caffeine", "state"]) }
-  function refreshSystem() { restart(sysProc, [hushctl, "sys"]) }
 
   function applyBrightnessState(data) {
     try {
@@ -200,15 +190,6 @@ PanelWindow {
 
   function applyCaffeineState(data) {
     try { caffeineEnabled = !!JSON.parse(data).enabled } catch(e) {}
-  }
-
-  function applySystemState(data) {
-    try {
-      let state = JSON.parse(data)
-      sysCpuPercent = state.cpu || 0
-      sysRamPercent = state.ram_pct || 0
-      sysDiskPercent = state.root_disk && state.root_disk.exists ? state.root_disk.percent || 0 : 0
-    } catch(e) {}
   }
 
   function run(command) { restart(actionProc, command) }
@@ -359,78 +340,6 @@ PanelWindow {
         spacing: 8
         QuickControlSlider { width: parent.width; value: root.sinkMuted ? 0 : root.sinkVolume; minimumIcon: root.volumeIcon(); onValueEdited: value => root.setAudio("set-sink-volume", value) }
         QuickControlSlider { width: parent.width; value: root.brightnessPercent; minimumIcon: root.brightnessIcon(); onValueEdited: value => root.setBrightness(value) }
-      }
-
-      Rectangle {
-        width: parent.width
-        height: 72
-        radius: Config.cardRadius
-        color: Config.controlIdleBg
-
-        Row {
-          anchors.centerIn: parent
-          spacing: 0
-
-          Item {
-            width: 120
-            height: 52
-            Column {
-              anchors.centerIn: parent
-              spacing: 4
-              Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
-                Text { text: Config.iconCpu; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
-                Text { text: root.sysCpuPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeMedium; font.weight: Font.Bold; font.family: Config.fontMono }
-              }
-              Rectangle {
-                width: 30; height: 3; radius: 2; anchors.horizontalCenter: parent.horizontalCenter; color: Config.separatorColor
-                Rectangle { width: parent.width * root.sysCpuPercent / 100; height: parent.height; radius: parent.radius; color: Config.themeAccent }
-              }
-              Text { text: "CPU"; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontSans; anchors.horizontalCenter: parent.horizontalCenter }
-            }
-          }
-          Rectangle { width: 1; height: 40; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
-          Item {
-            width: 120
-            height: 52
-            Column {
-              anchors.centerIn: parent
-              spacing: 4
-              Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
-                Text { text: Config.iconRam; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
-                Text { text: root.sysRamPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeMedium; font.weight: Font.Bold; font.family: Config.fontMono }
-              }
-              Rectangle {
-                width: 30; height: 3; radius: 2; anchors.horizontalCenter: parent.horizontalCenter; color: Config.separatorColor
-                Rectangle { width: parent.width * root.sysRamPercent / 100; height: parent.height; radius: parent.radius; color: Config.themeAccent }
-              }
-              Text { text: "RAM"; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontSans; anchors.horizontalCenter: parent.horizontalCenter }
-            }
-          }
-          Rectangle { width: 1; height: 40; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
-          Item {
-            width: 120
-            height: 52
-            Column {
-              anchors.centerIn: parent
-              spacing: 4
-              Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
-                Text { text: Config.iconDisk; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
-                Text { text: root.sysDiskPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontSizeMedium; font.weight: Font.Bold; font.family: Config.fontMono }
-              }
-              Rectangle {
-                width: 30; height: 3; radius: 2; anchors.horizontalCenter: parent.horizontalCenter; color: Config.separatorColor
-                Rectangle { width: parent.width * root.sysDiskPercent / 100; height: parent.height; radius: parent.radius; color: Config.themeAccent }
-              }
-              Text { text: "Диск"; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontSans; anchors.horizontalCenter: parent.horizontalCenter }
-            }
-          }
-        }
       }
 
       Rectangle {

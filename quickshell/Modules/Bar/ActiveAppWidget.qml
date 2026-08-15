@@ -12,9 +12,11 @@ Rectangle {
   readonly property string appClass: (activeApp.appId || "").toString()
   readonly property string appTitle: activeApp.title || ""
   readonly property string appIconPath: activeApp.iconPath || ""
+  readonly property string appOutput: activeApp.output || ""
   readonly property var desktopEntry: lookupDesktopEntry()
   readonly property string appName: desktopEntry ? desktopEntry.name : prettyAppName(appClass)
-  readonly property bool hasApp: appClass.length > 0 || appTitle.length > 0
+  readonly property bool onThisMonitor: root.monitorName.length === 0 || root.appOutput.length === 0 || root.appOutput === root.monitorName
+  readonly property bool hasApp: onThisMonitor && (appClass.length > 0 || appTitle.length > 0)
 
   visible: hasApp
   implicitWidth: root.vertical ? Config.buttonWidth : Math.min(appRow.implicitWidth + 14, 360)
@@ -22,6 +24,8 @@ Rectangle {
   radius: Config.buttonRadius
   color: appMouse.containsMouse ? Config.hoverBg : "#00000000"
   property bool vertical: false
+  property string monitorName: ""
+  property var tooltip: null
 
   function lookupDesktopEntry() {
     let names = []
@@ -102,5 +106,7 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.NoButton
+    onEntered: if (root.tooltip) root.tooltip.show(root, root.labelText())
+    onExited: if (root.tooltip) root.tooltip.hide()
   }
 }
