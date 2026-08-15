@@ -1,16 +1,21 @@
-# vey
+<div align="center">
 
-<p align="center"><img src="quickshell/logo.svg" alt="Логотип vey" width="160"></p>
+<p align="center">
+    <img src="docs/logo.svg" alt="vey logo" width="160">
+</p>
 
-[English](README.md) | [Русский](README.ru.md)
+`vey` - настраиваемая Wayland-оболочка рабочего стола на Quickshell, QML и Go для Hyprland и Niri.
+
+[English](README.md) · **Русский**
 
 [![Лицензия: MIT](https://img.shields.io/badge/Лицензия-MIT-6b8e23.svg)](LICENSE)
 [![Quickshell](https://img.shields.io/badge/Quickshell-QML-5c7cfa.svg)](https://quickshell.org/)
 [![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff.svg)](https://hyprland.org/)
 [![Niri](https://img.shields.io/badge/Niri-Wayland-7c4dff.svg)](https://github.com/YaLTeR/niri)
 [![Go](https://img.shields.io/badge/Go-1.25-00ADD8.svg)](https://go.dev/)
+![GitHub last commit](https://img.shields.io/github/last-commit/haxgun/vey)
 
-`vey` - настраиваемая Wayland-оболочка рабочего стола на Quickshell, QML и Go для Hyprland и Niri.
+</div>
 
 ## Возможности
 
@@ -98,3 +103,19 @@ go build -C core -o ../quickshell/veyctl ./cmd/veyctl
 git diff --check
 quickshell --path quickshell
 ```
+
+<div align="center">
+    <a href="https://github.com/haxgun/vey/graphs/contributors" target="_blank">
+      <table>
+        <tr>
+          <th colspan="2">
+            <br><img src="https://contrib.rocks/image?repo=haxgun/vey" /><br><br>
+          </th>
+        </tr>
+      </table>
+    </a>
+</div>
+
+## Статистика
+
+![Alt](https://repobeats.axiom.co/api/embed/3caf808ce8401c6c39d1913e45a21c801fd6263a.svg "Repobeats analytics image")
