@@ -1757,6 +1757,69 @@ func cmdWeather(args []string) {
 	output(result)
 }
 
+func installedVersion() string {
+	exe, err := os.Executable()
+	if err != nil {
+		return "unknown"
+	}
+	repoRoot := filepath.Dir(filepath.Dir(exe))
+	out, code := run(3*time.Second, "git", "-C", repoRoot, "describe", "--tags", "--always")
+	if code != 0 || strings.TrimSpace(out) == "" {
+		return "unknown"
+	}
+	return strings.TrimSpace(out)
+}
+
+func githubInfo() (string, []map[string]any) {
+	latest := ""
+	raw, code := run(8*time.Second, "curl", "-fsS", "--max-time", "7", "https://api.github.com/repos/haxgun/vey/commits?per_page=1")
+	if code == 0 {
+		var commits []struct {
+			Sha string `json:"sha"`
+		}
+		if json.Unmarshal([]byte(raw), &commits) == nil && len(commits) > 0 {
+			latest = commits[0].Sha
+			if len(latest) > 7 {
+				latest = latest[:7]
+			}
+		}
+	}
+
+	raw, code = run(8*time.Second, "curl", "-fsS", "--max-time", "7", "https://api.github.com/repos/haxgun/vey/contributors?per_page=100")
+	if code != 0 {
+		return latest, nil
+	}
+	var contribs []struct {
+		Login         string `json:"login"`
+		AvatarURL     string `json:"avatar_url"`
+		Contributions int    `json:"contributions"`
+	}
+	if json.Unmarshal([]byte(raw), &contribs) != nil {
+		return latest, nil
+	}
+
+	avatarDir := filepath.Join(homeDir, ".cache/veyctl/avatars")
+	_ = os.MkdirAll(avatarDir, 0o755)
+	result := make([]map[string]any, 0, len(contribs))
+	for _, c := range contribs {
+		avatar := ""
+		if c.AvatarURL != "" {
+			local := filepath.Join(avatarDir, c.Login)
+			if _, code := run(8*time.Second, "curl", "-fsS", "--max-time", "7", "-o", local, c.AvatarURL); code == 0 {
+				avatar = "file://" + local
+			}
+		}
+		result = append(result, map[string]any{"name": c.Login, "commits": c.Contributions, "avatar": avatar})
+	}
+	return latest, result
+}
+
+func cmdAbout() {
+	version := installedVersion()
+	latest, contributors := githubInfo()
+	output(map[string]any{"ok": true, "version": version, "latest": latest, "contributors": contributors})
+}
+
 // Run dispatches veyctl commands from the process arguments.
 func Run() {
 	if len(os.Args) < 2 {
@@ -1765,6 +1828,8 @@ func Run() {
 	}
 	cmd, args := os.Args[1], os.Args[2:]
 	switch cmd {
+	case "about":
+		cmdAbout()
 	case "app-scanner":
 		cmdAppScanner()
 	case "audio":

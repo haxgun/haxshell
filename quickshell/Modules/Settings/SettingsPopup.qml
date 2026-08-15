@@ -103,6 +103,11 @@ PanelWindow {
   readonly property real manualSat: manualAccentColor.hslSaturation
   readonly property string currentManualHex: colorToHex(manualAccentColor)
   readonly property string veyctl: Config.veyctl
+  property string aboutVersion: ""
+  property string aboutLatest: ""
+  property var aboutContributors: []
+
+  onActiveSectionChanged: if (root.activeSection === "about") root.refreshAbout()
 
   onIsOpenChanged: if (isOpen) {
     wallpaperDirInput.text = Config.wallpaperDir
@@ -169,6 +174,11 @@ PanelWindow {
   Process {
     id: citySearchProc
     stdout: SplitParser { onRead: data => root.applyCitySuggestions(data) }
+  }
+
+  Process {
+    id: aboutProc
+    stdout: SplitParser { onRead: data => root.applyAbout(data) }
   }
 
   Timer { id: citySearchTimer; interval: 350; repeat: false; onTriggered: if (weatherLocationInput.activeFocus) root.searchCities(weatherLocationInput.text) }
@@ -489,6 +499,28 @@ PanelWindow {
         weatherSuggestions.append({ label: parts.join(", ") })
       }
     } catch(e) { weatherSuggestions.clear() }
+  }
+
+  function applyAbout(data) {
+    try {
+      let res = JSON.parse(data)
+      root.aboutVersion = res.version || ""
+      root.aboutLatest = res.latest || ""
+      root.aboutContributors = res.contributors || []
+    } catch(e) {}
+  }
+
+  function refreshAbout() {
+    aboutProc.running = false
+    aboutProc.command = [root.veyctl, "about"]
+    aboutProc.running = true
+  }
+
+  function commitsLabel(n) {
+    let m10 = n % 10, m100 = n % 100
+    if (m10 === 1 && m100 !== 11) return n + " коммит"
+    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return n + " коммита"
+    return n + " коммитов"
   }
 
   Rectangle {
@@ -1847,7 +1879,7 @@ PanelWindow {
             Text { text: I18n.tr("О программе"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Rectangle {
               width: parent.width
-              height: 124
+              height: 140
               radius: Config.cardRadius
               color: Config.searchBg
               border.color: Config.borderColor
@@ -1867,10 +1899,50 @@ PanelWindow {
                 Column {
                   width: parent.width - 84
                   anchors.verticalCenter: parent.verticalCenter
-                  spacing: 5
+                  spacing: 4
                   Text { text: "vey"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans }
                   Text { text: I18n.tr("Vey is a customizable Wayland desktop shell built with Quickshell, QML, and Go."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
-                  Text { text: "Quickshell · QML · Go · Hyprland · Niri"; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
+                  Text { text: I18n.tr("Установленная версия") + ": " + root.aboutVersion; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
+                  Text { text: I18n.tr("Последняя версия") + ": " + root.aboutLatest; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
+                }
+              }
+            }
+
+            Column {
+              width: parent.width
+              spacing: 8
+              visible: root.aboutContributors.length > 0
+              Text { text: I18n.tr("Контрибьюторы") + " (" + root.aboutContributors.length + ")"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+              Grid {
+                id: contributorsGrid
+                width: parent.width
+                columns: 3
+                columnSpacing: 10
+                rowSpacing: 10
+                Repeater {
+                  model: root.aboutContributors
+                  delegate: Column {
+                    required property var modelData
+                    width: (contributorsGrid.width - 20) / 3
+                    spacing: 4
+                    Rectangle {
+                      width: 48
+                      height: 48
+                      radius: 999
+                      color: Config.controlIdleBg
+                      clip: true
+                      anchors.horizontalCenter: parent.horizontalCenter
+                      Image {
+                        anchors.fill: parent
+                        source: modelData.avatar || ""
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                        visible: modelData.avatar && modelData.avatar.length > 0
+                      }
+                    }
+                    Text { text: modelData.name || ""; color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width; horizontalAlignment: Text.AlignHCenter }
+                    Text { text: root.commitsLabel(modelData.commits || 0); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; width: parent.width; horizontalAlignment: Text.AlignHCenter }
+                  }
                 }
               }
             }
