@@ -819,6 +819,9 @@ func cmdBattery(args []string) {
 	energyFull := readInt(filepath.Join(bat, "energy_full"))
 	energyDesign := readInt(filepath.Join(bat, "energy_full_design"))
 	powerNow := readInt(filepath.Join(bat, "power_now"))
+	voltageNow := readInt(filepath.Join(bat, "voltage_now"))
+	tempNow := readInt(filepath.Join(bat, "temp"))
+	cycleCount := readInt(filepath.Join(bat, "cycle_count"))
 	if energyNow == 0 {
 		energyNow = readInt(filepath.Join(bat, "charge_now"))
 		energyFull = readInt(filepath.Join(bat, "charge_full"))
@@ -837,7 +840,7 @@ func cmdBattery(args []string) {
 			hours = math.Max(0, float64(energyNow)/float64(powerNow))
 		}
 	}
-	output(map[string]any{"ok": true, "nativePath": filepath.Base(bat), "percentage": percentage, "status": status, "charging": charging, "online": acOnline(), "rate": wh(powerNow), "capacity": capacity, "energyNow": wh(energyNow), "energyFull": wh(energyFull), "timeHours": math.Round(hours*100) / 100, "profile": profileState()})
+	output(map[string]any{"ok": true, "nativePath": filepath.Base(bat), "percentage": percentage, "status": status, "charging": charging, "online": acOnline(), "rate": wh(powerNow), "capacity": capacity, "energyNow": wh(energyNow), "energyFull": wh(energyFull), "timeHours": math.Round(hours*100) / 100, "voltage": math.Round(float64(voltageNow)/1000000*100) / 100, "temp": math.Round(float64(tempNow)) / 10, "cycles": cycleCount, "profile": profileState()})
 }
 
 func brightnessResult(ok bool, brightness int, backend, bus, device, errText string) {

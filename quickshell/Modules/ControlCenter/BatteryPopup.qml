@@ -18,6 +18,9 @@ PanelWindow {
   property double batteryRate: 0
   property int batteryCapacity: 0
   property double batteryTimeHours: 0
+  property double batteryVoltage: 0
+  property double batteryTemp: 0
+  property int batteryCycles: 0
   property string powerProfile: "balanced"
   readonly property string veyctl: Config.veyctl
 
@@ -64,7 +67,7 @@ PanelWindow {
 
   Timer {
     interval: 10000
-    running: root.isOpen
+    running: true
     repeat: true
     onTriggered: root.refresh()
   }
@@ -93,6 +96,9 @@ PanelWindow {
       root.batteryRate = res.rate || 0
       root.batteryCapacity = res.capacity || 0
       root.batteryTimeHours = res.timeHours || 0
+      root.batteryVoltage = res.voltage || 0
+      root.batteryTemp = res.temp || 0
+      root.batteryCycles = res.cycles || 0
       root.powerProfile = res.profile || "balanced"
     } catch(e) {}
   }
@@ -275,6 +281,9 @@ PanelWindow {
         BatteryInfoRow { label: "RATE"; value: root.batteryRate.toFixed(2) + " W"; width: (parent.width - 10) / 2 }
         BatteryInfoRow { label: "CAPACITY"; value: root.batteryCapacity + "%"; width: (parent.width - 10) / 2 }
         BatteryInfoRow { label: "STATUS"; value: root.acOnline ? "AC" : "BAT"; width: (parent.width - 10) / 2 }
+        BatteryInfoRow { label: "Напряжение"; value: root.batteryVoltage > 0 ? root.batteryVoltage.toFixed(2) + " В" : "--"; width: (parent.width - 10) / 2 }
+        BatteryInfoRow { label: "Температура"; value: root.batteryTemp !== 0 ? root.batteryTemp.toFixed(1) + "°C" : "--"; width: (parent.width - 10) / 2 }
+        BatteryInfoRow { label: "Циклы"; value: root.batteryCycles > 0 ? String(root.batteryCycles) : "--"; width: (parent.width - 10) / 2 }
       }
 
       Text {

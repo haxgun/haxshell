@@ -63,6 +63,14 @@ PanelWindow {
     return device.name || device.deviceName || device.address || "Bluetooth устройство"
   }
 
+  function deviceIcon(device) {
+    if (!device || !device.icon) return Config.iconBluetooth
+    let icon = device.icon.toLowerCase()
+    if (icon.indexOf("head") !== -1) return Config.iconHeadphones
+    if (icon.indexOf("speaker") !== -1) return Config.iconSpeaker
+    return Config.iconBluetooth
+  }
+
   function toggleScanning() {
     if (!root.adapter) return
     root.adapter.discovering = !root.adapter.discovering
@@ -149,7 +157,7 @@ PanelWindow {
           Text {
             text: "Bluetooth"
             color: Config.textWhite
-            font.pixelSize: Config.fontSizeLarge
+            font.pixelSize: Config.fontSizeMedium
             font.weight: Font.Bold
             font.family: Config.fontSans
           }
@@ -221,39 +229,6 @@ PanelWindow {
         horizontalAlignment: Text.AlignHCenter
       }
 
-      Row {
-        width: parent.width
-        height: 30
-        visible: !!root.adapter
-        spacing: 0
-
-        Rectangle {
-          width: parent.width
-          height: 30
-          radius: 8
-          color: discoverMouse.containsMouse ? Config.hoverBg : (root.adapter && root.adapter.discoverable ? Config.selectedBg : Config.controlIdleBg)
-          border.color: root.adapter && root.adapter.discoverable ? Config.activeBorderColor : Config.subtleBorder
-          border.width: 1
-
-          Text {
-            anchors.centerIn: parent
-            text: root.adapter && root.adapter.discoverable ? "Видимый" : "Скрытый"
-            color: Config.textWhite
-            font.pixelSize: Config.fontSizeSmall
-            font.weight: Font.Bold
-            font.family: Config.fontSans
-          }
-
-          MouseArea {
-            id: discoverMouse
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: if (root.adapter) root.adapter.discoverable = !root.adapter.discoverable
-          }
-        }
-      }
-
       ListView {
         id: deviceList
         width: parent.width
@@ -278,7 +253,7 @@ PanelWindow {
             spacing: 10
 
             Text {
-              text: Config.iconBluetooth
+              text: root.deviceIcon(modelData)
               color: modelData.connected ? Config.textWhite : Config.textMuted
               font.pixelSize: Config.fontSizeIconMedium
               font.family: Config.fontIcon

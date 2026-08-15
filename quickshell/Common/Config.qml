@@ -312,6 +312,8 @@ QtObject {
   readonly property string iconTemperature: "󰔏"
   readonly property string iconHumidity: "󰖎"
   readonly property string iconBluetooth: "󰂯"
+  readonly property string iconHeadphones: "󰋋"
+  readonly property string iconSpeaker: "󰔃"
   readonly property string iconEthernet: "󰈀"
   readonly property string iconWifiConnected: "󰤨"
   readonly property string iconWifiConnecting: "󱍸"
