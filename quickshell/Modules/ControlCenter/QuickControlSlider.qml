@@ -14,6 +14,9 @@ Item {
 
   implicitHeight: 48
 
+  readonly property bool fillCoversIcon: fill.width >= minimumIconText.mapToItem(track, 0, 0).x
+  readonly property bool fillCoversText: fill.width >= valueText.mapToItem(track, 0, 0).x
+
   function setFromPosition(position) {
     let ratio = Math.max(0, Math.min(1, position / Math.max(track.width, 1)))
     valueEdited(Math.round(from + ratio * (to - from)))
@@ -27,16 +30,17 @@ Item {
     Rectangle {
       id: track
       anchors.left: parent.left
-      anchors.leftMargin: 48
-      anchors.right: valueText.left
-      anchors.rightMargin: 12
+      anchors.leftMargin: 8
+      anchors.right: parent.right
+      anchors.rightMargin: 8
       anchors.verticalCenter: parent.verticalCenter
       height: parent.height - 10
       radius: height / 2
       color: Config.searchBg
 
       Rectangle {
-        width: Math.max(0, parent.width * (root.value - root.from) / Math.max(root.to - root.from, 1))
+        id: fill
+        width: Math.min(parent.width, Math.max(0, parent.width * (root.value - root.from) / Math.max(root.to - root.from, 1)))
         height: parent.height
         radius: parent.radius
         color: Config.iconColor
@@ -52,22 +56,25 @@ Item {
     }
 
     Text {
+      id: minimumIconText
+      z: 1
       anchors.left: parent.left
       anchors.leftMargin: 16
       anchors.verticalCenter: parent.verticalCenter
       text: root.minimumIcon
-      color: Config.iconColor
+      color: root.fillCoversIcon ? Config.textDark : Config.iconColor
       font.pixelSize: Config.fontSizeIconMedium
       font.family: Config.fontIcon
     }
 
     Text {
       id: valueText
+      z: 1
       anchors.right: parent.right
       anchors.rightMargin: 16
       anchors.verticalCenter: parent.verticalCenter
       text: root.value + "%"
-      color: Config.textPrimary
+      color: root.fillCoversText ? Config.textDark : Config.textPrimary
       font.pixelSize: Config.fontMonoSizeSmall
       font.weight: Font.Bold
       font.family: Config.fontMono
