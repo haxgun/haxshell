@@ -244,12 +244,13 @@ PanelWindow {
   }
 
   function showHolidayTip(target, name) {
-    holidayTipText.text = name
-    let pos = target.mapToItem(container, 0, 0)
-    let tipW = holidayTip.width
-    holidayTip.x = Math.max(6, Math.min(container.width - tipW - 6, pos.x + target.width / 2 - tipW / 2))
-    holidayTip.y = Math.max(6, Math.min(container.height - holidayTip.height - 6, pos.y + target.height + 4))
-    holidayTip.visible = true
+    try {
+      holidayTipText.text = name
+      let pos = target.mapToItem(root, 0, 0)
+      holidayTip.x = Math.max(6, Math.min(root.width - holidayTip.width - 6, pos.x + target.width / 2 - holidayTip.width / 2))
+      holidayTip.y = Math.max(6, Math.min(root.height - holidayTip.height - 6, pos.y + target.height + 4))
+      holidayTip.visible = true
+    } catch(e) { holidayTip.visible = false }
   }
 
   function hideHolidayTip() {
@@ -431,6 +432,7 @@ PanelWindow {
             model: calendarModel
 
             Item {
+              id: dayCell
               required property int dayNumber
               required property bool inMonth
               required property bool isToday
@@ -466,7 +468,7 @@ PanelWindow {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: holidayName.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onEntered: if (holidayName.length > 0) root.showHolidayTip(parent, holidayName)
+                onEntered: if (holidayName.length > 0) root.showHolidayTip(dayCell, holidayName)
                 onExited: root.hideHolidayTip()
               }
             }
@@ -475,25 +477,26 @@ PanelWindow {
       }
     }
 
-    Rectangle {
-      id: holidayTip
-      visible: false
-      z: 20
-      width: holidayTipText.implicitWidth + 24
-      height: 28
-      radius: 8
-      color: Config.popupGlassBg
-      border.color: Config.popupBorderColor
-      border.width: 1
+  }
 
-      Text {
-        id: holidayTipText
-        anchors.centerIn: parent
-        text: ""
-        color: Config.textPrimary
-        font.pixelSize: Config.fontSizeSmall
-        font.family: Config.fontSans
-      }
+  Rectangle {
+    id: holidayTip
+    visible: false
+    z: 50
+    width: holidayTipText.implicitWidth + 24
+    height: 28
+    radius: 8
+    color: Config.glassBg
+    border.color: Config.activeBorderColor
+    border.width: 1
+
+    Text {
+      id: holidayTipText
+      anchors.centerIn: parent
+      text: ""
+      color: Config.textPrimary
+      font.pixelSize: Config.fontSizeSmall
+      font.family: Config.fontSans
     }
   }
 }

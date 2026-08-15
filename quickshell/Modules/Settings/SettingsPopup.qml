@@ -73,6 +73,8 @@ PanelWindow {
   property real wallpaperGridContentY: 0
   property bool restoringWallpaperScroll: false
   property bool wallpaperSelectionInProgress: false
+  property var wallpapersAll: []
+  property string wallpaperFilterText: ""
 
   function selectSection(section) {
     if (section === root.activeSection || sectionTransition.running) return
@@ -469,14 +471,24 @@ PanelWindow {
           saveSettingAlt("dynamicPalette", JSON.stringify(Config.dynamicPalette))
       }
       if (!root.wallpaperSelectionInProgress) {
-        wallpapersModel.clear()
-        let items = res.items || []
-        for (let i = 0; i < items.length; i++) wallpapersModel.append(items[i])
+        root.wallpapersAll = res.items || []
+        root.applyWallpaperFilter()
         wallpaperScrollRestoreTimer.restart()
       }
       root.wallpaperSelectionInProgress = false
       root.restoringWallpaperScroll = false
     } catch(e) {}
+  }
+
+  function applyWallpaperFilter() {
+    wallpapersModel.clear()
+    let needle = root.wallpaperFilterText.trim().toLowerCase()
+    for (let i = 0; i < root.wallpapersAll.length; i++) {
+      let item = root.wallpapersAll[i]
+      if (!needle || (item.name && item.name.toLowerCase().indexOf(needle) !== -1)) {
+        wallpapersModel.append(item)
+      }
+    }
   }
 
   function searchCities(query) {
@@ -1190,6 +1202,52 @@ PanelWindow {
                 subtitle: Config.blurWallpaperOnOverview ? I18n.tr("Включено") : I18n.tr("Выключено")
                 onClicked: root.setBoolSetting("blurWallpaperOnOverview", !Config.blurWallpaperOnOverview)
                 ToggleSwitch { z: 1; checked: Config.blurWallpaperOnOverview; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("blurWallpaperOnOverview", !Config.blurWallpaperOnOverview) }
+              }
+            }
+            Rectangle {
+              width: parent.width
+              height: 34
+              radius: 9
+              color: Config.searchBg
+              border.color: wallpaperFilterInput.activeFocus ? Config.activeBorderColor : "#00000000"
+              border.width: wallpaperFilterInput.activeFocus ? 1 : 0
+              Row {
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                spacing: 8
+                Text {
+                  text: Config.iconSearch
+                  color: Config.textMuted
+                  font.pixelSize: Config.fontSizeIconSmall
+                  font.family: Config.fontIcon
+                  anchors.verticalCenter: parent.verticalCenter
+                }
+                TextInput {
+                  id: wallpaperFilterInput
+                  width: parent.width - 22
+                  anchors.verticalCenter: parent.verticalCenter
+                  verticalAlignment: TextInput.AlignVCenter
+                  text: root.wallpaperFilterText
+                  color: Config.textPrimary
+                  selectedTextColor: Config.textWhite
+                  selectionColor: Config.selectedBg
+                  font.pixelSize: Config.fontSizeSmall
+                  font.family: Config.fontSans
+                  clip: true
+                  onTextChanged: {
+                    root.wallpaperFilterText = text
+                    root.applyWallpaperFilter()
+                  }
+                  Text {
+                    text: I18n.tr("Поиск обоев")
+                    color: Config.textPlaceholder
+                    font.pixelSize: Config.fontSizeSmall
+                    font.family: Config.fontSans
+                    visible: !wallpaperFilterInput.text && !wallpaperFilterInput.activeFocus
+                    anchors.verticalCenter: parent.verticalCenter
+                  }
+                }
               }
             }
             Text { width: parent.width; visible: wallpapersModel.count === 0; text: I18n.tr("В папке нет поддерживаемых изображений или видео"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap }

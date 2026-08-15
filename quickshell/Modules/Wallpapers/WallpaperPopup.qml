@@ -13,8 +13,6 @@ PanelWindow {
   property string wallName: "Нет обоев"
   property int currentIndex: 0
   property var palette: []
-  property var wallpapersAll: []
-  property string filterText: ""
   readonly property string veyctl: Config.veyctl
 
   visible: isOpen || container.opacity > 0.01
@@ -88,20 +86,8 @@ PanelWindow {
       }
       wallpapersModel.clear()
       let items = res.items || []
-      root.wallpapersAll = items
-      root.applyFilter()
+      for (let i = 0; i < items.length; i++) wallpapersModel.append(items[i])
     } catch(e) {}
-  }
-
-  function applyFilter() {
-    wallpapersModel.clear()
-    let needle = root.filterText.trim().toLowerCase()
-    for (let i = 0; i < root.wallpapersAll.length; i++) {
-      let item = root.wallpapersAll[i]
-      if (!needle || (item.name && item.name.toLowerCase().indexOf(needle) !== -1)) {
-        wallpapersModel.append(item)
-      }
-    }
   }
 
   Rectangle {
@@ -172,56 +158,6 @@ PanelWindow {
         border.width: 1
         Text { anchors.centerIn: parent; text: "Следующие обои"; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
         MouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.nextWallpaper() }
-      }
-
-      Rectangle {
-        width: parent.width
-        height: 34
-        radius: 9
-        color: Config.searchBg
-        border.color: wallpaperFilterInput.activeFocus ? Config.activeBorderColor : Config.subtleBorder
-        border.width: 1
-
-        Row {
-          anchors.fill: parent
-          anchors.leftMargin: 10
-          anchors.rightMargin: 10
-          spacing: 8
-
-          Text {
-            text: Config.iconSearch
-            color: Config.textMuted
-            font.pixelSize: Config.fontSizeIconSmall
-            font.family: Config.fontIcon
-            anchors.verticalCenter: parent.verticalCenter
-          }
-
-          TextInput {
-            id: wallpaperFilterInput
-            width: parent.width - 22
-            anchors.verticalCenter: parent.verticalCenter
-            verticalAlignment: TextInput.AlignVCenter
-            text: root.filterText
-            color: Config.textPrimary
-            selectedTextColor: Config.textWhite
-            selectionColor: Config.selectedBg
-            font.pixelSize: Config.fontSizeSmall
-            font.family: Config.fontSans
-            clip: true
-            onTextChanged: {
-              root.filterText = text
-              root.applyFilter()
-            }
-            Text {
-              text: "Поиск обоев"
-              color: Config.textPlaceholder
-              font.pixelSize: Config.fontSizeSmall
-              font.family: Config.fontSans
-              visible: !wallpaperFilterInput.text && !wallpaperFilterInput.activeFocus
-              anchors.verticalCenter: parent.verticalCenter
-            }
-          }
-        }
       }
 
       ListView {
