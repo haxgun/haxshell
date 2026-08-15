@@ -148,7 +148,6 @@ Scope {
                         ActiveAppWidget {
                             vertical: false
                             monitorName: modelData.name
-                            visible: Config.barActiveAppEnabled
                             anchors.left: workspaceWidget.right
                             anchors.verticalCenter: parent.verticalCenter
                         }

@@ -18,7 +18,7 @@ Rectangle {
   readonly property bool onThisMonitor: root.monitorName.length === 0 || root.appOutput.length === 0 || root.appOutput === root.monitorName
   readonly property bool hasApp: onThisMonitor && (appClass.length > 0 || appTitle.length > 0)
 
-  visible: hasApp
+  visible: hasApp && Config.barActiveAppEnabled
   implicitWidth: root.vertical ? Config.buttonWidth : Math.min(appRow.implicitWidth + 14, 360)
   implicitHeight: root.vertical ? appRow.implicitHeight + 14 : Config.buttonHeight
   radius: Config.buttonRadius
