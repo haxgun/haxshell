@@ -1,5 +1,6 @@
 // SettingsPopup.qml - Sectioned settings, wallpaper, fonts and weather controls
 import QtQuick
+import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -1921,27 +1922,48 @@ PanelWindow {
                 rowSpacing: 10
                 Repeater {
                   model: root.aboutContributors
-                  delegate: Column {
+                  delegate: Rectangle {
                     required property var modelData
                     width: (contributorsGrid.width - 20) / 3
-                    spacing: 4
-                    Rectangle {
-                      width: 48
-                      height: 48
-                      radius: 999
-                      color: Config.controlIdleBg
-                      clip: true
-                      anchors.horizontalCenter: parent.horizontalCenter
+                    height: contributorColumn.implicitHeight
+                    radius: Config.cardRadius
+                    color: contributorMouse.containsMouse ? Config.hoverBg : "#00000000"
+
+                    Column {
+                      id: contributorColumn
+                      width: parent.width
+                      spacing: 4
+
                       Image {
-                        anchors.fill: parent
+                        id: avatarImage
+                        width: 48
+                        height: 48
                         source: modelData.avatar || ""
                         fillMode: Image.PreserveAspectCrop
                         asynchronous: true
                         visible: modelData.avatar && modelData.avatar.length > 0
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                          maskSource: Rectangle {
+                            width: avatarImage.width
+                            height: avatarImage.height
+                            radius: 999
+                          }
+                        }
                       }
+
+                      Text { text: modelData.name || ""; color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width; horizontalAlignment: Text.AlignHCenter }
+                      Text { text: root.commitsLabel(modelData.commits || 0); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; width: parent.width; horizontalAlignment: Text.AlignHCenter }
                     }
-                    Text { text: modelData.name || ""; color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width; horizontalAlignment: Text.AlignHCenter }
-                    Text { text: root.commitsLabel(modelData.commits || 0); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; width: parent.width; horizontalAlignment: Text.AlignHCenter }
+
+                    MouseArea {
+                      id: contributorMouse
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
+                      onClicked: if (modelData.url) Qt.openUrlExternally(modelData.url)
+                    }
                   }
                 }
               }

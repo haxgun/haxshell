@@ -1792,6 +1792,7 @@ func githubInfo() (string, []map[string]any) {
 	var contribs []struct {
 		Login         string `json:"login"`
 		AvatarURL     string `json:"avatar_url"`
+		HTMLURL       string `json:"html_url"`
 		Contributions int    `json:"contributions"`
 	}
 	if json.Unmarshal([]byte(raw), &contribs) != nil {
@@ -1809,7 +1810,7 @@ func githubInfo() (string, []map[string]any) {
 				avatar = "file://" + local
 			}
 		}
-		result = append(result, map[string]any{"name": c.Login, "commits": c.Contributions, "avatar": avatar})
+		result = append(result, map[string]any{"name": c.Login, "commits": c.Contributions, "avatar": avatar, "url": c.HTMLURL})
 	}
 	return latest, result
 }
