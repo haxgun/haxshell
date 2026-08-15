@@ -330,6 +330,7 @@ QtObject {
   readonly property string iconWallpaper: "󰸉"
   readonly property string iconBattery: "󰁹"
   readonly property string iconBatteryCharging: "󰚥"
+  readonly property string iconChargingBolt: "󰅒"
   readonly property string iconPowerSaver: "󰌪"
   readonly property string iconBalanced: "󰗑"
   readonly property string iconPerformance: "󰓅"

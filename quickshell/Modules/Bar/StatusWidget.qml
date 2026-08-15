@@ -689,9 +689,9 @@ Rectangle {
           Text {
             anchors.centerIn: parent
             visible: root.batteryPopup && (root.batteryPopup.batteryCharging || root.batteryPopup.acOnline)
-            text: Config.iconBatteryCharging
+            text: Config.iconChargingBolt
             color: root.chargingIconColor(batteryContainer.batteryPercent)
-            font.pixelSize: 9
+            font.pixelSize: 12
             font.family: Config.fontIcon
           }
         }
