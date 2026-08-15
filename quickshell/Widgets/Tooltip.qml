@@ -8,6 +8,7 @@ PanelWindow {
   id: root
 
   required property var screenInfo
+  property var anchorWindow: null
   property string text: ""
   property bool tipVisible: false
   readonly property real tipWidth: tipLabel.implicitWidth + 28
@@ -28,7 +29,7 @@ PanelWindow {
 
   Timer {
     id: showDelay
-    interval: 2000
+    interval: 400
     repeat: false
     onTriggered: {
       root.tipVisible = true
@@ -50,12 +51,25 @@ PanelWindow {
     let g = target.mapToGlobal(Qt.point(0, 0))
     let screenX = root.screenInfo ? root.screenInfo.x : 0
     let screenY = root.screenInfo ? root.screenInfo.y : 0
+    let sw = root.screenInfo ? root.screenInfo.width : root.width
+    let sh = root.screenInfo ? root.screenInfo.height : root.height
     let bw = root.tipWidth
     let bh = root.tipHeight
     let x = g.x - screenX + target.width / 2 - bw / 2
-    let y = g.y - screenY + target.height + Config.popupGap
-    x = Math.max(6, Math.min(root.width - bw - 6, x))
-    y = Math.max(6, Math.min(root.height - bh - 6, y))
+    let y = 0
+    if (root.anchorWindow) {
+      if (Config.barPosition === "bottom") {
+        y = sh - root.anchorWindow.height - Config.popupGap - bh
+      } else if (Config.barPosition === "top") {
+        y = root.anchorWindow.height + Config.popupGap
+      } else {
+        y = g.y - screenY + target.height + Config.popupGap
+      }
+    } else {
+      y = g.y - screenY + target.height + Config.popupGap
+    }
+    x = Math.max(6, Math.min(sw - bw - 6, x))
+    y = Math.max(6, Math.min(sh - bh - 6, y))
     bubble.x = x
     bubble.y = y
   }

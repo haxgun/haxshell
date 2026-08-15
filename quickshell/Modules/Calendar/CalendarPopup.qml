@@ -10,6 +10,7 @@ PanelWindow {
 
   property bool isOpen: false
   property int rightMargin: 16
+  property var tooltip: null
 
   visible: isOpen || container.opacity > 0.01
 
@@ -244,17 +245,11 @@ PanelWindow {
   }
 
   function showHolidayTip(target, name) {
-    try {
-      holidayTipText.text = name
-      let pos = target.mapToItem(root, 0, 0)
-      holidayTip.x = Math.max(6, Math.min(root.width - holidayTip.width - 6, pos.x + target.width / 2 - holidayTip.width / 2))
-      holidayTip.y = Math.max(6, Math.min(root.height - holidayTip.height - 6, pos.y + target.height + 4))
-      holidayTip.visible = true
-    } catch(e) { holidayTip.visible = false }
+    if (root.tooltip) root.tooltip.show(target, name)
   }
 
   function hideHolidayTip() {
-    holidayTip.visible = false
+    if (root.tooltip) root.tooltip.hide()
   }
 
   // Floating Compact Container Box
@@ -477,26 +472,5 @@ PanelWindow {
       }
     }
 
-  }
-
-  Rectangle {
-    id: holidayTip
-    visible: false
-    z: 50
-    width: holidayTipText.implicitWidth + 24
-    height: 28
-    radius: 8
-    color: Config.glassBg
-    border.color: Config.activeBorderColor
-    border.width: 1
-
-    Text {
-      id: holidayTipText
-      anchors.centerIn: parent
-      text: ""
-      color: Config.textPrimary
-      font.pixelSize: Config.fontSizeSmall
-      font.family: Config.fontSans
-    }
   }
 }

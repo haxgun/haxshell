@@ -5,6 +5,7 @@ import QtQuick
 import Quickshell.Io
 import "Common"
 import "Services"
+import "Widgets"
 
 Scope {
   id: root
@@ -140,6 +141,12 @@ Scope {
   // Calendar Overlay
   CalendarPopup {
     id: calendar
+    tooltip: calendarTooltip
+  }
+
+  Tooltip {
+    id: calendarTooltip
+    screenInfo: calendar.screen
   }
 
   // Display Brightness Control Overlay

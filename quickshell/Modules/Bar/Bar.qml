@@ -1,5 +1,6 @@
 import "."
 import "../../Common"
+import "../../Widgets"
 import QtQuick
 // Bar.qml - Quickshell bar window container
 import Quickshell
@@ -40,6 +41,12 @@ Scope {
 
         Scope {
             required property var modelData
+
+            Tooltip {
+                id: barTooltip
+                screenInfo: modelData
+                anchorWindow: window
+            }
 
             PanelWindow {
                 id: window
@@ -141,6 +148,7 @@ Scope {
                             appDrawer: root.appDrawer
                             monitorName: modelData.name
                             vertical: false
+                            tooltip: barTooltip
                             anchors.left: parent.left
                             anchors.verticalCenter: parent.verticalCenter
                         }
@@ -148,6 +156,7 @@ Scope {
                         ActiveAppWidget {
                             vertical: false
                             monitorName: modelData.name
+                            tooltip: barTooltip
                             anchors.left: workspaceWidget.right
                             anchors.verticalCenter: parent.verticalCenter
                         }
@@ -172,6 +181,7 @@ Scope {
                             mediaPopup: root.mediaPopup
                             osd: root.osd
                             vertical: false
+                            tooltip: barTooltip
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                         }
