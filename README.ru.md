@@ -79,6 +79,43 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 Если Vicinae ещё не установлен, потребуется `yay` или `paru`: этот пакет устанавливается из AUR.
 
+## Зависимости
+
+### Рантайм
+
+- `quickshell` — рантайм оболочки
+- `curl` — погода, праздники и раздел «О программе»
+- `awww` — демон обоев
+- `imagemagick` — извлечение палитры, миниатюры, тайлинг обоев
+- `ffmpeg` — миниатюры видеообоев
+- `brightnessctl` — управление яркостью
+- `power-profiles-daemon` — профили питания
+- `pipewire`, `pipewire-pulse`, `wireplumber` — звук
+- `networkmanager` — Wi-Fi и состояние сети
+- `bluez`, `bluez-utils`, `blueman` — Bluetooth
+- `qt6-declarative`, `qt6-svg`, `qt6-multimedia` — рантайм Qt
+- `ttf-jetbrains-mono-nerd` — глифы иконок
+- `zenity` или `kdialog` — выбор папки
+- `pavucontrol` — графический интерфейс громкости
+
+### Сборка
+
+- `go` 1.25+
+
+### Композитор
+
+Один из:
+
+- **Hyprland** — `hyprland`, `hyprlock`, `hyprpicker`, `xdg-desktop-portal-hyprland`, `grim`
+- **Niri** — `niri`, плюс `base-devel`, `cmake`, `git` для сборки модуля `qml-niri`
+
+### Опционально
+
+- `vicinae` (AUR) — лаунчер приложений
+- `cava` — визуализатор музыки на панели
+
+Quickshell сам обрабатывает уведомления — отключите любой другой демон уведомлений (например, Dunst), чтобы тосты не дублировались.
+
 ## Сборка `veyctl`
 
 `veyctl` используется QML-компонентами для системных операций: управления яркостью, звуком, погодой, обоями и другими функциями.

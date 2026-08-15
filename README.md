@@ -79,6 +79,43 @@ For Niri, install the event-driven `qml-niri` integration as a required dependen
 
 `yay` or `paru` is required when Vicinae is not installed because it is installed from the AUR.
 
+## Dependencies
+
+### Runtime
+
+- `quickshell` — the shell runtime
+- `curl` — weather, holidays, and the About section
+- `awww` — wallpaper daemon
+- `imagemagick` — palette extraction, thumbnails, wallpaper tiling
+- `ffmpeg` — video wallpaper thumbnails
+- `brightnessctl` — brightness control
+- `power-profiles-daemon` — power profiles
+- `pipewire`, `pipewire-pulse`, `wireplumber` — audio
+- `networkmanager` — Wi-Fi and network status
+- `bluez`, `bluez-utils`, `blueman` — Bluetooth
+- `qt6-declarative`, `qt6-svg`, `qt6-multimedia` — Qt runtime
+- `ttf-jetbrains-mono-nerd` — icon glyphs
+- `zenity` or `kdialog` — folder picker
+- `pavucontrol` — volume control GUI
+
+### Build
+
+- `go` 1.25+
+
+### Compositor
+
+One of:
+
+- **Hyprland** — `hyprland`, `hyprlock`, `hyprpicker`, `xdg-desktop-portal-hyprland`, `grim`
+- **Niri** — `niri`, plus `base-devel`, `cmake`, `git` to build the `qml-niri` module
+
+### Optional
+
+- `vicinae` (AUR) — app launcher
+- `cava` — bar music visualizer
+
+Quickshell handles notifications itself — disable any other notification daemon (such as Dunst) so toasts are not duplicated.
+
 ## Build `veyctl`
 
 `veyctl` is used by QML components for system operations including brightness, audio, weather, and wallpaper control.
