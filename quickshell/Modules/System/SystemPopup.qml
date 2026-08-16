@@ -10,7 +10,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property int cpu: 0
   property int cpuTemp: 0
   property double load1: 0
@@ -121,7 +121,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 390
+    width: Config.scaledSize(390)
     implicitHeight: content.implicitHeight + 30
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
@@ -154,28 +154,28 @@ PanelWindow {
       id: content
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 15
+      anchors.topMargin: Config.scaledSize(15)
       anchors.horizontalCenter: parent.horizontalCenter
       spacing: 0
 
       Item {
         width: parent.width
-        height: 24
+        height: Config.scaledSize(24)
         Row {
           anchors.left: parent.left
           anchors.verticalCenter: parent.verticalCenter
-          spacing: 9
+          spacing: Config.scaledSize(9)
           Text { text: Config.iconCpu; color: Config.textWhite; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-          Text { text: "СИСТЕМА"; color: Config.textMuted; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 1.8; anchors.verticalCenter: parent.verticalCenter }
+          Text { text: "СИСТЕМА"; color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 1.8; anchors.verticalCenter: parent.verticalCenter }
         }
-        Text { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; text: root.localizedUptimeSysmon; color: Config.textMuted; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 1.1 }
+        Text { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; text: root.localizedUptimeSysmon; color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 1.1 }
       }
 
       Item { width: 1; height: 16 }
 
       Item {
         width: parent.width
-        height: 110
+        height: Config.scaledSize(110)
         Repeater {
           model: root.dialKeys
           SystemDial {
@@ -199,7 +199,7 @@ PanelWindow {
 
       Item {
         width: parent.width
-        height: 34
+        height: Config.scaledSize(34)
         Repeater {
           model: root.cellKeys
           Item {
@@ -214,21 +214,21 @@ PanelWindow {
 
             Column {
               anchors.centerIn: parent
-              spacing: 6
-              Text { anchors.horizontalCenter: parent.horizontalCenter; text: root.cellLabel(key); color: Config.textMuted; font.pixelSize: 8; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+              spacing: Config.scaledSize(6)
+              Text { anchors.horizontalCenter: parent.horizontalCenter; text: root.cellLabel(key); color: Config.textMuted; font.pixelSize: Config.scaledFontSize(8); font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
               Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 8
+                spacing: Config.scaledSize(8)
                 visible: key === "net"
-                Text { text: "↓" + root.mib(root.rxBps).toFixed(root.mib(root.rxBps) >= 10 ? 0 : 1); color: Config.textWhite; font.pixelSize: 13; font.weight: Font.ExtraBold; font.family: Config.fontSans }
-                Text { text: "↑" + root.mib(root.txBps).toFixed(root.mib(root.txBps) >= 10 ? 0 : 1); color: Config.accentBlue; font.pixelSize: 13; font.weight: Font.ExtraBold; font.family: Config.fontSans }
+                Text { text: "↓" + root.mib(root.rxBps).toFixed(root.mib(root.rxBps) >= 10 ? 0 : 1); color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.ExtraBold; font.family: Config.fontSans }
+                Text { text: "↑" + root.mib(root.txBps).toFixed(root.mib(root.txBps) >= 10 ? 0 : 1); color: Config.themeAccent; font.pixelSize: Config.fontSizeNormal; font.weight: Font.ExtraBold; font.family: Config.fontSans }
               }
               Text {
                 anchors.horizontalCenter: parent.horizontalCenter
                 visible: key !== "net"
                 text: key === "disk" ? root.rootDisk.toString() : (key === "swap" ? root.swapUsed.toFixed(1) : root.vramUsed.toFixed(1) + " / " + root.vramTotal.toFixed(0))
                 color: Config.textWhite
-                font.pixelSize: 13
+                font.pixelSize: Config.fontSizeNormal
                 font.weight: Font.ExtraBold
                 font.family: Config.fontSans
               }

@@ -11,7 +11,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property bool refreshActive: false
   property var pendingNetwork: null
   property string wifiPassword: ""
@@ -25,6 +25,11 @@ PanelWindow {
   }
 
   readonly property var wifiNetworks: wifiDevice && wifiDevice.networks && wifiDevice.networks.values ? wifiDevice.networks.values : []
+  readonly property var sortedNetworks: {
+    let arr = wifiNetworks.slice()
+    arr.sort((a, b) => (b.known ? 1 : 0) - (a.known ? 1 : 0))
+    return arr
+  }
   readonly property string connectedNetworkName: {
     for (let i = 0; i < wifiNetworks.length; i++) {
       if (wifiNetworks[i] && wifiNetworks[i].connected) return wifiNetworks[i].name
@@ -67,7 +72,7 @@ PanelWindow {
   }
 
   onIsOpenChanged: {
-    if (isOpen && root.wifiDevice) root.wifiDevice.scannerEnabled = true
+    if (isOpen) root.refreshNetworks()
   }
 
   Timer {
@@ -136,7 +141,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 340
+    width: Config.scaledSize(340)
     implicitHeight: columnLayout.implicitHeight + 28
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
@@ -170,14 +175,14 @@ PanelWindow {
       id: columnLayout
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 12
+      spacing: Config.scaledSize(12)
 
       Row {
         width: parent.width
-        height: 28
-        spacing: 10
+        height: Config.scaledSize(28)
+        spacing: Config.scaledSize(10)
 
         Text {
           text: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected
@@ -190,13 +195,13 @@ PanelWindow {
         Column {
           width: parent.width - 126
           anchors.verticalCenter: parent.verticalCenter
-          spacing: 1
+          spacing: Config.scaledSize(1)
 
           Text {
             text: "Wi-Fi"
             color: Config.textWhite
             font.pixelSize: Config.fontSizeLarge
-            font.weight: Font.Bold
+            font.weight: Font.Medium
             font.family: Config.fontSans
           }
 
@@ -211,9 +216,9 @@ PanelWindow {
         }
 
         Rectangle {
-          width: 28
-          height: 26
-          radius: 8
+          width: Config.scaledSize(28)
+          height: Config.scaledSize(26)
+          radius: Config.popupRadiusPx(8)
           color: wifiRefreshMouse.containsMouse ? Config.activeHoverBg : "#00000000"
 
           Text {
@@ -271,8 +276,26 @@ PanelWindow {
         height: Math.min(310, contentHeight)
         visible: !!root.wifiDevice
         clip: true
-        spacing: 6
-        model: root.wifiNetworks
+        spacing: Config.scaledSize(6)
+        model: root.sortedNetworks
+
+        section.property: "known"
+        section.criteria: ViewSection.FullString
+        section.delegate: Rectangle {
+          width: networkList.width
+          height: Config.scaledSize(26)
+          color: "#00000000"
+
+          Text {
+            text: section === "true" ? "Знакомые сети" : "Другие сети"
+            color: Config.textMuted
+            font.pixelSize: Config.fontSizeExtraSmall
+            font.weight: Font.Medium
+            font.family: Config.fontSans
+            font.letterSpacing: 1.2
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
 
         delegate: Rectangle {
           required property var modelData
@@ -299,10 +322,10 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            height: 46
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            spacing: 10
+            height: Config.scaledSize(46)
+            anchors.leftMargin: Config.scaledSize(12)
+            anchors.rightMargin: Config.scaledSize(12)
+            spacing: Config.scaledSize(10)
 
             Text {
               text: root.signalIcon(modelData)
@@ -315,13 +338,13 @@ PanelWindow {
             Column {
               width: parent.width - 54
               anchors.verticalCenter: parent.verticalCenter
-              spacing: 1
+              spacing: Config.scaledSize(1)
 
               Text {
                 text: modelData.name || "Скрытая сеть"
                 color: modelData.connected ? Config.textWhite : Config.textPrimary
                 font.pixelSize: Config.fontSizeNormal
-                font.weight: modelData.connected ? Font.Bold : Font.Medium
+                font.weight: modelData.connected ? Font.Medium : Font.Medium
                 font.family: Config.fontSans
                 elide: Text.ElideRight
                 width: parent.width
@@ -351,9 +374,9 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: networkRow.bottom
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            spacing: 8
+            anchors.leftMargin: Config.scaledSize(12)
+            anchors.rightMargin: Config.scaledSize(12)
+            spacing: Config.scaledSize(8)
             opacity: parent.passwordOpen ? 1 : 0
             visible: opacity > 0.01
 
@@ -372,8 +395,8 @@ PanelWindow {
 
             Rectangle {
               width: parent.width
-              height: 34
-              radius: 10
+              height: Config.scaledSize(34)
+              radius: Config.popupRadiusPx(10)
               color: Config.searchBg
               border.color: inlinePasswordInput.activeFocus ? Config.activeBorderColor : Config.borderColor
               border.width: 1
@@ -381,8 +404,8 @@ PanelWindow {
               TextInput {
                 id: inlinePasswordInput
                 anchors.fill: parent
-                anchors.leftMargin: 12
-                anchors.rightMargin: 12
+                anchors.leftMargin: Config.scaledSize(12)
+                anchors.rightMargin: Config.scaledSize(12)
                 verticalAlignment: TextInput.AlignVCenter
                 text: root.wifiPassword
                 echoMode: TextInput.Password
@@ -400,12 +423,12 @@ PanelWindow {
 
             Row {
               width: parent.width
-              spacing: 8
+              spacing: Config.scaledSize(8)
 
               Rectangle {
                 width: (parent.width - 8) / 2
-                height: 28
-                radius: 8
+                height: Config.scaledSize(28)
+                radius: Config.popupRadiusPx(8)
                 color: cancelMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                 border.color: Config.borderColor
                 border.width: 1
@@ -417,8 +440,8 @@ PanelWindow {
               Rectangle {
                 id: connectButton
                 width: (parent.width - 8) / 2
-                height: 28
-                radius: 8
+                height: Config.scaledSize(28)
+                radius: Config.popupRadiusPx(8)
                 color: connectMouse.containsMouse ? Config.activeHoverBg : Config.selectedBg
                 border.color: Config.activeBorderColor
                 border.width: 1
@@ -429,7 +452,7 @@ PanelWindow {
                   root.pendingNetwork = null
                 }
 
-                Text { anchors.centerIn: parent; text: "Подключить"; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+                Text { anchors.centerIn: parent; text: "Подключить"; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
                 MouseArea { id: connectMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: connectButton.clicked() }
               }
             }

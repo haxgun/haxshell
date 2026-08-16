@@ -10,7 +10,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property int batteryPercent: 0
   property string batteryStatus: "Unknown"
   property bool batteryCharging: false
@@ -135,14 +135,9 @@ PanelWindow {
     return Config.iconBalanced
   }
 
-  function chargingIconColor() {
-    if (root.batteryPercent < 50) return Config.textWhite
-    return Config.isLightTheme ? "#ffffff" : "#020617"
-  }
-
   Rectangle {
     id: container
-    width: 320
+    width: Config.scaledSize(320)
     implicitHeight: columnLayout.implicitHeight + 28
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
@@ -176,18 +171,18 @@ PanelWindow {
       id: columnLayout
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 12
+      spacing: Config.scaledSize(12)
 
       Row {
         width: parent.width
-        height: 32
-        spacing: 10
+        height: Config.scaledSize(32)
+        spacing: Config.scaledSize(10)
 
         Text {
-          text: (root.batteryCharging || root.acOnline) ? Config.iconBatteryCharging : Config.iconBattery
-          color: (root.batteryCharging || root.acOnline) ? root.chargingIconColor() : Config.textWhite
+          text: Config.iconBattery
+          color: Config.textWhite
           font.pixelSize: Config.fontSizeTitle
           font.family: Config.fontIcon
           anchors.verticalCenter: parent.verticalCenter
@@ -196,13 +191,13 @@ PanelWindow {
         Column {
           width: parent.width - 44
           anchors.verticalCenter: parent.verticalCenter
-          spacing: 1
+          spacing: Config.scaledSize(1)
 
           Text {
             text: "Батарея"
             color: Config.textWhite
             font.pixelSize: Config.fontSizeLarge
-            font.weight: Font.Bold
+            font.weight: Font.Medium
             font.family: Config.fontSans
           }
 
@@ -219,7 +214,7 @@ PanelWindow {
 
       Rectangle {
         width: parent.width
-        height: 52
+        height: Config.scaledSize(52)
         radius: Config.cardRadius
         color: Config.controlIdleBg
         border.color: Config.borderColor
@@ -227,8 +222,8 @@ PanelWindow {
 
         Column {
           anchors.fill: parent
-          anchors.margins: 10
-          spacing: 8
+          anchors.margins: Config.scaledSize(10)
+          spacing: Config.scaledSize(8)
 
           Row {
             width: parent.width
@@ -236,8 +231,8 @@ PanelWindow {
               width: parent.width / 2
               text: root.batteryCharging ? "Заряд" : "Остаток"
               color: Config.textMuted
-              font.pixelSize: 10
-              font.weight: Font.Bold
+              font.pixelSize: Config.fontSizeExtraSmall
+              font.weight: Font.Medium
               font.family: Config.fontSans
               font.letterSpacing: 1.2
             }
@@ -247,7 +242,7 @@ PanelWindow {
               color: Config.textWhite
               horizontalAlignment: Text.AlignRight
               font.pixelSize: Config.fontMonoSizeSmall
-              font.weight: Font.Bold
+              font.weight: Font.Medium
               font.family: Config.fontMono
             }
           }
@@ -255,7 +250,7 @@ PanelWindow {
           Rectangle {
             width: parent.width
             height: 10
-            radius: height / 2
+            radius: Config.popupPillRadius(height)
             color: Config.meterTrack
             clip: true
 
@@ -274,8 +269,8 @@ PanelWindow {
       Grid {
         width: parent.width
         columns: 2
-        rowSpacing: 8
-        columnSpacing: 10
+        rowSpacing: Config.scaledSize(8)
+        columnSpacing: Config.scaledSize(10)
 
         BatteryInfoRow { label: "Осталось"; value: root.timeText(); width: (parent.width - 10) / 2 }
         BatteryInfoRow { label: "RATE"; value: root.batteryRate.toFixed(2) + " W"; width: (parent.width - 10) / 2 }
@@ -290,13 +285,13 @@ PanelWindow {
         text: "Профиль питания"
         color: Config.textSubtle
         font.pixelSize: Config.fontSizeSmall
-        font.weight: Font.Bold
+        font.weight: Font.Medium
         font.family: Config.fontSans
       }
 
       Row {
         width: parent.width
-        spacing: 10
+        spacing: Config.scaledSize(10)
 
         Repeater {
           model: ["power-saver", "balanced", "performance"]
@@ -307,7 +302,7 @@ PanelWindow {
             readonly property bool active: root.powerProfile === modelData
 
             width: (parent.width - 20) / 3
-            height: 42
+            height: Config.scaledSize(42)
             radius: Config.cardRadius
             opacity: available ? 1.0 : 0.35
             color: active ? Config.selectedBg : (profileMouse.containsMouse && available ? Config.hoverBg : Config.controlIdleBg)
@@ -316,7 +311,7 @@ PanelWindow {
 
             Column {
               anchors.centerIn: parent
-              spacing: 1
+              spacing: Config.scaledSize(1)
 
               Text {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -330,8 +325,8 @@ PanelWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: root.profileName(modelData)
                 color: active ? Config.textWhite : Config.textMuted
-                font.pixelSize: 9
-                font.weight: active ? Font.Bold : Font.Medium
+                font.pixelSize: Config.fontSizeTiny
+                font.weight: active ? Font.Medium : Font.Medium
                 font.family: Config.fontSans
               }
             }

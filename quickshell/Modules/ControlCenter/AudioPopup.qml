@@ -11,7 +11,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property var osd: null
   readonly property var sink: Pipewire.defaultAudioSink
   readonly property var source: Pipewire.defaultAudioSource
@@ -98,9 +98,15 @@ PanelWindow {
     objects: Pipewire.nodes.values.filter(node => node && node.audio && !node.isStream)
   }
 
+  PwNodePeakMonitor {
+    id: micPeak
+    node: root.source
+    enabled: root.isOpen
+  }
+
   Rectangle {
     id: container
-    width: 360
+    width: Config.scaledSize(360)
     implicitHeight: columnLayout.implicitHeight + 28
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
@@ -134,14 +140,14 @@ PanelWindow {
       id: columnLayout
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 14
+      spacing: Config.scaledSize(14)
 
       Row {
         width: parent.width
-        height: 28
-        spacing: 10
+        height: Config.scaledSize(28)
+        spacing: Config.scaledSize(10)
 
         Text {
           text: Config.iconVolHigh
@@ -156,7 +162,7 @@ PanelWindow {
           text: "Звук"
           color: Config.textWhite
           font.pixelSize: Config.fontSizeLarge
-          font.weight: Font.Bold
+          font.weight: Font.Medium
           font.family: Config.fontSans
           anchors.verticalCenter: parent.verticalCenter
         }
@@ -194,6 +200,23 @@ PanelWindow {
         muted: root.sourceMuted
         onApplyValue: val => { if (root.source && root.source.audio) root.source.audio.volume = val / 100 }
         onToggleMute: if (root.source && root.source.audio) root.source.audio.muted = !root.source.audio.muted
+      }
+
+      Rectangle {
+        width: parent.width
+        height: Config.scaledSize(6)
+        radius: Config.popupPillRadius(height)
+        color: Config.meterTrack
+        clip: true
+        visible: root.source != null
+
+        Rectangle {
+          height: parent.height
+          radius: parent.radius
+          width: Math.min(parent.width, parent.width * Math.max(0, Math.min(1, micPeak.peak)))
+          color: root.sourceMuted ? Config.dangerRed : Config.themeAccent
+          Behavior on width { NumberAnimation { duration: 70; easing.type: Easing.Linear } }
+        }
       }
 
       AudioDeviceList {
