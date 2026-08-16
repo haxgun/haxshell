@@ -343,6 +343,7 @@ PanelWindow {
     if (key === "barShadowsEnabled") Config.barShadowsEnabled = value
     if (key === "popupShadowsEnabled") Config.popupShadowsEnabled = value
     if (key === "weatherEnabled") Config.weatherEnabled = value
+    if (key === "weatherTenths") Config.weatherTenths = value
     if (key === "barDateTimeEnabled") Config.barDateTimeEnabled = value
     if (key === "barWeatherEnabled") Config.barWeatherEnabled = value
     if (key === "barColorPickerEnabled") Config.barColorPickerEnabled = value
@@ -353,6 +354,12 @@ PanelWindow {
     if (key === "barTrayEnabled") Config.barTrayEnabled = value
     if (key === "barKeyboardLayoutEnabled") Config.barKeyboardLayoutEnabled = value
     if (key === "barSystemEnabled") Config.barSystemEnabled = value
+    if (key === "barSysCpuEnabled") Config.barSysCpuEnabled = value
+    if (key === "barSysCpuTempEnabled") Config.barSysCpuTempEnabled = value
+    if (key === "barSysGpuEnabled") Config.barSysGpuEnabled = value
+    if (key === "barSysGpuTempEnabled") Config.barSysGpuTempEnabled = value
+    if (key === "barSysRamEnabled") Config.barSysRamEnabled = value
+    if (key === "barSysNetEnabled") Config.barSysNetEnabled = value
     if (key === "barNotificationsEnabled") Config.barNotificationsEnabled = value
     if (key === "barVolumeEnabled") Config.barVolumeEnabled = value
     if (key === "barBrightnessEnabled") Config.barBrightnessEnabled = value
@@ -1963,6 +1970,13 @@ PanelWindow {
               ToggleSwitch { checked: Config.weatherEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("weatherEnabled", !Config.weatherEnabled) }
             }
             SettingsRow {
+              icon: Config.iconTemperature
+              title: I18n.tr("Точность до десятых")
+              subtitle: Config.weatherTenths ? I18n.tr("С десятыми") : I18n.tr("Целые градусы")
+              onClicked: root.setBoolSetting("weatherTenths", !Config.weatherTenths)
+              ToggleSwitch { z: 1; checked: Config.weatherTenths; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("weatherTenths", !Config.weatherTenths) }
+            }
+            SettingsRow {
               icon: Config.iconWeather
               title: I18n.tr("Город погоды")
               subtitle: Config.weatherLocation.length > 0 ? Config.weatherLocation : I18n.tr("Автоматически по IP")
@@ -2046,6 +2060,50 @@ PanelWindow {
                 Text { text: I18n.tr("Системные метрики"); color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
                 Text { text: I18n.tr("CPU, память, сеть и накопители отображаются на панели и в системном попапе."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
               }
+            }
+
+            Text { text: I18n.tr("Метрики в панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconCpu
+              title: I18n.tr("Загрузка CPU")
+              subtitle: I18n.tr("Процент использования процессора")
+              onClicked: root.setBoolSetting("barSysCpuEnabled", !Config.barSysCpuEnabled)
+              ToggleSwitch { z: 1; checked: Config.barSysCpuEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysCpuEnabled", !Config.barSysCpuEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconTemperature
+              title: I18n.tr("Температура CPU")
+              subtitle: I18n.tr("Температура процессора")
+              onClicked: root.setBoolSetting("barSysCpuTempEnabled", !Config.barSysCpuTempEnabled)
+              ToggleSwitch { z: 1; checked: Config.barSysCpuTempEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysCpuTempEnabled", !Config.barSysCpuTempEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconGpu
+              title: I18n.tr("Загрузка GPU")
+              subtitle: I18n.tr("Процент использования видеокарты")
+              onClicked: root.setBoolSetting("barSysGpuEnabled", !Config.barSysGpuEnabled)
+              ToggleSwitch { z: 1; checked: Config.barSysGpuEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysGpuEnabled", !Config.barSysGpuEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconTemperature
+              title: I18n.tr("Температура GPU")
+              subtitle: I18n.tr("Температура видеокарты")
+              onClicked: root.setBoolSetting("barSysGpuTempEnabled", !Config.barSysGpuTempEnabled)
+              ToggleSwitch { z: 1; checked: Config.barSysGpuTempEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysGpuTempEnabled", !Config.barSysGpuTempEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconRam
+              title: I18n.tr("Оперативная память")
+              subtitle: I18n.tr("Использование RAM")
+              onClicked: root.setBoolSetting("barSysRamEnabled", !Config.barSysRamEnabled)
+              ToggleSwitch { z: 1; checked: Config.barSysRamEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysRamEnabled", !Config.barSysRamEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconNet
+              title: I18n.tr("Сеть")
+              subtitle: I18n.tr("Скорость загрузки")
+              onClicked: root.setBoolSetting("barSysNetEnabled", !Config.barSysNetEnabled)
+              ToggleSwitch { z: 1; checked: Config.barSysNetEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysNetEnabled", !Config.barSysNetEnabled) }
             }
           }
 

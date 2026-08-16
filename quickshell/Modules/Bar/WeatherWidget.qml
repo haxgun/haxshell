@@ -7,10 +7,12 @@ import "../../Common"
 Rectangle {
   id: root
 
-  property string weatherText: "--"
+  property bool weatherOk: false
+  property real weatherTemp: 0
   property int weatherCode: -1
   property bool embedded: false
   property bool iconOnRight: false
+  readonly property string weatherText: !root.weatherOk ? "--" : Config.tempText(root.weatherTemp, Config.weatherTenths)
   visible: Config.weatherEnabled
   implicitWidth: weatherRow.implicitWidth + (embedded ? 0 : 12)
   implicitHeight: Config.buttonHeight
@@ -26,9 +28,10 @@ Rectangle {
       onRead: data => {
         try {
           let weather = JSON.parse(data)
-          root.weatherText = weather.ok ? (Math.round(weather.temperature) + "°") : "--"
+          root.weatherOk = weather.ok
+          root.weatherTemp = weather.ok ? weather.temperature : 0
           root.weatherCode = weather.ok ? weather.code : -1
-        } catch(e) { root.weatherText = "--" }
+        } catch(e) { root.weatherOk = false }
       }
     }
   }

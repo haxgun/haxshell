@@ -58,7 +58,9 @@ PanelWindow {
   property int displayYear: today.getFullYear()
   property int displayMonth: today.getMonth()
   property string weatherIcon: Config.iconWeather
-  property string weatherTemp: "--"
+  property bool weatherOk: false
+  property real weatherTempRaw: 0
+  readonly property string weatherTemp: !weatherOk ? "--" : Config.tempText(weatherTempRaw, Config.weatherTenths)
   property string weatherCondition: "Погода недоступна"
   property string weatherDetails: "Погода недоступна"
   property string weatherHumidity: "--"
@@ -120,7 +122,8 @@ PanelWindow {
     try {
       let res = JSON.parse(data)
       if (!res.ok) return
-      root.weatherTemp = Math.round(res.temperature) + "°"
+      root.weatherOk = true
+      root.weatherTempRaw = res.temperature
       root.weatherHumidity = res.humidity + "%"
       root.weatherCondition = res.condition || "Погода"
       root.weatherDetails = (res.name || Config.weatherLocation || "Текущий город") + " · влажность " + root.weatherHumidity
@@ -130,7 +133,7 @@ PanelWindow {
         let day = days[i]
         forecastModel.append({
           dayLabel: root.forecastDayLabel(day.date, i),
-          temp: Math.round(day.temperature) + "°",
+          tempRaw: day.temperature,
           humidity: day.humidity + "%",
           desc: day.condition || "Прогноз"
         })
@@ -138,7 +141,7 @@ PanelWindow {
       for (let i = days.length; i < 4; i++) {
         forecastModel.append({
           dayLabel: root.forecastDayLabel(root.addDays(new Date(), i), i),
-          temp: "--",
+          tempRaw: -999,
           humidity: "--",
           desc: "Нет данных"
         })
@@ -347,7 +350,7 @@ PanelWindow {
                 spacing: Config.scaledSize(4)
                 Text { width: parent.width; text: dayLabel; color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight }
                 Text { width: parent.width; text: Config.iconWeather; color: Config.textSubtle; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
-                Text { width: parent.width; text: Config.iconTemperature + " " + temp; color: Config.textWhite; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
+                Text { width: parent.width; text: Config.iconTemperature + " " + (tempRaw > -999 ? Config.tempText(tempRaw, Config.weatherTenths) : "--"); color: Config.textWhite; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
                 Text { width: parent.width; text: Config.iconHumidity + " " + humidity; color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
               }
             }

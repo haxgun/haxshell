@@ -41,6 +41,7 @@ Singleton {
   property alias uiScale: adapter.uiScale
   property alias reduceMotion: adapter.reduceMotion
   property alias weatherEnabled: adapter.weatherEnabled
+  property alias weatherTenths: adapter.weatherTenths
   property alias barDateTimeEnabled: adapter.barDateTimeEnabled
   property alias barWeatherEnabled: adapter.barWeatherEnabled
   property alias barColorPickerEnabled: adapter.barColorPickerEnabled
@@ -51,6 +52,12 @@ Singleton {
   property alias barTrayEnabled: adapter.barTrayEnabled
   property alias barKeyboardLayoutEnabled: adapter.barKeyboardLayoutEnabled
   property alias barSystemEnabled: adapter.barSystemEnabled
+  property alias barSysCpuEnabled: adapter.barSysCpuEnabled
+  property alias barSysCpuTempEnabled: adapter.barSysCpuTempEnabled
+  property alias barSysGpuEnabled: adapter.barSysGpuEnabled
+  property alias barSysGpuTempEnabled: adapter.barSysGpuTempEnabled
+  property alias barSysRamEnabled: adapter.barSysRamEnabled
+  property alias barSysNetEnabled: adapter.barSysNetEnabled
   property alias barNotificationsEnabled: adapter.barNotificationsEnabled
   property alias barVolumeEnabled: adapter.barVolumeEnabled
   property alias barBrightnessEnabled: adapter.barBrightnessEnabled
@@ -143,6 +150,7 @@ Singleton {
       property string uiScale: "1.0"
       property string reduceMotion: "false"
       property string weatherEnabled: "true"
+      property string weatherTenths: "false"
       property string barDateTimeEnabled: "true"
       property string barWeatherEnabled: "true"
       property string barColorPickerEnabled: "true"
@@ -153,6 +161,12 @@ Singleton {
       property string barTrayEnabled: "true"
       property string barKeyboardLayoutEnabled: "true"
       property string barSystemEnabled: "true"
+      property string barSysCpuEnabled: "true"
+      property string barSysCpuTempEnabled: "true"
+      property string barSysGpuEnabled: "true"
+      property string barSysGpuTempEnabled: "true"
+      property string barSysRamEnabled: "true"
+      property string barSysNetEnabled: "true"
       property string barNotificationsEnabled: "true"
       property string barVolumeEnabled: "true"
       property string barBrightnessEnabled: "true"
@@ -228,6 +242,7 @@ Singleton {
       uiScale: adapter.uiScale,
       reduceMotion: adapter.reduceMotion,
       weatherEnabled: adapter.weatherEnabled,
+      weatherTenths: adapter.weatherTenths,
       barDateTimeEnabled: adapter.barDateTimeEnabled,
       barWeatherEnabled: adapter.barWeatherEnabled,
       barColorPickerEnabled: adapter.barColorPickerEnabled,
@@ -238,6 +253,12 @@ Singleton {
       barTrayEnabled: adapter.barTrayEnabled,
       barKeyboardLayoutEnabled: adapter.barKeyboardLayoutEnabled,
       barSystemEnabled: adapter.barSystemEnabled,
+      barSysCpuEnabled: adapter.barSysCpuEnabled,
+      barSysCpuTempEnabled: adapter.barSysCpuTempEnabled,
+      barSysGpuEnabled: adapter.barSysGpuEnabled,
+      barSysGpuTempEnabled: adapter.barSysGpuTempEnabled,
+      barSysRamEnabled: adapter.barSysRamEnabled,
+      barSysNetEnabled: adapter.barSysNetEnabled,
       barNotificationsEnabled: adapter.barNotificationsEnabled,
       barVolumeEnabled: adapter.barVolumeEnabled,
       barBrightnessEnabled: adapter.barBrightnessEnabled,

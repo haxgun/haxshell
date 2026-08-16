@@ -148,6 +148,13 @@ Rectangle {
   property double sysStorageTotalGb: 0.0
   property int sysStoragePercent: 0
 
+  property bool sysGpuExists: false
+  property string sysGpuVendor: "none"
+  property int sysGpuPercent: 0
+  property int sysGpuTemp: 0
+  property double sysGpuVramUsedGb: 0.0
+  property double sysGpuVramTotalGb: 0.0
+
   function batteryColor(percent) {
     if (percent <= 20) return Config.dangerRed
     return Config.textPrimary
@@ -190,6 +197,14 @@ Rectangle {
             root.sysStorageUsedGb = res.storage_disk.used_gb
             root.sysStorageTotalGb = res.storage_disk.total_gb
             root.sysStoragePercent = res.storage_disk.percent
+          }
+          if (res.gpu && res.gpu.has) {
+            root.sysGpuExists = true
+            root.sysGpuVendor = res.gpu.vendor || "none"
+            root.sysGpuPercent = res.gpu.load || 0
+            root.sysGpuTemp = res.gpu.temp || 0
+            root.sysGpuVramUsedGb = res.gpu.vram_used || 0
+            root.sysGpuVramTotalGb = res.gpu.vram_total || 0
           }
         } catch(e) {}
       }
@@ -395,18 +410,48 @@ Rectangle {
             spacing: Config.scaledSize(8)
 
             Row {
+              id: cpuMetric
+              visible: Config.barSysCpuEnabled
               spacing: Config.scaledSize(4)
               Text { text: Config.iconCpu; color: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
               Text { text: root.sysCpuPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             }
-            Rectangle { width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+            Rectangle { visible: cpuMetric.visible && (cpuTempMetric.visible || gpuMetric.visible || gpuTempMetric.visible || ramMetric.visible || netMetric.visible); width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
             Row {
+              id: cpuTempMetric
+              visible: Config.barSysCpuTempEnabled && root.sysCpuTemp > 0
+              spacing: Config.scaledSize(4)
+              Text { text: Config.iconTemperature; color: root.sysCpuTemp > 85 ? Config.dangerRed : (root.sysCpuTemp > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysCpuTemp + "°C"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+            }
+            Rectangle { visible: cpuTempMetric.visible && (gpuMetric.visible || gpuTempMetric.visible || ramMetric.visible || netMetric.visible); width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+            Row {
+              id: gpuMetric
+              visible: Config.barSysGpuEnabled && root.sysGpuExists
+              spacing: Config.scaledSize(4)
+              Text { text: Config.iconGpu; color: root.sysGpuPercent > 85 ? Config.dangerRed : (root.sysGpuPercent > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysGpuPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+            }
+            Rectangle { visible: gpuMetric.visible && (gpuTempMetric.visible || ramMetric.visible || netMetric.visible); width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+            Row {
+              id: gpuTempMetric
+              visible: Config.barSysGpuTempEnabled && root.sysGpuExists && root.sysGpuTemp > 0
+              spacing: Config.scaledSize(4)
+              Text { text: Config.iconTemperature; color: root.sysGpuTemp > 85 ? Config.dangerRed : (root.sysGpuTemp > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.sysGpuTemp + "°C"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+            }
+            Rectangle { visible: gpuTempMetric.visible && (ramMetric.visible || netMetric.visible); width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+            Row {
+              id: ramMetric
+              visible: Config.barSysRamEnabled
               spacing: Config.scaledSize(4)
               Text { text: Config.iconRam; color: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
               Text { text: root.sysRamUsedGb.toFixed(1) + "G"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             }
-            Rectangle { width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
+            Rectangle { visible: ramMetric.visible && netMetric.visible; width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
             Row {
+              id: netMetric
+              visible: Config.barSysNetEnabled
               spacing: Config.scaledSize(4)
               Text { text: Config.iconNet; color: Config.iconColor; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
               Text { text: root.sysNetRx.trim(); color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }

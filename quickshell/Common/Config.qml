@@ -256,6 +256,7 @@ QtObject {
   property int sysCheckIntervalMs: 3000
   property int netCheckIntervalMs: 5000
   property bool weatherEnabled: true
+  property bool weatherTenths: false
   property bool barDateTimeEnabled: true
   property bool barWeatherEnabled: true
   property bool barColorPickerEnabled: true
@@ -266,6 +267,12 @@ QtObject {
   property bool barTrayEnabled: true
   property bool barKeyboardLayoutEnabled: true
   property bool barSystemEnabled: true
+  property bool barSysCpuEnabled: true
+  property bool barSysCpuTempEnabled: true
+  property bool barSysGpuEnabled: true
+  property bool barSysGpuTempEnabled: true
+  property bool barSysRamEnabled: true
+  property bool barSysNetEnabled: true
   property bool barNotificationsEnabled: true
   property bool barVolumeEnabled: true
   property bool barBrightnessEnabled: true
@@ -343,6 +350,7 @@ QtObject {
   readonly property string iconNextTrack: "󰒭"
   readonly property string iconCpu: "󰍛"
   readonly property string iconRam: "󰘚"
+  readonly property string iconGpu: "󰢮"
   readonly property string iconNet: "󰛳"
   readonly property string iconDisk: "󰋊"
   readonly property string iconWeather: "󰖕"
