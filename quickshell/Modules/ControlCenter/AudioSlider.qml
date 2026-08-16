@@ -12,17 +12,17 @@ Column {
   signal applyValue(int value)
   signal toggleMute()
 
-  spacing: 8
+  spacing: Config.scaledSize(8)
 
   Row {
     width: parent.width
-    height: 24
-    spacing: 8
+    height: Config.scaledSize(24)
+    spacing: Config.scaledSize(8)
 
     Rectangle {
-      width: 28
-      height: 24
-      radius: 8
+      width: Config.scaledSize(28)
+      height: Config.scaledSize(24)
+      radius: Config.popupRadiusPx(8)
       color: muteMouse.containsMouse ? Config.activeHoverBg : (root.muted ? "#30f87171" : "#00000000")
 
       Text {
@@ -47,17 +47,17 @@ Column {
       text: root.title
       color: Config.textWhite
       font.pixelSize: Config.fontSizeMedium
-      font.weight: Font.Bold
+      font.weight: Font.Medium
       font.family: Config.fontSans
       anchors.verticalCenter: parent.verticalCenter
     }
 
     Text {
-      width: 42
+      width: Config.scaledSize(42)
       text: root.value + "%"
       color: root.muted ? Config.dangerRed : Config.textMuted
       font.pixelSize: Config.fontMonoSizeMedium
-      font.weight: Font.Bold
+      font.weight: Font.Medium
       font.family: Config.fontMono
       horizontalAlignment: Text.AlignRight
       anchors.verticalCenter: parent.verticalCenter
@@ -67,7 +67,7 @@ Column {
   Item {
     id: sliderBox
     width: parent.width
-    height: 24
+    height: Config.scaledSize(24)
 
     Rectangle {
       width: parent.width

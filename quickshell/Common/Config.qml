@@ -129,23 +129,29 @@ QtObject {
   property int barTopMargin: 6
   property int barBottomMargin: 6
   property int barHorizontalMargin: 12
-  property int barRadius: 14
+  property int barRadius: 35
   property int barFrostOpacity: 56
-  property int popupRadius: 18
+  property int popupRadius: 45
   property int popupBackgroundOpacity: 56
   readonly property int barHeight: Math.round(barThickness * uiScale)
   readonly property int scaledBarTopMargin: Math.round(barTopMargin * uiScale)
   readonly property int scaledBarBottomMargin: Math.round(barBottomMargin * uiScale)
   readonly property int barMargin: Math.round(barHorizontalMargin * uiScale)
-  readonly property int scaledBarRadius: Math.round(barRadius * uiScale)
+  readonly property int scaledBarRadius: Math.round(barHeight * barRadius / 100)
   readonly property color barBackgroundBg: Qt.rgba(glassBg.r, glassBg.g, glassBg.b, barFrostOpacity / 100)
   readonly property color popupGlassBg: Qt.rgba(glassBg.r, glassBg.g, glassBg.b, popupBackgroundOpacity / 100)
   readonly property int barPadding: Math.round(16 * uiScale)
 
-  readonly property int widgetRadius: Math.round(14 * uiScale)
-  readonly property int overlayRadius: Math.round(popupRadius * uiScale)
-  readonly property int cardRadius: Math.round(10 * uiScale)
-  readonly property int innerBorderRadius: Math.round(12 * uiScale)
+  readonly property real barRadiusScale: barRadius / 35.0
+  readonly property real popupRadiusScale: popupRadius / 45.0
+  function barRadiusPx(base) { return Math.round(base * uiScale * barRadiusScale) }
+  function popupRadiusPx(base) { return Math.round(base * uiScale * popupRadiusScale) }
+  function popupPillRadius(dim) { return Math.round(dim / 2 * popupRadiusScale) }
+
+  readonly property int widgetRadius: scaledBarRadius
+  readonly property int overlayRadius: Math.round(barHeight * popupRadius / 100)
+  readonly property int cardRadius: popupRadiusPx(10)
+  readonly property int innerBorderRadius: barRadiusPx(12)
   readonly property int innerBorderMargin: 2
   readonly property int popupGap: 2
   readonly property int shellShadowOffsetY: Math.round(3 * uiScale)
@@ -160,7 +166,7 @@ QtObject {
 
   readonly property int buttonHeight: Math.round(28 * uiScale)
   readonly property int buttonWidth: Math.round(28 * uiScale)
-  readonly property int buttonRadius: Math.round(8 * uiScale)
+  readonly property int buttonRadius: barRadiusPx(8)
 
   // Overlay Container Dimensions
   readonly property int appDrawerWidth: Math.round(360 * uiScale)
@@ -181,20 +187,29 @@ QtObject {
   readonly property string fontMono: fontMonoFamily
   readonly property string fontIcon: "JetBrainsMono Nerd Font"
 
+  readonly property int fontSizeTiny: Math.round(9 * uiScale * fontScale)
+  readonly property int fontSizeExtraSmall: Math.round(10 * uiScale * fontScale)
   readonly property int fontSizeSmall: Math.round(12 * uiScale * fontScale)
   readonly property int fontSizeNormal: Math.round(13 * uiScale * fontScale)
   readonly property int fontSizeMedium: Math.round(14 * uiScale * fontScale)
   readonly property int fontSizeLarge: Math.round(15 * uiScale * fontScale)
+  readonly property int fontSizeSubtitle: Math.round(17 * uiScale * fontScale)
   readonly property int fontSizeTitle: Math.round(18 * uiScale * fontScale)
+  readonly property int fontSizeIconTiny: Math.round(12 * uiScale)
   readonly property int fontSizeIconSmall: Math.round(14 * uiScale)
   readonly property int fontSizeIconMedium: Math.round(16 * uiScale)
   readonly property int fontSizeIconLarge: Math.round(22 * uiScale)
+  readonly property int fontSizeIconHuge: Math.round(28 * uiScale)
 
   readonly property int fontMonoSizeSmall: Math.round(12 * uiScale * fontMonoScale)
   readonly property int fontMonoSizeNormal: Math.round(13 * uiScale * fontMonoScale)
   readonly property int fontMonoSizeMedium: Math.round(14 * uiScale * fontMonoScale)
   readonly property int fontMonoSizeLarge: Math.round(15 * uiScale * fontMonoScale)
   readonly property int fontMonoSizeTitle: Math.round(18 * uiScale * fontMonoScale)
+
+  function scaledFontSize(base) { return Math.round(base * uiScale * fontScale) }
+  function scaledIconSize(base) { return Math.round(base * uiScale) }
+  function scaledSize(base) { return Math.round(base * uiScale) }
 
   // ==========================================
   // ⚙️ SECTION 4: COMPONENT CONFIGURATION

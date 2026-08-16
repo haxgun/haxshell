@@ -77,8 +77,8 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 260
-    height: 76
+    width: Config.scaledSize(260)
+    height: Config.scaledSize(76)
     anchors.top: root.osdAtTop ? parent.top : undefined
     anchors.topMargin: root.osdAtTop ? 72 : 0
     anchors.bottom: root.osdAtTop ? undefined : parent.bottom
@@ -100,18 +100,18 @@ PanelWindow {
 
     Row {
       anchors.fill: parent
-      anchors.margins: 14
-      spacing: 12
+      anchors.margins: Config.scaledSize(14)
+      spacing: Config.scaledSize(12)
 
-      Text { width: 28; text: root.icon; color: root.muted ? Config.dangerRed : Config.textWhite; font.pixelSize: 22; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+      Text { width: Config.scaledSize(28); text: root.icon; color: root.muted ? Config.dangerRed : Config.textWhite; font.pixelSize: Config.fontSizeIconLarge; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
       Column {
         width: parent.width - 40
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 7
+        spacing: Config.scaledSize(7)
         Row {
           width: parent.width
           Text { text: root.label; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; width: parent.width - 46 }
-          Text { text: root.muted ? "Выкл." : root.value + "%"; color: root.muted ? Config.dangerRed : Config.textWhite; font.pixelSize: Config.fontMonoSizeSmall; font.weight: Font.Bold; font.family: Config.fontMono; width: 46; horizontalAlignment: Text.AlignRight }
+          Text { text: root.muted ? "Выкл." : root.value + "%"; color: root.muted ? Config.dangerRed : Config.textWhite; font.pixelSize: Config.fontMonoSizeSmall; font.weight: Font.Medium; font.family: Config.fontMono; width: Config.scaledSize(46); horizontalAlignment: Text.AlignRight }
         }
         Rectangle {
           width: parent.width

@@ -10,7 +10,7 @@ PanelWindow {
   id: panel
 
   property var targetScreen: null
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property var toastItems: []
   readonly property bool isTargetScreen: NotificationService.isScreenFocused(targetScreen)
   readonly property int toastTimeoutMs: Config.notificationTimeoutMs
@@ -67,7 +67,7 @@ PanelWindow {
 
   Column {
     id: toastColumn
-    width: 360
+    width: Config.scaledSize(360)
     height: implicitHeight
     anchors.top: panel.toastAtTop ? parent.top : undefined
     anchors.topMargin: panel.toastAtTop ? 8 : 0
@@ -78,7 +78,7 @@ PanelWindow {
     anchors.right: panel.toastAtLeft || panel.toastAtCenter ? undefined : parent.right
     anchors.rightMargin: panel.toastAtLeft || panel.toastAtCenter ? 0 : panel.rightMargin
     anchors.horizontalCenter: panel.toastAtCenter ? parent.horizontalCenter : undefined
-    spacing: 10
+    spacing: Config.scaledSize(10)
 
     Repeater {
       model: panel.toastItems

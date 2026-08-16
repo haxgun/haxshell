@@ -9,9 +9,9 @@ Rectangle {
   property bool interactive: true
   signal toggled()
 
-  width: 46
-  height: 22
-  radius: height / 2
+  width: Config.scaledSize(46)
+  height: Config.scaledSize(22)
+  radius: Config.popupPillRadius(height)
   color: checked ? Config.selectedBg : Config.controlIdleBg
   border.color: checked ? Config.activeBorderColor : Config.borderColor
   border.width: 1
@@ -22,8 +22,8 @@ Rectangle {
   Rectangle {
     id: glow
     anchors.fill: parent
-    anchors.margins: 2
-    radius: height / 2
+    anchors.margins: Config.scaledSize(2)
+    radius: Config.popupPillRadius(height)
     color: root.checked ? Config.activeHoverBg : "#00000000"
     opacity: switchMouse.containsMouse ? 0.9 : 0.55
 
@@ -35,7 +35,7 @@ Rectangle {
     id: knob
     width: 16
     height: 16
-    radius: height / 2
+    radius: Config.popupPillRadius(height)
     x: root.checked ? root.width - width - 3 : 3
     anchors.verticalCenter: parent.verticalCenter
     color: root.checked ? Config.textWhite : Config.textMuted

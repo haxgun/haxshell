@@ -77,7 +77,7 @@ Rectangle {
   Row {
     id: appRow
     anchors.centerIn: parent
-    spacing: 6
+    spacing: Config.scaledSize(6)
 
     IconImage {
       width: 18

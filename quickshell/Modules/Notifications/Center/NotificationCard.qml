@@ -32,14 +32,14 @@ Rectangle {
 
   Item {
     anchors.fill: parent
-    anchors.margins: 11
+    anchors.margins: Config.scaledSize(11)
     z: 1
 
     Rectangle {
       id: centerThumb
       width: visible ? 42 : 0
-      height: 42
-      radius: 10
+      height: Config.scaledSize(42)
+      radius: Config.popupRadiusPx(10)
       color: Config.controlIdleBg
       clip: true
       visible: imageSource.length > 0 || iconSource.length > 0 || appName.length > 0
@@ -52,8 +52,8 @@ Rectangle {
         color: "transparent"
         Image { id: centerImage; anchors.fill: parent; source: imageSource; visible: source.toString().length > 0; fillMode: Image.PreserveAspectCrop; asynchronous: true }
       }
-      IconImage { anchors.centerIn: parent; width: 26; height: 26; source: iconSource; visible: !centerImage.visible && source.toString().length > 0 }
-      Text { anchors.centerIn: parent; visible: !centerImage.visible && iconSource.length === 0; text: (appName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans }
+      IconImage { anchors.centerIn: parent; width: Config.scaledSize(26); height: Config.scaledSize(26); source: iconSource; visible: !centerImage.visible && source.toString().length > 0 }
+      Text { anchors.centerIn: parent; visible: !centerImage.visible && iconSource.length === 0; text: (appName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
     }
 
     Column {
@@ -62,22 +62,22 @@ Rectangle {
       anchors.leftMargin: centerThumb.visible ? 10 : 0
       anchors.right: parent.right
       anchors.top: parent.top
-      spacing: 5
+      spacing: Config.scaledSize(5)
 
       Row {
         width: parent.width
-        spacing: 8
-        Text { width: parent.width - 34; text: card.summary; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; maximumLineCount: 1 }
+        spacing: Config.scaledSize(8)
+        Text { width: parent.width - 34; text: card.summary; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; maximumLineCount: 1 }
         Rectangle {
-          width: 26
-          height: 26
-          radius: 8
+          width: Config.scaledSize(26)
+          height: Config.scaledSize(26)
+          radius: Config.popupRadiusPx(8)
           color: centerCloseMouse.containsMouse ? "#35f87171" : Config.controlIdleBg
           border.color: centerCloseMouse.containsMouse ? Config.dangerRed : Config.borderColor
           border.width: 1
           Behavior on color { ColorAnimation { duration: Config.reduceMotion ? 0 : 120 } }
           Behavior on border.color { ColorAnimation { duration: Config.reduceMotion ? 0 : 120 } }
-          Text { anchors.centerIn: parent; text: "×"; color: centerCloseMouse.containsMouse ? Config.dangerRed : Config.textMuted; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans }
+          Text { anchors.centerIn: parent; text: "×"; color: centerCloseMouse.containsMouse ? Config.dangerRed : Config.textMuted; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans }
           MouseArea { id: centerCloseMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: NotificationService.removeNotification(card.modelData) }
         }
       }
@@ -87,15 +87,15 @@ Rectangle {
 
       Row {
         width: parent.width
-        spacing: 6
+        spacing: Config.scaledSize(6)
         visible: !card.isHistory && card.actions.length > 0
         Repeater {
           model: card.actions
           Rectangle {
             required property var modelData
-            height: 26
+            height: Config.scaledSize(26)
             implicitWidth: actionText.implicitWidth + 18
-            radius: 7
+            radius: Config.popupRadiusPx(7)
             color: actionMouse.containsMouse ? Config.activeHoverBg : Config.controlIdleBg
             border.color: Config.subtleBorder
             border.width: 1

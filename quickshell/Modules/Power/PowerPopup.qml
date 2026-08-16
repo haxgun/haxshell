@@ -10,7 +10,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property string pendingCommand: ""
 
   visible: isOpen || container.opacity > 0.01
@@ -49,7 +49,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 240
+    width: Config.scaledSize(240)
     implicitHeight: content.implicitHeight + 28
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
@@ -70,16 +70,16 @@ PanelWindow {
       id: content
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 10
+      spacing: Config.scaledSize(10)
 
       Row {
         width: parent.width
-        height: 28
-        spacing: 10
+        height: Config.scaledSize(28)
+        spacing: Config.scaledSize(10)
         Text { text: Config.iconPower; color: Config.dangerRed; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { text: "Питание"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+        Text { text: "Питание"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
       }
 
       Rectangle { width: parent.width; height: 1; color: Config.separatorColor }
@@ -96,15 +96,15 @@ PanelWindow {
         Rectangle {
           required property var modelData
           width: parent.width
-          height: 34
+          height: Config.scaledSize(34)
           radius: Config.cardRadius
           color: powerItemMouse.containsMouse ? (modelData.danger ? "#35f87171" : Config.hoverBg) : "#00000000"
 
           Row {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: 10
-            spacing: 10
+            anchors.leftMargin: Config.scaledSize(10)
+            spacing: Config.scaledSize(10)
 
             Text { text: parent.parent.modelData.icon; color: parent.parent.modelData.danger ? Config.dangerRed : Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
             Text { text: parent.parent.modelData.label; color: parent.parent.modelData.danger ? Config.dangerRed : Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }

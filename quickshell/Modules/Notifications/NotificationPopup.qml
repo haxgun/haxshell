@@ -1,6 +1,7 @@
 // NotificationPopup.qml - Notification center overlay entry point
 import Quickshell
 import Quickshell.Io
+import "../../Common"
 import "../../Services"
 import "Popup"
 import "Center"
@@ -9,7 +10,7 @@ Scope {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   readonly property int notificationCount: NotificationService.notificationCount
 
   IpcHandler {

@@ -114,7 +114,7 @@ Rectangle {
   Row {
     id: mainRow
     anchors.centerIn: parent
-    spacing: 8
+    spacing: Config.scaledSize(8)
 
     // LEFT EXTENSION: Play/Pause Button & Track Info
     Item {
@@ -130,14 +130,14 @@ Rectangle {
       Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 4
-        spacing: 6
+        anchors.leftMargin: Config.scaledSize(4)
+        spacing: Config.scaledSize(6)
 
         // Play / Pause Button
         Rectangle {
-          width: 24
-          height: 24
-          radius: 6
+          width: Config.scaledSize(24)
+          height: Config.scaledSize(24)
+          radius: Config.barRadiusPx(6)
           color: playPauseMouse.containsMouse ? Config.pressedBg : "#00000000"
           anchors.verticalCenter: parent.verticalCenter
 
@@ -203,7 +203,7 @@ Rectangle {
       Row {
         id: rowLayout
         anchors.centerIn: parent
-        spacing: 12
+        spacing: Config.scaledSize(12)
 
         // Date text (Left)
         Text {
@@ -267,13 +267,13 @@ Rectangle {
 
       Row {
         anchors.centerIn: parent
-        spacing: 6
+        spacing: Config.scaledSize(6)
 
         // Previous Track Button
         Rectangle {
-          width: 20
-          height: 20
-          radius: 5
+          width: Config.scaledSize(20)
+          height: Config.scaledSize(20)
+          radius: Config.barRadiusPx(5)
           color: prevTrackMouse.containsMouse ? Config.pressedBg : "#00000000"
           opacity: root.isHovered ? 1.0 : 0.0
           anchors.verticalCenter: parent.verticalCenter
@@ -309,7 +309,7 @@ Rectangle {
 
         // Progress Bar
         Rectangle {
-          width: 44
+          width: Config.scaledSize(44)
           height: 4
           radius: 2
           color: Config.meterTrack
@@ -326,7 +326,7 @@ Rectangle {
 
         // Soundwave Visualizer Bars
         Row {
-          spacing: 2.5
+          spacing: Config.scaledSize(2).5
           visible: root.rightDisplayMode === "visualizer"
           anchors.verticalCenter: parent.verticalCenter
 
@@ -359,9 +359,9 @@ Rectangle {
 
         // Next Track Button
         Rectangle {
-          width: 20
-          height: 20
-          radius: 5
+          width: Config.scaledSize(20)
+          height: Config.scaledSize(20)
+          radius: Config.barRadiusPx(5)
           color: nextTrackMouse.containsMouse ? Config.pressedBg : "#00000000"
           opacity: root.isHovered ? 1.0 : 0.0
           anchors.verticalCenter: parent.verticalCenter

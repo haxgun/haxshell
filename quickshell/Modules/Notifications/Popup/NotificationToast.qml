@@ -24,7 +24,7 @@ Rectangle {
   signal removeRequested(int notificationId)
   signal centerRequested()
 
-  width: 360
+  width: Config.scaledSize(360)
   implicitHeight: Math.max(toastThumb.visible ? toastThumb.height : 0, toastText.implicitHeight) + 24
   radius: Config.overlayRadius
   color: Config.popupGlassBg
@@ -76,7 +76,7 @@ Rectangle {
     id: toastDragArea
     z: 0
     anchors.fill: parent
-    anchors.rightMargin: 46
+    anchors.rightMargin: Config.scaledSize(46)
     cursorShape: Qt.PointingHandCursor
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     drag.target: toast
@@ -94,13 +94,13 @@ Rectangle {
   Item {
     z: 1
     anchors.fill: parent
-    anchors.margins: 12
+    anchors.margins: Config.scaledSize(12)
 
     Rectangle {
       id: toastThumb
       width: visible ? 44 : 0
-      height: 44
-      radius: 11
+      height: Config.scaledSize(44)
+      radius: Config.popupRadiusPx(11)
       color: Config.controlIdleBg
       clip: true
       visible: toast.toastImageSource.length > 0 || toast.toastIconSource.length > 0 || toast.toastAppName.length > 0
@@ -113,8 +113,8 @@ Rectangle {
         color: "transparent"
         Image { id: toastImage; anchors.fill: parent; source: toast.toastImageSource; visible: source.toString().length > 0; fillMode: Image.PreserveAspectCrop; asynchronous: true }
       }
-      IconImage { anchors.centerIn: parent; width: 28; height: 28; source: toast.toastIconSource; visible: !toastImage.visible && source.toString().length > 0 }
-      Text { anchors.centerIn: parent; visible: !toastImage.visible && toast.toastIconSource.length === 0; text: (toast.toastAppName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans }
+      IconImage { anchors.centerIn: parent; width: Config.scaledSize(28); height: Config.scaledSize(28); source: toast.toastIconSource; visible: !toastImage.visible && source.toString().length > 0 }
+      Text { anchors.centerIn: parent; visible: !toastImage.visible && toast.toastIconSource.length === 0; text: (toast.toastAppName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
     }
 
     Column {
@@ -122,20 +122,20 @@ Rectangle {
       anchors.left: toastThumb.visible ? toastThumb.right : parent.left
       anchors.leftMargin: toastThumb.visible ? 10 : 0
       anchors.right: toastClose.left
-      anchors.rightMargin: 10
+      anchors.rightMargin: Config.scaledSize(10)
       anchors.top: parent.top
-      spacing: 3
+      spacing: Config.scaledSize(3)
 
-      Text { width: parent.width; text: toast.toastSummary; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; maximumLineCount: 1 }
+      Text { width: parent.width; text: toast.toastSummary; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; maximumLineCount: 1 }
       Text { width: parent.width; text: toast.toastBody; color: Config.textSubtle; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.WrapAnywhere; maximumLineCount: 4; elide: Text.ElideRight; visible: text.length > 0 }
     }
 
     Rectangle {
       id: toastClose
       z: 10
-      width: 28
-      height: 28
-      radius: 9
+      width: Config.scaledSize(28)
+      height: Config.scaledSize(28)
+      radius: Config.popupRadiusPx(9)
       anchors.top: parent.top
       anchors.right: parent.right
       color: toastCloseMouse.containsMouse ? "#35f87171" : "#00000000"

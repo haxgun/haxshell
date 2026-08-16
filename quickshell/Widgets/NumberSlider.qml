@@ -27,17 +27,17 @@ Item {
   Rectangle {
     id: track
     height: 4
-    radius: height / 2
+    radius: Config.popupPillRadius(height)
     anchors.left: parent.left
     anchors.right: valueField.left
-    anchors.rightMargin: 12
+    anchors.rightMargin: Config.scaledSize(12)
     anchors.verticalCenter: parent.verticalCenter
     color: Config.separatorColor
 
     Rectangle {
       width: Math.max(0, handle.x + handle.width / 2)
       height: parent.height
-      radius: height / 2
+      radius: Config.popupPillRadius(height)
       color: Config.themeAccent
     }
 
@@ -45,7 +45,7 @@ Item {
       id: handle
       width: 12
       height: 12
-      radius: width / 2
+      radius: Config.popupPillRadius(width)
       x: (root.value - root.from) / Math.max(root.to - root.from, 1) * (track.width - width)
       anchors.verticalCenter: parent.verticalCenter
       color: Config.textWhite
@@ -66,11 +66,11 @@ Item {
 
   Rectangle {
     id: valueField
-    width: 48
+    width: Config.scaledSize(48)
     height: parent.height
-    radius: Config.buttonRadius
+    radius: Config.popupRadiusPx(8)
     anchors.right: unit.left
-    anchors.rightMargin: 5
+    anchors.rightMargin: Config.scaledSize(5)
     color: Config.popupInputBg
     border.color: valueInput.activeFocus ? Config.themeAccent : Config.borderColor
     border.width: 1
@@ -78,7 +78,7 @@ Item {
     TextInput {
       id: valueInput
       anchors.fill: parent
-      anchors.margins: 6
+      anchors.margins: Config.scaledSize(6)
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
       text: root.value.toString()
@@ -95,7 +95,7 @@ Item {
   Text {
     id: unit
     anchors.right: resetButton.left
-    anchors.rightMargin: 6
+    anchors.rightMargin: Config.scaledSize(6)
     anchors.verticalCenter: parent.verticalCenter
     text: root.suffix
     color: Config.textMuted
@@ -105,9 +105,9 @@ Item {
 
   Rectangle {
     id: resetButton
-    width: 28
+    width: Config.scaledSize(28)
     height: parent.height
-    radius: Config.buttonRadius
+    radius: Config.popupRadiusPx(8)
     anchors.right: parent.right
     color: resetMouse.containsMouse ? Config.hoverBg : "#00000000"
 

@@ -8,8 +8,8 @@ Column {
   property string label: ""
   property string value: ""
 
-  height: 42
-  spacing: 2
+  height: Config.scaledSize(42)
+  spacing: Config.scaledSize(2)
 
   Text {
     text: root.label
@@ -22,7 +22,7 @@ Column {
     text: root.value
     color: Config.textPrimary
     font.pixelSize: Config.fontMonoSizeNormal
-    font.weight: Font.Bold
+    font.weight: Font.Medium
     font.family: Config.fontMono
     elide: Text.ElideRight
     width: parent.width

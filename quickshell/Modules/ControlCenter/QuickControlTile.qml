@@ -19,16 +19,16 @@ Rectangle {
 
   width: wide ? (parent ? parent.width : 250) : (parent ? (parent.width - 8) / 2 : 250)
   height: wide ? 62 : 64
-  radius: height / 2
+  radius: Config.popupPillRadius(height)
   color: root.active ? root.activeBg : (bodyMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
 
   Rectangle {
     id: iconTile
-    width: 44
-    height: 44
-    radius: width / 2
+    width: Config.scaledSize(44)
+    height: Config.scaledSize(44)
+    radius: Config.popupPillRadius(width)
     anchors.left: parent.left
-    anchors.leftMargin: 10
+    anchors.leftMargin: Config.scaledSize(10)
     anchors.verticalCenter: parent.verticalCenter
     color: root.active ? root.activeFg : Config.searchBg
     Text { anchors.centerIn: parent; text: root.icon; color: root.active ? root.activeBg : Config.textMuted; font.pixelSize: Config.fontSizeIconLarge; font.family: Config.fontIcon }
@@ -37,13 +37,13 @@ Rectangle {
 
   Column {
     anchors.left: iconTile.right
-    anchors.leftMargin: 9
+    anchors.leftMargin: Config.scaledSize(9)
     anchors.right: parent.right
-    anchors.rightMargin: 10
+    anchors.rightMargin: Config.scaledSize(10)
     anchors.verticalCenter: parent.verticalCenter
-    spacing: 2
+    spacing: Config.scaledSize(2)
     Text { width: parent.width; text: root.title; color: root.active ? root.activeFg : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-    Text { width: parent.width; text: root.subtitle; color: root.active ? root.activeMuted : Config.textMuted; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight }
+    Text { width: parent.width; text: root.subtitle; color: root.active ? root.activeMuted : Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
   }
 
   MouseArea {

@@ -153,7 +153,7 @@ PanelWindow {
     width: root.containerWidth
     height: root.containerHeight
     anchors.verticalCenter: parent.verticalCenter
-    anchors.leftMargin: 16
+    anchors.leftMargin: Config.scaledSize(16)
 
     x: root.isOpen ? 16 : -width - 24
     opacity: root.isOpen ? 1.0 : 0.0
@@ -195,22 +195,22 @@ PanelWindow {
       width: parent.width - 32
       height: parent.height - 32
       anchors.centerIn: parent
-      spacing: 14
+      spacing: Config.scaledSize(14)
 
       // Search Input Container
       Rectangle {
         width: parent.width
-        height: 50
-        radius: 14
+        height: Config.scaledSize(50)
+        radius: Config.popupRadiusPx(14)
         color: root.searchBgColor
         border.color: searchInput.activeFocus ? root.activeBorderColor : root.borderColor
         border.width: 1
 
         Row {
           anchors.fill: parent
-          anchors.leftMargin: 16
-          anchors.rightMargin: 16
-          spacing: 14
+          anchors.leftMargin: Config.scaledSize(16)
+          anchors.rightMargin: Config.scaledSize(16)
+          spacing: Config.scaledSize(14)
 
           Text {
             text: Config.iconSearch
@@ -265,7 +265,7 @@ PanelWindow {
         width: parent.width
         height: parent.height - 64
         clip: true
-        spacing: 6
+        spacing: Config.scaledSize(6)
         currentIndex: 0
         highlightFollowsCurrentItem: true
 
@@ -282,7 +282,7 @@ PanelWindow {
           readonly property bool isSelected: index === appListView.currentIndex
 
           width: appListView.width
-          height: 52
+          height: Config.scaledSize(52)
           radius: Config.cardRadius
           color: isSelected ? root.highlightColor : "#00000000"
 
@@ -290,13 +290,13 @@ PanelWindow {
 
           Row {
             anchors.fill: parent
-            anchors.leftMargin: 16
-            anchors.rightMargin: 16
-            spacing: 16
+            anchors.leftMargin: Config.scaledSize(16)
+            anchors.rightMargin: Config.scaledSize(16)
+            spacing: Config.scaledSize(16)
 
             Item {
-              width: 28
-              height: 28
+              width: Config.scaledSize(28)
+              height: Config.scaledSize(28)
               anchors.verticalCenter: parent.verticalCenter
 
               Image {
@@ -309,7 +309,7 @@ PanelWindow {
 
               Rectangle {
                 anchors.fill: parent
-                radius: 6
+                radius: Config.popupRadiusPx(6)
                 color: root.highlightColor
                 visible: appIconImg.status !== Image.Ready
 
@@ -318,7 +318,7 @@ PanelWindow {
                   text: name ? name.charAt(0).toUpperCase() : "?"
                   color: Config.textWhite
                   font.pixelSize: Config.fontSizeIconSmall
-                  font.weight: Font.Bold
+                  font.weight: Font.Medium
                   font.family: Config.fontSans
                 }
               }
@@ -327,8 +327,8 @@ PanelWindow {
             Text {
               text: name
               color: delegateRect.isSelected ? Config.textWhite : Config.textSubtle
-              font.pixelSize: 17
-              font.weight: delegateRect.isSelected ? Font.Bold : Font.Medium
+              font.pixelSize: Config.fontSizeSubtitle
+              font.weight: delegateRect.isSelected ? Font.Medium : Font.Medium
               font.family: Config.fontSans
               anchors.verticalCenter: parent.verticalCenter
               elide: Text.ElideRight

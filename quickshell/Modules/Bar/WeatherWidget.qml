@@ -40,6 +40,11 @@ Rectangle {
     onTriggered: root.refresh()
   }
 
+  Connections {
+    target: Config
+    function onWeatherLocationChanged() { root.refresh() }
+  }
+
   function refresh() {
     if (!Config.weatherEnabled) return
     weatherProc.running = false
@@ -63,12 +68,12 @@ Rectangle {
   Row {
     id: weatherRow
     anchors.centerIn: parent
-    spacing: 5
+    spacing: Config.scaledSize(5)
 
     Item {
       visible: !root.iconOnRight
       width: weatherIconLeft.implicitWidth
-      height: 20
+      height: Config.scaledSize(20)
       anchors.verticalCenter: parent.verticalCenter
 
       Text {
@@ -82,7 +87,7 @@ Rectangle {
     }
 
     Text {
-      height: 20
+      height: Config.scaledSize(20)
       text: root.weatherText
       color: Config.textPrimary
       font.pixelSize: Config.fontSizeSmall
@@ -95,7 +100,7 @@ Rectangle {
     Item {
       visible: root.iconOnRight
       width: weatherIconRight.implicitWidth
-      height: 20
+      height: Config.scaledSize(20)
       anchors.verticalCenter: parent.verticalCenter
 
       Text {

@@ -11,7 +11,7 @@ PanelWindow {
 
   property var targetScreen: null
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   readonly property bool isTargetScreen: NotificationService.isScreenFocused(targetScreen)
   readonly property int notificationCount: NotificationService.notificationCount
   readonly property var centerModel: notificationCount > 0 ? NotificationService.notifications : NotificationService.historyList
@@ -68,22 +68,22 @@ PanelWindow {
       id: columnLayout
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 12
+      spacing: Config.scaledSize(12)
 
       Row {
         width: parent.width
-        height: 30
-        spacing: 10
+        height: Config.scaledSize(30)
+        spacing: Config.scaledSize(10)
 
         Text { text: Config.iconNotificationsActive; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { width: parent.width - 86; text: I18n.tr("Уведомления"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+        Text { width: parent.width - 86; text: I18n.tr("Уведомления"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
 
         Rectangle {
-          width: 36
-          height: 28
-          radius: 8
+          width: Config.scaledSize(36)
+          height: Config.scaledSize(28)
+          radius: Config.popupRadiusPx(8)
           color: clearMouse.containsMouse ? "#35f87171" : Config.controlIdleBg
           border.color: Config.subtleBorder
           border.width: 1
@@ -96,8 +96,8 @@ PanelWindow {
 
       Row {
         width: parent.width
-        height: 26
-        spacing: 10
+        height: Config.scaledSize(26)
+        spacing: Config.scaledSize(10)
 
         Text { text: Config.iconNotifications; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
         Text { width: parent.width - doNotDisturbToggle.width - 28; text: I18n.tr("Не беспокоить"); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
@@ -121,7 +121,7 @@ PanelWindow {
         height: Math.min(460, contentHeight)
         visible: centerModel.length > 0
         clip: true
-        spacing: 8
+        spacing: Config.scaledSize(8)
         model: panel.centerModel
         delegate: NotificationCard {}
       }

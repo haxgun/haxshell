@@ -9,7 +9,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property var tooltip: null
 
   visible: isOpen || container.opacity > 0.01
@@ -289,28 +289,28 @@ PanelWindow {
       id: columnLayout
       width: parent.width - 28
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 14
+      spacing: Config.scaledSize(14)
 
       Item {
-        width: 170
+        width: Config.scaledSize(170)
         height: calendarColumn.implicitHeight
 
         Column {
           id: weatherColumn
           width: parent.width
-          spacing: 10
+          spacing: Config.scaledSize(10)
 
           Row {
             width: parent.width
-            height: 48
-            spacing: 10
+            height: Config.scaledSize(48)
+            spacing: Config.scaledSize(10)
 
             Text {
               text: Config.iconWeather
               color: Config.activeBorderColor
-              font.pixelSize: 28
+              font.pixelSize: Config.fontSizeIconHuge
               font.family: Config.fontIcon
               anchors.verticalCenter: parent.verticalCenter
             }
@@ -318,37 +318,37 @@ PanelWindow {
             Column {
               width: parent.width - 42
               anchors.verticalCenter: parent.verticalCenter
-              spacing: 1
+              spacing: Config.scaledSize(1)
 
-              Text { width: parent.width; text: root.weatherTemp; color: Config.textWhite; font.pixelSize: 28; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
-              Text { width: parent.width; text: root.weatherCondition; color: Config.textMuted; font.pixelSize: 11; font.family: Config.fontSans; elide: Text.ElideRight }
+              Text { width: parent.width; text: root.weatherTemp; color: Config.textWhite; font.pixelSize: Config.fontSizeIconHuge; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+              Text { width: parent.width; text: root.weatherCondition; color: Config.textMuted; font.pixelSize: Config.scaledFontSize(11); font.family: Config.fontSans; elide: Text.ElideRight }
             }
           }
 
           Row {
             width: parent.width
-            height: 24
-            spacing: 6
-            Text { width: parent.width - 52; text: Config.weatherLocation || "Погода"; color: Config.textSubtle; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
-            Text { width: 46; text: Config.iconHumidity + " " + root.weatherHumidity; color: Config.textMuted; font.pixelSize: 10; font.family: Config.fontIcon; horizontalAlignment: Text.AlignRight; anchors.verticalCenter: parent.verticalCenter }
+            height: Config.scaledSize(24)
+            spacing: Config.scaledSize(6)
+            Text { width: parent.width - 52; text: Config.weatherLocation || "Погода"; color: Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
+            Text { width: Config.scaledSize(46); text: Config.iconHumidity + " " + root.weatherHumidity; color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontIcon; horizontalAlignment: Text.AlignRight; anchors.verticalCenter: parent.verticalCenter }
           }
 
           Rectangle { width: parent.width; height: 1; color: Config.separatorColor; opacity: 0.45 }
 
           Row {
             width: parent.width
-            height: 88
-            spacing: 4
+            height: Config.scaledSize(88)
+            spacing: Config.scaledSize(4)
 
             Repeater {
               model: forecastModel
               Column {
                 width: (weatherColumn.width - 12) / 4
-                spacing: 4
-                Text { width: parent.width; text: dayLabel; color: Config.textMuted; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight }
+                spacing: Config.scaledSize(4)
+                Text { width: parent.width; text: dayLabel; color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight }
                 Text { width: parent.width; text: Config.iconWeather; color: Config.textSubtle; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
-                Text { width: parent.width; text: Config.iconTemperature + " " + temp; color: Config.textWhite; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
-                Text { width: parent.width; text: Config.iconHumidity + " " + humidity; color: Config.textMuted; font.pixelSize: 9; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
+                Text { width: parent.width; text: Config.iconTemperature + " " + temp; color: Config.textWhite; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
+                Text { width: parent.width; text: Config.iconHumidity + " " + humidity; color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
               }
             }
           }
@@ -361,18 +361,18 @@ PanelWindow {
       Column {
         id: calendarColumn
         width: parent.width - 199
-        spacing: 10
+        spacing: Config.scaledSize(10)
 
         Item {
           width: parent.width
-          height: 28
+          height: Config.scaledSize(28)
 
           Rectangle {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            width: 28
-            height: 28
-            radius: 7
+            width: Config.scaledSize(28)
+            height: Config.scaledSize(28)
+            radius: Config.popupRadiusPx(7)
             color: prevMouse.containsMouse ? Config.selectedBg : "#00000000"
             Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
             MouseArea { id: prevMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.prevMonth() }
@@ -381,9 +381,9 @@ PanelWindow {
           Rectangle {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            width: 28
-            height: 28
-            radius: 7
+            width: Config.scaledSize(28)
+            height: Config.scaledSize(28)
+            radius: Config.popupRadiusPx(7)
             color: nextMouse.containsMouse ? Config.selectedBg : "#00000000"
             Text { anchors.centerIn: parent; text: Config.iconChevronRight; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
             MouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.nextMonth() }
@@ -393,8 +393,8 @@ PanelWindow {
             anchors.centerIn: parent
             text: Config.monthNamesRu[root.displayMonth].toUpperCase() + " " + root.displayYear
             color: Config.textMuted
-            font.pixelSize: 10
-            font.weight: Font.Bold
+            font.pixelSize: Config.fontSizeExtraSmall
+            font.weight: Font.Medium
             font.family: Config.fontSans
             font.letterSpacing: 1.6
           }
@@ -411,9 +411,9 @@ PanelWindow {
 
             Item {
               width: calendarColumn.width / 7
-              height: 22
+              height: Config.scaledSize(22)
 
-              Text { anchors.centerIn: parent; text: modelData; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+              Text { anchors.centerIn: parent; text: modelData; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
             }
           }
         }
@@ -434,19 +434,19 @@ PanelWindow {
               required property string holidayName
 
               width: calendarColumn.width / 7
-              height: 30
+              height: Config.scaledSize(30)
 
               Rectangle {
                 anchors.centerIn: parent
-                width: 26
-                height: 26
-                radius: 8
+                width: Config.scaledSize(26)
+                height: Config.scaledSize(26)
+                radius: Config.popupRadiusPx(8)
                 color: isToday ? Config.selectedBg : "#00000000"
                 border.color: isToday ? Config.activeBorderColor : "#00000000"
                 border.width: isToday ? 1 : 0
               }
 
-              Text { anchors.centerIn: parent; text: dayNumber.toString(); color: isToday ? Config.textWhite : (inMonth ? Config.textSubtle : Config.textDark); font.pixelSize: Config.fontSizeNormal; font.weight: isToday ? Font.Bold : Font.Normal; font.family: Config.fontSans }
+              Text { anchors.centerIn: parent; text: dayNumber.toString(); color: isToday ? Config.textWhite : (inMonth ? Config.textSubtle : Config.textDark); font.pixelSize: Config.fontSizeNormal; font.weight: isToday ? Font.Medium : Font.Normal; font.family: Config.fontSans }
 
               Rectangle {
                 visible: holidayName.length > 0
@@ -456,7 +456,7 @@ PanelWindow {
                 color: Config.activeBorderColor
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 2
+                anchors.bottomMargin: Config.scaledSize(2)
               }
 
               MouseArea {

@@ -45,7 +45,7 @@ Rectangle {
   Row {
     id: keyRow
     anchors.centerIn: parent
-    spacing: 5
+    spacing: Config.scaledSize(5)
 
     Text {
       text: Config.iconKeyboard
@@ -59,7 +59,7 @@ Rectangle {
       text: root.layout
       color: Config.textPrimary
       font.pixelSize: Config.fontMonoSizeSmall
-      font.weight: Font.Bold
+      font.weight: Font.Medium
       font.family: Config.fontMono
       anchors.verticalCenter: parent.verticalCenter
     }

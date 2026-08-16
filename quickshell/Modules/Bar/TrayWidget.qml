@@ -82,8 +82,8 @@ Rectangle {
     id: trayRow
     anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
-    anchors.rightMargin: 4
-    spacing: 2
+    anchors.rightMargin: Config.scaledSize(4)
+    spacing: Config.scaledSize(2)
 
     Item {
       id: iconClip
@@ -106,7 +106,7 @@ Rectangle {
         id: iconRow
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 2
+        spacing: Config.scaledSize(2)
 
         Repeater {
           model: root.trayItems
@@ -134,7 +134,7 @@ Rectangle {
               text: (trayItem.modelData.title || trayItem.modelData.id || "?").charAt(0).toUpperCase()
               color: Config.textPrimary
               font.pixelSize: Config.fontSizeSmall
-              font.weight: Font.Bold
+              font.weight: Font.Medium
               font.family: Config.fontSans
             }
 

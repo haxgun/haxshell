@@ -24,18 +24,18 @@ Item {
 
   Rectangle {
     anchors.fill: parent
-    radius: height / 2
+    radius: Config.popupPillRadius(height)
     color: Config.controlIdleBg
 
     Rectangle {
       id: track
       anchors.left: parent.left
-      anchors.leftMargin: 8
+      anchors.leftMargin: Config.scaledSize(8)
       anchors.right: parent.right
-      anchors.rightMargin: 8
+      anchors.rightMargin: Config.scaledSize(8)
       anchors.verticalCenter: parent.verticalCenter
       height: parent.height - 10
-      radius: height / 2
+      radius: Config.popupPillRadius(height)
       color: Config.searchBg
 
       Rectangle {
@@ -59,7 +59,7 @@ Item {
       id: minimumIconText
       z: 1
       anchors.left: parent.left
-      anchors.leftMargin: 16
+      anchors.leftMargin: Config.scaledSize(16)
       anchors.verticalCenter: parent.verticalCenter
       text: root.minimumIcon
       color: root.fillCoversIcon ? Config.textDark : Config.iconColor
@@ -71,12 +71,12 @@ Item {
       id: valueText
       z: 1
       anchors.right: parent.right
-      anchors.rightMargin: 16
+      anchors.rightMargin: Config.scaledSize(16)
       anchors.verticalCenter: parent.verticalCenter
       text: root.value + "%"
       color: root.fillCoversText ? Config.textDark : Config.textPrimary
       font.pixelSize: Config.fontMonoSizeSmall
-      font.weight: Font.Bold
+      font.weight: Font.Medium
       font.family: Config.fontMono
     }
   }

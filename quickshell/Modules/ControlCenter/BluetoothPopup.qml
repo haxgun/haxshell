@@ -11,7 +11,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   readonly property var adapter: Bluetooth.defaultAdapter
   readonly property var bluetoothDevices: adapter && adapter.devices && adapter.devices.values ? adapter.devices.values : []
   readonly property string connectedDeviceName: {
@@ -98,7 +98,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 340
+    width: Config.scaledSize(340)
     implicitHeight: columnLayout.implicitHeight + 28
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
@@ -132,14 +132,14 @@ PanelWindow {
       id: columnLayout
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 12
+      spacing: Config.scaledSize(12)
 
       Row {
         width: parent.width
-        height: 28
-        spacing: 10
+        height: Config.scaledSize(28)
+        spacing: Config.scaledSize(10)
 
         Text {
           text: Config.iconBluetooth
@@ -152,13 +152,13 @@ PanelWindow {
         Column {
           width: parent.width - 126
           anchors.verticalCenter: parent.verticalCenter
-          spacing: 1
+          spacing: Config.scaledSize(1)
 
           Text {
             text: "Bluetooth"
             color: Config.textWhite
             font.pixelSize: Config.fontSizeMedium
-            font.weight: Font.Bold
+            font.weight: Font.Medium
             font.family: Config.fontSans
           }
 
@@ -173,9 +173,9 @@ PanelWindow {
         }
 
         Rectangle {
-          width: 28
-          height: 26
-          radius: 8
+          width: Config.scaledSize(28)
+          height: Config.scaledSize(26)
+          radius: Config.popupRadiusPx(8)
           color: btRefreshMouse.containsMouse ? Config.activeHoverBg : (root.adapter && root.adapter.discovering ? Config.selectedBg : "#00000000")
           border.color: root.adapter && root.adapter.discovering ? Config.activeBorderColor : "#00000000"
           border.width: 1
@@ -235,22 +235,22 @@ PanelWindow {
         height: Math.min(250, contentHeight)
         visible: !!root.adapter
         clip: true
-        spacing: 6
+        spacing: Config.scaledSize(6)
         model: root.bluetoothDevices
 
         delegate: Rectangle {
           required property var modelData
 
           width: deviceList.width
-          height: 46
+          height: Config.scaledSize(46)
           radius: Config.cardRadius
           color: btDeviceMouse.containsMouse || modelData.connected ? Config.hoverBg : "#00000000"
 
           Row {
             anchors.fill: parent
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            spacing: 10
+            anchors.leftMargin: Config.scaledSize(12)
+            anchors.rightMargin: Config.scaledSize(12)
+            spacing: Config.scaledSize(10)
 
             Text {
               text: root.deviceIcon(modelData)
@@ -263,13 +263,13 @@ PanelWindow {
             Column {
               width: parent.width - 40
               anchors.verticalCenter: parent.verticalCenter
-              spacing: 1
+              spacing: Config.scaledSize(1)
 
               Text {
                 text: root.deviceName(modelData)
                 color: modelData.connected ? Config.textWhite : Config.textPrimary
                 font.pixelSize: Config.fontSizeNormal
-                font.weight: modelData.connected ? Font.Bold : Font.Medium
+                font.weight: modelData.connected ? Font.Medium : Font.Medium
                 font.family: Config.fontSans
                 elide: Text.ElideRight
                 width: parent.width

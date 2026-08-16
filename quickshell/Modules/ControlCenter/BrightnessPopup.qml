@@ -9,7 +9,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property var osd: null
   property int brightnessPercent: 100
   property string activeBrightnessBus: Config.brightnessMonitorBus
@@ -165,17 +165,17 @@ PanelWindow {
       id: columnLayout
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 14
+      spacing: Config.scaledSize(14)
 
       // Header Bar (Left: Icon & Title, Right: Percentage)
       Item {
         width: parent.width
-        height: 24
+        height: Config.scaledSize(24)
 
         Row {
-          spacing: 8
+          spacing: Config.scaledSize(8)
           anchors.left: parent.left
           anchors.verticalCenter: parent.verticalCenter
 
@@ -191,7 +191,7 @@ PanelWindow {
             text: "Яркость экрана"
             color: Config.textWhite
             font.pixelSize: Config.fontSizeLarge
-            font.weight: Font.Bold
+            font.weight: Font.Medium
             font.family: Config.fontSans
             anchors.verticalCenter: parent.verticalCenter
           }
@@ -203,7 +203,7 @@ PanelWindow {
           text: root.brightnessPercent + "%"
           color: Config.textMuted
           font.pixelSize: Config.fontMonoSizeMedium
-          font.weight: Font.Bold
+          font.weight: Font.Medium
           font.family: Config.fontMono
         }
       }
@@ -212,7 +212,7 @@ PanelWindow {
       Item {
         id: sliderBox
         width: parent.width
-        height: 24
+        height: Config.scaledSize(24)
 
         Rectangle {
           id: track
@@ -275,7 +275,7 @@ PanelWindow {
       // Quick Preset Pills Row (25%, 50%, 75%, 100%)
       Row {
         width: parent.width
-        spacing: 8
+        spacing: Config.scaledSize(8)
 
         Repeater {
           model: [25, 50, 75, 100]
@@ -284,8 +284,8 @@ PanelWindow {
             id: presetBtn
             required property int modelData
             width: (columnLayout.width - 24) / 4
-            height: 26
-            radius: 7
+            height: Config.scaledSize(26)
+            radius: Config.popupRadiusPx(7)
             readonly property bool isSelected: root.brightnessPercent === modelData
             color: isSelected ? Config.selectedBg : (presetMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
             border.color: isSelected ? Config.activeBorderColor : Config.subtleBorder
@@ -298,7 +298,7 @@ PanelWindow {
               text: presetBtn.modelData + "%"
               color: presetBtn.isSelected ? Config.textWhite : Config.textSubtle
               font.pixelSize: Config.fontMonoSizeSmall
-              font.weight: presetBtn.isSelected ? Font.Bold : Font.Medium
+              font.weight: presetBtn.isSelected ? Font.Medium : Font.Medium
               font.family: Config.fontMono
             }
 

@@ -11,15 +11,15 @@ Rectangle {
   property int cardWidth: 58
 
   width: cardWidth
-  height: 22
-  radius: 7
+  height: Config.scaledSize(22)
+  radius: Config.popupRadiusPx(7)
   color: Config.controlIdleBg
   border.color: Config.borderColor
   border.width: 1
 
   Row {
     anchors.centerIn: parent
-    spacing: 4
+    spacing: Config.scaledSize(4)
 
     Text {
       text: root.icon

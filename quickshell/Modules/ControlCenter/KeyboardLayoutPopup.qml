@@ -9,7 +9,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property string currentLayout: "??"
   property string currentName: "Unknown"
   readonly property string veyctl: Config.veyctl
@@ -78,7 +78,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 210
+    width: Config.scaledSize(210)
     implicitHeight: content.implicitHeight + 24
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
@@ -99,16 +99,16 @@ PanelWindow {
       id: content
       width: parent.width - 24
       anchors.top: parent.top
-      anchors.topMargin: 12
+      anchors.topMargin: Config.scaledSize(12)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 8
+      spacing: Config.scaledSize(8)
 
       Row {
         width: parent.width
-        height: 24
-        spacing: 8
+        height: Config.scaledSize(24)
+        spacing: Config.scaledSize(8)
         Text { text: Config.iconKeyboard; color: Config.textWhite; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { width: parent.width - 28; text: "Раскладка"; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
+        Text { width: parent.width - 28; text: "Раскладка"; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
       }
 
       Repeater {
@@ -119,7 +119,7 @@ PanelWindow {
           required property string name
           required property bool active
           width: parent.width
-          height: 34
+          height: Config.scaledSize(34)
           radius: Config.cardRadius
           color: active ? Config.selectedBg : (layoutMouse.containsMouse ? Config.hoverBg : "#00000000")
           border.color: active ? Config.activeBorderColor : "#00000000"
@@ -127,10 +127,10 @@ PanelWindow {
 
           Row {
             anchors.fill: parent
-            anchors.leftMargin: 10
-            anchors.rightMargin: 10
-            spacing: 10
-            Text { width: 28; text: parent.parent.layout; color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.weight: Font.Bold; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
+            anchors.leftMargin: Config.scaledSize(10)
+            anchors.rightMargin: Config.scaledSize(10)
+            spacing: Config.scaledSize(10)
+            Text { width: Config.scaledSize(28); text: parent.parent.layout; color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.weight: Font.Medium; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             Text { width: parent.width - 38; text: parent.parent.name; color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
           }
 

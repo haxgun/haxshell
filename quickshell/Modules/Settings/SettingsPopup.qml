@@ -13,7 +13,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   property string activeSection: "general"
   property string pendingSection: "general"
   property string fontSearch: ""
@@ -111,6 +111,8 @@ PanelWindow {
   property var aboutContributors: []
 
   onActiveSectionChanged: if (root.activeSection === "about") root.refreshAbout()
+
+  Component.onCompleted: root.refreshAbout()
 
   onIsOpenChanged: if (isOpen) {
     wallpaperDirInput.text = Config.wallpaperDir
@@ -256,7 +258,7 @@ PanelWindow {
     saveSetting("barHorizontalMargin", margin)
   }
   function applyBarRadius(value) {
-    let radius = Math.max(0, Math.min(32, Math.round(value)))
+    let radius = Math.max(0, Math.min(100, Math.round(value)))
     Config.barRadius = radius
     saveSetting("barRadius", radius)
   }
@@ -266,7 +268,7 @@ PanelWindow {
     saveSetting("barFrostOpacity", opacity)
   }
   function applyPopupRadius(value) {
-    let radius = Math.max(0, Math.min(32, Math.round(value)))
+    let radius = Math.max(0, Math.min(100, Math.round(value)))
     Config.popupRadius = radius
     saveSetting("popupRadius", radius)
   }
@@ -284,8 +286,6 @@ PanelWindow {
       saveSetting("fontFamily", value)
     }
   }
-  function applyFontScale(value) { Config.fontScale = parseFloat(value) / 100; saveSetting("fontScale", Config.fontScale) }
-  function applyFontMonoScale(value) { Config.fontMonoScale = parseFloat(value) / 100; saveSetting("fontMonoScale", Config.fontMonoScale) }
   function applyWeatherLocation(value) { let location = value.trim(); Config.weatherLocation = location; saveSetting("weatherLocation", location) }
   function applyTimeFormat(value) { Config.timeFormat = value; saveSetting("timeFormat", value) }
   function applyUiScale(value) { Config.uiScale = parseFloat(value); saveSetting("uiScale", value) }
@@ -364,22 +364,22 @@ PanelWindow {
     id: picker
     property string settingKey: ""
     property string currentValue: ""
-    width: 194
+    width: Config.scaledSize(194)
     columns: 3
-    columnSpacing: 4
-    rowSpacing: 4
+    columnSpacing: Config.scaledSize(4)
+    rowSpacing: Config.scaledSize(4)
     Repeater {
       model: root.screenPositions
       Rectangle {
         required property var modelData
-        width: 62
-        height: 28
-        radius: 7
+        width: Config.scaledSize(62)
+        height: Config.scaledSize(28)
+        radius: Config.popupRadiusPx(7)
         readonly property bool active: picker.currentValue === modelData.key
         color: active ? Config.selectedBg : (positionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
         border.color: active ? Config.activeBorderColor : Config.borderColor
         border.width: 1
-        Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontSans }
+        Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontSans }
         MouseArea { id: positionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyChoice(picker.settingKey, parent.modelData.key) }
       }
     }
@@ -543,12 +543,12 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 620
+    width: Math.min(Config.scaledSize(620), root.width - Config.scaledSize(8))
     height: Math.min(480, root.height - 32)
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
     anchors.right: Config.popupsAtLeft ? undefined : parent.right
-    anchors.rightMargin: root.rightMargin
+    anchors.rightMargin: Math.max(Config.popupGap, Math.min(root.rightMargin, root.width - width - Config.popupGap))
     y: root.isOpen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
@@ -577,27 +577,27 @@ PanelWindow {
       id: contentRoot
       width: parent.width - 28
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 12
+      spacing: Config.scaledSize(12)
 
       Row {
         width: parent.width
-        height: 30
-        spacing: 10
+        height: Config.scaledSize(30)
+        spacing: Config.scaledSize(10)
         Text { text: Config.iconSettings; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+        Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
       }
 
       Row {
         width: parent.width
         height: container.height - 70
-        spacing: 12
+        spacing: Config.scaledSize(12)
 
         Column {
           id: sectionNav
-          width: 118
-          spacing: 5
+          width: Config.scaledSize(118)
+          spacing: Config.scaledSize(5)
 
           Repeater {
             model: [
@@ -614,7 +614,7 @@ PanelWindow {
             Rectangle {
               required property var modelData
               width: sectionNav.width
-              height: 34
+              height: Config.scaledSize(34)
               radius: Config.cardRadius
               readonly property bool active: root.activeSection === modelData.key
               color: active ? Config.selectedBg : (sectionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
@@ -623,11 +623,11 @@ PanelWindow {
 
               Row {
                 anchors.left: parent.left
-                anchors.leftMargin: 9
+                anchors.leftMargin: Config.scaledSize(9)
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 7
+                spacing: Config.scaledSize(7)
                 Text { text: parent.parent.modelData.icon; color: parent.parent.active ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-                Text { text: I18n.tr(parent.parent.modelData.title); color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight; width: 78; anchors.verticalCenter: parent.verticalCenter }
+                Text { text: I18n.tr(parent.parent.modelData.title); color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight; width: Config.scaledSize(78); anchors.verticalCenter: parent.verticalCenter }
               }
               MouseArea { id: sectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSection(parent.modelData.key) }
             }
@@ -645,38 +645,38 @@ PanelWindow {
         Column {
           id: sectionContent
           width: parent.width
-          spacing: 12
+          spacing: Config.scaledSize(12)
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "general"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Оформление"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Оформление"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconPalette
               title: I18n.tr("Тема")
               subtitle: Config.themeName === "manual" ? I18n.tr("Ручной акцент") : (Config.themeName === "dynamic" ? I18n.tr("Акцент из обоев") : (Config.themeName === "light" ? I18n.tr("Светлая палитра") : I18n.tr("Тёмная палитра")))
               Rectangle {
                 id: themeSegment
-                width: 226
-                height: 34
-                radius: 9
+                width: Config.scaledSize(226)
+                height: Config.scaledSize(34)
+                radius: Config.popupRadiusPx(9)
                 color: "transparent"
                 Row {
                   anchors.fill: parent
-                  spacing: 2
+                  spacing: Config.scaledSize(2)
                   Repeater {
                     model: [{ key: "light", label: "Свет" }, { key: "dark", label: "Тьма" }, { key: "dynamic", label: "Дин." }, { key: "manual", label: "Своя" }]
                     Rectangle {
                       required property var modelData
                       width: (themeSegment.width - 6) / 4
-                      height: 34
-                      radius: 9
+                      height: Config.scaledSize(34)
+                      radius: Config.popupRadiusPx(9)
                       readonly property bool active: Config.themeName === modelData.key
                       color: active ? Config.selectedBg : (themeMouse.containsMouse ? Config.hoverBg : "transparent")
-                      Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.2 }
+                      Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.2 }
                       MouseArea { id: themeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyTheme(parent.modelData.key) }
                     }
                   }
@@ -692,7 +692,7 @@ PanelWindow {
               Column {
                 id: manualThemeColumn
                 width: parent.width
-                spacing: 12
+                spacing: Config.scaledSize(12)
                 topPadding: 4
                 bottomPadding: 6
 
@@ -705,7 +705,7 @@ PanelWindow {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     height: 14
-                    radius: 7
+                    radius: Config.popupRadiusPx(7)
                     gradient: Gradient {
                       orientation: Gradient.Horizontal
                       GradientStop { position: 0.0; color: Qt.hsla(0.0, 0.7, 0.5, 1) }
@@ -719,7 +719,7 @@ PanelWindow {
                     Rectangle {
                       width: 18
                       height: 18
-                      radius: 9
+                      radius: Config.popupRadiusPx(9)
                       anchors.verticalCenter: parent.verticalCenter
                       x: root.manualHue * (manualHueStrip.width - width)
                       color: Config.manualAccent
@@ -737,31 +737,31 @@ PanelWindow {
 
                 Row {
                   width: parent.width
-                  height: 36
-                  spacing: 10
-                  Rectangle { width: 34; height: 34; radius: 9; color: Config.manualAccent; border.color: Config.borderColor; border.width: 1; anchors.verticalCenter: parent.verticalCenter }
+                  height: Config.scaledSize(36)
+                  spacing: Config.scaledSize(10)
+                  Rectangle { width: Config.scaledSize(34); height: Config.scaledSize(34); radius: Config.popupRadiusPx(9); color: Config.manualAccent; border.color: Config.borderColor; border.width: 1; anchors.verticalCenter: parent.verticalCenter }
                   Column {
                     width: parent.width - 174
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: 2
-                    Text { width: parent.width; text: I18n.tr("Акцент"); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
-                    Text { width: parent.width; text: root.currentManualHex + " · " + (Config.manualDark ? I18n.tr("тёмная") : I18n.tr("светлая")); color: Config.textMuted; font.pixelSize: 10; font.family: Config.fontSans; elide: Text.ElideRight }
+                    spacing: Config.scaledSize(2)
+                    Text { width: parent.width; text: I18n.tr("Акцент"); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+                    Text { width: parent.width; text: root.currentManualHex + " · " + (Config.manualDark ? I18n.tr("тёмная") : I18n.tr("светлая")); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
                   }
                   Row {
-                    width: 120
-                    height: 30
-                    spacing: 4
+                    width: Config.scaledSize(120)
+                    height: Config.scaledSize(30)
+                    spacing: Config.scaledSize(4)
                     anchors.verticalCenter: parent.verticalCenter
                     Repeater {
                       model: [{ key: true, label: "Тьма" }, { key: false, label: "Свет" }]
                       Rectangle {
                         required property var modelData
-                        width: 58
-                        height: 30
-                        radius: 8
+                        width: Config.scaledSize(58)
+                        height: Config.scaledSize(30)
+                        radius: Config.popupRadiusPx(8)
                         readonly property bool active: Config.manualDark === modelData.key
                         color: active ? Config.selectedBg : (toneMouse.containsMouse ? Config.hoverBg : "transparent")
-                        Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans }
+                        Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans }
                         MouseArea { id: toneMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyManualTone(parent.modelData.key) }
                       }
                     }
@@ -770,16 +770,16 @@ PanelWindow {
 
                 Rectangle {
                   width: parent.width
-                  height: 34
-                  radius: 10
+                  height: Config.scaledSize(34)
+                  radius: Config.popupRadiusPx(10)
                   color: Config.searchBg
                   border.color: manualAccentInput.activeFocus ? Config.activeBorderColor : Config.borderColor
                   border.width: 1
                   TextInput {
                     id: manualAccentInput
                     anchors.fill: parent
-                    anchors.leftMargin: 12
-                    anchors.rightMargin: 12
+                    anchors.leftMargin: Config.scaledSize(12)
+                    anchors.rightMargin: Config.scaledSize(12)
                     verticalAlignment: TextInput.AlignVCenter
                     text: Config.manualAccent
                     color: Config.textPrimary
@@ -817,28 +817,28 @@ PanelWindow {
               title: I18n.tr("Язык")
               subtitle: root.languageName(Config.language)
               Item {
-                width: 194
-                height: 30
+                width: Config.scaledSize(194)
+                height: Config.scaledSize(30)
 
                 Rectangle {
                   id: languageButton
                   anchors.top: parent.top
                   anchors.left: parent.left
                   anchors.right: parent.right
-                  height: 30
-                  radius: 9
+                  height: Config.scaledSize(30)
+                  radius: Config.popupRadiusPx(9)
                   color: languageButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                   border.color: root.languageDropdownOpen ? Config.activeBorderColor : Config.borderColor
                   border.width: 1
 
                   Text {
                     anchors.left: parent.left
-                    anchors.leftMargin: 10
+                    anchors.leftMargin: Config.scaledSize(10)
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.languageName(Config.language)
                     color: Config.textPrimary
                     font.pixelSize: Config.fontSizeSmall
-                    font.weight: Font.Bold
+                    font.weight: Font.Medium
                     font.family: Config.fontSans
                     elide: Text.ElideRight
                     width: parent.width - 38
@@ -846,7 +846,7 @@ PanelWindow {
 
                   Text {
                     anchors.right: parent.right
-                    anchors.rightMargin: 10
+                    anchors.rightMargin: Config.scaledSize(10)
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.languageDropdownOpen ? "󰅃" : "󰅀"
                     color: Config.textMuted
@@ -895,51 +895,23 @@ PanelWindow {
 
             SettingsRow {
               icon: Config.iconScale
-              title: I18n.tr("Размер шрифта")
-              subtitle: Math.round(Config.fontScale * 100) + "%"
-              NumberSlider {
-                value: Math.round(Config.fontScale * 100)
-                from: 80
-                to: 140
-                defaultValue: 100
-                suffix: "%"
-                onValueEdited: root.applyFontScale(value)
-              }
-            }
-
-            SettingsRow {
-              icon: Config.iconScale
-              title: I18n.tr("Размер моноширинного шрифта")
-              subtitle: Math.round(Config.fontMonoScale * 100) + "%"
-              NumberSlider {
-                value: Math.round(Config.fontMonoScale * 100)
-                from: 80
-                to: 140
-                defaultValue: 100
-                suffix: "%"
-                onValueEdited: root.applyFontMonoScale(value)
-              }
-            }
-
-            SettingsRow {
-              icon: Config.iconScale
-              title: I18n.tr("Масштаб интерфейса")
+              title: I18n.tr("Размер текста")
               subtitle: Math.round(Config.uiScale * 100) + "%"
               last: true
               Row {
-                width: 194
-                spacing: 6
+                width: Config.scaledSize(194)
+                spacing: Config.scaledSize(4)
                 Repeater {
-                  model: [{ key: "0.9", label: "90" }, { key: "1.0", label: "100" }, { key: "1.1", label: "110" }, { key: "1.25", label: "125" }]
+                  model: [{ v: 75 }, { v: 90 }, { v: 100 }, { v: 125 }]
                   Rectangle {
                     required property var modelData
-                    width: (parent.width - 18) / 4
-                    height: 30
-                    radius: 8
-                    readonly property bool active: Math.abs(Config.uiScale - parseFloat(modelData.key)) < 0.01
-                    color: active ? Config.selectedBg : (scaleMouse.containsMouse ? Config.hoverBg : "#00000000")
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans }
-                    MouseArea { id: scaleMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyUiScale(parent.modelData.key) }
+                    width: (parent.width - 12) / 4
+                    height: Config.scaledSize(30)
+                    radius: Config.popupRadiusPx(8)
+                    readonly property bool active: Math.round(Config.uiScale * 100) === modelData.v
+                    color: active ? Config.selectedBg : (uiScaleMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+                    Text { anchors.centerIn: parent; text: parent.modelData.v + "%"; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
+                    MouseArea { id: uiScaleMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyUiScale(parent.modelData.v / 100) }
                   }
                 }
               }
@@ -948,39 +920,39 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "fontPicker"
             height: visible ? implicitHeight : 0
             clip: true
             Row {
               width: parent.width
-              height: 32
-              spacing: 8
+              height: Config.scaledSize(32)
+              spacing: Config.scaledSize(8)
               Rectangle {
-                width: 32
-                height: 32
-                radius: 9
+                width: Config.scaledSize(32)
+                height: Config.scaledSize(32)
+                radius: Config.popupRadiusPx(9)
                 color: backMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                 border.color: Config.borderColor
                 border.width: 1
                 Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
                 MouseArea { id: backMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.activeSection = "general" }
               }
-              Text { text: root.fontPickerTarget === "mono" ? I18n.tr("Моноширинный шрифт") : I18n.tr("Основной шрифт"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.fontPickerTarget === "mono" ? I18n.tr("Моноширинный шрифт") : I18n.tr("Основной шрифт"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
             }
             Text { text: I18n.tr("Текущий") + ": " + (root.fontPickerTarget === "mono" ? Config.fontMonoFamily : Config.fontFamily); color: Config.textSubtle; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width }
 
             Rectangle {
               width: parent.width
-              height: 36
-              radius: 10
+              height: Config.scaledSize(36)
+              radius: Config.popupRadiusPx(10)
               color: Config.searchBg
               border.color: fontSearchInput.activeFocus ? Config.activeBorderColor : Config.borderColor
               border.width: 1
 
               Text {
                 anchors.left: parent.left
-                anchors.leftMargin: 12
+                anchors.leftMargin: Config.scaledSize(12)
                 anchors.verticalCenter: parent.verticalCenter
                 text: Config.iconSearch
                 color: Config.textMuted
@@ -991,8 +963,8 @@ PanelWindow {
               TextInput {
                 id: fontSearchInput
                 anchors.fill: parent
-                anchors.leftMargin: 36
-                anchors.rightMargin: 12
+                anchors.leftMargin: Config.scaledSize(36)
+                anchors.rightMargin: Config.scaledSize(12)
                 verticalAlignment: TextInput.AlignVCenter
                 color: Config.textPrimary
                 selectedTextColor: Config.textWhite
@@ -1010,14 +982,14 @@ PanelWindow {
 
             ListView {
               width: parent.width
-              height: 310
+              height: Config.scaledSize(310)
               clip: true
-              spacing: 6
+              spacing: Config.scaledSize(6)
               model: fontModel
               delegate: Rectangle {
                 required property string name
                 width: ListView.view.width
-                height: 44
+                height: Config.scaledSize(44)
                 radius: Config.cardRadius
                 readonly property bool active: root.fontPickerTarget === "mono" ? Config.fontMonoFamily === name : Config.fontFamily === name
                 color: active ? Config.selectedBg : (fontMouse.containsMouse ? Config.hoverBg : "#00000000")
@@ -1027,11 +999,11 @@ PanelWindow {
                   anchors.left: parent.left
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter
-                  anchors.leftMargin: 10
-                  anchors.rightMargin: 10
-                  spacing: 1
+                  anchors.leftMargin: Config.scaledSize(10)
+                  anchors.rightMargin: Config.scaledSize(10)
+                  spacing: Config.scaledSize(1)
                   Text { width: parent.width; text: name; color: active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: name; elide: Text.ElideRight }
-                  Text { width: parent.width; text: I18n.tr("19:37 пн, июл. 20  ·  Быстрая лиса 123"); color: Config.textMuted; font.pixelSize: 10; font.family: name; elide: Text.ElideRight }
+                  Text { width: parent.width; text: I18n.tr("19:37 пн, июл. 20  ·  Быстрая лиса 123"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: name; elide: Text.ElideRight }
                 }
                 MouseArea { id: fontMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyFont(parent.name) }
               }
@@ -1040,7 +1012,7 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "wallpaper"
             height: visible ? implicitHeight : 0
             clip: true
@@ -1052,28 +1024,28 @@ PanelWindow {
                 title: I18n.tr("Папка обоев")
                 subtitle: Config.wallpaperDir
                 Item {
-                  width: 194
-                  height: 34
+                  width: Config.scaledSize(194)
+                  height: Config.scaledSize(34)
                   Rectangle {
                     anchors.left: parent.left
                     anchors.right: folderButton.left
-                    anchors.rightMargin: 6
-                    height: 34
-                    radius: 10
+                    anchors.rightMargin: Config.scaledSize(6)
+                    height: Config.scaledSize(34)
+                    radius: Config.popupRadiusPx(10)
                     color: Config.searchBg
                     border.color: wallpaperDirInput.activeFocus ? Config.activeBorderColor : "#00000000"
                     border.width: wallpaperDirInput.activeFocus ? 1 : 0
                     TextInput {
                       id: wallpaperDirInput
                       anchors.fill: parent
-                      anchors.leftMargin: 10
-                      anchors.rightMargin: 10
+                      anchors.leftMargin: Config.scaledSize(10)
+                      anchors.rightMargin: Config.scaledSize(10)
                       verticalAlignment: TextInput.AlignVCenter
                       text: Config.wallpaperDir
                       color: Config.textPrimary
                       selectedTextColor: Config.textWhite
                       selectionColor: Config.selectedBg
-                      font.pixelSize: 10
+                      font.pixelSize: Config.fontSizeExtraSmall
                       font.family: Config.fontSans
                       clip: true
                       onEditingFinished: root.applyWallpaperDir(text)
@@ -1084,9 +1056,9 @@ PanelWindow {
                   Rectangle {
                     id: folderButton
                     anchors.right: parent.right
-                    width: 34
-                    height: 34
-                    radius: 10
+                    width: Config.scaledSize(34)
+                    height: Config.scaledSize(34)
+                    radius: Config.popupRadiusPx(10)
                     color: folderMouse.containsMouse ? Config.hoverBg : "#00000000"
                     Text { anchors.centerIn: parent; text: Config.iconFolder; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
                     MouseArea { id: folderMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.pickWallpaperDir() }
@@ -1098,17 +1070,17 @@ PanelWindow {
                 title: I18n.tr("Отображение обоев")
                 subtitle: I18n.tr("Масштабирование изображения")
                 Item {
-                  width: 194
-                  height: 30
+                  width: Config.scaledSize(194)
+                  height: Config.scaledSize(30)
                   Rectangle {
                     id: wallpaperModeButton
                     anchors.fill: parent
-                    radius: 9
+                    radius: Config.popupRadiusPx(9)
                     color: wallpaperModeButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                     border.color: root.wallpaperModeDropdownOpen ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
-                    Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperFillModes, Config.wallpaperFillMode); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
-                    Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: root.wallpaperModeDropdownOpen ? "󰅃" : "󰅀"; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+                    Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperFillModes, Config.wallpaperFillMode); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+                    Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: root.wallpaperModeDropdownOpen ? "󰅃" : "󰅀"; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
                     MouseArea {
                       id: wallpaperModeButtonMouse
                       anchors.fill: parent
@@ -1131,17 +1103,17 @@ PanelWindow {
                 title: I18n.tr("Эффект смены")
                 subtitle: I18n.tr("Переход при смене обоев")
                 Item {
-                  width: 194
-                  height: 30
+                  width: Config.scaledSize(194)
+                  height: Config.scaledSize(30)
                   Rectangle {
                     id: wallpaperTransitionButton
                     anchors.fill: parent
-                    radius: 9
+                    radius: Config.popupRadiusPx(9)
                     color: wallpaperTransitionButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                     border.color: root.wallpaperTransitionDropdownOpen ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
-                    Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperTransitions, Config.wallpaperTransition); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
-                    Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: root.wallpaperTransitionDropdownOpen ? "󰅃" : "󰅀"; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+                    Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperTransitions, Config.wallpaperTransition); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+                    Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: root.wallpaperTransitionDropdownOpen ? "󰅃" : "󰅀"; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
                     MouseArea {
                       id: wallpaperTransitionButtonMouse
                       anchors.fill: parent
@@ -1164,17 +1136,17 @@ PanelWindow {
                 title: I18n.tr("Пресет палитры")
                 subtitle: I18n.tr("Как извлекать цвета из обоев")
                 Item {
-                  width: 194
-                  height: 30
+                  width: Config.scaledSize(194)
+                  height: Config.scaledSize(30)
                   Rectangle {
                     id: wallpaperPaletteButton
                     anchors.fill: parent
-                    radius: 9
+                    radius: Config.popupRadiusPx(9)
                     color: wallpaperPaletteButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                     border.color: root.wallpaperPaletteDropdownOpen ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
-                    Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperPaletteSchemes, Config.wallpaperPaletteScheme); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
-                    Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: root.wallpaperPaletteDropdownOpen ? "󰅃" : "󰅀"; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+                    Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperPaletteSchemes, Config.wallpaperPaletteScheme); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+                    Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: root.wallpaperPaletteDropdownOpen ? "󰅃" : "󰅀"; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
                     MouseArea {
                       id: wallpaperPaletteButtonMouse
                       anchors.fill: parent
@@ -1218,16 +1190,16 @@ PanelWindow {
             }
             Rectangle {
               width: parent.width
-              height: 34
-              radius: 9
+              height: Config.scaledSize(34)
+              radius: Config.popupRadiusPx(9)
               color: Config.searchBg
               border.color: wallpaperFilterInput.activeFocus ? Config.activeBorderColor : "#00000000"
               border.width: wallpaperFilterInput.activeFocus ? 1 : 0
               Row {
                 anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                spacing: 8
+                anchors.leftMargin: Config.scaledSize(10)
+                anchors.rightMargin: Config.scaledSize(10)
+                spacing: Config.scaledSize(8)
                 Text {
                   text: Config.iconSearch
                   color: Config.textMuted
@@ -1307,7 +1279,7 @@ PanelWindow {
 
                   ClippingRectangle {
                     anchors.fill: parent
-                    anchors.margins: 2
+                    anchors.margins: Config.scaledSize(2)
                     radius: Config.overlayRadius - 4
                     color: Config.searchBg
 
@@ -1317,8 +1289,8 @@ PanelWindow {
                       fillMode: Image.PreserveAspectCrop
                       asynchronous: true
                       cache: true
-                      sourceSize.width: 220
-                      sourceSize.height: 150
+                      sourceSize.width: Config.scaledSize(220)
+                      sourceSize.height: Config.scaledSize(150)
                       visible: thumbnail.length > 0
                     }
 
@@ -1333,7 +1305,7 @@ PanelWindow {
                       anchors.left: parent.left
                       anchors.right: parent.right
                       anchors.bottom: parent.bottom
-                      height: 34
+                      height: Config.scaledSize(34)
                       opacity: tile.isHovered || tile.isSelected ? 1 : 0
                       gradient: Gradient {
                         GradientStop { position: 0.0; color: "#00000000" }
@@ -1346,11 +1318,11 @@ PanelWindow {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        anchors.margins: 8
+                        anchors.margins: Config.scaledSize(8)
                         text: name
                         color: Config.textWhite
                         font.pixelSize: Config.fontSizeSmall
-                        font.weight: tile.isSelected ? Font.Bold : Font.Medium
+                        font.weight: tile.isSelected ? Font.Medium : Font.Medium
                         font.family: Config.fontSans
                         elide: Text.ElideMiddle
                       }
@@ -1475,8 +1447,9 @@ PanelWindow {
               NumberSlider {
                 value: Config.barRadius
                 from: 0
-                to: 32
-                defaultValue: 14
+                to: 100
+                defaultValue: 35
+                suffix: "%"
                 onValueEdited: root.applyBarRadius(value)
               }
             }
@@ -1529,7 +1502,7 @@ PanelWindow {
                 onValueEdited: root.applyBarFrostOpacity(value)
               }
             }
-            Text { text: I18n.tr("Виджеты панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Виджеты панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconWorkspace
               title: I18n.tr("Рабочие столы")
@@ -1664,7 +1637,7 @@ PanelWindow {
               onClicked: root.setBoolSetting("barPowerEnabled", !Config.barPowerEnabled)
               ToggleSwitch { z: 1; checked: Config.barPowerEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barPowerEnabled", !Config.barPowerEnabled) }
             }
-            Text { text: I18n.tr("Рабочие столы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Рабочие столы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconSettings
               title: I18n.tr("Цифры рабочих столов")
@@ -1685,21 +1658,21 @@ PanelWindow {
               subtitle: Config.workspaceIndicatorStyle === "dot" ? I18n.tr("Точка") : (Config.workspaceIndicatorStyle === "border" ? I18n.tr("Рамка") : I18n.tr("Подсветка"))
               last: true
               Row {
-                width: 194
-                height: 30
-                spacing: 4
+                width: Config.scaledSize(194)
+                height: Config.scaledSize(30)
+                spacing: Config.scaledSize(4)
                 Repeater {
                   model: [{ key: "tint", label: "Фон" }, { key: "dot", label: "Точка" }, { key: "border", label: "Рамка" }]
                   Rectangle {
                     required property var modelData
                     width: (parent.width - 8) / 3
                     height: parent.height
-                    radius: 8
+                    radius: Config.popupRadiusPx(8)
                     readonly property bool active: Config.workspaceIndicatorStyle === modelData.key
                     color: active ? Config.selectedBg : (indicatorMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
                     border.color: active ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
-                    Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontSans }
+                    Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontSans }
                     MouseArea { id: indicatorMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyChoice("workspaceIndicatorStyle", parent.modelData.key) }
                   }
                 }
@@ -1709,32 +1682,32 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "popups"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Всплывающие панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Всплывающие панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconSettings
               title: I18n.tr("Положение всплывающих панелей")
               subtitle: I18n.tr("Выбор для левой и правой панели")
               Row {
-                width: 154
-                height: 30
-                spacing: 6
+                width: Config.scaledSize(154)
+                height: Config.scaledSize(30)
+                spacing: Config.scaledSize(6)
                 anchors.verticalCenter: parent.verticalCenter
                 Repeater {
                   model: [{ key: "top", label: "Верх" }, { key: "bottom", label: "Низ" }]
                   Rectangle {
                     required property var modelData
-                    width: 74
-                    height: 30
+                    width: Config.scaledSize(74)
+                    height: Config.scaledSize(30)
                     radius: Config.cardRadius
                     readonly property bool active: Config.popupVerticalAlign === modelData.key
                     color: active ? Config.selectedBg : (popupSideMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
                     border.color: active ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
                     MouseArea { id: popupSideMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyPopupVerticalAlign(parent.modelData.key) }
                   }
                 }
@@ -1768,8 +1741,9 @@ PanelWindow {
               NumberSlider {
                 value: Config.popupRadius
                 from: 0
-                to: 32
-                defaultValue: 18
+                to: 100
+                defaultValue: 45
+                suffix: "%"
                 onValueEdited: root.applyPopupRadius(value)
               }
             }
@@ -1790,11 +1764,11 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "notifications"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Уведомления"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Уведомления"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconNotifications
               title: I18n.tr("Не беспокоить")
@@ -1818,11 +1792,11 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "osd"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Экранные индикаторы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Экранные индикаторы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconSettings
               title: I18n.tr("Положение OSD")
@@ -1833,32 +1807,32 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "location"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Время и локация"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Время и локация"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconClock
               title: I18n.tr("Формат времени")
               subtitle: Config.timeFormat === "12" ? I18n.tr("12-часовой формат") : I18n.tr("24-часовой формат")
               Row {
-                width: 154
-                height: 30
-                spacing: 6
+                width: Config.scaledSize(154)
+                height: Config.scaledSize(30)
+                spacing: Config.scaledSize(6)
                 anchors.verticalCenter: parent.verticalCenter
                 Repeater {
                   model: [{ key: "24", label: "24ч" }, { key: "12", label: "12ч" }]
                   Rectangle {
                     required property var modelData
-                    width: 74
-                    height: 30
+                    width: Config.scaledSize(74)
+                    height: Config.scaledSize(30)
                     radius: Config.cardRadius
                     readonly property bool active: Config.timeFormat === modelData.key
                     color: active ? Config.selectedBg : (timeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
                     border.color: active ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
                     MouseArea { id: timeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyTimeFormat(parent.modelData.key) }
                   }
                 }
@@ -1881,17 +1855,17 @@ PanelWindow {
               title: I18n.tr("Город погоды")
               subtitle: Config.weatherLocation.length > 0 ? Config.weatherLocation : I18n.tr("Автоматически по IP")
               Rectangle {
-                width: 210
-                height: 34
-                radius: 10
+                width: Config.scaledSize(210)
+                height: Config.scaledSize(34)
+                radius: Config.popupRadiusPx(10)
                 color: Config.searchBg
                 border.color: weatherLocationInput.activeFocus ? Config.activeBorderColor : "#00000000"
                 border.width: weatherLocationInput.activeFocus ? 1 : 0
                 TextInput {
                   id: weatherLocationInput
                   anchors.fill: parent
-                  anchors.leftMargin: 10
-                  anchors.rightMargin: 10
+                  anchors.leftMargin: Config.scaledSize(10)
+                  anchors.rightMargin: Config.scaledSize(10)
                   verticalAlignment: TextInput.AlignVCenter
                   text: Config.weatherLocation
                   color: Config.textPrimary
@@ -1910,17 +1884,17 @@ PanelWindow {
             }
             Column {
               width: parent.width
-              spacing: 4
+              spacing: Config.scaledSize(4)
               visible: weatherSuggestions.count > 0
               Repeater {
                 model: weatherSuggestions
                 Rectangle {
                   required property string label
                   width: parent.width
-                  height: 32
-                  radius: 8
+                  height: Config.scaledSize(32)
+                  radius: Config.popupRadiusPx(8)
                   color: cityMouse.containsMouse ? Config.hoverBg : "#00000000"
-                  Text { anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; verticalAlignment: Text.AlignVCenter; text: label; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+                  Text { anchors.fill: parent; anchors.leftMargin: Config.scaledSize(10); anchors.rightMargin: Config.scaledSize(10); verticalAlignment: Text.AlignVCenter; text: label; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight }
                   MouseArea {
                     id: cityMouse
                     anchors.fill: parent
@@ -1941,23 +1915,23 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "monitoring"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Мониторинг системы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Мониторинг системы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Rectangle {
               width: parent.width
-              height: 76
+              height: Config.scaledSize(76)
               radius: Config.cardRadius
               color: Config.searchBg
               border.color: Config.borderColor
               border.width: 1
               Column {
                 anchors.fill: parent
-                anchors.margins: 12
-                spacing: 5
-                Text { text: I18n.tr("Системные метрики"); color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans }
+                anchors.margins: Config.scaledSize(12)
+                spacing: Config.scaledSize(5)
+                Text { text: I18n.tr("Системные метрики"); color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
                 Text { text: I18n.tr("CPU, память, сеть и накопители отображаются на панели и в системном попапе."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
               }
             }
@@ -1965,25 +1939,25 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "about"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("О программе"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("О программе"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Rectangle {
               width: parent.width
-              height: 140
+              height: Config.scaledSize(140)
               radius: Config.cardRadius
               color: Config.searchBg
               border.color: Config.borderColor
               border.width: 1
               Row {
                 anchors.fill: parent
-                anchors.margins: 12
-                spacing: 12
+                anchors.margins: Config.scaledSize(12)
+                spacing: Config.scaledSize(12)
                 Image {
-                  width: 72
-                  height: 72
+                  width: Config.scaledSize(72)
+                  height: Config.scaledSize(72)
                   source: Qt.resolvedUrl("../../logo.svg")
                   fillMode: Image.PreserveAspectFit
                   asynchronous: true
@@ -1992,8 +1966,8 @@ PanelWindow {
                 Column {
                   width: parent.width - 84
                   anchors.verticalCenter: parent.verticalCenter
-                  spacing: 4
-                  Text { text: "vey"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Bold; font.family: Config.fontSans }
+                  spacing: Config.scaledSize(4)
+                  Text { text: "vey"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans }
                   Text { text: I18n.tr("Vey is a customizable Wayland desktop shell built with Quickshell, QML, and Go."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
                   Text { text: I18n.tr("Установленная версия") + ": " + root.aboutVersion; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
                   Text { text: I18n.tr("Последняя версия") + ": " + root.aboutLatest; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
@@ -2003,15 +1977,15 @@ PanelWindow {
 
             Column {
               width: parent.width
-              spacing: 8
+              spacing: Config.scaledSize(8)
               visible: root.aboutContributors.length > 0
-              Text { text: I18n.tr("Контрибьюторы") + " (" + root.aboutContributors.length + ")"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+              Text { text: I18n.tr("Контрибьюторы") + " (" + root.aboutContributors.length + ")"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
               Grid {
                 id: contributorsGrid
                 width: parent.width
                 columns: 3
-                columnSpacing: 10
-                rowSpacing: 10
+                columnSpacing: Config.scaledSize(10)
+                rowSpacing: Config.scaledSize(10)
                 Repeater {
                   model: root.aboutContributors
                   delegate: Rectangle {
@@ -2024,12 +1998,12 @@ PanelWindow {
                     Column {
                       id: contributorColumn
                       width: parent.width
-                      spacing: 4
+                      spacing: Config.scaledSize(4)
 
                       Image {
                         id: avatarImage
-                        width: 48
-                        height: 48
+                        width: Config.scaledSize(48)
+                        height: Config.scaledSize(48)
                         source: modelData.avatar || ""
                         fillMode: Image.PreserveAspectCrop
                         asynchronous: true
@@ -2040,12 +2014,12 @@ PanelWindow {
                           maskSource: Rectangle {
                             width: avatarImage.width
                             height: avatarImage.height
-                            radius: 999
+                            radius: Config.scaledSize(999)
                           }
                         }
                       }
 
-                      Text { text: modelData.name || ""; color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width; horizontalAlignment: Text.AlignHCenter }
+                      Text { text: modelData.name || ""; color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width; horizontalAlignment: Text.AlignHCenter }
                       Text { text: root.commitsLabel(modelData.commits || 0); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; width: parent.width; horizontalAlignment: Text.AlignHCenter }
                     }
 
@@ -2074,7 +2048,7 @@ PanelWindow {
         y: root.languageDropdownY
         width: root.languageDropdownWidth
         height: Math.min(root.languages.length * 32 + 12, 180)
-        radius: 10
+        radius: Config.popupRadiusPx(10)
         color: Config.glassBg
         border.color: Config.activeBorderColor
         border.width: 1
@@ -2084,7 +2058,7 @@ PanelWindow {
         Flickable {
           id: languageList
           anchors.fill: parent
-          anchors.margins: 6
+          anchors.margins: Config.scaledSize(6)
           contentWidth: width
           contentHeight: languageListColumn.implicitHeight
           clip: true
@@ -2092,15 +2066,15 @@ PanelWindow {
           Column {
             id: languageListColumn
             width: languageList.width
-            spacing: 4
+            spacing: Config.scaledSize(4)
 
             Repeater {
               model: root.languages
               Rectangle {
                 required property var modelData
                 width: languageListColumn.width
-                height: 28
-                radius: 8
+                height: Config.scaledSize(28)
+                radius: Config.popupRadiusPx(8)
                 readonly property bool active: Config.language === modelData.key
                 color: active ? Config.selectedBg : (languageMouse.containsMouse ? Config.hoverBg : "#00000000")
                 border.color: active ? Config.activeBorderColor : "#00000000"
@@ -2108,10 +2082,10 @@ PanelWindow {
 
                 Row {
                   anchors.left: parent.left
-                  anchors.leftMargin: 10
+                  anchors.leftMargin: Config.scaledSize(10)
                   anchors.verticalCenter: parent.verticalCenter
-                  spacing: 8
-                  Text { text: parent.parent.modelData.label; color: parent.parent.active ? Config.textWhite : Config.textMuted; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans; width: 22 }
+                  spacing: Config.scaledSize(8)
+                  Text { text: parent.parent.modelData.label; color: parent.parent.active ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; width: Config.scaledSize(22) }
                   Text { text: parent.parent.modelData.name; color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                 }
 
@@ -2123,7 +2097,7 @@ PanelWindow {
 
         Rectangle {
           anchors.right: parent.right
-          anchors.rightMargin: 3
+          anchors.rightMargin: Config.scaledSize(3)
           y: 6 + (languageList.visibleArea.yPosition * (parent.height - 12))
           width: 3
           height: Math.max(18, languageList.visibleArea.heightRatio * (parent.height - 12))
@@ -2140,7 +2114,7 @@ PanelWindow {
         y: root.wallpaperModeDropdownY
         width: root.wallpaperModeDropdownWidth
         height: Math.min(root.wallpaperFillModes.length * 32 + 12, 220)
-        radius: 10
+        radius: Config.popupRadiusPx(10)
         color: Config.popupGlassBg
         border.color: Config.activeBorderColor
         border.width: 1
@@ -2149,26 +2123,26 @@ PanelWindow {
 
         Flickable {
           anchors.fill: parent
-          anchors.margins: 6
+          anchors.margins: Config.scaledSize(6)
           contentWidth: width
           contentHeight: wallpaperModeColumn.implicitHeight
           clip: true
           Column {
             id: wallpaperModeColumn
             width: parent.width
-            spacing: 4
+            spacing: Config.scaledSize(4)
             Repeater {
               model: root.wallpaperFillModes
               Rectangle {
                 required property var modelData
                 width: wallpaperModeColumn.width
-                height: 28
-                radius: 8
+                height: Config.scaledSize(28)
+                radius: Config.popupRadiusPx(8)
                 readonly property bool active: Config.wallpaperFillMode === modelData.key
                 color: active ? Config.selectedBg : (wallpaperModeMouse.containsMouse ? Config.hoverBg : "#00000000")
                 border.color: active ? Config.activeBorderColor : "#00000000"
                 border.width: 1
-                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                 MouseArea { id: wallpaperModeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyWallpaperFillMode(parent.modelData.key) }
               }
             }
@@ -2183,7 +2157,7 @@ PanelWindow {
         y: root.wallpaperTransitionDropdownY
         width: root.wallpaperTransitionDropdownWidth
         height: Math.min(root.wallpaperTransitions.length * 32 + 12, 220)
-        radius: 10
+        radius: Config.popupRadiusPx(10)
         color: Config.popupGlassBg
         border.color: Config.activeBorderColor
         border.width: 1
@@ -2192,26 +2166,26 @@ PanelWindow {
 
         Flickable {
           anchors.fill: parent
-          anchors.margins: 6
+          anchors.margins: Config.scaledSize(6)
           contentWidth: width
           contentHeight: wallpaperTransitionColumn.implicitHeight
           clip: true
           Column {
             id: wallpaperTransitionColumn
             width: parent.width
-            spacing: 4
+            spacing: Config.scaledSize(4)
             Repeater {
               model: root.wallpaperTransitions
               Rectangle {
                 required property var modelData
                 width: wallpaperTransitionColumn.width
-                height: 28
-                radius: 8
+                height: Config.scaledSize(28)
+                radius: Config.popupRadiusPx(8)
                 readonly property bool active: Config.wallpaperTransition === modelData.key
                 color: active ? Config.selectedBg : (wallpaperTransitionMouse.containsMouse ? Config.hoverBg : "#00000000")
                 border.color: active ? Config.activeBorderColor : "#00000000"
                 border.width: 1
-                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                 MouseArea { id: wallpaperTransitionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyWallpaperTransition(parent.modelData.key) }
               }
             }
@@ -2226,7 +2200,7 @@ PanelWindow {
         y: root.wallpaperPaletteDropdownY
         width: root.wallpaperPaletteDropdownWidth
         height: Math.min(root.wallpaperPaletteSchemes.length * 32 + 12, 220)
-        radius: 10
+        radius: Config.popupRadiusPx(10)
         color: Config.popupGlassBg
         border.color: Config.activeBorderColor
         border.width: 1
@@ -2235,26 +2209,26 @@ PanelWindow {
 
         Flickable {
           anchors.fill: parent
-          anchors.margins: 6
+          anchors.margins: Config.scaledSize(6)
           contentWidth: width
           contentHeight: wallpaperPaletteColumn.implicitHeight
           clip: true
           Column {
             id: wallpaperPaletteColumn
             width: parent.width
-            spacing: 4
+            spacing: Config.scaledSize(4)
             Repeater {
               model: root.wallpaperPaletteSchemes
               Rectangle {
                 required property var modelData
                 width: wallpaperPaletteColumn.width
-                height: 28
-                radius: 8
+                height: Config.scaledSize(28)
+                radius: Config.popupRadiusPx(8)
                 readonly property bool active: Config.wallpaperPaletteScheme === modelData.key
                 color: active ? Config.selectedBg : (wallpaperPaletteMouse.containsMouse ? Config.hoverBg : "#00000000")
                 border.color: active ? Config.activeBorderColor : "#00000000"
                 border.width: 1
-                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                 MouseArea { id: wallpaperPaletteMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyWallpaperPaletteScheme(parent.modelData.key) }
               }
             }

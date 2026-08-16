@@ -13,9 +13,9 @@ Rectangle {
   property var closeFlyouts: null
   readonly property string veyctl: Config.veyctl
 
-  width: 26
+  width: Config.scaledSize(26)
   height: Config.buttonHeight
-  radius: Config.buttonRadius
+  radius: Config.popupRadiusPx(8)
   clip: true
   color: wallMouse.containsMouse ? Config.pressedBg : "#00000000"
 

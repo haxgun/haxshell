@@ -12,8 +12,8 @@ Item {
   property string secondary: ""
   property color accent: Config.activeBorderColor
 
-  width: 150
-  height: 132
+  width: Config.scaledSize(150)
+  height: Config.scaledSize(132)
 
   readonly property real pct: Math.max(0, Math.min(1, maximum > 0 ? value / maximum : 0))
   readonly property color loadColor: pct > 0.85 ? Config.dangerRed : (pct > 0.70 ? Config.warningAmber : Config.themeAccent)
@@ -26,8 +26,8 @@ Item {
     id: gauge
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
-    width: 112
-    height: 88
+    width: Config.scaledSize(112)
+    height: Config.scaledSize(88)
 
     onPaint: {
       let ctx = getContext("2d")
@@ -56,14 +56,14 @@ Item {
   Column {
     anchors.horizontalCenter: gauge.horizontalCenter
     y: 38
-    spacing: 1
+    spacing: Config.scaledSize(1)
 
     Text {
       anchors.horizontalCenter: parent.horizontalCenter
       text: root.primary
       color: Config.textWhite
       font.pixelSize: Config.fontMonoSizeTitle
-      font.weight: Font.Bold
+      font.weight: Font.Medium
       font.family: Config.fontMono
     }
 
@@ -71,8 +71,8 @@ Item {
       anchors.horizontalCenter: parent.horizontalCenter
       text: root.title
       color: Config.textMuted
-      font.pixelSize: 9
-      font.weight: Font.Bold
+      font.pixelSize: Config.fontSizeTiny
+      font.weight: Font.Medium
       font.family: Config.fontSans
       font.letterSpacing: 1.8
     }
@@ -84,7 +84,7 @@ Item {
     text: root.secondary
     color: Config.textSubtle
     font.pixelSize: Config.fontMonoSizeSmall
-    font.weight: Font.Bold
+    font.weight: Font.Medium
     font.family: Config.fontMono
   }
 }

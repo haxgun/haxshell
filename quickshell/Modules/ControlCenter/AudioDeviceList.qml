@@ -12,7 +12,7 @@ Column {
   property bool expanded: false
   signal selectDevice(var device)
 
-  spacing: 6
+  spacing: Config.scaledSize(6)
 
   Text {
     width: parent.width
@@ -27,7 +27,7 @@ Column {
   Rectangle {
     id: currentDeviceButton
     width: root.width
-    height: 38
+    height: Config.scaledSize(38)
     visible: !!root.currentDevice
     radius: Config.cardRadius
     color: currentMouse.containsMouse || root.expanded ? Config.hoverBg : "#00000000"
@@ -36,9 +36,9 @@ Column {
 
     Row {
       anchors.fill: parent
-      anchors.leftMargin: 12
-      anchors.rightMargin: 12
-      spacing: 8
+      anchors.leftMargin: Config.scaledSize(12)
+      anchors.rightMargin: Config.scaledSize(12)
+      spacing: Config.scaledSize(8)
 
       Text {
         text: root.expanded ? Config.iconChevronRight : Config.iconChevronLeft
@@ -53,14 +53,14 @@ Column {
         text: root.currentDevice ? (root.currentDevice.description || root.currentDevice.name) : ""
         color: Config.textWhite
         font.pixelSize: Config.fontSizeSmall
-        font.weight: Font.Bold
+        font.weight: Font.Medium
         font.family: Config.fontSans
         elide: Text.ElideRight
         anchors.verticalCenter: parent.verticalCenter
       }
 
       Text {
-        width: 44
+        width: Config.scaledSize(44)
         text: root.currentDevice && root.currentDevice.audio ? (Math.round(root.currentDevice.audio.volume * 100) + "%") : ""
         color: root.currentDevice && root.currentDevice.audio && root.currentDevice.audio.muted ? Config.dangerRed : Config.textMuted
         font.pixelSize: Config.fontMonoSizeSmall
@@ -91,7 +91,7 @@ Column {
     Column {
       id: deviceColumn
       width: parent.width
-      spacing: 6
+      spacing: Config.scaledSize(6)
 
       Repeater {
         id: deviceRepeater
@@ -102,7 +102,7 @@ Column {
           readonly property bool isDefault: device === root.currentDevice
 
           width: root.width
-          height: 38
+          height: Config.scaledSize(38)
           radius: Config.cardRadius
           color: deviceMouse.containsMouse || isDefault ? Config.hoverBg : "#00000000"
           border.color: isDefault ? Config.activeBorderColor : "#00000000"
@@ -110,9 +110,9 @@ Column {
 
           Row {
             anchors.fill: parent
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            spacing: 8
+            anchors.leftMargin: Config.scaledSize(12)
+            anchors.rightMargin: Config.scaledSize(12)
+            spacing: Config.scaledSize(8)
 
             Text {
               text: parent.parent.isDefault ? "●" : "○"
@@ -127,14 +127,14 @@ Column {
               text: parent.parent.device.description || parent.parent.device.name
               color: parent.parent.isDefault ? Config.textWhite : Config.textPrimary
               font.pixelSize: Config.fontSizeSmall
-              font.weight: parent.parent.isDefault ? Font.Bold : Font.Medium
+              font.weight: parent.parent.isDefault ? Font.Medium : Font.Medium
               font.family: Config.fontSans
               elide: Text.ElideRight
               anchors.verticalCenter: parent.verticalCenter
             }
 
             Text {
-              width: 44
+              width: Config.scaledSize(44)
               text: parent.parent.device.audio ? (Math.round(parent.parent.device.audio.volume * 100) + "%") : ""
               color: parent.parent.device.audio && parent.parent.device.audio.muted ? Config.dangerRed : Config.textMuted
               font.pixelSize: Config.fontMonoSizeSmall

@@ -11,7 +11,7 @@ PanelWindow {
   id: root
 
   property bool isOpen: false
-  property int rightMargin: 16
+  property int rightMargin: Config.scaledSize(16)
   readonly property var player: MprisController.activePlayer
   readonly property bool hasMedia: player && !MprisController.isIdle(player)
   readonly property bool isPlaying: player && player.isPlaying
@@ -55,7 +55,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 390
+    width: Config.scaledSize(390)
     implicitHeight: content.implicitHeight + content.anchors.topMargin * 2
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
@@ -106,17 +106,17 @@ PanelWindow {
       id: content
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
       Row {
         width: parent.width
         height: Math.max(artwork.height, mediaDetails.implicitHeight)
-        spacing: 16
+        spacing: Config.scaledSize(16)
 
         Rectangle {
           id: artwork
-          width: 120
-          height: 120
+          width: Config.scaledSize(120)
+          height: Config.scaledSize(120)
           radius: Config.cardRadius
           color: Config.searchBg
           ClippingRectangle {
@@ -125,26 +125,26 @@ PanelWindow {
             color: "transparent"
             Image { anchors.fill: parent; source: root.artUrl; fillMode: Image.PreserveAspectCrop; asynchronous: true; cache: false; visible: root.artUrl.length > 0 }
           }
-          Text { anchors.centerIn: parent; visible: root.artUrl.length === 0; text: Config.iconPlay; color: Config.textMuted; font.pixelSize: 36; font.family: Config.fontIcon }
+          Text { anchors.centerIn: parent; visible: root.artUrl.length === 0; text: Config.iconPlay; color: Config.textMuted; font.pixelSize: Config.scaledIconSize(36); font.family: Config.fontIcon }
         }
 
         Column {
           id: mediaDetails
           width: parent.width - artwork.width - parent.spacing
-          spacing: 4
+          spacing: Config.scaledSize(4)
             Item { width: 1; height: 6 }
-            Text { width: parent.width; text: root.title || "Нет трека"; color: "#ffffff"; font.pixelSize: Config.fontSizeTitle; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
+            Text { width: parent.width; text: root.title || "Нет трека"; color: "#ffffff"; font.pixelSize: Config.fontSizeTitle; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
             Text { width: parent.width; text: root.artist || "Неизвестный артист"; color: "#e8ffffff"; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; elide: Text.ElideRight }
             Text { width: parent.width; text: root.album || ""; color: "#b8ffffff"; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; visible: text.length > 0 }
             Item { width: 1; height: 6 }
 
             Item {
               width: parent.width
-              height: 36
+              height: Config.scaledSize(36)
               Row {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 17
+                spacing: Config.scaledSize(17)
                 Repeater {
                   model: [
                     { icon: Config.iconPrevTrack, action: "previous" },
@@ -153,8 +153,8 @@ PanelWindow {
                   ]
                   Rectangle {
                     required property var modelData
-                    width: 36
-                    height: 36
+                    width: Config.scaledSize(36)
+                    height: Config.scaledSize(36)
                     color: "transparent"
                     Text { anchors.centerIn: parent; text: parent.modelData.icon; color: mediaButtonMouse.containsMouse ? "#c8ffffff" : "#ffffff"; font.pixelSize: Config.fontSizeIconLarge; font.family: Config.fontIcon }
                     MouseArea { id: mediaButtonMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { if (!root.player) return; if (parent.modelData.action === "previous") MprisController.previousOrRewind(); else if (parent.modelData.action === "next") MprisController.next(); else if (root.player.canTogglePlaying) root.player.togglePlaying() } }

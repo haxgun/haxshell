@@ -92,12 +92,12 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 340
+    width: Config.scaledSize(340)
     implicitHeight: columnLayout.implicitHeight + 28
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
     anchors.right: Config.popupsAtLeft ? undefined : parent.right
-    anchors.rightMargin: 16
+    anchors.rightMargin: Config.scaledSize(16)
     y: root.isOpen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
     opacity: root.isOpen ? 1.0 : 0.0
     color: Config.popupGlassBg
@@ -113,26 +113,26 @@ PanelWindow {
       id: columnLayout
       width: parent.width - 32
       anchors.top: parent.top
-      anchors.topMargin: 14
+      anchors.topMargin: Config.scaledSize(14)
       anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 12
+      spacing: Config.scaledSize(12)
 
       Rectangle {
         width: parent.width
-        height: 120
+        height: Config.scaledSize(120)
         radius: Config.cardRadius
         clip: true
         color: Config.controlIdleBg
 
         Image { anchors.fill: parent; source: root.thumbnail; fillMode: Image.PreserveAspectCrop; visible: root.thumbnail.length > 0; asynchronous: true }
         Rectangle { anchors.fill: parent; color: "#50000000" }
-        Text { anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.margins: 12; text: root.wallName; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Bold; font.family: Config.fontSans; elide: Text.ElideRight }
+        Text { anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.margins: Config.scaledSize(12); text: root.wallName; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
       }
 
       Row {
         width: parent.width
         height: 18
-        spacing: 6
+        spacing: Config.scaledSize(6)
         visible: root.palette.length > 0
 
         Repeater {
@@ -141,7 +141,7 @@ PanelWindow {
             required property string modelData
             width: (parent.width - 30) / 6
             height: 18
-            radius: 6
+            radius: Config.popupRadiusPx(6)
             color: modelData
             border.color: Config.borderColor
             border.width: 1
@@ -151,12 +151,12 @@ PanelWindow {
 
       Rectangle {
         width: parent.width
-        height: 32
-        radius: 9
+        height: Config.scaledSize(32)
+        radius: Config.popupRadiusPx(9)
         color: nextMouse.containsMouse ? Config.activeHoverBg : Config.selectedBg
         border.color: Config.activeBorderColor
         border.width: 1
-        Text { anchors.centerIn: parent; text: "Следующие обои"; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+        Text { anchors.centerIn: parent; text: "Следующие обои"; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
         MouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.nextWallpaper() }
       }
 
@@ -164,7 +164,7 @@ PanelWindow {
         width: parent.width
         height: Math.min(230, contentHeight)
         clip: true
-        spacing: 6
+        spacing: Config.scaledSize(6)
         model: wallpapersModel
 
         delegate: Rectangle {
@@ -172,13 +172,13 @@ PanelWindow {
           required property string name
           required property string thumbnail
           width: ListView.view.width
-          height: 42
+          height: Config.scaledSize(42)
           radius: Config.cardRadius
           color: wallItemMouse.containsMouse || wallIndex === root.currentIndex ? Config.hoverBg : "#00000000"
           border.color: wallIndex === root.currentIndex ? Config.activeBorderColor : "#00000000"
           border.width: wallIndex === root.currentIndex ? 1 : 0
-          Image { anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 34; height: 26; source: thumbnail; fillMode: Image.PreserveAspectCrop; asynchronous: true; visible: thumbnail.length > 0; clip: true }
-          Text { anchors.fill: parent; anchors.leftMargin: 50; anchors.rightMargin: 12; verticalAlignment: Text.AlignVCenter; text: name; color: wallIndex === root.currentIndex ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: wallIndex === root.currentIndex ? Font.Bold : Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+          Image { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(8); anchors.verticalCenter: parent.verticalCenter; width: Config.scaledSize(34); height: Config.scaledSize(26); source: thumbnail; fillMode: Image.PreserveAspectCrop; asynchronous: true; visible: thumbnail.length > 0; clip: true }
+          Text { anchors.fill: parent; anchors.leftMargin: Config.scaledSize(50); anchors.rightMargin: Config.scaledSize(12); verticalAlignment: Text.AlignVCenter; text: name; color: wallIndex === root.currentIndex ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: wallIndex === root.currentIndex ? Font.Medium : Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
           MouseArea { id: wallItemMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.setWallpaper(wallIndex) }
         }
       }

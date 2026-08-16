@@ -12,8 +12,8 @@ Item {
   property string sub: ""
   property real display: value
 
-  width: 104
-  height: 104
+  width: Config.scaledSize(104)
+  height: Config.scaledSize(104)
 
   onValueChanged: display = value
   onDisplayChanged: face.requestPaint()
@@ -57,19 +57,19 @@ Item {
     id: valueRow
     anchors.centerIn: parent
     anchors.verticalCenterOffset: -10
-    spacing: 1
+    spacing: Config.scaledSize(1)
 
-    Text { id: valueText; text: root.primary; color: Config.textWhite; font.pixelSize: root.primary.length > 3 ? 16 : 20; font.weight: Font.ExtraBold; font.family: Config.fontSans }
-    Text { anchors.baseline: valueText.baseline; text: root.unit; color: Config.textMuted; font.pixelSize: 11; font.weight: Font.Bold; font.family: Config.fontSans; visible: root.unit.length > 0 }
+    Text { id: valueText; text: root.primary; color: Config.textWhite; font.pixelSize: Config.scaledFontSize(root.primary.length > 3 ? 16 : 20); font.weight: Font.ExtraBold; font.family: Config.fontSans }
+    Text { anchors.baseline: valueText.baseline; text: root.unit; color: Config.textMuted; font.pixelSize: Config.scaledFontSize(11); font.weight: Font.Medium; font.family: Config.fontSans; visible: root.unit.length > 0 }
   }
 
   Column {
     anchors.top: valueRow.bottom
-    anchors.topMargin: 3
+    anchors.topMargin: Config.scaledSize(3)
     anchors.horizontalCenter: valueRow.horizontalCenter
-    spacing: 3
+    spacing: Config.scaledSize(3)
 
-    Text { anchors.horizontalCenter: parent.horizontalCenter; text: root.label; color: Config.textMuted; font.pixelSize: 9; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 1.1 }
-    Text { anchors.horizontalCenter: parent.horizontalCenter; text: root.sub; color: Config.textSubtle; font.pixelSize: 10; font.weight: Font.Bold; font.family: Config.fontSans }
+    Text { anchors.horizontalCenter: parent.horizontalCenter; text: root.label; color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 1.1 }
+    Text { anchors.horizontalCenter: parent.horizontalCenter; text: root.sub; color: Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans }
   }
 }

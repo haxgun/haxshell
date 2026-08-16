@@ -68,7 +68,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: 280
+    width: Config.scaledSize(280)
     implicitHeight: Math.min(menuColumn.implicitHeight + 16, 480)
     x: root.clampedX()
     y: root.isOpen ? root.clampedY() : root.clampedY() - 12
@@ -118,7 +118,7 @@ PanelWindow {
       Column {
         id: menuColumn
         width: parent.width
-        spacing: 4
+        spacing: Config.scaledSize(4)
 
         Repeater {
           model: menuOpener.children
@@ -129,12 +129,12 @@ PanelWindow {
             property bool expanded: false
 
             width: menuColumn.width
-            spacing: 3
+            spacing: Config.scaledSize(3)
 
             Rectangle {
               width: parent.width
               height: entryBlock.modelData.isSeparator ? 9 : 34
-              radius: Config.buttonRadius
+              radius: Config.popupRadiusPx(8)
               color: entryMouse.containsMouse && entryBlock.modelData.enabled && !entryBlock.modelData.isSeparator ? Config.hoverBg : "#00000000"
               opacity: entryBlock.modelData.enabled ? 1.0 : 0.45
 
@@ -149,9 +149,9 @@ PanelWindow {
               Row {
                 visible: !entryBlock.modelData.isSeparator
                 anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                spacing: 8
+                anchors.leftMargin: Config.scaledSize(10)
+                anchors.rightMargin: Config.scaledSize(10)
+                spacing: Config.scaledSize(8)
 
                 Text {
                   width: 16
@@ -224,7 +224,7 @@ PanelWindow {
                 id: childColumn
                 width: parent.width - 18
                 x: 18
-                spacing: 3
+                spacing: Config.scaledSize(3)
 
                 Repeater {
                   model: childOpener.children
@@ -234,12 +234,12 @@ PanelWindow {
 
                     width: childColumn.width
                     height: modelData.isSeparator ? 9 : 30
-                    radius: Config.buttonRadius
+                    radius: Config.popupRadiusPx(8)
                     color: childMouse.containsMouse && modelData.enabled && !modelData.isSeparator ? Config.hoverBg : "#00000000"
                     opacity: modelData.enabled ? 1.0 : 0.45
 
                     Rectangle { visible: modelData.isSeparator; width: parent.width - 12; height: 1; color: Config.separatorColor; anchors.centerIn: parent }
-                    Text { visible: !modelData.isSeparator; anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; verticalAlignment: Text.AlignVCenter; text: root.cleanText(modelData.text); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+                    Text { visible: !modelData.isSeparator; anchors.fill: parent; anchors.leftMargin: Config.scaledSize(10); anchors.rightMargin: Config.scaledSize(10); verticalAlignment: Text.AlignVCenter; text: root.cleanText(modelData.text); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight }
 
                     MouseArea {
                       id: childMouse

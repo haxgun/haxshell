@@ -38,12 +38,12 @@ Rectangle {
   Row {
     id: mediaRow
     anchors.centerIn: parent
-    spacing: 7
+    spacing: Config.scaledSize(7)
 
     Rectangle {
-      width: 22
-      height: 22
-      radius: 6
+      width: Config.scaledSize(22)
+      height: Config.scaledSize(22)
+      radius: Config.barRadiusPx(6)
       clip: true
       color: Config.searchBg
       ClippingRectangle {
@@ -59,7 +59,7 @@ Rectangle {
     Item {
       id: trackViewport
       width: Math.min(150, trackText.implicitWidth)
-      height: 22
+      height: Config.scaledSize(22)
       clip: true
       anchors.verticalCenter: parent.verticalCenter
 

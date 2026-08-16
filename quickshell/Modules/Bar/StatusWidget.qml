@@ -262,20 +262,6 @@ Rectangle {
     }
   }
 
-  // Auto-hide timer for inline volume display
-  property bool showVolumeText: false
-
-  Timer {
-    id: hideVolumeTimer
-    interval: 2500
-    repeat: false
-    onTriggered: {
-      if (!volMouse.containsMouse) {
-        showVolumeText = false
-      }
-    }
-  }
-
   Timer {
     id: audioReadyTimer
     interval: 1000
@@ -284,8 +270,6 @@ Rectangle {
   }
 
   function showAudioOsd() {
-    showVolumeText = true
-    hideVolumeTimer.restart()
     if (osd) osd.showVolume(volumePercent, isMuted)
   }
 
@@ -339,7 +323,7 @@ Rectangle {
   Grid {
     id: rowLayout
     anchors.centerIn: parent
-    spacing: 5
+    spacing: Config.scaledSize(5)
     rows: root.vertical ? 0 : 1
     columns: root.vertical ? 1 : 0
     verticalItemAlignment: Grid.AlignVCenter
@@ -390,15 +374,15 @@ Rectangle {
       Row {
         id: sysRow
         anchors.centerIn: parent
-        spacing: 6
+        spacing: Config.scaledSize(6)
         visible: !root.vertical
 
         // CONDENSED VIEW: CPU, RAM, and network in one segmented surface.
         Rectangle {
           id: condensedRow
           width: condensedMetrics.implicitWidth + 16
-          height: 24
-          radius: 8
+          height: Config.scaledSize(24)
+          radius: Config.buttonRadius
           color: Config.controlIdleBg
           border.color: Config.borderColor
           border.width: Config.shellBordersEnabled ? 1 : 0
@@ -408,22 +392,22 @@ Rectangle {
           Row {
             id: condensedMetrics
             anchors.centerIn: parent
-            spacing: 8
+            spacing: Config.scaledSize(8)
 
             Row {
-              spacing: 4
+              spacing: Config.scaledSize(4)
               Text { text: Config.iconCpu; color: root.sysCpuPercent > 85 ? Config.dangerRed : (root.sysCpuPercent > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
               Text { text: root.sysCpuPercent + "%"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             }
             Rectangle { width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
             Row {
-              spacing: 4
+              spacing: Config.scaledSize(4)
               Text { text: Config.iconRam; color: root.sysRamPercent > 85 ? Config.dangerRed : (root.sysRamPercent > 70 ? Config.warningAmber : Config.iconColor); font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
               Text { text: root.sysRamUsedGb.toFixed(1) + "G"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             }
             Rectangle { width: 1; height: 14; color: Config.separatorColor; anchors.verticalCenter: parent.verticalCenter }
             Row {
-              spacing: 4
+              spacing: Config.scaledSize(4)
               Text { text: Config.iconNet; color: Config.iconColor; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
               Text { text: root.sysNetRx.trim(); color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; anchors.verticalCenter: parent.verticalCenter }
             }
@@ -433,7 +417,7 @@ Rectangle {
         // EXPANDED VIEW: Detailed metrics
         Row {
           id: expandedRow
-          spacing: 6
+          spacing: Config.scaledSize(6)
           visible: false
           anchors.verticalCenter: parent.verticalCenter
 
@@ -500,8 +484,8 @@ Rectangle {
         radius: height / 2
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.topMargin: 4
-        anchors.rightMargin: 4
+        anchors.topMargin: Config.scaledSize(4)
+        anchors.rightMargin: Config.scaledSize(4)
         visible: notificationContainer.notificationCount > 0
         color: Config.dangerRed
         border.color: Config.textPrimary
@@ -523,41 +507,20 @@ Rectangle {
     Rectangle {
       id: volContainer
       visible: Config.barVolumeEnabled
+      width: Config.buttonWidth
       height: Config.buttonHeight
-      implicitWidth: root.vertical ? Config.buttonWidth : volRow.implicitWidth + 12
       radius: Config.buttonRadius
       readonly property bool isAudioActive: (root.audioPopup && root.audioPopup.isOpen)
       color: (isAudioActive || volMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
-      Behavior on implicitWidth { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
 
-      Row {
-        id: volRow
+      Text {
         anchors.centerIn: parent
-        spacing: 6
-
-        Text {
-          text: root.isMuted ? Config.iconVolMuted : (root.volumePercent >= 70 ? Config.iconVolHigh : (root.volumePercent >= 30 ? Config.iconVolMedium : Config.iconVolLow))
-          color: root.isMuted ? Config.dangerRed : ((volContainer.isAudioActive || volMouse.containsMouse) ? Config.textWhite : Config.iconColor)
-          font.pixelSize: Config.fontSizeIconMedium
-          font.family: Config.fontIcon
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-          id: volText
-          visible: !root.vertical && opacity > 0.01
-          opacity: (root.showVolumeText || volMouse.containsMouse) ? 1.0 : 0.0
-          text: root.isMuted ? "Выкл." : (root.volumePercent + "%")
-          color: root.isMuted ? Config.dangerRed : Config.textPrimary
-          font.pixelSize: Config.fontSizeMedium
-          font.weight: Font.Medium
-          font.family: Config.fontSans
-          anchors.verticalCenter: parent.verticalCenter
-
-          Behavior on opacity { NumberAnimation { duration: 200 } }
-        }
+        text: root.isMuted ? Config.iconVolMuted : (root.volumePercent >= 70 ? Config.iconVolHigh : (root.volumePercent >= 30 ? Config.iconVolMedium : Config.iconVolLow))
+        color: root.isMuted ? Config.dangerRed : ((volContainer.isAudioActive || volMouse.containsMouse) ? Config.textWhite : Config.iconColor)
+        font.pixelSize: Config.fontSizeIconMedium
+        font.family: Config.fontIcon
       }
 
       MouseArea {
@@ -653,7 +616,7 @@ Rectangle {
       }
 
       Item {
-        width: 26
+        width: Config.scaledSize(26)
         height: 16
         anchors.centerIn: parent
 
@@ -661,7 +624,7 @@ Rectangle {
           id: batteryBody
           anchors.left: parent.left
           anchors.verticalCenter: parent.verticalCenter
-          width: 22
+          width: Config.scaledSize(22)
           height: 14
           radius: 3
           color: Config.meterTrack
@@ -671,7 +634,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            anchors.margins: 2
+            anchors.margins: Config.scaledSize(2)
             width: Math.max(2, Math.round((parent.width - 4) * batteryContainer.batteryPercent / 100))
             radius: 2
             color: root.batteryColor(batteryContainer.batteryPercent)
@@ -691,7 +654,7 @@ Rectangle {
             visible: root.batteryPopup && (root.batteryPopup.batteryCharging || root.batteryPopup.acOnline)
             text: Config.iconBatteryCharging
             color: root.chargingIconColor(batteryContainer.batteryPercent)
-            font.pixelSize: 12
+            font.pixelSize: Config.fontSizeIconTiny
             font.family: Config.fontIcon
           }
         }
@@ -701,7 +664,7 @@ Rectangle {
           height: 7
           radius: 1
           anchors.left: batteryBody.right
-          anchors.leftMargin: 1
+          anchors.leftMargin: Config.scaledSize(1)
           anchors.verticalCenter: batteryBody.verticalCenter
           color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
         }
@@ -879,9 +842,9 @@ Rectangle {
 
     Rectangle {
       id: dateTimeContainer
-      height: 24
+      height: Config.scaledSize(24)
       implicitWidth: root.vertical ? 58 : dateTimeRow.implicitWidth + 16
-      radius: 8
+      radius: Config.buttonRadius
       visible: Config.barDateTimeEnabled || (Config.weatherEnabled && Config.barWeatherEnabled)
       readonly property bool isCalendarActive: root.calendarPopup && root.calendarPopup.isOpen
       color: (isCalendarActive || dateTimeMouse.containsMouse) ? Config.activeHoverBg : Config.controlIdleBg
@@ -893,12 +856,12 @@ Rectangle {
       Row {
         id: dateTimeRow
         anchors.centerIn: parent
-        spacing: 8
+        spacing: Config.scaledSize(8)
 
         Item {
           visible: !root.vertical && Config.barDateTimeEnabled
           width: clockIcon.implicitWidth
-          height: 20
+          height: Config.scaledSize(20)
           anchors.verticalCenter: parent.verticalCenter
 
           Text {
@@ -913,7 +876,7 @@ Rectangle {
 
         Text {
           visible: Config.barDateTimeEnabled
-          height: 20
+          height: Config.scaledSize(20)
           text: root.vertical ? Config.formatTime24(statusClock.date) : Config.formatBarDateTimeRu(statusClock.date)
           color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.textPrimary
           font.pixelSize: Config.fontSizeSmall

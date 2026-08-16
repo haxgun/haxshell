@@ -69,16 +69,16 @@ Rectangle {
   Grid {
     id: rowLayout
     anchors.left: parent.left
-    anchors.leftMargin: 8
+    anchors.leftMargin: Config.scaledSize(8)
     anchors.verticalCenter: parent.verticalCenter
-    spacing: 2
+    spacing: Config.scaledSize(2)
     rows: root.vertical ? 0 : 1
     columns: root.vertical ? 1 : 0
 
     // App Launcher Toggle Button
     Rectangle {
       id: launcherBtn
-      width: 32
+      width: Config.scaledSize(32)
       height: Config.buttonHeight
       radius: Config.buttonRadius
       visible: Config.barLauncherEnabled
@@ -134,7 +134,7 @@ Rectangle {
         required property int index
 
         visible: Config.barWorkspacesEnabled
-        width: 32
+        width: Config.scaledSize(32)
         height: Config.buttonHeight
         radius: Config.buttonRadius
 
@@ -161,7 +161,7 @@ Rectangle {
           visible: Config.showWorkspaceNumbers
           color: itemRect.isActive ? Config.textWhite : (itemRect.isOccupied ? Config.textPrimary : (itemRect.isHovered ? Config.textSubtle : Config.textPlaceholder))
           font.pixelSize: Config.fontSizeMedium
-          font.weight: itemRect.isActive ? Font.Bold : (itemRect.isOccupied ? Font.Medium : Font.Normal)
+          font.weight: itemRect.isActive ? Font.Medium : (itemRect.isOccupied ? Font.Medium : Font.Normal)
           font.family: Config.fontSans
         }
 
@@ -173,7 +173,7 @@ Rectangle {
           color: Config.iconColor
           anchors.horizontalCenter: parent.horizontalCenter
           anchors.bottom: parent.bottom
-          anchors.bottomMargin: 3
+          anchors.bottomMargin: Config.scaledSize(3)
           visible: !itemRect.isActive && itemRect.isOccupied && root.indicatorStyle === "dot"
         }
 

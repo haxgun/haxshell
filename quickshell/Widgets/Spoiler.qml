@@ -10,12 +10,12 @@ Column {
   default property alias content: body.data
 
   width: parent ? parent.width : 0
-  spacing: 6
+  spacing: Config.scaledSize(6)
 
   Rectangle {
     id: header
     width: parent.width
-    height: 34
+    height: Config.scaledSize(34)
     radius: Config.cardRadius
     color: headerMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
     border.color: Config.borderColor
@@ -23,11 +23,11 @@ Column {
 
     Row {
       anchors.left: parent.left
-      anchors.leftMargin: 10
+      anchors.leftMargin: Config.scaledSize(10)
       anchors.right: parent.right
-      anchors.rightMargin: 10
+      anchors.rightMargin: Config.scaledSize(10)
       anchors.verticalCenter: parent.verticalCenter
-      spacing: 8
+      spacing: Config.scaledSize(8)
 
       Text {
         anchors.verticalCenter: parent.verticalCenter
@@ -42,7 +42,7 @@ Column {
         text: root.title
         color: Config.textPrimary
         font.pixelSize: Config.fontSizeSmall
-        font.weight: Font.Bold
+        font.weight: Font.Medium
         font.family: Config.fontSans
         elide: Text.ElideRight
       }
@@ -69,7 +69,7 @@ Column {
     Column {
       id: body
       width: parent.width
-      spacing: 8
+      spacing: Config.scaledSize(8)
     }
   }
 }
