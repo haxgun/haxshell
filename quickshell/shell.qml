@@ -99,6 +99,7 @@ Scope {
       if (settings.workspaceIndicatorStyle) Config.workspaceIndicatorStyle = settings.workspaceIndicatorStyle
       if (typeof settings.reduceMotion === "string") Config.reduceMotion = settings.reduceMotion === "true"
       if (settings.barPosition) Config.barPosition = settings.barPosition
+      if (settings.barStyle) Config.barStyle = settings.barStyle
       if (settings.barThickness) Config.barThickness = parseInt(settings.barThickness)
       if (typeof settings.barTopMargin === "string") Config.barTopMargin = parseInt(settings.barTopMargin)
       if (typeof settings.barBottomMargin === "string") Config.barBottomMargin = parseInt(settings.barBottomMargin)

@@ -227,6 +227,10 @@ PanelWindow {
     Config.barPosition = value
     saveSetting("barPosition", value)
   }
+  function applyBarStyle(value) {
+    Config.barStyle = value
+    saveSetting("barStyle", value)
+  }
   function applyBarThickness(value) {
     let thickness = Math.max(28, Math.min(100, Math.round(value)))
     Config.barThickness = thickness
@@ -1367,29 +1371,51 @@ PanelWindow {
 
           Column {
             width: parent.width
-            spacing: 10
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "bar"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Панель"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("Панель"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconWallpaper
               title: I18n.tr("Положение панели")
               subtitle: Config.barPosition === "bottom" ? I18n.tr("Снизу") : (Config.barPosition === "left" ? I18n.tr("Слева") : (Config.barPosition === "right" ? I18n.tr("Справа") : I18n.tr("Сверху")))
               Row {
-                width: 194
-                spacing: 4
+                width: Config.scaledSize(194)
+                spacing: Config.scaledSize(4)
                 Repeater {
                   model: [{ key: "top", label: "Верх" }, { key: "bottom", label: "Низ" }, { key: "left", label: "Слева" }, { key: "right", label: "Справа" }]
                   Rectangle {
                     required property var modelData
                     width: (parent.width - 12) / 4
-                    height: 30
-                    radius: 8
+                    height: Config.scaledSize(30)
+                    radius: Config.popupRadiusPx(8)
                     readonly property bool active: Config.barPosition === modelData.key
                     color: active ? Config.selectedBg : (barSectionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: 9; font.family: Config.fontSans }
+                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
                     MouseArea { id: barSectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarPosition(parent.modelData.key) }
+                  }
+                }
+              }
+            }
+            SettingsRow {
+              icon: Config.iconSettings
+              title: I18n.tr("Дизайн панели")
+              subtitle: Config.barStyle === "islands" ? I18n.tr("Островки") : I18n.tr("Сплошной")
+              Row {
+                width: Config.scaledSize(194)
+                spacing: Config.scaledSize(4)
+                Repeater {
+                  model: [{ key: "solid", label: "Сплошной" }, { key: "islands", label: "Островки" }]
+                  Rectangle {
+                    required property var modelData
+                    width: (parent.width - 4) / 2
+                    height: Config.scaledSize(30)
+                    radius: Config.popupRadiusPx(8)
+                    readonly property bool active: Config.barStyle === modelData.key
+                    color: active ? Config.selectedBg : (barStyleMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
+                    MouseArea { id: barStyleMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarStyle(parent.modelData.key) }
                   }
                 }
               }

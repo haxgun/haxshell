@@ -45,7 +45,6 @@ Scope {
             Tooltip {
                 id: barTooltip
                 screenInfo: modelData
-                anchorWindow: window
             }
 
             PanelWindow {
@@ -64,7 +63,7 @@ Scope {
                 WlrLayershell.namespace: "quickshell-bar"
                 WlrLayershell.layer: WlrLayer.Top
                 implicitWidth: window.vertical ? Config.barHeight + Config.barMargin : 0
-                implicitHeight: window.vertical ? 0 : Config.barHeight + (window.posTop ? Config.scaledBarTopMargin : (window.posBottom ? Config.scaledBarBottomMargin : 0))
+                implicitHeight: window.vertical ? 0 : Config.barHeight + Config.scaledBarTopMargin + Config.scaledBarBottomMargin
                 color: "#00000000"
 
                 anchors {
@@ -78,16 +77,18 @@ Scope {
                     id: barSurface
 
                     readonly property bool vertical: window.vertical
+                    property Item leftIsland: null
+                    property Item rightIsland: null
 
                     x: vertical ? (window.posLeft ? Config.barMargin : 0) : Config.barMargin
-                    y: vertical ? Config.scaledBarTopMargin : (window.posTop ? Config.scaledBarTopMargin : 0)
+                    y: Config.scaledBarTopMargin
                     width: vertical ? Config.barHeight : parent.width - Config.barMargin * 2
                     height: vertical ? parent.height - Config.scaledBarTopMargin - Config.scaledBarBottomMargin : Config.barHeight
                     radius: Config.scaledBarRadius
-                    color: Config.barBackgroundBg
+                    color: Config.barStyle === "solid" ? Config.barBackgroundBg : "#00000000"
 
                     Rectangle {
-                        visible: Config.barShadowsEnabled
+                        visible: Config.barStyle === "solid" && Config.barShadowsEnabled
                         x: 0
                         y: Config.shellShadowOffsetY
                         width: parent.width
@@ -99,6 +100,7 @@ Scope {
                     }
 
                     Rectangle {
+                        visible: Config.barStyle === "solid" && Config.barBordersEnabled
                         anchors.fill: parent
                         anchors.margins: Config.innerBorderMargin
                         radius: Math.max(0, barSurface.radius - Config.innerBorderMargin)
@@ -124,7 +126,7 @@ Scope {
 
                             let gap = 16;
                             let screenW = window.screenWidth;
-                            let popupW = 430;
+                            let popupW = Config.scaledSize(620);
                             let windowOffsetX = window.posRight ? (screenW - window.width) : 0;
                             let cursorX = windowOffsetX + barSurface.x + mouse.x;
                             root.settingsPopup.rightMargin = Math.max(gap, Math.min(screenW - popupW - gap, screenW - popupW / 2 - cursorX));
@@ -141,6 +143,61 @@ Scope {
                         rotation: Config.barRotation
                         transformOrigin: Item.Center
 
+                        Component {
+                            id: islandBg
+
+                            Rectangle {
+                                radius: Config.scaledBarRadius
+                                color: Config.barBackgroundBg
+
+                                Rectangle {
+                                    visible: Config.barShadowsEnabled
+                                    x: 0
+                                    y: Config.shellShadowOffsetY
+                                    width: parent.width
+                                    height: parent.height
+                                    radius: parent.radius
+                                    color: Config.shellShadowColor
+                                    opacity: 0.55
+                                    z: -1
+                                }
+
+                                Rectangle {
+                                    anchors.fill: parent
+                                    anchors.margins: Config.innerBorderMargin
+                                    radius: Math.max(0, parent.radius - Config.innerBorderMargin)
+                                    color: "#00000000"
+                                    border.color: Config.barBorderColor
+                                    border.width: Config.barBordersEnabled ? 1 : 0
+                                }
+                            }
+                        }
+
+                        Loader {
+                            id: leftIsland
+
+                            visible: Config.barStyle === "islands"
+                            sourceComponent: islandBg
+                            x: 0
+                            width: activeAppWidget.x + activeAppWidget.width
+                            height: parent.height
+                        }
+
+                        Loader {
+                            id: rightIsland
+
+                            visible: Config.barStyle === "islands"
+                            sourceComponent: islandBg
+                            x: statusWidget.x
+                            width: statusWidget.width
+                            height: parent.height
+                        }
+
+                        Component.onCompleted: {
+                            barSurface.leftIsland = leftIsland
+                            barSurface.rightIsland = rightIsland
+                        }
+
                         WorkspaceWidget {
                             id: workspaceWidget
 
@@ -154,6 +211,8 @@ Scope {
                         }
 
                         ActiveAppWidget {
+                            id: activeAppWidget
+
                             vertical: false
                             monitorName: modelData.name
                             tooltip: barTooltip
@@ -191,8 +250,18 @@ Scope {
                 }
 
                 BackgroundEffect.blurRegion: Region {
-                    item: Config.barBlurEnabled ? barSurface : null
+                    item: Config.barBlurEnabled && Config.barStyle === "solid" ? barSurface : null
                     radius: Math.round(barSurface.radius)
+
+                    Region {
+                        item: Config.barBlurEnabled && Config.barStyle === "islands" ? barSurface.leftIsland : null
+                        radius: Math.round(barSurface.radius)
+                    }
+
+                    Region {
+                        item: Config.barBlurEnabled && Config.barStyle === "islands" ? barSurface.rightIsland : null
+                        radius: Math.round(barSurface.radius)
+                    }
                 }
 
             }

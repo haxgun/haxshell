@@ -63,6 +63,7 @@ Singleton {
   property alias brightnessMonitorBus: adapter.brightnessMonitorBus
   property alias brightnessSleepMultiplier: adapter.brightnessSleepMultiplier
   property alias barPosition: adapter.barPosition
+  property alias barStyle: adapter.barStyle
   property alias barThickness: adapter.barThickness
   property alias barTopMargin: adapter.barTopMargin
   property alias barBottomMargin: adapter.barBottomMargin
@@ -164,6 +165,7 @@ Singleton {
       property string brightnessMonitorBus: "auto"
       property string brightnessSleepMultiplier: ".2"
       property string barPosition: "top"
+      property string barStyle: "solid"
       property string barThickness: "40"
       property string barTopMargin: "6"
       property string barBottomMargin: "6"
@@ -248,6 +250,7 @@ Singleton {
       brightnessMonitorBus: adapter.brightnessMonitorBus,
       brightnessSleepMultiplier: adapter.brightnessSleepMultiplier,
       barPosition: adapter.barPosition,
+      barStyle: adapter.barStyle,
       barThickness: adapter.barThickness,
       barTopMargin: adapter.barTopMargin,
       barBottomMargin: adapter.barBottomMargin,

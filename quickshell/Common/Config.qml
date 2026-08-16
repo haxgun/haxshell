@@ -150,6 +150,7 @@ QtObject {
   readonly property int popupGap: 2
   readonly property int shellShadowOffsetY: Math.round(3 * uiScale)
   property string barPosition: "top"
+  property string barStyle: "solid"
   property string popupVerticalAlign: "top"
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property int barRotation: barPosition === "left" ? -90 : (barPosition === "right" ? 90 : 0)
