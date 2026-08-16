@@ -33,6 +33,7 @@ Singleton {
   property alias caffeineEnabled: adapter.caffeineEnabled
   property alias timeFormat: adapter.timeFormat
   property alias showSeconds: adapter.showSeconds
+  property alias tooltipsEnabled: adapter.tooltipsEnabled
   property alias language: adapter.language
   property alias showWorkspaceNumbers: adapter.showWorkspaceNumbers
   property alias showWorkspacesOnAllMonitors: adapter.showWorkspacesOnAllMonitors
@@ -133,6 +134,7 @@ Singleton {
       property string caffeineEnabled: "false"
       property string timeFormat: "24"
       property string showSeconds: "false"
+      property string tooltipsEnabled: "true"
       property string language: "ru"
       property string showWorkspaceNumbers: "true"
       property string showWorkspacesOnAllMonitors: "false"
@@ -216,6 +218,7 @@ Singleton {
       caffeineEnabled: adapter.caffeineEnabled,
       timeFormat: adapter.timeFormat,
       showSeconds: adapter.showSeconds,
+      tooltipsEnabled: adapter.tooltipsEnabled,
       language: adapter.language,
       showWorkspaceNumbers: adapter.showWorkspaceNumbers,
       showWorkspacesOnAllMonitors: adapter.showWorkspacesOnAllMonitors,

@@ -308,6 +308,7 @@ PanelWindow {
   }
   function setBoolSetting(key, value) {
     if (key === "showSeconds") Config.showSeconds = value
+    if (key === "tooltipsEnabled") Config.tooltipsEnabled = value
     if (key === "showWorkspaceNumbers") Config.showWorkspaceNumbers = value
     if (key === "showWorkspacesOnAllMonitors") Config.showWorkspacesOnAllMonitors = value
     if (key === "barBlurEnabled") Config.barBlurEnabled = value
@@ -798,7 +799,14 @@ PanelWindow {
               ToggleSwitch { checked: Config.reduceMotion; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("reduceMotion", !Config.reduceMotion) }
             }
 
-            Text { text: I18n.tr("Интерфейс"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Bold; font.family: Config.fontSans }
+            SettingsRow {
+              icon: Config.iconInfo
+              title: I18n.tr("Подсказки")
+              subtitle: Config.tooltipsEnabled ? I18n.tr("Показываются") : I18n.tr("Скрыты")
+              ToggleSwitch { checked: Config.tooltipsEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("tooltipsEnabled", !Config.tooltipsEnabled) }
+            }
+
+            Text { text: I18n.tr("Интерфейс"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
 
             SettingsRow {
               icon: Config.iconLanguage

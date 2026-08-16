@@ -207,6 +207,7 @@ QtObject {
   property int defaultMinWorkspaces: 5
   property string timeFormat: "24"
   property bool showSeconds: false
+  property bool tooltipsEnabled: true
   property string language: "ru"
 
   // MPRIS Media Player Options

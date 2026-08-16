@@ -8,11 +8,10 @@ PanelWindow {
   id: root
 
   required property var screenInfo
-  property var anchorWindow: null
   property string text: ""
   property bool tipVisible: false
-  readonly property real tipWidth: tipLabel.implicitWidth + 28
-  readonly property real tipHeight: 32
+  readonly property real tipWidth: tipLabel.implicitWidth + Config.scaledSize(20)
+  readonly property real tipHeight: Config.scaledSize(24)
 
   visible: tipVisible || bubble.opacity > 0.01
   WlrLayershell.namespace: "quickshell-tooltip"
@@ -44,6 +43,7 @@ PanelWindow {
   }
 
   function show(target, tipText) {
+    if (!Config.tooltipsEnabled) return
     root.text = tipText
     showDelay.restart()
     hideDelay.stop()
@@ -51,25 +51,24 @@ PanelWindow {
     let g = target.mapToGlobal(Qt.point(0, 0))
     let screenX = root.screenInfo ? root.screenInfo.x : 0
     let screenY = root.screenInfo ? root.screenInfo.y : 0
-    let sw = root.screenInfo ? root.screenInfo.width : root.width
-    let sh = root.screenInfo ? root.screenInfo.height : root.height
     let bw = root.tipWidth
     let bh = root.tipHeight
     let x = g.x - screenX + target.width / 2 - bw / 2
-    let y = 0
-    if (root.anchorWindow) {
-      if (Config.barPosition === "bottom") {
-        y = sh - root.anchorWindow.height - Config.popupGap - bh
-      } else if (Config.barPosition === "top") {
-        y = root.anchorWindow.height + Config.popupGap
-      } else {
-        y = g.y - screenY + target.height + Config.popupGap
-      }
-    } else {
-      y = g.y - screenY + target.height + Config.popupGap
+    let y = g.y - screenY + target.height / 2 - bh / 2
+    if (Config.barPosition === "top") {
+      y = 0
+    } else if (Config.barPosition === "bottom") {
+      y = root.height - bh
+    } else if (Config.barPosition === "left") {
+      x = 0
+    } else if (Config.barPosition === "right") {
+      x = root.width - bw
     }
-    x = Math.max(6, Math.min(sw - bw - 6, x))
-    y = Math.max(6, Math.min(sh - bh - 6, y))
+    if (Config.barPosition === "top" || Config.barPosition === "bottom") {
+      x = Math.max(6, Math.min(root.width - bw - 6, x))
+    } else {
+      y = Math.max(6, Math.min(root.height - bh - 6, y))
+    }
     bubble.x = x
     bubble.y = y
   }

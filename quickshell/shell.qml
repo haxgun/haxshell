@@ -53,6 +53,7 @@ Scope {
       if (settings.uiScale) Config.uiScale = parseFloat(settings.uiScale)
       if (settings.language) Config.language = settings.language
       if (typeof settings.showSeconds === "string") Config.showSeconds = settings.showSeconds === "true"
+      if (typeof settings.tooltipsEnabled === "string") Config.tooltipsEnabled = settings.tooltipsEnabled === "true"
       if (typeof settings.weatherEnabled === "string") Config.weatherEnabled = settings.weatherEnabled === "true"
       if (typeof settings.barDateTimeEnabled === "string") Config.barDateTimeEnabled = settings.barDateTimeEnabled === "true"
       if (typeof settings.barWeatherEnabled === "string") Config.barWeatherEnabled = settings.barWeatherEnabled === "true"
