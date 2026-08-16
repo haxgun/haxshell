@@ -145,7 +145,11 @@ func unlockSettings(f *os.File) {
 func settingsDefaults() map[string]string {
 	return map[string]string{
 		"themeName":                   "dark",
+		"dynamicDark":                 "true",
 		"fontFamily":                  "Geist Mono",
+		"fontMonoFamily":              "Geist Mono",
+		"fontScale":                   "1.0",
+		"fontMonoScale":               "1.0",
 		"wallpaperDir":                "~/wallpapers/animated",
 		"wallpaperFillMode":           "fill",
 		"wallpaperTransition":         "fade",
@@ -156,33 +160,56 @@ func settingsDefaults() map[string]string {
 		"weatherLocation":             "",
 		"dynamicAccent":               "#e2e8f0",
 		"dynamicPalette":              "[\"#e2e8f0\",\"#334155\",\"#64748b\",\"#94a3b8\"]",
-		"manualAccent":                "#e2e8f0",
-		"manualDark":                  "true",
+		"manualPalette":               "[\"#282a36\",\"#ff5555\",\"#50fa7b\",\"#f1fa8c\",\"#bd93f9\",\"#ff79c6\",\"#8be9fd\",\"#f8f8f2\",\"#6272a4\",\"#ff6e6e\",\"#69ff94\",\"#ffffa5\",\"#d6acff\",\"#ff92df\",\"#a4ffff\",\"#ffffff\"]",
 		"caffeineEnabled":             "false",
 		"timeFormat":                  "24",
 		"showSeconds":                 "false",
+		"tooltipsEnabled":             "true",
 		"language":                    "ru",
-		"musicVisualizerEnabled":      "true",
 		"showWorkspaceNumbers":        "true",
 		"showWorkspacesOnAllMonitors": "false",
 		"workspaceIndicatorStyle":     "tint",
 		"uiScale":                     "1.0",
 		"reduceMotion":                "false",
 		"weatherEnabled":              "true",
+		"weatherTenths":               "false",
 		"barDateTimeEnabled":          "true",
 		"barWeatherEnabled":           "true",
 		"barColorPickerEnabled":       "true",
+		"barWorkspacesEnabled":        "true",
+		"barLauncherEnabled":          "true",
+		"barActiveAppEnabled":         "true",
+		"barMediaEnabled":             "true",
+		"barTrayEnabled":              "true",
+		"barKeyboardLayoutEnabled":    "true",
+		"barSystemEnabled":            "true",
+		"barSysCpuEnabled":            "true",
+		"barSysCpuTempEnabled":        "true",
+		"barSysGpuEnabled":            "true",
+		"barSysGpuTempEnabled":        "true",
+		"barSysRamEnabled":            "true",
+		"barSysNetEnabled":            "true",
+		"barNotificationsEnabled":     "true",
+		"barVolumeEnabled":            "true",
+		"barBrightnessEnabled":        "true",
+		"barBatteryEnabled":           "true",
+		"barBluetoothEnabled":         "true",
+		"barNetworkEnabled":           "true",
+		"barControlCenterEnabled":     "true",
+		"barVpnEnabled":               "true",
+		"barPowerEnabled":             "true",
 		"brightnessMonitorBus":        "auto",
 		"brightnessSleepMultiplier":   ".2",
 		"barPosition":                 "top",
+		"barStyle":                    "solid",
 		"barThickness":                "40",
 		"barTopMargin":                "6",
 		"barBottomMargin":             "6",
 		"barHorizontalMargin":         "12",
-		"barRadius":                   "14",
+		"barRadius":                   "35",
 		"barFrostOpacity":             "56",
 		"popupVerticalAlign":          "top",
-		"popupRadius":                 "18",
+		"popupRadius":                 "45",
 		"popupBackgroundOpacity":      "56",
 		"barBlurEnabled":              "true",
 		"popupBlurEnabled":            "true",
@@ -206,10 +233,11 @@ func readSettings() map[string]string {
 	if err == nil {
 		var parsed map[string]string
 		if json.Unmarshal(data, &parsed) == nil {
+			// Preserve every saved key, including ones not present in
+			// settingsDefaults, so a Go-side defaults drift never silently
+			// drops user settings on the next write-back.
 			for key, value := range parsed {
-				if _, ok := settings[key]; ok {
-					settings[key] = value
-				}
+				settings[key] = value
 			}
 		}
 	}
@@ -1934,6 +1962,8 @@ func Run() {
 		cmdNet()
 	case "pick-folder":
 		cmdPickFolder(args)
+	case "presets":
+		cmdPresets()
 	case "settings":
 		cmdSettings(args)
 	case "sys":
