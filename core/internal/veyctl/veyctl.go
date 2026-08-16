@@ -1736,7 +1736,7 @@ func cmdWeather(args []string) {
 		return
 	}
 	place := geo.Results[0]
-	forecastURL := fmt.Sprintf("https://api.open-meteo.com/v1/forecast?latitude=%.5f&longitude=%.5f&current=temperature_2m,relative_humidity_2m,weather_code&hourly=relative_humidity_2m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4", place.Latitude, place.Longitude)
+	forecastURL := fmt.Sprintf("https://api.open-meteo.com/v1/forecast?latitude=%.5f&longitude=%.5f&current=temperature_2m,relative_humidity_2m,weather_code&hourly=temperature_2m,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4", place.Latitude, place.Longitude)
 	forecastRaw, forecastCode := run(6*time.Second, "curl", "-fsS", "--max-time", "5", forecastURL)
 	if forecastCode != 0 {
 		if cached != nil {
@@ -1747,7 +1747,8 @@ func cmdWeather(args []string) {
 		return
 	}
 	var forecast struct {
-		Current struct {
+		UtcOffsetSeconds int `json:"utc_offset_seconds"`
+		Current          struct {
 			Temperature float64 `json:"temperature_2m"`
 			Humidity    float64 `json:"relative_humidity_2m"`
 			Code        int     `json:"weather_code"`
@@ -1759,8 +1760,10 @@ func cmdWeather(args []string) {
 			Min   []float64 `json:"temperature_2m_min"`
 		} `json:"daily"`
 		Hourly struct {
-			Time     []string  `json:"time"`
-			Humidity []float64 `json:"relative_humidity_2m"`
+			Time        []string  `json:"time"`
+			Temperature []float64 `json:"temperature_2m"`
+			Humidity    []float64 `json:"relative_humidity_2m"`
+			Codes       []int     `json:"weather_code"`
 		} `json:"hourly"`
 	}
 	if json.Unmarshal([]byte(forecastRaw), &forecast) != nil {
@@ -1788,7 +1791,17 @@ func cmdWeather(args []string) {
 		}
 		days = append(days, map[string]any{"date": forecast.Daily.Time[i], "code": code, "condition": weatherDescription(code), "temperature": math.Round(averageTemp*10) / 10, "humidity": humidity})
 	}
-	result := map[string]any{"ok": true, "location": location, "name": place.Name, "country": place.Country, "temperature": math.Round(forecast.Current.Temperature*10) / 10, "humidity": int(math.Round(forecast.Current.Humidity)), "code": forecast.Current.Code, "condition": weatherDescription(forecast.Current.Code), "days": days, "cachedAt": time.Now().Unix()}
+	locNow := time.Now().UTC().Add(time.Duration(forecast.UtcOffsetSeconds) * time.Second)
+	hours := []map[string]any{}
+	for i := 0; i < len(forecast.Hourly.Time) && len(hours) < 4; i++ {
+		t, err := time.Parse("2006-01-02T15:04", forecast.Hourly.Time[i])
+		if err != nil || t.Before(locNow.Add(-30*time.Minute)) || i >= len(forecast.Hourly.Temperature) || i >= len(forecast.Hourly.Codes) {
+			continue
+		}
+		code := forecast.Hourly.Codes[i]
+		hours = append(hours, map[string]any{"time": t.Format("15:04"), "code": code, "condition": weatherDescription(code), "temperature": math.Round(forecast.Hourly.Temperature[i]*10) / 10})
+	}
+	result := map[string]any{"ok": true, "location": location, "name": place.Name, "country": place.Country, "temperature": math.Round(forecast.Current.Temperature*10) / 10, "humidity": int(math.Round(forecast.Current.Humidity)), "code": forecast.Current.Code, "condition": weatherDescription(forecast.Current.Code), "hours": hours, "days": days, "cachedAt": time.Now().Unix()}
 	writeJSONFile(weatherCachePath(), result)
 	output(result)
 }

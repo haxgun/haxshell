@@ -57,7 +57,7 @@ PanelWindow {
   // Displayed month and year (interactive)
   property int displayYear: today.getFullYear()
   property int displayMonth: today.getMonth()
-  property string weatherIcon: Config.iconWeather
+  property int weatherCode: -1
   property bool weatherOk: false
   property real weatherTempRaw: 0
   readonly property string weatherTemp: !weatherOk ? "--" : Config.tempText(weatherTempRaw, Config.weatherTenths)
@@ -124,6 +124,7 @@ PanelWindow {
       if (!res.ok) return
       root.weatherOk = true
       root.weatherTempRaw = res.temperature
+      root.weatherCode = res.code
       root.weatherHumidity = res.humidity + "%"
       root.weatherCondition = res.condition || "Погода"
       root.weatherDetails = (res.name || Config.weatherLocation || "Текущий город") + " · влажность " + root.weatherHumidity
@@ -135,6 +136,7 @@ PanelWindow {
           dayLabel: root.forecastDayLabel(day.date, i),
           tempRaw: day.temperature,
           humidity: day.humidity + "%",
+          code: day.code,
           desc: day.condition || "Прогноз"
         })
       }
@@ -146,6 +148,15 @@ PanelWindow {
           desc: "Нет данных"
         })
       }
+      hourlyModel.clear()
+      let hours = res.hours || []
+      for (let i = 0; i < Math.min(4, hours.length); i++) {
+        hourlyModel.append({
+          hourLabel: hours[i].time,
+          tempRaw: hours[i].temperature,
+          code: hours[i].code
+        })
+      }
     } catch(e) {}
   }
 
@@ -153,6 +164,19 @@ PanelWindow {
     if (index === 0) return "Сегодня"
     let d = rawDate instanceof Date ? rawDate : new Date(rawDate + "T00:00:00")
     return Config.weekdayBarNamesRu[d.getDay()]
+  }
+
+  function weatherIcon(code) {
+    if (code === 0) return "󰖙"
+    if (code === 1 || code === 2) return "󰖕"
+    if (code === 3) return "󰖐"
+    if (code === 45 || code === 48) return "󰖑"
+    if (code >= 51 && code <= 57) return "󰖗"
+    if (code >= 61 && code <= 67) return "󰖖"
+    if (code >= 71 && code <= 77) return "󰖘"
+    if (code >= 80 && code <= 82) return "󰖖"
+    if (code >= 95) return "󰖓"
+    return Config.iconWeather
   }
 
   function addDays(date, days) {
@@ -168,6 +192,10 @@ PanelWindow {
 
   ListModel {
     id: forecastModel
+  }
+
+  ListModel {
+    id: hourlyModel
   }
 
   function holidayKey(y, m, d) {
@@ -311,7 +339,7 @@ PanelWindow {
             spacing: Config.scaledSize(10)
 
             Text {
-              text: Config.iconWeather
+              text: root.weatherIcon(root.weatherCode)
               color: Config.activeBorderColor
               font.pixelSize: Config.fontSizeIconHuge
               font.family: Config.fontIcon
@@ -340,6 +368,26 @@ PanelWindow {
 
           Row {
             width: parent.width
+            height: Config.scaledSize(58)
+            spacing: Config.scaledSize(4)
+            visible: hourlyModel.count > 0
+
+            Repeater {
+              model: hourlyModel
+              Column {
+                width: (weatherColumn.width - 12) / 4
+                spacing: Config.scaledSize(4)
+                Text { width: parent.width; text: hourLabel; color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight }
+                Text { width: parent.width; text: root.weatherIcon(code); color: Config.textSubtle; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
+                Text { width: parent.width; text: Config.iconTemperature + " " + (tempRaw > -999 ? Config.tempText(tempRaw, Config.weatherTenths) : "--"); color: Config.textWhite; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
+              }
+            }
+          }
+
+          Rectangle { width: parent.width; height: 1; color: Config.separatorColor; opacity: 0.45; visible: hourlyModel.count > 0 }
+
+          Row {
+            width: parent.width
             height: Config.scaledSize(88)
             spacing: Config.scaledSize(4)
 
@@ -349,7 +397,7 @@ PanelWindow {
                 width: (weatherColumn.width - 12) / 4
                 spacing: Config.scaledSize(4)
                 Text { width: parent.width; text: dayLabel; color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight }
-                Text { width: parent.width; text: Config.iconWeather; color: Config.textSubtle; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
+                Text { width: parent.width; text: root.weatherIcon(code); color: Config.textSubtle; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
                 Text { width: parent.width; text: Config.iconTemperature + " " + (tempRaw > -999 ? Config.tempText(tempRaw, Config.weatherTenths) : "--"); color: Config.textWhite; font.pixelSize: Config.fontSizeTiny; font.weight: Font.Medium; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
                 Text { width: parent.width; text: Config.iconHumidity + " " + humidity; color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontIcon; horizontalAlignment: Text.AlignHCenter }
               }
