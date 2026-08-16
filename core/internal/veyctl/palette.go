@@ -84,12 +84,17 @@ func extractInProcessPalette(path string) []string {
 	if path == "" {
 		return []string{}
 	}
+	settings := readSettings()
 	scheme := paletteSchemeOverride
 	if !paletteSchemePresets[scheme] {
 		scheme = "vibrant"
-		if s := readSettings()["wallpaperPaletteScheme"]; paletteSchemePresets[s] {
+		if s := settings["wallpaperPaletteScheme"]; paletteSchemePresets[s] {
 			scheme = s
 		}
+	}
+	lightMode := settings["dynamicDark"] == "false"
+	if lightMode {
+		scheme += ":light"
 	}
 	st, err := os.Stat(path)
 	if err != nil {
@@ -114,7 +119,7 @@ func extractInProcessPalette(path string) []string {
 		return cached
 	}
 
-	colors := extractPalette(path, scheme)
+	colors := extractPalette(path, scheme, lightMode)
 	if len(colors) == 0 {
 		colors = magickPalette(path)
 	}
@@ -166,7 +171,7 @@ type bucket struct {
 	score   float64
 }
 
-func extractPalette(path, scheme string) []string {
+func extractPalette(path, scheme string, lightMode bool) []string {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil
@@ -182,8 +187,8 @@ func extractPalette(path, scheme string) []string {
 		return nil
 	}
 
-	const grid = 40
-	acc := map[uint32]*bucket{}
+	const grid = 80
+	var pixels []oklab
 	for gy := 0; gy < grid; gy++ {
 		for gx := 0; gx < grid; gx++ {
 			x := b.Min.X + gx*w/grid + w/grid/2
@@ -192,40 +197,17 @@ func extractPalette(path, scheme string) []string {
 			if a16 < 0x8000 {
 				continue
 			}
-			r := int(r16 >> 8)
-			g := int(g16 >> 8)
-			bl := int(b16 >> 8)
-			key := uint32(r>>3)<<10 | uint32(g>>3)<<5 | uint32(bl>>3)
-			if p := acc[key]; p != nil {
-				p.r += r
-				p.g += g
-				p.b += bl
-				p.count++
-			} else {
-				acc[key] = &bucket{r: r, g: g, b: bl, count: 1}
-			}
+			pixels = append(pixels, rgbToOKLab(int(r16>>8), int(g16>>8), int(b16>>8)))
 		}
 	}
-	if len(acc) == 0 {
+	if len(pixels) == 0 {
 		return nil
 	}
 
-	buckets := make([]bucket, 0, len(acc))
-	for _, p := range acc {
-		r := p.r / p.count
-		g := p.g / p.count
-		bl := p.b / p.count
-		h01, sat, light := hslOf(r, g, bl)
-		bk := bucket{
-			r: r, g: g, b: bl, count: p.count,
-			hue:    h01 * 360,
-			sat:    sat,
-			light:  light,
-			chroma: sat * (1 - math.Abs(2*light-1)) * 100,
-			tone:   light * 100,
-		}
-		buckets = append(buckets, bk)
-	}
+	// Median-cut in OKLab perceptually clusters the sampled pixels into
+	// dominant colors (aether docs/color-extraction.md), with vivid pixels
+	// boosted so small saturated accents survive large muted backgrounds.
+	buckets := medianCutBuckets(boostChromaticPixels(pixels), 48)
 
 	scoreBuckets(buckets, scheme)
 	sort.SliceStable(buckets, func(i, j int) bool { return buckets[i].score > buckets[j].score })
@@ -263,7 +245,21 @@ func extractPalette(path, scheme string) []string {
 	if len(colors) == 0 {
 		return nil
 	}
+	if lightMode && len(colors) > 1 {
+		colors[1] = lightenHex(colors[1])
+	}
 	return ensurePalette(colors)
+}
+
+// lightenHex blends a color toward white so light-mode surfaces stay readable.
+func lightenHex(hex string) string {
+	if len(hex) < 7 {
+		return hex
+	}
+	r := hexVal(hex[1:3])
+	g := hexVal(hex[3:5])
+	b := hexVal(hex[5:7])
+	return rgbHex((r*3+255*7)/10, (g*3+255*7)/10, (b*3+255*7)/10)
 }
 
 // grayscale returns a perceptually-weighted luma for monochrome palettes.

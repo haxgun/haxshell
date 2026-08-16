@@ -31,6 +31,7 @@ Scope {
     try {
       let settings = typeof data === "string" ? JSON.parse(data) : data
       if (settings.themeName) Config.themeName = settings.themeName
+      if (typeof settings.dynamicDark === "string") Config.dynamicDark = settings.dynamicDark === "true"
       if (settings.fontFamily) Config.fontFamily = settings.fontFamily
       if (settings.fontMonoFamily) Config.fontMonoFamily = settings.fontMonoFamily
       if (settings.fontScale) Config.fontScale = parseFloat(settings.fontScale)
@@ -47,14 +48,17 @@ Scope {
       if (settings.dynamicPalette) {
         try { Config.applyDynamicPalette(JSON.parse(settings.dynamicPalette)) } catch(e) {}
       }
-      if (settings.manualAccent) Config.manualAccent = settings.manualAccent
-      if (typeof settings.manualDark === "string") Config.manualDark = settings.manualDark === "true"
+      if (settings.manualPalette) {
+        try { Config.manualPalette = JSON.parse(settings.manualPalette) } catch(e) {}
+      }
+      if (Config.themeName === "manual") Config.applyManualPalette()
       if (settings.timeFormat) Config.timeFormat = settings.timeFormat
       if (settings.uiScale) Config.uiScale = parseFloat(settings.uiScale)
       if (settings.language) Config.language = settings.language
       if (typeof settings.showSeconds === "string") Config.showSeconds = settings.showSeconds === "true"
       if (typeof settings.tooltipsEnabled === "string") Config.tooltipsEnabled = settings.tooltipsEnabled === "true"
       if (typeof settings.weatherEnabled === "string") Config.weatherEnabled = settings.weatherEnabled === "true"
+      if (typeof settings.weatherTenths === "string") Config.weatherTenths = settings.weatherTenths === "true"
       if (typeof settings.barDateTimeEnabled === "string") Config.barDateTimeEnabled = settings.barDateTimeEnabled === "true"
       if (typeof settings.barWeatherEnabled === "string") Config.barWeatherEnabled = settings.barWeatherEnabled === "true"
       if (typeof settings.barColorPickerEnabled === "string") Config.barColorPickerEnabled = settings.barColorPickerEnabled === "true"

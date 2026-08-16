@@ -101,24 +101,29 @@ PanelWindow {
     onTriggered: root.restoreWallpaperScroll()
   }
   property var palette: []
-  property color manualAccentColor: Config.manualAccent
-  readonly property real manualHue: manualAccentColor.hslHue >= 0 ? manualAccentColor.hslHue : 0
-  readonly property real manualSat: manualAccentColor.hslSaturation
-  readonly property string currentManualHex: colorToHex(manualAccentColor)
+  property int manualSlot: 1
+  readonly property color manualSlotColor: (Config.manualPalette && Config.manualPalette.length > manualSlot) ? Config.manualPalette[manualSlot] : "#888888"
+  readonly property real manualHue: manualSlotColor.hslHue >= 0 ? manualSlotColor.hslHue : 0
+  readonly property real manualSat: manualSlotColor.hslSaturation
+  readonly property string currentManualHex: colorToHex(manualSlotColor)
   readonly property string veyctl: Config.veyctl
   property string aboutVersion: ""
   property string aboutLatest: ""
   property var aboutContributors: []
+  property var presets: []
 
   onActiveSectionChanged: if (root.activeSection === "about") root.refreshAbout()
 
-  Component.onCompleted: root.refreshAbout()
+  Component.onCompleted: {
+    root.refreshAbout()
+    root.refreshPresets()
+  }
 
   onIsOpenChanged: if (isOpen) {
     wallpaperDirInput.text = Config.wallpaperDir
     weatherLocationInput.text = Config.weatherLocation
     fontSearchInput.text = root.fontSearch
-    manualAccentInput.text = Config.manualAccent
+    manualAccentInput.text = root.currentManualHex
     refreshWallpapers()
     refreshFonts()
   } else {
@@ -184,6 +189,12 @@ PanelWindow {
   Process {
     id: aboutProc
     stdout: SplitParser { onRead: data => root.applyAbout(data) }
+  }
+
+  Process {
+    id: presetsProc
+    command: [root.veyctl, "presets"]
+    stdout: SplitParser { onRead: data => root.applyPresets(data) }
   }
 
   Timer { id: citySearchTimer; interval: 350; repeat: false; onTriggered: if (weatherLocationInput.activeFocus) root.searchCities(weatherLocationInput.text) }
@@ -289,30 +300,35 @@ PanelWindow {
   function applyWeatherLocation(value) { let location = value.trim(); Config.weatherLocation = location; saveSetting("weatherLocation", location) }
   function applyTimeFormat(value) { Config.timeFormat = value; saveSetting("timeFormat", value) }
   function applyUiScale(value) { Config.uiScale = parseFloat(value); saveSetting("uiScale", value) }
-  function applyManualAccent(value) {
+  function slotLabel(index) {
+    let names = ["BG", "Red", "Grn", "Ylw", "Blu", "Mgn", "Cyn", "FG", "Dim", "Rd+", "Gr+", "Yl+", "Bl+", "Mg+", "Cy+", "FG+"]
+    return names[index] || String(index)
+  }
+  function slotTextColor(hex) {
+    let c = hex || "#000000"
+    let r = parseInt(c.slice(1, 3), 16)
+    let g = parseInt(c.slice(3, 5), 16)
+    let b = parseInt(c.slice(5, 7), 16)
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) > 132 ? "#0f172a" : "#ffffff"
+  }
+  function applyManualSlot(value) {
     let color = value.trim()
     if (!/^#[0-9A-Fa-f]{6}$/.test(color)) return
-    Config.manualAccent = color
-    saveSetting("manualAccent", color)
-  }
-  function applyManualColor(color) { applyManualAccent(colorToHex(color)) }
-  function applyManualTone(value) {
-    Config.manualDark = value
-    saveSetting("manualDark", value ? "true" : "false")
-    let hue = root.manualHue
-    let sat = root.manualSat < 0.05 ? 0.5 : root.manualSat
-    let color = colorToHex(Qt.hsla(hue, sat, value ? 0.5 : 0.62, 1))
-    Config.manualAccent = color
-    saveSettingAlt("manualAccent", color)
+    let arr = Config.manualPalette.slice()
+    arr[root.manualSlot] = color
+    Config.manualPalette = arr
+    Config.applyManualPalette()
+    saveSetting("manualPalette", JSON.stringify(arr))
   }
   function setManualHueFromX(x, width) {
     let hue = Math.max(0, Math.min(1, x / Math.max(width, 1)))
     let sat = root.manualSat < 0.05 ? 0.5 : root.manualSat
-    applyManualColor(Qt.hsla(hue, sat, Config.manualDark ? 0.5 : 0.62, 1))
+    applyManualSlot(colorToHex(Qt.hsla(hue, sat, 0.5, 1)))
   }
   function setBoolSetting(key, value) {
     if (key === "showSeconds") Config.showSeconds = value
     if (key === "tooltipsEnabled") Config.tooltipsEnabled = value
+    if (key === "dynamicDark") Config.dynamicDark = value
     if (key === "showWorkspaceNumbers") Config.showWorkspaceNumbers = value
     if (key === "showWorkspacesOnAllMonitors") Config.showWorkspacesOnAllMonitors = value
     if (key === "barBlurEnabled") Config.barBlurEnabled = value
@@ -470,7 +486,7 @@ PanelWindow {
       root.wallName = res.name || "Нет обоев"
       root.currentWallpaperIndex = res.index || 0
       root.palette = res.palette || []
-        if (root.palette.length > 0) {
+        if (root.palette.length > 0 && Config.themeName === "dynamic") {
           Config.applyDynamicPalette(root.palette)
           saveSettingAlt("dynamicAccent", Config.dynamicAccent)
           saveSettingAlt("dynamicPalette", JSON.stringify(Config.dynamicPalette))
@@ -532,6 +548,27 @@ PanelWindow {
     aboutProc.running = false
     aboutProc.command = [root.veyctl, "about"]
     aboutProc.running = true
+  }
+
+  function applyPresets(data) {
+    try {
+      root.presets = JSON.parse(data) || []
+    } catch(e) { root.presets = [] }
+  }
+
+  function refreshPresets() {
+    presetsProc.running = false
+    presetsProc.command = [root.veyctl, "presets"]
+    presetsProc.running = true
+  }
+
+  function applyPreset(name, colors) {
+    if (!colors || colors.length < 16) return
+    Config.manualPalette = colors.slice(0, 16)
+    Config.applyManualPalette()
+    Config.themeName = "manual"
+    saveSetting("themeName", "manual")
+    saveSetting("manualPalette", JSON.stringify(Config.manualPalette))
   }
 
   function commitsLabel(n) {
@@ -602,6 +639,7 @@ PanelWindow {
           Repeater {
             model: [
               { key: "general", icon: Config.iconSettings, title: "Общие" },
+              { key: "palette", icon: Config.iconColorPicker, title: "Цветовая палитра" },
               { key: "bar", icon: Config.iconScale, title: "Бар" },
               { key: "popups", icon: Config.iconControlCenter, title: "Попапы" },
               { key: "notifications", icon: Config.iconNotifications, title: "Уведомления" },
@@ -654,148 +692,6 @@ PanelWindow {
             height: visible ? implicitHeight : 0
             clip: true
             Text { text: I18n.tr("Оформление"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            SettingsRow {
-              icon: Config.iconPalette
-              title: I18n.tr("Тема")
-              subtitle: Config.themeName === "manual" ? I18n.tr("Ручной акцент") : (Config.themeName === "dynamic" ? I18n.tr("Акцент из обоев") : (Config.themeName === "light" ? I18n.tr("Светлая палитра") : I18n.tr("Тёмная палитра")))
-              Rectangle {
-                id: themeSegment
-                width: Config.scaledSize(226)
-                height: Config.scaledSize(34)
-                radius: Config.popupRadiusPx(9)
-                color: "transparent"
-                Row {
-                  anchors.fill: parent
-                  spacing: Config.scaledSize(2)
-                  Repeater {
-                    model: [{ key: "light", label: "Свет" }, { key: "dark", label: "Тьма" }, { key: "dynamic", label: "Дин." }, { key: "manual", label: "Своя" }]
-                    Rectangle {
-                      required property var modelData
-                      width: (themeSegment.width - 6) / 4
-                      height: Config.scaledSize(34)
-                      radius: Config.popupRadiusPx(9)
-                      readonly property bool active: Config.themeName === modelData.key
-                      color: active ? Config.selectedBg : (themeMouse.containsMouse ? Config.hoverBg : "transparent")
-                      Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.2 }
-                      MouseArea { id: themeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyTheme(parent.modelData.key) }
-                    }
-                  }
-                }
-              }
-            }
-
-            Item {
-              width: parent.width
-              height: Config.themeName === "manual" ? manualThemeColumn.implicitHeight : 0
-              clip: true
-              Behavior on height { NumberAnimation { duration: Config.reduceMotion ? 0 : 120; easing.type: Easing.OutCubic } }
-              Column {
-                id: manualThemeColumn
-                width: parent.width
-                spacing: Config.scaledSize(12)
-                topPadding: 4
-                bottomPadding: 6
-
-                Item {
-                  width: parent.width
-                  height: 18
-                  Rectangle {
-                    id: manualHueStrip
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    height: 14
-                    radius: Config.popupRadiusPx(7)
-                    gradient: Gradient {
-                      orientation: Gradient.Horizontal
-                      GradientStop { position: 0.0; color: Qt.hsla(0.0, 0.7, 0.5, 1) }
-                      GradientStop { position: 1 / 6; color: Qt.hsla(1 / 6, 0.7, 0.5, 1) }
-                      GradientStop { position: 2 / 6; color: Qt.hsla(2 / 6, 0.7, 0.5, 1) }
-                      GradientStop { position: 3 / 6; color: Qt.hsla(3 / 6, 0.7, 0.5, 1) }
-                      GradientStop { position: 4 / 6; color: Qt.hsla(4 / 6, 0.7, 0.5, 1) }
-                      GradientStop { position: 5 / 6; color: Qt.hsla(5 / 6, 0.7, 0.5, 1) }
-                      GradientStop { position: 1.0; color: Qt.hsla(1.0, 0.7, 0.5, 1) }
-                    }
-                    Rectangle {
-                      width: 18
-                      height: 18
-                      radius: Config.popupRadiusPx(9)
-                      anchors.verticalCenter: parent.verticalCenter
-                      x: root.manualHue * (manualHueStrip.width - width)
-                      color: Config.manualAccent
-                      border.width: 2
-                      border.color: Config.textWhite
-                    }
-                    MouseArea {
-                      anchors.fill: parent
-                      cursorShape: Qt.PointingHandCursor
-                      onPressed: mouse => root.setManualHueFromX(mouse.x, manualHueStrip.width)
-                      onPositionChanged: mouse => root.setManualHueFromX(mouse.x, manualHueStrip.width)
-                    }
-                  }
-                }
-
-                Row {
-                  width: parent.width
-                  height: Config.scaledSize(36)
-                  spacing: Config.scaledSize(10)
-                  Rectangle { width: Config.scaledSize(34); height: Config.scaledSize(34); radius: Config.popupRadiusPx(9); color: Config.manualAccent; border.color: Config.borderColor; border.width: 1; anchors.verticalCenter: parent.verticalCenter }
-                  Column {
-                    width: parent.width - 174
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: Config.scaledSize(2)
-                    Text { width: parent.width; text: I18n.tr("Акцент"); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-                    Text { width: parent.width; text: root.currentManualHex + " · " + (Config.manualDark ? I18n.tr("тёмная") : I18n.tr("светлая")); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
-                  }
-                  Row {
-                    width: Config.scaledSize(120)
-                    height: Config.scaledSize(30)
-                    spacing: Config.scaledSize(4)
-                    anchors.verticalCenter: parent.verticalCenter
-                    Repeater {
-                      model: [{ key: true, label: "Тьма" }, { key: false, label: "Свет" }]
-                      Rectangle {
-                        required property var modelData
-                        width: Config.scaledSize(58)
-                        height: Config.scaledSize(30)
-                        radius: Config.popupRadiusPx(8)
-                        readonly property bool active: Config.manualDark === modelData.key
-                        color: active ? Config.selectedBg : (toneMouse.containsMouse ? Config.hoverBg : "transparent")
-                        Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans }
-                        MouseArea { id: toneMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyManualTone(parent.modelData.key) }
-                      }
-                    }
-                  }
-                }
-
-                Rectangle {
-                  width: parent.width
-                  height: Config.scaledSize(34)
-                  radius: Config.popupRadiusPx(10)
-                  color: Config.searchBg
-                  border.color: manualAccentInput.activeFocus ? Config.activeBorderColor : Config.borderColor
-                  border.width: 1
-                  TextInput {
-                    id: manualAccentInput
-                    anchors.fill: parent
-                    anchors.leftMargin: Config.scaledSize(12)
-                    anchors.rightMargin: Config.scaledSize(12)
-                    verticalAlignment: TextInput.AlignVCenter
-                    text: Config.manualAccent
-                    color: Config.textPrimary
-                    selectedTextColor: Config.textWhite
-                    selectionColor: Config.selectedBg
-                    font.pixelSize: Config.fontMonoSizeSmall
-                    font.family: Config.fontMono
-                    maximumLength: 7
-                    onEditingFinished: root.applyManualAccent(text)
-                    Keys.onReturnPressed: focus = false
-                    Keys.onEscapePressed: { text = Config.manualAccent; focus = false }
-                  }
-                }
-              }
-            }
-
             SettingsRow {
               icon: Config.iconMotion
               title: I18n.tr("Меньше анимаций")
@@ -1013,6 +909,256 @@ PanelWindow {
           Column {
             width: parent.width
             spacing: Config.scaledSize(10)
+            visible: root.activeSection === "palette"
+            height: visible ? implicitHeight : 0
+            clip: true
+            SettingsRow {
+              icon: Config.iconPalette
+              title: I18n.tr("Тема")
+              subtitle: Config.themeName === "manual" ? I18n.tr("Ручной акцент") : (Config.themeName === "dynamic" ? I18n.tr("Акцент из обоев") : (Config.themeName === "light" ? I18n.tr("Светлая палитра") : I18n.tr("Тёмная палитра")))
+              Rectangle {
+                id: themeSegment
+                width: Config.scaledSize(226)
+                height: Config.scaledSize(34)
+                radius: Config.popupRadiusPx(9)
+                color: "transparent"
+                Row {
+                  anchors.fill: parent
+                  spacing: Config.scaledSize(2)
+                  Repeater {
+                    model: [{ key: "light", label: "Свет" }, { key: "dark", label: "Тьма" }, { key: "dynamic", label: "Дин." }, { key: "manual", label: "Своя" }]
+                    Rectangle {
+                      required property var modelData
+                      width: (themeSegment.width - 6) / 4
+                      height: Config.scaledSize(34)
+                      radius: Config.popupRadiusPx(9)
+                      readonly property bool active: Config.themeName === modelData.key
+                      color: active ? Config.selectedBg : (themeMouse.containsMouse ? Config.hoverBg : "transparent")
+                      Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.2 }
+                      MouseArea { id: themeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyTheme(parent.modelData.key) }
+                    }
+                  }
+                }
+              }
+            }
+
+            Item {
+              width: parent.width
+              height: Config.themeName === "manual" ? manualThemeColumn.implicitHeight : 0
+              clip: true
+              Behavior on height { NumberAnimation { duration: Config.reduceMotion ? 0 : 120; easing.type: Easing.OutCubic } }
+              Column {
+                id: manualThemeColumn
+                width: parent.width
+                spacing: Config.scaledSize(12)
+                topPadding: 4
+                bottomPadding: 6
+
+                Grid {
+                  width: parent.width
+                  columns: 8
+                  columnSpacing: Config.scaledSize(4)
+                  rowSpacing: Config.scaledSize(4)
+                  Repeater {
+                    model: 16
+                    Rectangle {
+                      required property int modelData
+                      width: (parent.width - 7 * Config.scaledSize(4)) / 8
+                      height: Config.scaledSize(30)
+                      radius: Config.popupRadiusPx(8)
+                      color: Config.manualPalette[modelData] || "#000000"
+                      border.color: root.manualSlot === modelData ? Config.textWhite : Config.subtleBorder
+                      border.width: root.manualSlot === modelData ? 2 : 1
+                      Text {
+                        anchors.centerIn: parent
+                        text: root.slotLabel(modelData)
+                        color: root.slotTextColor(Config.manualPalette[modelData])
+                        font.pixelSize: Config.fontSizeTiny
+                        font.weight: Font.Medium
+                        font.family: Config.fontSans
+                      }
+                      MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.manualSlot = modelData }
+                    }
+                  }
+                }
+
+                Row {
+                  width: parent.width
+                  height: Config.scaledSize(34)
+                  spacing: Config.scaledSize(10)
+                  Rectangle { width: Config.scaledSize(34); height: Config.scaledSize(34); radius: Config.popupRadiusPx(9); color: root.manualSlotColor; border.color: Config.borderColor; border.width: 1; anchors.verticalCenter: parent.verticalCenter }
+                  Column {
+                    width: parent.width - 44
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Config.scaledSize(2)
+                    Text { width: parent.width; text: root.slotLabel(root.manualSlot) + " · " + root.currentManualHex; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+                    Text { width: parent.width; text: I18n.tr("Кликни по цвету, чтобы выбрать его"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+                  }
+                }
+
+                Item {
+                  width: parent.width
+                  height: 18
+                  Rectangle {
+                    id: manualHueStrip
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: 14
+                    radius: Config.popupRadiusPx(7)
+                    gradient: Gradient {
+                      orientation: Gradient.Horizontal
+                      GradientStop { position: 0.0; color: Qt.hsla(0.0, 0.7, 0.5, 1) }
+                      GradientStop { position: 1 / 6; color: Qt.hsla(1 / 6, 0.7, 0.5, 1) }
+                      GradientStop { position: 2 / 6; color: Qt.hsla(2 / 6, 0.7, 0.5, 1) }
+                      GradientStop { position: 3 / 6; color: Qt.hsla(3 / 6, 0.7, 0.5, 1) }
+                      GradientStop { position: 4 / 6; color: Qt.hsla(4 / 6, 0.7, 0.5, 1) }
+                      GradientStop { position: 5 / 6; color: Qt.hsla(5 / 6, 0.7, 0.5, 1) }
+                      GradientStop { position: 1.0; color: Qt.hsla(1.0, 0.7, 0.5, 1) }
+                    }
+                    Rectangle {
+                      width: 18
+                      height: 18
+                      radius: Config.popupRadiusPx(9)
+                      anchors.verticalCenter: parent.verticalCenter
+                      x: root.manualHue * (manualHueStrip.width - width)
+                      color: root.manualSlotColor
+                      border.width: 2
+                      border.color: Config.textWhite
+                    }
+                    MouseArea {
+                      anchors.fill: parent
+                      cursorShape: Qt.PointingHandCursor
+                      onPressed: mouse => root.setManualHueFromX(mouse.x, manualHueStrip.width)
+                      onPositionChanged: mouse => root.setManualHueFromX(mouse.x, manualHueStrip.width)
+                    }
+                  }
+                }
+
+                Rectangle {
+                  width: parent.width
+                  height: Config.scaledSize(34)
+                  radius: Config.popupRadiusPx(10)
+                  color: Config.searchBg
+                  border.color: manualAccentInput.activeFocus ? Config.activeBorderColor : Config.borderColor
+                  border.width: 1
+                  TextInput {
+                    id: manualAccentInput
+                    anchors.fill: parent
+                    anchors.leftMargin: Config.scaledSize(12)
+                    anchors.rightMargin: Config.scaledSize(12)
+                    verticalAlignment: TextInput.AlignVCenter
+                    text: root.currentManualHex
+                    color: Config.textPrimary
+                    selectedTextColor: Config.textWhite
+                    selectionColor: Config.selectedBg
+                    font.pixelSize: Config.fontMonoSizeSmall
+                    font.family: Config.fontMono
+                    maximumLength: 7
+                    onEditingFinished: root.applyManualSlot(text)
+                    Keys.onReturnPressed: focus = false
+                    Keys.onEscapePressed: { text = root.currentManualHex; focus = false }
+                  }
+                }
+              }
+            }
+
+            SettingsRow {
+              visible: Config.themeName === "dynamic"
+              icon: Config.iconWallpaper
+              title: I18n.tr("Пресет палитры")
+              subtitle: I18n.tr("Как извлекать цвета из обоев")
+              Item {
+                width: Config.scaledSize(194)
+                height: Config.scaledSize(30)
+                Rectangle {
+                  id: wallpaperPaletteButton
+                  anchors.fill: parent
+                  radius: Config.popupRadiusPx(9)
+                  color: wallpaperPaletteButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+                  border.color: root.wallpaperPaletteDropdownOpen ? Config.activeBorderColor : Config.borderColor
+                  border.width: 1
+                  Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperPaletteSchemes, Config.wallpaperPaletteScheme); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+                  Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: root.wallpaperPaletteDropdownOpen ? "󰅃" : "󰅀"; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
+                  MouseArea {
+                    id: wallpaperPaletteButtonMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                      let pos = wallpaperPaletteButton.mapToItem(container, 0, wallpaperPaletteButton.height + 6)
+                      root.wallpaperPaletteDropdownX = pos.x
+                      root.wallpaperPaletteDropdownY = pos.y
+                      root.wallpaperPaletteDropdownWidth = wallpaperPaletteButton.width
+                      root.wallpaperModeDropdownOpen = false
+                      root.wallpaperTransitionDropdownOpen = false
+                      root.wallpaperPaletteDropdownOpen = !root.wallpaperPaletteDropdownOpen
+                    }
+                  }
+                }
+              }
+            }
+
+            SettingsRow {
+              visible: Config.themeName === "dynamic"
+              icon: Config.iconTheme
+              title: I18n.tr("Тёмная тема")
+              subtitle: Config.dynamicDark ? I18n.tr("Тёмные цвета из обоев") : I18n.tr("Светлые цвета из обоев")
+              onClicked: root.setBoolSetting("dynamicDark", !Config.dynamicDark)
+              ToggleSwitch { z: 1; checked: Config.dynamicDark; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("dynamicDark", !Config.dynamicDark) }
+            }
+
+            Text { text: I18n.tr("Пресеты"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Grid {
+              id: presetsGrid
+              width: parent.width
+              columns: 3
+              columnSpacing: Config.scaledSize(10)
+              rowSpacing: Config.scaledSize(10)
+              Repeater {
+                model: root.presets
+                delegate: Rectangle {
+                  required property var modelData
+                  width: (presetsGrid.width - 20) / 3
+                  height: Config.scaledSize(52)
+                  radius: Config.cardRadius
+                  color: presetMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+                  border.color: Config.subtleBorder
+                  border.width: 1
+
+                  Column {
+                    anchors.fill: parent
+                    anchors.margins: Config.scaledSize(8)
+                    spacing: Config.scaledSize(6)
+
+                    Text { width: parent.width; text: modelData.name; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight }
+
+                    Row {
+                      width: parent.width
+                      height: Config.scaledSize(12)
+                      spacing: 1
+                      Repeater {
+                        model: modelData.colors.slice(0, 8)
+                        Rectangle {
+                          required property var modelData
+                          width: (parent.width - 7) / 8
+                          height: parent.height
+                          radius: 2
+                          color: modelData
+                        }
+                      }
+                    }
+                  }
+
+                  MouseArea { id: presetMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyPreset(modelData.name, modelData.colors) }
+                }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Config.scaledSize(10)
             visible: root.activeSection === "wallpaper"
             height: visible ? implicitHeight : 0
             clip: true
@@ -1126,40 +1272,6 @@ PanelWindow {
                         root.wallpaperTransitionDropdownWidth = wallpaperTransitionButton.width
                         root.wallpaperModeDropdownOpen = false
                         root.wallpaperTransitionDropdownOpen = !root.wallpaperTransitionDropdownOpen
-                      }
-                    }
-                  }
-                }
-              }
-              SettingsRow {
-                icon: Config.iconWallpaper
-                title: I18n.tr("Пресет палитры")
-                subtitle: I18n.tr("Как извлекать цвета из обоев")
-                Item {
-                  width: Config.scaledSize(194)
-                  height: Config.scaledSize(30)
-                  Rectangle {
-                    id: wallpaperPaletteButton
-                    anchors.fill: parent
-                    radius: Config.popupRadiusPx(9)
-                    color: wallpaperPaletteButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
-                    border.color: root.wallpaperPaletteDropdownOpen ? Config.activeBorderColor : Config.borderColor
-                    border.width: 1
-                    Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; width: parent.width - 38; text: root.optionName(root.wallpaperPaletteSchemes, Config.wallpaperPaletteScheme); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-                    Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: root.wallpaperPaletteDropdownOpen ? "󰅃" : "󰅀"; color: Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon }
-                    MouseArea {
-                      id: wallpaperPaletteButtonMouse
-                      anchors.fill: parent
-                      hoverEnabled: true
-                      cursorShape: Qt.PointingHandCursor
-                      onClicked: {
-                        let pos = wallpaperPaletteButton.mapToItem(container, 0, wallpaperPaletteButton.height + 6)
-                        root.wallpaperPaletteDropdownX = pos.x
-                        root.wallpaperPaletteDropdownY = pos.y
-                        root.wallpaperPaletteDropdownWidth = wallpaperPaletteButton.width
-                        root.wallpaperModeDropdownOpen = false
-                        root.wallpaperTransitionDropdownOpen = false
-                        root.wallpaperPaletteDropdownOpen = !root.wallpaperPaletteDropdownOpen
                       }
                     }
                   }
@@ -2205,7 +2317,7 @@ PanelWindow {
         border.color: Config.activeBorderColor
         border.width: 1
         clip: true
-        visible: root.wallpaperPaletteDropdownOpen && root.activeSection === "wallpaper"
+        visible: root.wallpaperPaletteDropdownOpen && root.activeSection === "palette"
 
         Flickable {
           anchors.fill: parent

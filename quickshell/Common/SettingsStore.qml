@@ -14,6 +14,7 @@ Singleton {
   property bool parseError: false
 
   property alias themeName: adapter.themeName
+  property alias dynamicDark: adapter.dynamicDark
   property alias fontFamily: adapter.fontFamily
   property alias fontMonoFamily: adapter.fontMonoFamily
   property alias fontScale: adapter.fontScale
@@ -28,8 +29,7 @@ Singleton {
   property alias weatherLocation: adapter.weatherLocation
   property alias dynamicAccent: adapter.dynamicAccent
   property alias dynamicPalette: adapter.dynamicPalette
-  property alias manualAccent: adapter.manualAccent
-  property alias manualDark: adapter.manualDark
+  property alias manualPalette: adapter.manualPalette
   property alias caffeineEnabled: adapter.caffeineEnabled
   property alias timeFormat: adapter.timeFormat
   property alias showSeconds: adapter.showSeconds
@@ -116,6 +116,7 @@ Singleton {
     JsonAdapter {
       id: adapter
       property string themeName: "dark"
+      property string dynamicDark: "true"
       property string fontFamily: "Geist Mono"
       property string fontMonoFamily: "Geist Mono"
       property string fontScale: "1.0"
@@ -130,8 +131,7 @@ Singleton {
       property string weatherLocation: ""
       property string dynamicAccent: "#e2e8f0"
       property string dynamicPalette: "[\"#e2e8f0\",\"#334155\",\"#64748b\",\"#94a3b8\"]"
-      property string manualAccent: "#e2e8f0"
-      property string manualDark: "true"
+      property string manualPalette: "[\"#282a36\",\"#ff5555\",\"#50fa7b\",\"#f1fa8c\",\"#bd93f9\",\"#ff79c6\",\"#8be9fd\",\"#f8f8f2\",\"#6272a4\",\"#ff6e6e\",\"#69ff94\",\"#ffffa5\",\"#d6acff\",\"#ff92df\",\"#a4ffff\",\"#ffffff\"]"
       property string caffeineEnabled: "false"
       property string timeFormat: "24"
       property string showSeconds: "false"
@@ -201,6 +201,7 @@ Singleton {
   function snapshot() {
     return {
       themeName: adapter.themeName,
+      dynamicDark: adapter.dynamicDark,
       fontFamily: adapter.fontFamily,
       fontMonoFamily: adapter.fontMonoFamily,
       fontScale: adapter.fontScale,
@@ -215,8 +216,7 @@ Singleton {
       weatherLocation: adapter.weatherLocation,
       dynamicAccent: adapter.dynamicAccent,
       dynamicPalette: adapter.dynamicPalette,
-      manualAccent: adapter.manualAccent,
-      manualDark: adapter.manualDark,
+      manualPalette: adapter.manualPalette,
       caffeineEnabled: adapter.caffeineEnabled,
       timeFormat: adapter.timeFormat,
       showSeconds: adapter.showSeconds,
