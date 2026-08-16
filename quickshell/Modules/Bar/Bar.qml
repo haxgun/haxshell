@@ -40,7 +40,30 @@ Scope {
         model: Quickshell.screens
 
         Scope {
+            id: screenScope
             required property var modelData
+            property string targetPos: ""
+            property bool barMoveActive: false
+
+            function nearestEdge(sx, sy) {
+                let w = modelData.width
+                let h = modelData.height
+                let nx = w > 0 ? Math.max(0, Math.min(1, sx / w)) : 0.5
+                let ny = h > 0 ? Math.max(0, Math.min(1, sy / h)) : 0.5
+                let edge = "top"
+                let best = ny
+                if (1 - ny < best) { edge = "bottom"; best = 1 - ny }
+                if (nx < best) { edge = "left"; best = nx }
+                if (1 - nx < best) { edge = "right"; best = 1 - nx }
+                return edge
+            }
+
+            function finishBarDrag() {
+                if (targetPos !== "" && targetPos !== Config.barPosition) {
+                    Config.barPosition = targetPos
+                    SettingsStore.setValue("barPosition", targetPos)
+                }
+            }
 
             Tooltip {
                 id: barTooltip
@@ -131,6 +154,51 @@ Scope {
                             let cursorX = windowOffsetX + barSurface.x + mouse.x;
                             root.settingsPopup.rightMargin = Math.max(gap, Math.min(screenW - popupW - gap, screenW - popupW / 2 - cursorX));
                             root.settingsPopup.isOpen = true;
+                        }
+                    }
+
+                    // Left-drag on empty bar area repositions the bar to the nearest edge.
+                    // Placed below widgets so their own mouse handling wins.
+                    MouseArea {
+                        id: barDragArea
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton
+                        preventStealing: true
+                        property bool dragging: false
+                        property point pressPos: Qt.point(0, 0)
+                        property real pressScreenX: 0
+                        property real pressScreenY: 0
+
+                        onPressed: (mouse) => {
+                            dragging = false
+                            pressPos = Qt.point(mouse.x, mouse.y)
+                            let ps = barSurface.mapToItem(null, mouse.x, mouse.y)
+                            pressScreenX = ps.x + (Config.barPosition === "right" ? Math.max(0, modelData.width - window.width) : 0)
+                            pressScreenY = ps.y + (Config.barPosition === "bottom" ? Math.max(0, modelData.height - window.height) : 0)
+                            screenScope.targetPos = ""
+                            screenScope.barMoveActive = false
+                        }
+                        onPositionChanged: (mouse) => {
+                            if (!(mouse.buttons & Qt.LeftButton)) return
+                            let dx = mouse.x - pressPos.x
+                            let dy = mouse.y - pressPos.y
+                            if (!dragging && Math.abs(dx) + Math.abs(dy) > Config.scaledSize(6)) {
+                                dragging = true
+                            }
+                            if (dragging) {
+                                screenScope.barMoveActive = true
+                                screenScope.targetPos = screenScope.nearestEdge(pressScreenX + dx, pressScreenY + dy)
+                            }
+                        }
+                        onReleased: (mouse) => {
+                            if (!dragging) return
+                            dragging = false
+                            screenScope.barMoveActive = false
+                            screenScope.finishBarDrag()
+                        }
+                        onCanceled: {
+                            dragging = false
+                            screenScope.barMoveActive = false
                         }
                     }
 
@@ -264,6 +332,38 @@ Scope {
                     }
                 }
 
+            }
+
+            PanelWindow {
+                id: ghostWindow
+                screen: modelData
+                WlrLayershell.namespace: "quickshell-bar"
+                WlrLayershell.layer: WlrLayer.Overlay
+                exclusiveZone: 0
+                visible: screenScope.barMoveActive
+                color: "#00000000"
+                mask: Region {}
+
+                anchors {
+                    top: true
+                    left: true
+                    right: true
+                    bottom: true
+                }
+
+                Rectangle {
+                    id: ghost
+                    radius: Config.scaledBarRadius
+                    color: Config.barBackgroundBg
+                    opacity: 0.8
+                    border.color: Qt.rgba(Config.themeAccent.r, Config.themeAccent.g, Config.themeAccent.b, 0.65)
+                    border.width: 1
+
+                    x: screenScope.targetPos === "right" ? window.screenWidth - Config.barHeight - Config.barMargin : Config.barMargin
+                    y: screenScope.targetPos === "bottom" ? window.screenHeight - Config.barHeight - Config.scaledBarBottomMargin : Config.scaledBarTopMargin
+                    width: (screenScope.targetPos === "left" || screenScope.targetPos === "right") ? Config.barHeight : window.screenWidth - Config.barMargin * 2
+                    height: (screenScope.targetPos === "left" || screenScope.targetPos === "right") ? window.screenHeight - Config.scaledBarTopMargin - Config.scaledBarBottomMargin : Config.barHeight
+                }
             }
 
         }
