@@ -71,6 +71,9 @@ Singleton {
   property alias brightnessSleepMultiplier: adapter.brightnessSleepMultiplier
   property alias barPosition: adapter.barPosition
   property alias barStyle: adapter.barStyle
+  property alias barAutoHide: adapter.barAutoHide
+  property alias barAutoHideDelay: adapter.barAutoHideDelay
+  property alias settingsCloseKeybind: adapter.settingsCloseKeybind
   property alias barThickness: adapter.barThickness
   property alias barTopMargin: adapter.barTopMargin
   property alias barBottomMargin: adapter.barBottomMargin
@@ -180,6 +183,9 @@ Singleton {
       property string brightnessSleepMultiplier: ".2"
       property string barPosition: "top"
       property string barStyle: "solid"
+      property string barAutoHide: "false"
+      property string barAutoHideDelay: "3"
+      property string settingsCloseKeybind: "Esc"
       property string barThickness: "40"
       property string barTopMargin: "6"
       property string barBottomMargin: "6"
@@ -272,6 +278,9 @@ Singleton {
       brightnessSleepMultiplier: adapter.brightnessSleepMultiplier,
       barPosition: adapter.barPosition,
       barStyle: adapter.barStyle,
+      barAutoHide: adapter.barAutoHide,
+      barAutoHideDelay: adapter.barAutoHideDelay,
+      settingsCloseKeybind: adapter.settingsCloseKeybind,
       barThickness: adapter.barThickness,
       barTopMargin: adapter.barTopMargin,
       barBottomMargin: adapter.barBottomMargin,

@@ -178,6 +178,9 @@ QtObject {
   property string barPosition: "top"
   property string barStyle: "solid"
   property string popupVerticalAlign: "top"
+  property bool barAutoHide: false
+  property int barAutoHideDelay: 3
+  property string settingsCloseKeybind: "Esc"
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property int barRotation: barPosition === "left" ? -90 : (barPosition === "right" ? 90 : 0)
   readonly property bool popupsAtBottom: barPosition === "bottom" || (isBarVertical && popupVerticalAlign === "bottom")

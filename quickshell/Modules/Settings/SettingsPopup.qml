@@ -129,6 +129,7 @@ PanelWindow {
   } else {
     weatherSuggestions.clear()
     root.fontSearch = ""
+    container.moved = false
   }
 
   visible: isOpen || container.opacity > 0.01
@@ -150,6 +151,12 @@ PanelWindow {
     function toggle() { root.isOpen = !root.isOpen }
     function open() { root.isOpen = true }
     function close() { root.isOpen = false }
+  }
+
+  Shortcut {
+    sequence: Config.settingsCloseKeybind
+    enabled: root.isOpen
+    onActivated: root.isOpen = false
   }
 
   ListModel { id: wallpapersModel }
@@ -195,6 +202,20 @@ PanelWindow {
     id: presetsProc
     command: [root.veyctl, "presets"]
     stdout: SplitParser { onRead: data => root.applyPresets(data) }
+  }
+
+  Process {
+    id: screenColorProc
+    command: [root.veyctl, "color", "pick"]
+    stdout: SplitParser {
+      onRead: data => {
+        try {
+          let result = JSON.parse(data)
+          if (result.ok && result.hex) root.applyManualSlot(result.hex)
+        } catch (_) {}
+      }
+    }
+    onExited: root.isOpen = true
   }
 
   Timer { id: citySearchTimer; interval: 350; repeat: false; onTriggered: if (weatherLocationInput.activeFocus) root.searchCities(weatherLocationInput.text) }
@@ -248,6 +269,17 @@ PanelWindow {
     let thickness = Math.max(28, Math.min(100, Math.round(value)))
     Config.barThickness = thickness
     saveSetting("barThickness", thickness)
+  }
+  function applyBarAutoHideDelay(value) {
+    let delay = Math.max(0, Math.min(60, Math.round(value)))
+    Config.barAutoHideDelay = delay
+    saveSetting("barAutoHideDelay", delay)
+  }
+  function applyCloseKeybind(value) {
+    let key = value.trim()
+    if (key.length === 0) return
+    Config.settingsCloseKeybind = key
+    saveSetting("settingsCloseKeybind", key)
   }
   function applyBarTopMargin(value) {
     let margin = Math.max(0, Math.min(64, Math.round(value)))
@@ -325,6 +357,10 @@ PanelWindow {
     let sat = root.manualSat < 0.05 ? 0.5 : root.manualSat
     applyManualSlot(colorToHex(Qt.hsla(hue, sat, 0.5, 1)))
   }
+  function pickManualColor() {
+    root.isOpen = false
+    screenColorProc.running = true
+  }
   function setBoolSetting(key, value) {
     if (key === "showSeconds") Config.showSeconds = value
     if (key === "tooltipsEnabled") Config.tooltipsEnabled = value
@@ -369,6 +405,7 @@ PanelWindow {
     if (key === "barControlCenterEnabled") Config.barControlCenterEnabled = value
     if (key === "barVpnEnabled") Config.barVpnEnabled = value
     if (key === "barPowerEnabled") Config.barPowerEnabled = value
+    if (key === "barAutoHide") Config.barAutoHide = value
     saveSetting(key, value ? "true" : "false")
   }
   function applyChoice(key, value) {
@@ -589,11 +626,11 @@ PanelWindow {
     id: container
     width: Math.min(Config.scaledSize(620), root.width - Config.scaledSize(8))
     height: Math.min(480, root.height - 32)
-    anchors.left: Config.popupsAtLeft ? parent.left : undefined
-    anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
-    anchors.right: Config.popupsAtLeft ? undefined : parent.right
-    anchors.rightMargin: Math.max(Config.popupGap, Math.min(root.rightMargin, root.width - width - Config.popupGap))
-    y: root.isOpen ? (Config.popupsAtBottom ? parent.height - height - Config.popupGap : Config.popupGap) : (Config.popupsAtBottom ? parent.height + 12 : -12)
+    property bool moved: false
+    property real dragX: 0
+    property real dragY: 0
+    x: moved ? dragX : (parent.width - width) / 2
+    y: moved ? dragY : (parent.height - height) / 2
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
     color: Config.popupGlassBg
@@ -611,11 +648,25 @@ PanelWindow {
       z: -1
     }
 
-    Behavior on y { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
     Behavior on opacity { NumberAnimation { duration: 100 } }
 
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
     Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
+
+    Rectangle {
+      id: settingsClose
+      width: Config.scaledSize(28)
+      height: Config.scaledSize(28)
+      radius: Config.popupRadiusPx(9)
+      z: 2
+      anchors.top: parent.top
+      anchors.topMargin: Config.scaledSize(14)
+      anchors.right: parent.right
+      anchors.rightMargin: Config.scaledSize(14)
+      color: settingsCloseMouse.containsMouse ? Config.hoverBg : "#00000000"
+      Text { anchors.centerIn: parent; text: "×"; color: settingsCloseMouse.containsMouse ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeLarge; font.family: Config.fontSans }
+      MouseArea { id: settingsCloseMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: mouse => { mouse.accepted = true; root.isOpen = false } }
+    }
 
     Column {
       id: contentRoot
@@ -625,12 +676,36 @@ PanelWindow {
       anchors.horizontalCenter: parent.horizontalCenter
       spacing: Config.scaledSize(12)
 
-      Row {
+      Item {
         width: parent.width
         height: Config.scaledSize(30)
-        spacing: Config.scaledSize(10)
-        Text { text: Config.iconSettings; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+
+        Text { id: settingsTitleIcon; text: Config.iconSettings; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter }
+        Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsTitleIcon.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter }
+
+        MouseArea {
+          id: settingsDragArea
+          anchors.fill: parent
+          cursorShape: Qt.ClosedHandCursor
+          property point pressPoint: Qt.point(0, 0)
+          property real pressX: 0
+          property real pressY: 0
+          onPressed: (mouse) => {
+            pressX = container.x
+            pressY = container.y
+            container.dragX = pressX
+            container.dragY = pressY
+            pressPoint = Qt.point(mouse.x, mouse.y)
+            container.moved = true
+          }
+          onPositionChanged: (mouse) => {
+            if (!pressed) return
+            container.dragX = pressX + mouse.x - pressPoint.x
+            container.dragY = pressY + mouse.y - pressPoint.y
+            container.dragX = Math.max(0, Math.min(container.parent.width - container.width, container.dragX))
+            container.dragY = Math.max(0, Math.min(container.parent.height - container.height, container.dragY))
+          }
+        }
       }
 
       Row {
@@ -654,6 +729,7 @@ PanelWindow {
               { key: "wallpaper", icon: Config.iconWallpaper, title: "Обои" },
               { key: "location", icon: Config.iconClock, title: "Время и локация" },
               { key: "monitoring", icon: Config.iconCpu, title: "Мониторинг" },
+              { key: "keybinds", icon: Config.iconKeyboard, title: "Сочетания клавиш" },
               { key: "about", icon: Config.iconInfo, title: "О программе" }
             ]
             Rectangle {
@@ -1001,6 +1077,24 @@ PanelWindow {
                     Text { width: parent.width; text: root.slotLabel(root.manualSlot) + " · " + root.currentManualHex; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
                     Text { width: parent.width; text: I18n.tr("Кликни по цвету, чтобы выбрать его"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
                   }
+                }
+
+                ColorPicker {
+                  width: parent.width
+                  height: Config.scaledSize(170)
+                  selectedColor: root.manualSlotColor
+                  onColorEdited: color => root.applyManualSlot(root.colorToHex(color))
+                }
+
+                Rectangle {
+                  width: parent.width
+                  height: Config.scaledSize(34)
+                  radius: Config.popupRadiusPx(10)
+                  color: screenColorMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+                  border.color: Config.borderColor
+                  border.width: 1
+                  Text { anchors.centerIn: parent; text: Config.iconColorPicker + "  " + I18n.tr("Выбрать цвет с экрана"); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                  MouseArea { id: screenColorMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.pickManualColor() }
                 }
 
                 Item {
@@ -1524,6 +1618,26 @@ PanelWindow {
               }
             }
             SettingsRow {
+              icon: Config.iconStopwatch
+              title: I18n.tr("Автоскрытие")
+              subtitle: Config.barAutoHide ? I18n.tr("Скрывается автоматически") : I18n.tr("Всегда отображается")
+              onClicked: root.setBoolSetting("barAutoHide", !Config.barAutoHide)
+              ToggleSwitch { z: 1; checked: Config.barAutoHide; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barAutoHide", !Config.barAutoHide) }
+            }
+            SettingsRow {
+              icon: Config.iconStopwatch
+              title: I18n.tr("Задержка скрытия")
+              subtitle: I18n.tr("Через сколько секунд скрывать панель")
+              NumberSlider {
+                value: Config.barAutoHideDelay
+                from: 0
+                to: 60
+                defaultValue: 3
+                suffix: " с"
+                onValueEdited: root.applyBarAutoHideDelay(value)
+              }
+            }
+            SettingsRow {
               icon: Config.iconSettings
               title: I18n.tr("Отступ сверху")
               subtitle: I18n.tr("Расстояние от верхнего края")
@@ -1712,13 +1826,6 @@ PanelWindow {
               subtitle: Config.barNetworkEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
               onClicked: root.setBoolSetting("barNetworkEnabled", !Config.barNetworkEnabled)
               ToggleSwitch { z: 1; checked: Config.barNetworkEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barNetworkEnabled", !Config.barNetworkEnabled) }
-            }
-            SettingsRow {
-              icon: Config.iconControlCenter
-              title: I18n.tr("Центр управления")
-              subtitle: Config.barControlCenterEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыт из панели")
-              onClicked: root.setBoolSetting("barControlCenterEnabled", !Config.barControlCenterEnabled)
-              ToggleSwitch { z: 1; checked: Config.barControlCenterEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barControlCenterEnabled", !Config.barControlCenterEnabled) }
             }
             SettingsRow {
               icon: Config.iconClock
@@ -2104,6 +2211,45 @@ PanelWindow {
               subtitle: I18n.tr("Скорость загрузки")
               onClicked: root.setBoolSetting("barSysNetEnabled", !Config.barSysNetEnabled)
               ToggleSwitch { z: 1; checked: Config.barSysNetEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysNetEnabled", !Config.barSysNetEnabled) }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Config.scaledSize(10)
+            visible: root.activeSection === "keybinds"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("Сочетания клавиш"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconKeyboard
+              title: I18n.tr("Закрыть настройки")
+              subtitle: I18n.tr("Сочетание клавиш для закрытия окна настроек")
+              Rectangle {
+                width: Config.scaledSize(120)
+                height: Config.scaledSize(34)
+                radius: Config.popupRadiusPx(10)
+                color: Config.searchBg
+                border.color: closeKeybindInput.activeFocus ? Config.activeBorderColor : "#00000000"
+                border.width: closeKeybindInput.activeFocus ? 1 : 0
+                TextInput {
+                  id: closeKeybindInput
+                  anchors.fill: parent
+                  anchors.leftMargin: Config.scaledSize(10)
+                  anchors.rightMargin: Config.scaledSize(10)
+                  verticalAlignment: TextInput.AlignVCenter
+                  horizontalAlignment: TextInput.AlignHCenter
+                  text: Config.settingsCloseKeybind
+                  color: Config.textPrimary
+                  selectedTextColor: Config.textWhite
+                  selectionColor: Config.selectedBg
+                  font.pixelSize: Config.fontSizeSmall
+                  font.family: Config.fontSans
+                  clip: true
+                  onEditingFinished: root.applyCloseKeybind(text)
+                  Keys.onEscapePressed: { text = Config.settingsCloseKeybind; focus = false }
+                }
+              }
             }
           }
 

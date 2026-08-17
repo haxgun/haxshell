@@ -119,5 +119,14 @@
   "Моноширинный шрифт": "Monospaced font",
   "Дизайн панели": "Bar design",
   "Островки": "Islands",
-  "Сплошной": "Solid"
+  "Сплошной": "Solid",
+  "Автоскрытие": "Auto-hide",
+  "Скрывается автоматически": "Hides automatically",
+  "Всегда отображается": "Always shown",
+  "Задержка скрытия": "Hide delay",
+  "Через сколько секунд скрывать панель": "Seconds before the panel hides",
+  "Сочетания клавиш": "Keybinds",
+  "Закрыть настройки": "Close settings",
+  "Сочетание клавиш для закрытия окна настроек": "Shortcut to close the settings window",
+  "Выбрать цвет с экрана": "Pick color from screen"
 }

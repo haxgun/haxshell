@@ -110,6 +110,9 @@ Scope {
       if (typeof settings.reduceMotion === "string") Config.reduceMotion = settings.reduceMotion === "true"
       if (settings.barPosition) Config.barPosition = settings.barPosition
       if (settings.barStyle) Config.barStyle = settings.barStyle
+      if (typeof settings.barAutoHide === "string") Config.barAutoHide = settings.barAutoHide === "true"
+      if (settings.barAutoHideDelay) Config.barAutoHideDelay = parseInt(settings.barAutoHideDelay)
+      if (settings.settingsCloseKeybind) Config.settingsCloseKeybind = settings.settingsCloseKeybind
       if (settings.barThickness) Config.barThickness = parseInt(settings.barThickness)
       if (typeof settings.barTopMargin === "string") Config.barTopMargin = parseInt(settings.barTopMargin)
       if (typeof settings.barBottomMargin === "string") Config.barBottomMargin = parseInt(settings.barBottomMargin)

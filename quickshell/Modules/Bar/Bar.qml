@@ -44,6 +44,7 @@ Scope {
             required property var modelData
             property string targetPos: ""
             property bool barMoveActive: false
+            property bool barHidden: false
 
             function nearestEdge(sx, sy) {
                 let w = modelData.width
@@ -62,6 +63,31 @@ Scope {
                 if (targetPos !== "" && targetPos !== Config.barPosition) {
                     Config.barPosition = targetPos
                     SettingsStore.setValue("barPosition", targetPos)
+                }
+            }
+
+            function revealBar() {
+                hideTimer.stop()
+                barHidden = false
+            }
+
+            function scheduleHide() {
+                if (!Config.barAutoHide) return
+                hideTimer.interval = Math.max(0, Config.barAutoHideDelay) * 1000
+                hideTimer.restart()
+            }
+
+            Timer {
+                id: hideTimer
+                repeat: false
+                onTriggered: screenScope.barHidden = true
+            }
+
+            Connections {
+                target: Config
+                function onBarAutoHideChanged() {
+                    if (Config.barAutoHide) screenScope.scheduleHide()
+                    else screenScope.revealBar()
                 }
             }
 
@@ -94,6 +120,22 @@ Scope {
                     bottom: window.vertical || window.posBottom
                     left: !window.vertical || window.posLeft
                     right: !window.vertical || window.posRight
+                }
+
+                readonly property int hideShift: (window.vertical ? Config.barHeight + Config.barMargin : Config.barHeight + Config.scaledBarTopMargin + Config.scaledBarBottomMargin) - Config.scaledSize(4)
+
+                margins {
+                    top: window.posTop && screenScope.barHidden ? -window.hideShift : 0
+                    bottom: window.posBottom && screenScope.barHidden ? -window.hideShift : 0
+                    left: window.posLeft && screenScope.barHidden ? -window.hideShift : 0
+                    right: window.posRight && screenScope.barHidden ? -window.hideShift : 0
+                }
+
+                exclusionMode: (Config.barAutoHide || screenScope.barHidden) ? ExclusionMode.Ignore : ExclusionMode.Auto
+
+                HoverHandler {
+                    id: barHover
+                    onHoveredChanged: hovered ? screenScope.revealBar() : screenScope.scheduleHide()
                 }
 
                 Rectangle {
@@ -135,26 +177,6 @@ Scope {
                     TapHandler {
                         acceptedButtons: Qt.LeftButton
                         onTapped: root.closeBarFlyouts()
-                    }
-
-                    // Right-click on empty bar area opens settings near the cursor.
-                    // Placed below widgets so tray icons handle their own right-click first.
-                    MouseArea {
-                        anchors.fill: parent
-                        acceptedButtons: Qt.RightButton
-                        onClicked: (mouse) => {
-                            root.closeBarFlyouts();
-                            if (!root.settingsPopup)
-                                return ;
-
-                            let gap = 16;
-                            let screenW = window.screenWidth;
-                            let popupW = Config.scaledSize(620);
-                            let windowOffsetX = window.posRight ? (screenW - window.width) : 0;
-                            let cursorX = windowOffsetX + barSurface.x + mouse.x;
-                            root.settingsPopup.rightMargin = Math.max(gap, Math.min(screenW - popupW - gap, screenW - popupW / 2 - cursorX));
-                            root.settingsPopup.isOpen = true;
-                        }
                     }
 
                     // Left-drag on empty bar area repositions the bar to the nearest edge.
@@ -337,9 +359,10 @@ Scope {
             PanelWindow {
                 id: ghostWindow
                 screen: modelData
-                WlrLayershell.namespace: "quickshell-bar"
+                WlrLayershell.namespace: "quickshell-bar-move-ghost"
                 WlrLayershell.layer: WlrLayer.Overlay
-                exclusiveZone: 0
+                WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+                exclusionMode: ExclusionMode.Ignore
                 visible: screenScope.barMoveActive
                 color: "#00000000"
                 mask: Region {}

@@ -119,5 +119,14 @@
   "Моноширинный шрифт": "Monospace-Schrift",
   "Дизайн панели": "Leisten-Design",
   "Островки": "Inseln",
-  "Сплошной": "Durchgehend"
+  "Сплошной": "Durchgehend",
+  "Автоскрытие": "Automatisch ausblenden",
+  "Скрывается автоматически": "Wird automatisch ausgeblendet",
+  "Всегда отображается": "Immer sichtbar",
+  "Задержка скрытия": "Ausblendeverzögerung",
+  "Через сколько секунд скрывать панель": "Sekunden bis zum Ausblenden",
+  "Сочетания клавиш": "Tastenkombinationen",
+  "Закрыть настройки": "Einstellungen schließen",
+  "Сочетание клавиш для закрытия окна настроек": "Tastenkombination zum Schließen der Einstellungen",
+  "Выбрать цвет с экрана": "Farbe vom Bildschirm auswählen"
 }

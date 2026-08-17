@@ -6,3 +6,4 @@ SpeedGauge 1.0 SpeedGauge.qml
 ToggleSwitch 1.0 ToggleSwitch.qml
 Spoiler 1.0 Spoiler.qml
 Tooltip 1.0 Tooltip.qml
+ColorPicker 1.0 ColorPicker.qml
