@@ -128,5 +128,9 @@
   "Сочетания клавиш": "Keybinds",
   "Закрыть настройки": "Close settings",
   "Сочетание клавиш для закрытия окна настроек": "Shortcut to close the settings window",
-  "Выбрать цвет с экрана": "Pick color from screen"
+  "Выбрать цвет с экрана": "Pick color from screen",
+  "Текущие": "Current",
+  "История": "History",
+  "Максимум тостов": "Maximum toasts",
+  "Одновременно на экране": "Visible at once"
 }

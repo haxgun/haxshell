@@ -11,7 +11,9 @@ PanelWindow {
 
   property var targetScreen: null
   property int rightMargin: Config.scaledSize(16)
+  property bool centerOpen: false
   property var toastItems: []
+  readonly property int maxVisibleToasts: Config.notificationMaxVisible
   readonly property bool isTargetScreen: NotificationService.isScreenFocused(targetScreen)
   readonly property int toastTimeoutMs: Config.notificationTimeoutMs
   readonly property bool toastAtTop: Config.notificationPosition.indexOf("top-") === 0
@@ -39,19 +41,30 @@ PanelWindow {
     function onNotificationReceived(notification) {
       if (panel.isTargetScreen && !NotificationService.doNotDisturb) panel.showToast(notification)
     }
+    function onDoNotDisturbChanged() {
+      if (NotificationService.doNotDisturb) panel.toastItems = []
+    }
   }
 
+  onCenterOpenChanged: {
+    if (centerOpen) toastItems = []
+  }
+
+  onMaxVisibleToastsChanged: toastItems = toastItems.slice(0, maxVisibleToasts)
+
   function showToast(notification) {
-    if (!notification) return
-    panel.toastItems = [{
+    if (!notification || centerOpen || NotificationService.doNotDisturb) return
+    let item = {
       id: notification.id,
       notification: notification,
       summary: notification.summary || notification.appName || "Уведомление",
       body: notification.body || "",
       appName: notification.appName || "",
       imageSource: NotificationService.notificationImageSource(notification),
-      iconSource: NotificationService.notificationIconSource(notification)
-    }].concat(panel.toastItems)
+      iconSource: NotificationService.notificationIconSource(notification),
+      timeoutMs: notification.expireTimeout >= 0 ? notification.expireTimeout : panel.toastTimeoutMs
+    }
+    panel.toastItems = [item].concat(panel.toastItems).slice(0, panel.maxVisibleToasts)
   }
 
   function removeToast(notificationId) {
@@ -83,7 +96,7 @@ PanelWindow {
     Repeater {
       model: panel.toastItems
       NotificationToast {
-        timeoutMs: panel.toastTimeoutMs
+        timeoutMs: modelData.timeoutMs
         onRemoveRequested: id => panel.removeToast(id)
         onCenterRequested: panel.centerRequested()
       }

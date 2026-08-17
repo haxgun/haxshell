@@ -49,7 +49,7 @@ Rectangle {
   Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
   Behavior on x { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
-  Timer { interval: toast.timeoutMs; running: true; repeat: false; onTriggered: toast.dismiss() }
+  Timer { id: timeoutTimer; interval: toast.timeoutMs; running: toast.timeoutMs > 0 && !toastDragArea.containsMouse && !toast.closing; repeat: false; onTriggered: toast.dismiss() }
   Timer { id: destroyTimer; interval: 220; repeat: false; onTriggered: toast.removeRequested(toast.notificationId) }
 
   function dismiss() {
@@ -83,6 +83,7 @@ Rectangle {
     drag.axis: Drag.XAxis
     drag.minimumX: -140
     drag.maximumX: 140
+    hoverEnabled: true
     onClicked: mouse => mouse.button === Qt.RightButton ? toast.closeNotification() : toast.activateNotification()
     onReleased: {
       if (toast.x > 90) toast.closeNotification()

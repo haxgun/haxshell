@@ -13,8 +13,8 @@ PanelWindow {
   property bool isOpen: false
   property int rightMargin: Config.scaledSize(16)
   readonly property bool isTargetScreen: NotificationService.isScreenFocused(targetScreen)
-  readonly property int notificationCount: NotificationService.notificationCount
-  readonly property var centerModel: notificationCount > 0 ? NotificationService.notifications : NotificationService.historyList
+  property string activeTab: "current"
+  readonly property var centerModel: activeTab === "current" ? NotificationService.notifications : NotificationService.historyList
 
   signal closeRequested()
 
@@ -87,10 +87,10 @@ PanelWindow {
           color: clearMouse.containsMouse ? "#35f87171" : Config.controlIdleBg
           border.color: Config.subtleBorder
           border.width: 1
-          opacity: notificationCount > 0 ? 1.0 : 0.45
+          opacity: centerModel.length > 0 ? 1.0 : 0.45
 
           Text { anchors.centerIn: parent; text: Config.iconTrash; color: Config.dangerRed; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-          MouseArea { id: clearMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; enabled: notificationCount > 0; onClicked: NotificationService.clearAll() }
+          MouseArea { id: clearMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; enabled: centerModel.length > 0; onClicked: activeTab === "current" ? NotificationService.clearCurrent() : NotificationService.clearHistory() }
         }
       }
 
@@ -101,10 +101,31 @@ PanelWindow {
 
         Text { text: Config.iconNotifications; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
         Text { width: parent.width - doNotDisturbToggle.width - 28; text: I18n.tr("Не беспокоить"); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
-        ToggleSwitch { id: doNotDisturbToggle; checked: NotificationService.doNotDisturb; anchors.verticalCenter: parent.verticalCenter; onToggled: NotificationService.doNotDisturb = !NotificationService.doNotDisturb }
+        ToggleSwitch { id: doNotDisturbToggle; checked: NotificationService.doNotDisturb; anchors.verticalCenter: parent.verticalCenter; onToggled: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb) }
       }
 
       Rectangle { width: parent.width; height: 1; color: Config.separatorColor }
+
+      Row {
+        width: parent.width
+        height: Config.scaledSize(28)
+        spacing: Config.scaledSize(6)
+        Repeater {
+          model: [
+            { key: "current", text: I18n.tr("Текущие") + " (" + NotificationService.notificationCount + ")" },
+            { key: "history", text: I18n.tr("История") + " (" + NotificationService.historyList.length + ")" }
+          ]
+          Rectangle {
+            required property var modelData
+            width: (parent.width - Config.scaledSize(6)) / 2
+            height: parent.height
+            radius: Config.popupRadiusPx(8)
+            color: panel.activeTab === modelData.key ? Config.pressedBg : Config.controlIdleBg
+            Text { anchors.centerIn: parent; text: modelData.text; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: panel.activeTab = modelData.key }
+          }
+        }
+      }
 
       Text {
         width: parent.width
@@ -124,6 +145,10 @@ PanelWindow {
         spacing: Config.scaledSize(8)
         model: panel.centerModel
         delegate: NotificationCard {}
+        add: Transition { NumberAnimation { properties: "opacity"; from: 0; to: 1; duration: Config.reduceMotion ? 0 : 160; easing.type: Easing.OutCubic } }
+        remove: Transition { NumberAnimation { properties: "opacity"; to: 0; duration: Config.reduceMotion ? 0 : 120; easing.type: Easing.InCubic } }
+        addDisplaced: Transition { NumberAnimation { properties: "y"; duration: Config.reduceMotion ? 0 : 160; easing.type: Easing.OutCubic } }
+        removeDisplaced: Transition { NumberAnimation { properties: "y"; duration: Config.reduceMotion ? 0 : 120; easing.type: Easing.OutCubic } }
       }
     }
   }

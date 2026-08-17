@@ -54,8 +54,7 @@ Singleton {
   }
 
   function historyImageSource(notification) {
-    let image = notificationImageSource(notification)
-    return image.indexOf("file://") === 0 ? image : ""
+    return notificationImageSource(notification)
   }
 
   function notificationIconSource(notification) {
@@ -70,10 +69,18 @@ Singleton {
     return notificationImageSource(notification).length > 0 || notificationIconSource(notification).length > 0 || !!(notification && notification.appName)
   }
 
-  function clearAll() {
+  function clearCurrent() {
     let list = notifications.slice()
     for (let i = 0; i < list.length; i++) list[i].dismiss()
+  }
+
+  function clearHistory() {
     historyList = []
+  }
+
+  function clearAll() {
+    clearCurrent()
+    clearHistory()
   }
 
   function removeNotification(notification) {

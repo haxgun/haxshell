@@ -11,7 +11,7 @@ Scope {
 
   property bool isOpen: false
   property int rightMargin: Config.scaledSize(16)
-  readonly property int notificationCount: NotificationService.notificationCount
+  readonly property int notificationCount: NotificationService.historyList.length
 
   IpcHandler {
     target: "notifications"
@@ -27,6 +27,7 @@ Scope {
       required property var modelData
       targetScreen: modelData
       rightMargin: root.rightMargin
+      centerOpen: root.isOpen
       onCenterRequested: root.isOpen = true
     }
   }

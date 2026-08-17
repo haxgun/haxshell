@@ -103,6 +103,7 @@ Scope {
       if (typeof settings.doNotDisturb === "string") Config.doNotDisturb = settings.doNotDisturb === "true"
       if (settings.notificationPosition) Config.notificationPosition = settings.notificationPosition
       if (settings.notificationTimeoutMs) Config.notificationTimeoutMs = parseInt(settings.notificationTimeoutMs)
+      if (settings.notificationMaxVisible) Config.notificationMaxVisible = parseInt(settings.notificationMaxVisible)
       if (settings.osdPosition) Config.osdPosition = settings.osdPosition
       if (typeof settings.showWorkspaceNumbers === "string") Config.showWorkspaceNumbers = settings.showWorkspaceNumbers === "true"
       if (typeof settings.showWorkspacesOnAllMonitors === "string") Config.showWorkspacesOnAllMonitors = settings.showWorkspacesOnAllMonitors === "true"

@@ -419,6 +419,11 @@ PanelWindow {
     Config.notificationTimeoutMs = timeout
     saveSetting("notificationTimeoutMs", timeout)
   }
+  function applyNotificationMaxVisible(value) {
+    let maximum = Math.max(1, Math.min(10, Math.round(value)))
+    Config.notificationMaxVisible = maximum
+    saveSetting("notificationMaxVisible", maximum)
+  }
 
   component PositionPicker: Grid {
     id: picker
@@ -2011,8 +2016,14 @@ PanelWindow {
               icon: Config.iconStopwatch
               title: I18n.tr("Время показа")
               subtitle: Math.round(Config.notificationTimeoutMs / 1000) + I18n.tr(" сек.")
-              last: true
               NumberSlider { value: Config.notificationTimeoutMs / 1000; from: 1; to: 300; defaultValue: 15; suffix: " с"; onValueEdited: root.applyNotificationTimeout(value * 1000) }
+            }
+            SettingsRow {
+              icon: Config.iconNotifications
+              title: I18n.tr("Максимум тостов")
+              subtitle: I18n.tr("Одновременно на экране")
+              last: true
+              NumberSlider { value: Config.notificationMaxVisible; from: 1; to: 10; defaultValue: 5; suffix: ""; onValueEdited: root.applyNotificationMaxVisible(value) }
             }
           }
 

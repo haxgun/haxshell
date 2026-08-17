@@ -100,6 +100,7 @@ For Niri, install the event-driven `qml-niri` integration as a required dependen
 | `bluez`, `bluez-utils`, `blueman` | Bluetooth |
 | `qt6-declarative`, `qt6-svg`, `qt6-multimedia` | Qt runtime |
 | `ttf-jetbrains-mono-nerd` | icon glyphs |
+| `fontconfig` | selected font lookup for the color picker |
 | `zenity` or `kdialog` | folder picker |
 | `pavucontrol` | volume control GUI |
 
@@ -111,7 +112,7 @@ For Niri, install the event-driven `qml-niri` integration as a required dependen
 
 One of:
 
-- **Hyprland** — `hyprland`, `hyprlock`, `hyprpicker`, `xdg-desktop-portal-hyprland`, `grim`
+- **Hyprland** — `hyprland`, `hyprlock`, `xdg-desktop-portal-hyprland`, `grim`
 - **Niri** — `niri`, plus `base-devel`, `cmake`, `git` to build the `qml-niri` module
 
 ### Optional

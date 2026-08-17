@@ -14,11 +14,11 @@ readonly PACKAGES=(
   cava
   curl
   ffmpeg
+  fontconfig
   grim
   go
   hyprland
   hyprlock
-  hyprpicker
   imagemagick
   kdialog
   networkmanager

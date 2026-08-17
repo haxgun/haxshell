@@ -42,6 +42,7 @@ QtObject {
   property bool doNotDisturb: false
   property string notificationPosition: "top-right"
   property int notificationTimeoutMs: 15000
+  property int notificationMaxVisible: 5
   property string osdPosition: "bottom-center"
   readonly property bool isDynamicTheme: themeName === "dynamic"
   readonly property bool isManualTheme: themeName === "manual"

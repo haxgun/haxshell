@@ -95,6 +95,7 @@ Singleton {
   property alias doNotDisturb: adapter.doNotDisturb
   property alias notificationPosition: adapter.notificationPosition
   property alias notificationTimeoutMs: adapter.notificationTimeoutMs
+  property alias notificationMaxVisible: adapter.notificationMaxVisible
   property alias osdPosition: adapter.osdPosition
 
   signal reloaded()
@@ -207,6 +208,7 @@ Singleton {
       property string doNotDisturb: "false"
       property string notificationPosition: "top-right"
       property string notificationTimeoutMs: "15000"
+      property string notificationMaxVisible: "5"
       property string osdPosition: "bottom-center"
     }
   }
@@ -302,6 +304,7 @@ Singleton {
       doNotDisturb: adapter.doNotDisturb,
       notificationPosition: adapter.notificationPosition,
       notificationTimeoutMs: adapter.notificationTimeoutMs,
+      notificationMaxVisible: adapter.notificationMaxVisible,
       osdPosition: adapter.osdPosition
       }
   }

@@ -128,5 +128,9 @@
   "Сочетания клавиш": "Tastenkombinationen",
   "Закрыть настройки": "Einstellungen schließen",
   "Сочетание клавиш для закрытия окна настроек": "Tastenkombination zum Schließen der Einstellungen",
-  "Выбрать цвет с экрана": "Farbe vom Bildschirm auswählen"
+  "Выбрать цвет с экрана": "Farbe vom Bildschirm auswählen",
+  "Текущие": "Aktuell",
+  "История": "Verlauf",
+  "Максимум тостов": "Maximale Toast-Anzahl",
+  "Одновременно на экране": "Gleichzeitig sichtbar"
 }

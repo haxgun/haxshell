@@ -100,6 +100,7 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 | `bluez`, `bluez-utils`, `blueman` | Bluetooth |
 | `qt6-declarative`, `qt6-svg`, `qt6-multimedia` | рантайм Qt |
 | `ttf-jetbrains-mono-nerd` | глифы иконок |
+| `fontconfig` | поиск выбранного шрифта для пипетки |
 | `zenity` или `kdialog` | выбор папки |
 | `pavucontrol` | графический интерфейс громкости |
 
@@ -111,7 +112,7 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 Один из:
 
-- **Hyprland** — `hyprland`, `hyprlock`, `hyprpicker`, `xdg-desktop-portal-hyprland`, `grim`
+- **Hyprland** — `hyprland`, `hyprlock`, `xdg-desktop-portal-hyprland`, `grim`
 - **Niri** — `niri`, плюс `base-devel`, `cmake`, `git` для сборки модуля `qml-niri`
 
 ### Опционально
