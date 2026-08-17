@@ -332,7 +332,7 @@ Rectangle {
 
   Process {
     id: pickerProc
-    command: ["hyprpicker", "-a"]
+    command: [Config.veyctl, "color", "pick"]
   }
 
   Grid {

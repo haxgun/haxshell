@@ -23,6 +23,8 @@ import (
 	"time"
 
 	"golang.org/x/image/draw"
+
+	"github.com/haxgun/vey/core/internal/colorpicker"
 )
 
 var homeDir, _ = os.UserHomeDir()
@@ -1943,6 +1945,36 @@ func cmdHolidays(args []string) {
 	output(result)
 }
 
+func cmdColor(args []string) {
+	if len(args) != 1 || args[0] != "pick" {
+		output(map[string]any{"ok": false, "error": "usage: color pick"})
+		return
+	}
+	color, err := colorpicker.New(colorpicker.Config{Format: colorpicker.FormatHex}).Run()
+	if err != nil {
+		output(map[string]any{"ok": false, "error": err.Error()})
+		return
+	}
+	if color == nil {
+		output(map[string]any{"ok": false, "error": "color pick cancelled"})
+		return
+	}
+	hex := color.ToHex(false)
+	copyColor(hex)
+	output(map[string]any{"ok": true, "hex": hex})
+}
+
+func copyColor(hex string) {
+	if !commandExists("wl-copy") {
+		return
+	}
+	cmd := exec.Command("wl-copy")
+	cmd.Stdin = strings.NewReader(hex)
+	if err := cmd.Run(); err != nil {
+		fmt.Fprintln(os.Stderr, "clipboard copy failed:", err)
+	}
+}
+
 // Run dispatches veyctl commands from the process arguments.
 func Run() {
 	if len(os.Args) < 2 {
@@ -1963,6 +1995,8 @@ func Run() {
 		cmdBrightness(args)
 	case "caffeine":
 		cmdCaffeine(args)
+	case "color":
+		cmdColor(args)
 	case "fonts":
 		cmdFonts()
 	case "holidays":
