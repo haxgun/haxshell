@@ -66,6 +66,16 @@ PanelWindow {
     { key: "top-left", label: "ВЛ" }, { key: "top-center", label: "Верх" }, { key: "top-right", label: "ВП" },
     { key: "bottom-left", label: "НЛ" }, { key: "bottom-center", label: "Низ" }, { key: "bottom-right", label: "НП" }
   ]
+  readonly property var sectionCategories: [
+    { key: "appearance", icon: Config.iconTheme, title: "Оформление", pages: [{ key: "general", title: "Интерфейс" }, { key: "palette", title: "Цветовая палитра" }, { key: "fontPicker", hidden: true }] },
+    { key: "bar", icon: Config.iconPanel, title: "Бар", pages: [{ key: "bar", title: "Панель" }, { key: "monitoring", title: "Мониторинг" }] },
+    { key: "desktop", icon: Config.iconWallpaper, title: "Обои", pages: [{ key: "wallpaper", title: "Обои" }, { key: "location", title: "Время и локация" }] },
+    { key: "notifications", icon: Config.iconNotifications, title: "Уведомления", pages: [{ key: "popups", title: "Попапы" }, { key: "notifications", title: "Уведомления" }, { key: "osd", title: "OSD" }] },
+    { key: "system", icon: Config.iconKeyboard, title: "Система", pages: [{ key: "system", title: "Сочетания клавиш" }] },
+    { key: "advanced", icon: Config.iconMonitor, title: "Дополнительно", pages: [{ key: "advanced", title: "Яркость" }] },
+    { key: "about", icon: Config.iconInfo, title: "О программе", pages: [{ key: "about", title: "О программе" }] }
+  ]
+  readonly property var currentCategory: categoryForSection(activeSection)
   property var allFonts: []
   property string thumbnail: ""
   property string wallName: "Нет обоев"
@@ -80,6 +90,26 @@ PanelWindow {
     if (section === root.activeSection || sectionTransition.running) return
     root.pendingSection = section
     sectionTransition.restart()
+  }
+
+  function categoryForSection(section) {
+    for (let i = 0; i < sectionCategories.length; i++) {
+      let category = sectionCategories[i]
+      for (let j = 0; j < category.pages.length; j++) {
+        if (category.pages[j].key === section) return category
+      }
+    }
+    return sectionCategories[0]
+  }
+
+  function selectCategory(category) { selectSection(category.pages[0].key) }
+
+  function visiblePageCount(category) {
+    let count = 0
+    for (let i = 0; i < category.pages.length; i++) {
+      if (!category.pages[i].hidden) count++
+    }
+    return count
   }
 
   SequentialAnimation {
@@ -332,6 +362,19 @@ PanelWindow {
   function applyWeatherLocation(value) { let location = value.trim(); Config.weatherLocation = location; saveSetting("weatherLocation", location) }
   function applyTimeFormat(value) { Config.timeFormat = value; saveSetting("timeFormat", value) }
   function applyUiScale(value) { Config.uiScale = parseFloat(value); saveSetting("uiScale", value) }
+  function applyBrightnessMonitorBus(value) {
+    let bus = value.trim()
+    if (bus.length === 0) return
+    Config.brightnessMonitorBus = bus
+    saveSetting("brightnessMonitorBus", bus)
+  }
+  function applyBrightnessSleepMultiplier(value) {
+    let multiplier = parseFloat(value)
+    if (!isFinite(multiplier) || multiplier <= 0) return
+    multiplier = Math.max(0.01, Math.min(5, multiplier))
+    Config.brightnessSleepMultiplier = String(multiplier)
+    saveSetting("brightnessSleepMultiplier", multiplier)
+  }
   function slotLabel(index) {
     let names = ["BG", "Red", "Grn", "Ylw", "Blu", "Mgn", "Cyn", "FG", "Dim", "Rd+", "Gr+", "Yl+", "Bl+", "Mg+", "Cy+", "FG+"]
     return names[index] || String(index)
@@ -724,25 +767,13 @@ PanelWindow {
           spacing: Config.scaledSize(5)
 
           Repeater {
-            model: [
-              { key: "general", icon: Config.iconSettings, title: "Общие" },
-              { key: "palette", icon: Config.iconColorPicker, title: "Цветовая палитра" },
-              { key: "bar", icon: Config.iconScale, title: "Бар" },
-              { key: "popups", icon: Config.iconControlCenter, title: "Попапы" },
-              { key: "notifications", icon: Config.iconNotifications, title: "Уведомления" },
-              { key: "osd", icon: Config.iconVolHigh, title: "OSD" },
-              { key: "wallpaper", icon: Config.iconWallpaper, title: "Обои" },
-              { key: "location", icon: Config.iconClock, title: "Время и локация" },
-              { key: "monitoring", icon: Config.iconCpu, title: "Мониторинг" },
-              { key: "keybinds", icon: Config.iconKeyboard, title: "Сочетания клавиш" },
-              { key: "about", icon: Config.iconInfo, title: "О программе" }
-            ]
+            model: root.sectionCategories
             Rectangle {
               required property var modelData
               width: sectionNav.width
               height: Config.scaledSize(34)
               radius: Config.cardRadius
-              readonly property bool active: root.activeSection === modelData.key
+              readonly property bool active: root.currentCategory.key === modelData.key
               color: active ? Config.selectedBg : (sectionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
               border.color: active ? Config.activeBorderColor : Config.subtleBorder
               border.width: 1
@@ -755,7 +786,7 @@ PanelWindow {
                 Text { text: parent.parent.modelData.icon; color: parent.parent.active ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
                 Text { text: I18n.tr(parent.parent.modelData.title); color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight; width: Config.scaledSize(78); anchors.verticalCenter: parent.verticalCenter }
               }
-              MouseArea { id: sectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSection(parent.modelData.key) }
+              MouseArea { id: sectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectCategory(parent.modelData) }
             }
           }
         }
@@ -772,6 +803,31 @@ PanelWindow {
           id: sectionContent
           width: parent.width
           spacing: Config.scaledSize(12)
+
+          Row {
+            id: sectionTabs
+            width: parent.width
+            height: visible ? Config.scaledSize(30) : 0
+            spacing: Config.scaledSize(4)
+            visible: root.visiblePageCount(root.currentCategory) > 1
+
+            Repeater {
+              model: root.currentCategory.pages
+              Rectangle {
+                required property var modelData
+                visible: !modelData.hidden
+                width: visible ? (sectionTabs.width - Config.scaledSize(4) * (root.visiblePageCount(root.currentCategory) - 1)) / root.visiblePageCount(root.currentCategory) : 0
+                height: sectionTabs.height
+                radius: Config.popupRadiusPx(8)
+                readonly property bool active: root.activeSection === modelData.key
+                color: active ? Config.selectedBg : (sectionTabMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+                border.color: active ? Config.activeBorderColor : Config.borderColor
+                border.width: 1
+                Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.title || ""); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width - Config.scaledSize(12); horizontalAlignment: Text.AlignHCenter }
+                MouseArea { id: sectionTabMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSection(parent.modelData.key) }
+              }
+            }
+          }
 
           Column {
             width: parent.width
@@ -795,65 +851,6 @@ PanelWindow {
             }
 
             Text { text: I18n.tr("Интерфейс"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
-
-            SettingsRow {
-              icon: Config.iconLanguage
-              title: I18n.tr("Язык")
-              subtitle: root.languageName(Config.language)
-              Item {
-                width: Config.scaledSize(194)
-                height: Config.scaledSize(30)
-
-                Rectangle {
-                  id: languageButton
-                  anchors.top: parent.top
-                  anchors.left: parent.left
-                  anchors.right: parent.right
-                  height: Config.scaledSize(30)
-                  radius: Config.popupRadiusPx(9)
-                  color: languageButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
-                  border.color: root.languageDropdownOpen ? Config.activeBorderColor : Config.borderColor
-                  border.width: 1
-
-                  Text {
-                    anchors.left: parent.left
-                    anchors.leftMargin: Config.scaledSize(10)
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.languageName(Config.language)
-                    color: Config.textPrimary
-                    font.pixelSize: Config.fontSizeSmall
-                    font.weight: Font.Medium
-                    font.family: Config.fontSans
-                    elide: Text.ElideRight
-                    width: parent.width - 38
-                  }
-
-                  Text {
-                    anchors.right: parent.right
-                    anchors.rightMargin: Config.scaledSize(10)
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.languageDropdownOpen ? "󰅃" : "󰅀"
-                    color: Config.textMuted
-                    font.pixelSize: Config.fontSizeIconSmall
-                    font.family: Config.fontIcon
-                  }
-
-                  MouseArea {
-                    id: languageButtonMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                      let pos = languageButton.mapToItem(container, 0, languageButton.height + 6)
-                      root.languageDropdownX = pos.x
-                      root.languageDropdownY = pos.y
-                      root.languageDropdownWidth = languageButton.width
-                      root.languageDropdownOpen = !root.languageDropdownOpen
-                    }
-                  }
-                }
-              }
-            }
 
             SettingsRow {
               icon: Config.iconFont
@@ -1171,7 +1168,7 @@ PanelWindow {
 
             SettingsRow {
               visible: Config.themeName === "dynamic"
-              icon: Config.iconWallpaper
+              icon: Config.iconPalettePreset
               title: I18n.tr("Пресет палитры")
               subtitle: I18n.tr("Как извлекать цвета из обоев")
               Item {
@@ -1272,7 +1269,7 @@ PanelWindow {
               title: I18n.tr("Настройки обоев")
               expanded: false
               SettingsRow {
-                icon: Config.iconWallpaper
+                icon: Config.iconFolder
                 title: I18n.tr("Папка обоев")
                 subtitle: Config.wallpaperDir
                 Item {
@@ -1318,7 +1315,7 @@ PanelWindow {
                 }
               }
               SettingsRow {
-                icon: Config.iconWallpaper
+                icon: Config.iconFitToScreen
                 title: I18n.tr("Отображение обоев")
                 subtitle: I18n.tr("Масштабирование изображения")
                 Item {
@@ -1351,7 +1348,7 @@ PanelWindow {
                 }
               }
               SettingsRow {
-                icon: Config.iconWallpaper
+                icon: Config.iconTransition
                 title: I18n.tr("Эффект смены")
                 subtitle: I18n.tr("Переход при смене обоев")
                 Item {
@@ -1384,7 +1381,7 @@ PanelWindow {
                 }
               }
               SettingsRow {
-                icon: Config.iconWallpaper
+                icon: Config.iconRefreshAuto
                 title: I18n.tr("Автоматическая смена")
                 subtitle: Config.wallpaperCyclingEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
                 onClicked: root.setBoolSetting("wallpaperCyclingEnabled", !Config.wallpaperCyclingEnabled)
@@ -1392,14 +1389,14 @@ PanelWindow {
               }
               SettingsRow {
                 visible: Config.wallpaperCyclingEnabled
-                icon: Config.iconWallpaper
+                icon: Config.iconStopwatch
                 title: I18n.tr("Интервал смены")
                 subtitle: I18n.tr("Секунды между обоями из текущей папки")
                 NumberSlider { value: Config.wallpaperCyclingInterval; from: 30; to: 43200; defaultValue: 300; suffix: "с"; onValueEdited: root.applyWallpaperCyclingInterval(value) }
               }
               SettingsRow {
                 visible: CompositorService.backend === "niri"
-                icon: Config.iconWallpaper
+                icon: Config.iconBlur
                 title: I18n.tr("Размывать обои в Overview")
                 subtitle: Config.blurWallpaperOnOverview ? I18n.tr("Включено") : I18n.tr("Выключено")
                 onClicked: root.setBoolSetting("blurWallpaperOnOverview", !Config.blurWallpaperOnOverview)
@@ -1567,7 +1564,7 @@ PanelWindow {
             clip: true
             Text { text: I18n.tr("Панель"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
-              icon: Config.iconWallpaper
+              icon: Config.iconPanelPosition
               title: I18n.tr("Положение панели")
               subtitle: Config.barPosition === "bottom" ? I18n.tr("Снизу") : (Config.barPosition === "left" ? I18n.tr("Слева") : (Config.barPosition === "right" ? I18n.tr("Справа") : I18n.tr("Сверху")))
               Row {
@@ -1589,7 +1586,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconTheme
               title: I18n.tr("Дизайн панели")
               subtitle: Config.barStyle === "islands" ? I18n.tr("Островки") : I18n.tr("Сплошной")
               Row {
@@ -1611,7 +1608,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconScale
               title: I18n.tr("Толщина панели")
               subtitle: I18n.tr("Высота или ширина панели")
               NumberSlider {
@@ -1643,7 +1640,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconArrowUp
               title: I18n.tr("Отступ сверху")
               subtitle: I18n.tr("Расстояние от верхнего края")
               NumberSlider {
@@ -1655,7 +1652,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconArrowDown
               title: I18n.tr("Отступ снизу")
               subtitle: I18n.tr("Расстояние от нижнего края")
               NumberSlider {
@@ -1667,7 +1664,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconArrowLeftRight
               title: I18n.tr("Отступы слева и справа")
               subtitle: I18n.tr("Одинаковое расстояние от боковых краёв")
               NumberSlider {
@@ -1679,7 +1676,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconRoundedCorner
               title: I18n.tr("Закругление бара")
               subtitle: I18n.tr("Радиус углов панели")
               NumberSlider {
@@ -1692,7 +1689,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconBlur
               title: I18n.tr("Размытие фона")
               subtitle: Config.barBlurEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")
               onClicked: root.setBoolSetting("barBlurEnabled", !Config.barBlurEnabled)
@@ -1704,7 +1701,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconBorder
               title: I18n.tr("Обводка бара")
               subtitle: Config.barBordersEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
               onClicked: root.setBoolSetting("barBordersEnabled", !Config.barBordersEnabled)
@@ -1716,7 +1713,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconShadow
               title: I18n.tr("Тень бара")
               subtitle: Config.barShadowsEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
               onClicked: root.setBoolSetting("barShadowsEnabled", !Config.barShadowsEnabled)
@@ -1728,7 +1725,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconOpacity
               title: I18n.tr("Непрозрачность фона")
               subtitle: I18n.tr("Непрозрачность фона панели")
               NumberSlider {
@@ -1756,7 +1753,7 @@ PanelWindow {
               ToggleSwitch { z: 1; checked: Config.barLauncherEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barLauncherEnabled", !Config.barLauncherEnabled) }
             }
             SettingsRow {
-              icon: Config.iconLauncher
+              icon: Config.iconApplication
               title: I18n.tr("Активное приложение")
               subtitle: Config.barActiveAppEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыто из панели")
               onClicked: root.setBoolSetting("barActiveAppEnabled", !Config.barActiveAppEnabled)
@@ -1770,7 +1767,7 @@ PanelWindow {
               ToggleSwitch { z: 1; checked: Config.barMediaEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barMediaEnabled", !Config.barMediaEnabled) }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconTray
               title: I18n.tr("Системный трей")
               subtitle: Config.barTrayEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыт из панели")
               onClicked: root.setBoolSetting("barTrayEnabled", !Config.barTrayEnabled)
@@ -1870,7 +1867,7 @@ PanelWindow {
             }
             Text { text: I18n.tr("Рабочие столы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconWorkspaceNumber
               title: I18n.tr("Цифры рабочих столов")
               subtitle: Config.showWorkspaceNumbers ? I18n.tr("Показываются") : I18n.tr("Скрыты")
               ToggleSwitch { checked: Config.showWorkspaceNumbers; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showWorkspaceNumbers", !Config.showWorkspaceNumbers) }
@@ -1884,7 +1881,7 @@ PanelWindow {
               ToggleSwitch { z: 1; checked: Config.showWorkspacesOnAllMonitors; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showWorkspacesOnAllMonitors", !Config.showWorkspacesOnAllMonitors) }
             }
             SettingsRow {
-              icon: Config.iconWorkspace
+              icon: Config.iconControlCenter
               title: I18n.tr("Индикатор занятого стола")
               subtitle: Config.workspaceIndicatorStyle === "dot" ? I18n.tr("Точка") : (Config.workspaceIndicatorStyle === "border" ? I18n.tr("Рамка") : I18n.tr("Подсветка"))
               last: true
@@ -1919,7 +1916,7 @@ PanelWindow {
             clip: true
             Text { text: I18n.tr("Всплывающие панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconPopupPosition
               title: I18n.tr("Положение всплывающих панелей")
               subtitle: I18n.tr("Выбор для левой и правой панели")
               Row {
@@ -1945,28 +1942,28 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconBlur
               title: I18n.tr("Размытие всплывающих панелей")
               subtitle: Config.popupBlurEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")
               onClicked: root.setBoolSetting("popupBlurEnabled", !Config.popupBlurEnabled)
               ToggleSwitch { z: 1; checked: Config.popupBlurEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupBlurEnabled", !Config.popupBlurEnabled) }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconBorder
               title: I18n.tr("Обводка всплывающих панелей")
               subtitle: Config.popupBordersEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
               onClicked: root.setBoolSetting("popupBordersEnabled", !Config.popupBordersEnabled)
               ToggleSwitch { z: 1; checked: Config.popupBordersEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupBordersEnabled", !Config.popupBordersEnabled) }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconShadow
               title: I18n.tr("Тень всплывающих панелей")
               subtitle: Config.popupShadowsEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
               onClicked: root.setBoolSetting("popupShadowsEnabled", !Config.popupShadowsEnabled)
               ToggleSwitch { z: 1; checked: Config.popupShadowsEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupShadowsEnabled", !Config.popupShadowsEnabled) }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconRoundedCorner
               title: I18n.tr("Закругление панелей")
               subtitle: I18n.tr("Радиус углов выпадающих меню")
               NumberSlider {
@@ -1979,7 +1976,7 @@ PanelWindow {
               }
             }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconOpacity
               title: I18n.tr("Непрозрачность панелей")
               subtitle: I18n.tr("Фон выпадающих меню и уведомлений")
               NumberSlider {
@@ -2007,7 +2004,7 @@ PanelWindow {
               ToggleSwitch { checked: Config.doNotDisturb; anchors.verticalCenter: parent.verticalCenter; onToggled: NotificationService.setDoNotDisturb(!Config.doNotDisturb) }
             }
             SettingsRow {
-              icon: Config.iconNotifications
+              icon: Config.iconToastPosition
               title: I18n.tr("Положение тостов")
               subtitle: I18n.tr("Место появления уведомлений")
               PositionPicker { settingKey: "notificationPosition"; currentValue: Config.notificationPosition }
@@ -2035,7 +2032,7 @@ PanelWindow {
             clip: true
             Text { text: I18n.tr("Экранные индикаторы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
-              icon: Config.iconSettings
+              icon: Config.iconOsd
               title: I18n.tr("Положение OSD")
               subtitle: I18n.tr("Громкость и яркость")
               PositionPicker { settingKey: "osdPosition"; currentValue: Config.osdPosition }
@@ -2228,9 +2225,68 @@ PanelWindow {
           Column {
             width: parent.width
             spacing: Config.scaledSize(10)
-            visible: root.activeSection === "keybinds"
+            visible: root.activeSection === "system"
             height: visible ? implicitHeight : 0
             clip: true
+            Text { text: I18n.tr("Система"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconLanguage
+              title: I18n.tr("Язык")
+              subtitle: root.languageName(Config.language)
+              Item {
+                width: Config.scaledSize(194)
+                height: Config.scaledSize(30)
+
+                Rectangle {
+                  id: languageButton
+                  anchors.top: parent.top
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  height: Config.scaledSize(30)
+                  radius: Config.popupRadiusPx(9)
+                  color: languageButtonMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+                  border.color: root.languageDropdownOpen ? Config.activeBorderColor : Config.borderColor
+                  border.width: 1
+
+                  Text {
+                    anchors.left: parent.left
+                    anchors.leftMargin: Config.scaledSize(10)
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.languageName(Config.language)
+                    color: Config.textPrimary
+                    font.pixelSize: Config.fontSizeSmall
+                    font.weight: Font.Medium
+                    font.family: Config.fontSans
+                    elide: Text.ElideRight
+                    width: parent.width - 38
+                  }
+
+                  Text {
+                    anchors.right: parent.right
+                    anchors.rightMargin: Config.scaledSize(10)
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.languageDropdownOpen ? "󰅃" : "󰅀"
+                    color: Config.textMuted
+                    font.pixelSize: Config.fontSizeIconSmall
+                    font.family: Config.fontIcon
+                  }
+
+                  MouseArea {
+                    id: languageButtonMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                      let pos = languageButton.mapToItem(container, 0, languageButton.height + 6)
+                      root.languageDropdownX = pos.x
+                      root.languageDropdownY = pos.y
+                      root.languageDropdownWidth = languageButton.width
+                      root.languageDropdownOpen = !root.languageDropdownOpen
+                    }
+                  }
+                }
+              }
+            }
             Text { text: I18n.tr("Сочетания клавиш"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconKeyboard
@@ -2259,6 +2315,72 @@ PanelWindow {
                   clip: true
                   onEditingFinished: root.applyCloseKeybind(text)
                   Keys.onEscapePressed: { text = Config.settingsCloseKeybind; focus = false }
+                }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Config.scaledSize(10)
+            visible: root.activeSection === "advanced"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("Дополнительно"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconBrightHigh
+              title: I18n.tr("Шина монитора")
+              subtitle: Config.brightnessMonitorBus
+              Rectangle {
+                width: Config.scaledSize(120)
+                height: Config.scaledSize(34)
+                radius: Config.popupRadiusPx(10)
+                color: Config.searchBg
+                border.color: brightnessBusInput.activeFocus ? Config.activeBorderColor : "#00000000"
+                border.width: brightnessBusInput.activeFocus ? 1 : 0
+                TextInput {
+                  id: brightnessBusInput
+                  anchors.fill: parent
+                  anchors.leftMargin: Config.scaledSize(10)
+                  anchors.rightMargin: Config.scaledSize(10)
+                  verticalAlignment: TextInput.AlignVCenter
+                  text: Config.brightnessMonitorBus
+                  color: Config.textPrimary
+                  selectedTextColor: Config.textWhite
+                  selectionColor: Config.selectedBg
+                  font.pixelSize: Config.fontSizeSmall
+                  font.family: Config.fontMono
+                  onEditingFinished: root.applyBrightnessMonitorBus(text)
+                  Keys.onEscapePressed: { text = Config.brightnessMonitorBus; focus = false }
+                }
+              }
+            }
+            SettingsRow {
+              icon: Config.iconStopwatch
+              title: I18n.tr("Задержка DDC/CI")
+              subtitle: I18n.tr("Множитель паузы между командами")
+              Rectangle {
+                width: Config.scaledSize(120)
+                height: Config.scaledSize(34)
+                radius: Config.popupRadiusPx(10)
+                color: Config.searchBg
+                border.color: brightnessDelayInput.activeFocus ? Config.activeBorderColor : "#00000000"
+                border.width: brightnessDelayInput.activeFocus ? 1 : 0
+                TextInput {
+                  id: brightnessDelayInput
+                  anchors.fill: parent
+                  anchors.leftMargin: Config.scaledSize(10)
+                  anchors.rightMargin: Config.scaledSize(10)
+                  verticalAlignment: TextInput.AlignVCenter
+                  text: Config.brightnessSleepMultiplier
+                  color: Config.textPrimary
+                  selectedTextColor: Config.textWhite
+                  selectionColor: Config.selectedBg
+                  font.pixelSize: Config.fontSizeSmall
+                  font.family: Config.fontMono
+                  inputMethodHints: Qt.ImhFormattedNumbersOnly
+                  onEditingFinished: root.applyBrightnessSleepMultiplier(text)
+                  Keys.onEscapePressed: { text = Config.brightnessSleepMultiplier; focus = false }
                 }
               }
             }
@@ -2380,7 +2502,7 @@ PanelWindow {
         border.color: Config.activeBorderColor
         border.width: 1
         clip: true
-        visible: root.languageDropdownOpen && root.activeSection === "general"
+        visible: root.languageDropdownOpen && root.activeSection === "system"
 
         Flickable {
           id: languageList

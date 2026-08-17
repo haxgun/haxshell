@@ -1,6 +1,11 @@
 {
   "Настройки": "Einstellungen",
   "Общие": "Allgemein",
+  "Система": "System",
+  "Дополнительно": "Erweitert",
+  "Шина монитора": "Monitorbus",
+  "Задержка DDC/CI": "DDC/CI-Verzögerung",
+  "Множитель паузы между командами": "Verzögerungsmultiplikator zwischen Befehlen",
   "Обои": "Hintergrund",
   "Настройки обоев": "Hintergrundeinstellungen",
   "Поиск обоев": "Hintergründe suchen",

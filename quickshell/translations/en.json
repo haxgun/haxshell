@@ -1,6 +1,11 @@
 {
   "Настройки": "Settings",
   "Общие": "General",
+  "Система": "System",
+  "Дополнительно": "Advanced",
+  "Шина монитора": "Monitor bus",
+  "Задержка DDC/CI": "DDC/CI delay",
+  "Множитель паузы между командами": "Delay multiplier between commands",
   "Обои": "Wallpapers",
   "Настройки обоев": "Wallpaper settings",
   "Поиск обоев": "Search wallpapers",
