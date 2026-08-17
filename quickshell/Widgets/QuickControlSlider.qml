@@ -1,6 +1,6 @@
 // QuickControlSlider.qml - Continuous control-center slider without numeric editing
 import QtQuick
-import "../../Common"
+import "../Common"
 
 Item {
   id: root

@@ -1,6 +1,6 @@
 // AudioSlider.qml - Shared audio volume slider row
 import QtQuick
-import "../../Common"
+import "../Common"
 
 Column {
   id: root
@@ -23,7 +23,7 @@ Column {
       width: Config.scaledSize(28)
       height: Config.scaledSize(24)
       radius: Config.popupRadiusPx(8)
-      color: muteMouse.containsMouse ? Config.activeHoverBg : (root.muted ? "#30f87171" : "#00000000")
+      color: muteMouse.containsMouse ? Config.activeHoverBg : (root.muted ? Qt.rgba(Config.dangerRed.r, Config.dangerRed.g, Config.dangerRed.b, 0.19) : "#00000000")
 
       Text {
         anchors.centerIn: parent

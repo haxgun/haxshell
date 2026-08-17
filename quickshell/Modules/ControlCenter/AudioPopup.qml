@@ -4,8 +4,8 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pipewire
-import "."
 import "../../Common"
+import "../../Widgets"
 
 PanelWindow {
   id: root

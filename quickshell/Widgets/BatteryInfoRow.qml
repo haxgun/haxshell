@@ -1,6 +1,6 @@
 // BatteryInfoRow.qml - Compact battery metric card
 import QtQuick
-import "../../Common"
+import "../Common"
 
 Column {
   id: root

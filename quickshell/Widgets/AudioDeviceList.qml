@@ -1,7 +1,7 @@
 // AudioDeviceList.qml - Select default audio input/output device
 import QtQuick
 import Quickshell.Services.Pipewire
-import "../../Common"
+import "../Common"
 
 Column {
   id: root

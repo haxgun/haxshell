@@ -1,6 +1,6 @@
 // QuickControlTile.qml - DMS-style quick control with separate toggle and detail actions
 import QtQuick
-import "../../Common"
+import "../Common"
 
 Rectangle {
   id: root
@@ -13,9 +13,9 @@ Rectangle {
   signal toggled()
   signal detailsRequested()
 
-  readonly property color activeBg: Config.isLightTheme ? "#0f172a" : "#ffffff"
-  readonly property color activeFg: Config.isLightTheme ? "#ffffff" : "#0f172a"
-  readonly property color activeMuted: Config.isLightTheme ? "#b0ffffff" : "#660f172a"
+  readonly property color activeBg: Config.themeAccent
+  readonly property color activeFg: Config.popupGlassBg
+  readonly property color activeMuted: Config.textMuted
 
   width: wide ? (parent ? parent.width : 250) : (parent ? (parent.width - 8) / 2 : 250)
   height: wide ? 62 : 64

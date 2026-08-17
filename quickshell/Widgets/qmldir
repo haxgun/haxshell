@@ -7,3 +7,11 @@ ToggleSwitch 1.0 ToggleSwitch.qml
 Spoiler 1.0 Spoiler.qml
 Tooltip 1.0 Tooltip.qml
 ColorPicker 1.0 ColorPicker.qml
+GradientRing 1.0 GradientRing.qml
+GradientSurface 1.0 GradientSurface.qml
+KeybindRecorder 1.0 KeybindRecorder.qml
+QuickControlTile 1.0 QuickControlTile.qml
+QuickControlSlider 1.0 QuickControlSlider.qml
+AudioSlider 1.0 AudioSlider.qml
+AudioDeviceList 1.0 AudioDeviceList.qml
+BatteryInfoRow 1.0 BatteryInfoRow.qml
