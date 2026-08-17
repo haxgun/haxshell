@@ -81,7 +81,7 @@ PanelWindow {
 
   Timer {
     interval: 250
-    running: true
+    running: root.isOpen
     repeat: true
     onTriggered: {
       if (fetchBrightnessProc.running) return

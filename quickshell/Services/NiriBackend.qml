@@ -9,6 +9,13 @@ Item {
   property var activeApp: ({ appId: "", title: "", iconPath: "", output: "" })
   property bool connected: false
 
+  Timer {
+    id: refreshTimer
+    interval: 50
+    repeat: false
+    onTriggered: root.refreshState()
+  }
+
   function refreshState() {
     let nextWorkspaces = []
     let focusedOutput = ""
@@ -64,6 +71,6 @@ Item {
     onDisconnected: root.connected = false
     onErrorOccurred: root.connected = false
     onFocusedWindowChanged: root.refreshState()
-    onRawEventReceived: root.refreshState()
+    onRawEventReceived: refreshTimer.restart()
   }
 }
