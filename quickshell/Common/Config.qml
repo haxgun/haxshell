@@ -43,6 +43,12 @@ QtObject {
   property string notificationPosition: "top-right"
   property int notificationTimeoutMs: 15000
   property int notificationMaxVisible: 5
+  property bool notificationSoundEnabled: false
+  property string notificationMutedApps: ""
+  property string controlCenterTiles: "wifi,bluetooth,dnd,caffeine,screenshot,nightlight"
+  property bool dockEnabled: true
+  property int idleTimeoutMinutes: 0
+  property string idleAction: "lock"
   property string osdPosition: "bottom-center"
   readonly property bool isDynamicTheme: themeName === "dynamic"
   readonly property bool isManualTheme: themeName === "manual"
@@ -151,25 +157,31 @@ QtObject {
   property int barBottomMargin: 6
   property int barHorizontalMargin: 12
   property int barRadius: 35
+  property string barRadiusMode: "linked"
+  property int barWidgetRadius: 35
   property int barFrostOpacity: 56
   property int popupRadius: 45
+  property string popupRadiusMode: "linked"
+  property int popupWidgetRadius: 45
   property int popupBackgroundOpacity: 56
   readonly property int barHeight: Math.round(barThickness * uiScale)
   readonly property int scaledBarTopMargin: Math.round(barTopMargin * uiScale)
   readonly property int scaledBarBottomMargin: Math.round(barBottomMargin * uiScale)
   readonly property int barMargin: Math.round(barHorizontalMargin * uiScale)
   readonly property int scaledBarRadius: Math.round(barHeight * barRadius / 100)
+  readonly property int scaledBarWidgetRadius: Math.round(barHeight * (barRadiusMode === "separate" ? barWidgetRadius : barRadius) / 100)
   readonly property color barBackgroundBg: Qt.rgba(glassBg.r, glassBg.g, glassBg.b, barFrostOpacity / 100)
   readonly property color popupGlassBg: Qt.rgba(glassBg.r, glassBg.g, glassBg.b, popupBackgroundOpacity / 100)
   readonly property int barPadding: Math.round(16 * uiScale)
 
   readonly property real barRadiusScale: barRadius / 35.0
-  readonly property real popupRadiusScale: popupRadius / 45.0
-  function barRadiusPx(base) { return Math.round(base * uiScale * barRadiusScale) }
+  readonly property real barWidgetRadiusScale: (barRadiusMode === "separate" ? barWidgetRadius : barRadius) / 35.0
+  readonly property real popupRadiusScale: (popupRadiusMode === "separate" ? popupWidgetRadius : popupRadius) / 45.0
+  function barRadiusPx(base) { return Math.round(base * uiScale * barWidgetRadiusScale) }
   function popupRadiusPx(base) { return Math.round(base * uiScale * popupRadiusScale) }
   function popupPillRadius(dim) { return Math.round(dim / 2 * popupRadiusScale) }
 
-  readonly property int widgetRadius: scaledBarRadius
+  readonly property int widgetRadius: scaledBarWidgetRadius
   readonly property int overlayRadius: Math.round(barHeight * popupRadius / 100)
   readonly property int cardRadius: popupRadiusPx(10)
   readonly property int innerBorderRadius: barRadiusPx(12)
@@ -182,6 +194,19 @@ QtObject {
   property bool barAutoHide: false
   property int barAutoHideDelay: 3
   property string settingsCloseKeybind: "Esc"
+  property string keybindDrawer: "Super+Space"
+  property string keybindSettings: "Super+,"
+  property string keybindClipboard: "Super+V"
+  property string keybindNotifications: "Super+N"
+  property string keybindPower: "Super+X"
+  property string keybindControlCenter: "Super+C"
+  property string keybindCalendar: "Super+T"
+  property string keybindMedia: "Super+M"
+  property string keybindWiFi: "Super+W"
+  property string keybindBluetooth: "Super+B"
+  property string keybindBrightness: "Super+L"
+  property string keybindKeyboard: "Super+K"
+  property string keybindSystem: "Super+I"
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property int barRotation: barPosition === "left" ? -90 : (barPosition === "right" ? 90 : 0)
   readonly property bool popupsAtBottom: barPosition === "bottom" || (isBarVertical && popupVerticalAlign === "bottom")
@@ -430,6 +455,9 @@ QtObject {
   readonly property string iconTransition: "󰤕"
   readonly property string iconRefreshAuto: "󱣲"
   readonly property string iconWorkspaceNumber: "󰲠"
+  readonly property string iconClipboard: "󰅌"
+  readonly property string iconDock: "󰀻"
+  readonly property string iconNightLight: "󰖔"
 
   // Volume Icons
   readonly property string iconVolHigh: "󰕾"
@@ -449,6 +477,5 @@ QtObject {
   readonly property string cmdVolumeControl: "pavucontrol"
   readonly property string cmdBluetoothControl: "blueman-manager"
   readonly property string cmdNetworkControl: "nm-connection-editor"
-  readonly property string cmdLauncher: "vicinae toggle"
   readonly property string cmdPowerMenu: "quickshell ipc call power toggle"
 }

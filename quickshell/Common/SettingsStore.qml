@@ -74,14 +74,31 @@ Singleton {
   property alias barAutoHide: adapter.barAutoHide
   property alias barAutoHideDelay: adapter.barAutoHideDelay
   property alias settingsCloseKeybind: adapter.settingsCloseKeybind
+  property alias keybindDrawer: adapter.keybindDrawer
+  property alias keybindSettings: adapter.keybindSettings
+  property alias keybindClipboard: adapter.keybindClipboard
+  property alias keybindNotifications: adapter.keybindNotifications
+  property alias keybindPower: adapter.keybindPower
+  property alias keybindControlCenter: adapter.keybindControlCenter
+  property alias keybindCalendar: adapter.keybindCalendar
+  property alias keybindMedia: adapter.keybindMedia
+  property alias keybindWiFi: adapter.keybindWiFi
+  property alias keybindBluetooth: adapter.keybindBluetooth
+  property alias keybindBrightness: adapter.keybindBrightness
+  property alias keybindKeyboard: adapter.keybindKeyboard
+  property alias keybindSystem: adapter.keybindSystem
   property alias barThickness: adapter.barThickness
   property alias barTopMargin: adapter.barTopMargin
   property alias barBottomMargin: adapter.barBottomMargin
   property alias barHorizontalMargin: adapter.barHorizontalMargin
   property alias barRadius: adapter.barRadius
+  property alias barRadiusMode: adapter.barRadiusMode
+  property alias barWidgetRadius: adapter.barWidgetRadius
   property alias barFrostOpacity: adapter.barFrostOpacity
   property alias popupVerticalAlign: adapter.popupVerticalAlign
   property alias popupRadius: adapter.popupRadius
+  property alias popupRadiusMode: adapter.popupRadiusMode
+  property alias popupWidgetRadius: adapter.popupWidgetRadius
   property alias popupBackgroundOpacity: adapter.popupBackgroundOpacity
   property alias barBlurEnabled: adapter.barBlurEnabled
   property alias popupBlurEnabled: adapter.popupBlurEnabled
@@ -96,6 +113,12 @@ Singleton {
   property alias notificationPosition: adapter.notificationPosition
   property alias notificationTimeoutMs: adapter.notificationTimeoutMs
   property alias notificationMaxVisible: adapter.notificationMaxVisible
+  property alias notificationSoundEnabled: adapter.notificationSoundEnabled
+  property alias notificationMutedApps: adapter.notificationMutedApps
+  property alias controlCenterTiles: adapter.controlCenterTiles
+  property alias dockEnabled: adapter.dockEnabled
+  property alias idleTimeoutMinutes: adapter.idleTimeoutMinutes
+  property alias idleAction: adapter.idleAction
   property alias osdPosition: adapter.osdPosition
 
   signal reloaded()
@@ -187,14 +210,31 @@ Singleton {
       property string barAutoHide: "false"
       property string barAutoHideDelay: "3"
       property string settingsCloseKeybind: "Esc"
+      property string keybindDrawer: "Super+Space"
+      property string keybindSettings: "Super+,"
+      property string keybindClipboard: "Super+V"
+      property string keybindNotifications: "Super+N"
+      property string keybindPower: "Super+X"
+      property string keybindControlCenter: "Super+C"
+      property string keybindCalendar: "Super+T"
+      property string keybindMedia: "Super+M"
+      property string keybindWiFi: "Super+W"
+      property string keybindBluetooth: "Super+B"
+      property string keybindBrightness: "Super+L"
+      property string keybindKeyboard: "Super+K"
+      property string keybindSystem: "Super+I"
       property string barThickness: "40"
       property string barTopMargin: "6"
       property string barBottomMargin: "6"
       property string barHorizontalMargin: "12"
       property string barRadius: "35"
+      property string barRadiusMode: "linked"
+      property string barWidgetRadius: "35"
       property string barFrostOpacity: "56"
       property string popupVerticalAlign: "top"
       property string popupRadius: "45"
+      property string popupRadiusMode: "linked"
+      property string popupWidgetRadius: "45"
       property string popupBackgroundOpacity: "56"
       property string barBlurEnabled: "true"
       property string popupBlurEnabled: "true"
@@ -209,6 +249,12 @@ Singleton {
       property string notificationPosition: "top-right"
       property string notificationTimeoutMs: "15000"
       property string notificationMaxVisible: "5"
+      property string notificationSoundEnabled: "false"
+      property string notificationMutedApps: ""
+      property string controlCenterTiles: "wifi,bluetooth,dnd,caffeine,screenshot,nightlight"
+      property string dockEnabled: "true"
+      property string idleTimeoutMinutes: "0"
+      property string idleAction: "lock"
       property string osdPosition: "bottom-center"
     }
   }
@@ -283,14 +329,31 @@ Singleton {
       barAutoHide: adapter.barAutoHide,
       barAutoHideDelay: adapter.barAutoHideDelay,
       settingsCloseKeybind: adapter.settingsCloseKeybind,
+      keybindDrawer: adapter.keybindDrawer,
+      keybindSettings: adapter.keybindSettings,
+      keybindClipboard: adapter.keybindClipboard,
+      keybindNotifications: adapter.keybindNotifications,
+      keybindPower: adapter.keybindPower,
+      keybindControlCenter: adapter.keybindControlCenter,
+      keybindCalendar: adapter.keybindCalendar,
+      keybindMedia: adapter.keybindMedia,
+      keybindWiFi: adapter.keybindWiFi,
+      keybindBluetooth: adapter.keybindBluetooth,
+      keybindBrightness: adapter.keybindBrightness,
+      keybindKeyboard: adapter.keybindKeyboard,
+      keybindSystem: adapter.keybindSystem,
       barThickness: adapter.barThickness,
       barTopMargin: adapter.barTopMargin,
       barBottomMargin: adapter.barBottomMargin,
       barHorizontalMargin: adapter.barHorizontalMargin,
       barRadius: adapter.barRadius,
+      barRadiusMode: adapter.barRadiusMode,
+      barWidgetRadius: adapter.barWidgetRadius,
       barFrostOpacity: adapter.barFrostOpacity,
       popupVerticalAlign: adapter.popupVerticalAlign,
       popupRadius: adapter.popupRadius,
+      popupRadiusMode: adapter.popupRadiusMode,
+      popupWidgetRadius: adapter.popupWidgetRadius,
       popupBackgroundOpacity: adapter.popupBackgroundOpacity,
       barBlurEnabled: adapter.barBlurEnabled,
       popupBlurEnabled: adapter.popupBlurEnabled,
@@ -305,6 +368,12 @@ Singleton {
       notificationPosition: adapter.notificationPosition,
       notificationTimeoutMs: adapter.notificationTimeoutMs,
       notificationMaxVisible: adapter.notificationMaxVisible,
+      notificationSoundEnabled: adapter.notificationSoundEnabled,
+      notificationMutedApps: adapter.notificationMutedApps,
+      controlCenterTiles: adapter.controlCenterTiles,
+      dockEnabled: adapter.dockEnabled,
+      idleTimeoutMinutes: adapter.idleTimeoutMinutes,
+      idleAction: adapter.idleAction,
       osdPosition: adapter.osdPosition
       }
   }

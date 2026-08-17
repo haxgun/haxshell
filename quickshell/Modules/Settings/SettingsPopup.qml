@@ -18,6 +18,7 @@ PanelWindow {
   property string pendingSection: "general"
   property string fontSearch: ""
   property string fontPickerTarget: "sans"
+  property string settingsSearch: ""
   property bool languageDropdownOpen: false
   property real languageDropdownX: 0
   property real languageDropdownY: 0
@@ -68,13 +69,30 @@ PanelWindow {
   ]
   readonly property var sectionCategories: [
     { key: "appearance", icon: Config.iconTheme, title: "Оформление", pages: [{ key: "general", title: "Интерфейс" }, { key: "palette", title: "Цветовая палитра" }, { key: "fontPicker", hidden: true }] },
-    { key: "bar", icon: Config.iconPanel, title: "Бар", pages: [{ key: "bar", title: "Панель" }, { key: "monitoring", title: "Мониторинг" }] },
+    { key: "bar", icon: Config.iconPanel, title: "Бар и попапы", pages: [{ key: "bar", title: "Панель" }, { key: "popups", title: "Попапы" }, { key: "monitoring", title: "Мониторинг" }] },
     { key: "desktop", icon: Config.iconWallpaper, title: "Обои", pages: [{ key: "wallpaper", title: "Обои" }, { key: "location", title: "Время и локация" }] },
-    { key: "notifications", icon: Config.iconNotifications, title: "Уведомления", pages: [{ key: "popups", title: "Попапы" }, { key: "notifications", title: "Уведомления" }, { key: "osd", title: "OSD" }] },
+    { key: "notifications", icon: Config.iconNotifications, title: "Уведомления", pages: [{ key: "notifications", title: "Уведомления" }, { key: "osd", title: "OSD" }] },
     { key: "system", icon: Config.iconKeyboard, title: "Система", pages: [{ key: "system", title: "Сочетания клавиш" }] },
     { key: "advanced", icon: Config.iconMonitor, title: "Дополнительно", pages: [{ key: "advanced", title: "Яркость" }] },
     { key: "about", icon: Config.iconInfo, title: "О программе", pages: [{ key: "about", title: "О программе" }] }
   ]
+  readonly property var searchableSettings: [
+    { section: "general", title: "Интерфейс" }, { section: "general", title: "Оформление" },
+    { section: "general", title: "Основной шрифт" }, { section: "general", title: "Моноширинный шрифт" },
+    { section: "general", title: "Размер текста" }, { section: "general", title: "Док" },
+    { section: "general", title: "Звук уведомлений" }, { section: "general", title: "Правило простоя" },
+    { section: "palette", title: "Цветовая палитра" }, { section: "bar", title: "Панель" },
+    { section: "monitoring", title: "Мониторинг" }, { section: "wallpaper", title: "Обои" },
+    { section: "location", title: "Время и локация" }, { section: "popups", title: "Попапы" },
+    { section: "notifications", title: "Уведомления" }, { section: "osd", title: "OSD" },
+    { section: "system", title: "Сочетания клавиш" }, { section: "advanced", title: "Яркость" },
+    { section: "about", title: "О программе" }
+  ]
+  readonly property var searchResults: {
+    let needle = settingsSearch.trim().toLowerCase()
+    if (!needle) return []
+    return searchableSettings.filter(entry => I18n.tr(entry.title).toLowerCase().indexOf(needle) >= 0)
+  }
   readonly property var currentCategory: categoryForSection(activeSection)
   property var allFonts: []
   property string thumbnail: ""
@@ -103,6 +121,32 @@ PanelWindow {
   }
 
   function selectCategory(category) { selectSection(category.pages[0].key) }
+
+  function selectRelativeCategory(step) {
+    let index = 0
+    for (let i = 0; i < sectionCategories.length; i++) {
+      if (sectionCategories[i].key === currentCategory.key) { index = i; break }
+    }
+    index = (index + step + sectionCategories.length) % sectionCategories.length
+    selectCategory(sectionCategories[index])
+  }
+
+  function selectRelativePage(step) {
+    let pages = currentCategory.pages.filter(page => !page.hidden)
+    if (pages.length < 2) return
+    let index = pages.findIndex(page => page.key === activeSection)
+    index = index < 0 ? 0 : (index + step + pages.length) % pages.length
+    selectSection(pages[index].key)
+  }
+
+  function searchSettings() {
+    if (searchResults.length) selectSearchResult(searchResults[0])
+  }
+
+  function selectSearchResult(result) {
+    settingsSearchInput.text = ""
+    selectSection(result.section)
+  }
 
   function visiblePageCount(category) {
     let count = 0
@@ -159,7 +203,6 @@ PanelWindow {
   } else {
     weatherSuggestions.clear()
     root.fontSearch = ""
-    container.moved = false
   }
 
   visible: isOpen || container.opacity > 0.01
@@ -188,6 +231,11 @@ PanelWindow {
     enabled: root.isOpen
     onActivated: root.isOpen = false
   }
+
+  Shortcut { sequence: "Ctrl+Tab"; enabled: root.isOpen; onActivated: root.selectRelativeCategory(1) }
+  Shortcut { sequence: "Ctrl+Shift+Tab"; enabled: root.isOpen; onActivated: root.selectRelativeCategory(-1) }
+  Shortcut { sequence: "Alt+Right"; enabled: root.isOpen; onActivated: root.selectRelativePage(1) }
+  Shortcut { sequence: "Alt+Left"; enabled: root.isOpen; onActivated: root.selectRelativePage(-1) }
 
   ListModel { id: wallpapersModel }
   ListModel { id: weatherSuggestions }
@@ -335,6 +383,15 @@ PanelWindow {
     Config.barRadius = radius
     saveSetting("barRadius", radius)
   }
+  function applyBarWidgetRadius(value) {
+    let radius = Math.max(0, Math.min(100, Math.round(value)))
+    Config.barWidgetRadius = radius
+    saveSetting("barWidgetRadius", radius)
+  }
+  function applyBarRadiusMode(value) {
+    Config.barRadiusMode = value
+    saveSetting("barRadiusMode", value)
+  }
   function applyBarFrostOpacity(value) {
     let opacity = Math.max(0, Math.min(100, Math.round(value)))
     Config.barFrostOpacity = opacity
@@ -344,6 +401,15 @@ PanelWindow {
     let radius = Math.max(0, Math.min(100, Math.round(value)))
     Config.popupRadius = radius
     saveSetting("popupRadius", radius)
+  }
+  function applyPopupWidgetRadius(value) {
+    let radius = Math.max(0, Math.min(100, Math.round(value)))
+    Config.popupWidgetRadius = radius
+    saveSetting("popupWidgetRadius", radius)
+  }
+  function applyPopupRadiusMode(value) {
+    Config.popupRadiusMode = value
+    saveSetting("popupRadiusMode", value)
   }
   function applyPopupBackgroundOpacity(value) {
     let opacity = Math.max(0, Math.min(100, Math.round(value)))
@@ -674,11 +740,8 @@ PanelWindow {
     id: container
     width: Math.min(Config.scaledSize(620), root.width - Config.scaledSize(8))
     height: Math.min(480, root.height - 32)
-    property bool moved: false
-    property real dragX: 0
-    property real dragY: 0
-    x: moved ? dragX : (parent.width - width) / 2
-    y: moved ? dragY : (parent.height - height) / 2
+    x: (parent.width - width) / 2
+    y: (parent.height - height) / 2
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
     color: Config.popupGlassBg
@@ -730,30 +793,37 @@ PanelWindow {
 
         Text { id: settingsTitleIcon; text: Config.iconSettings; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter }
         Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsTitleIcon.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter }
-
-        MouseArea {
-          id: settingsDragArea
-          anchors.fill: parent
-          cursorShape: Qt.ClosedHandCursor
-          property point pressPoint: Qt.point(0, 0)
-          property real pressX: 0
-          property real pressY: 0
-          onPressed: (mouse) => {
-            pressX = container.x
-            pressY = container.y
-            container.dragX = pressX
-            container.dragY = pressY
-            pressPoint = Qt.point(mouse.x, mouse.y)
-            container.moved = true
-          }
-          onPositionChanged: (mouse) => {
-            if (!pressed) return
-            container.dragX = pressX + mouse.x - pressPoint.x
-            container.dragY = pressY + mouse.y - pressPoint.y
-            container.dragX = Math.max(0, Math.min(container.parent.width - container.width, container.dragX))
-            container.dragY = Math.max(0, Math.min(container.parent.height - container.height, container.dragY))
+        Rectangle { id: settingsSearchBox; anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(42); anchors.verticalCenter: parent.verticalCenter; width: Config.scaledSize(180); height: Config.scaledSize(28); radius: Config.popupRadiusPx(8); color: Config.searchBg
+          TextInput { id: settingsSearchInput; anchors.fill: parent; anchors.margins: Config.scaledSize(8); verticalAlignment: TextInput.AlignVCenter; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; onTextChanged: root.settingsSearch = text; onAccepted: root.searchSettings(); Text { anchors.verticalCenter: parent.verticalCenter; text: I18n.tr("Поиск настроек"); visible: !parent.text; color: Config.textPlaceholder; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans } }
+        }
+        Rectangle {
+          anchors.top: settingsSearchBox.bottom
+          anchors.topMargin: Config.scaledSize(4)
+          anchors.right: settingsSearchBox.right
+          width: settingsSearchBox.width
+          height: Math.min(root.searchResults.length, 5) * Config.scaledSize(30)
+          visible: settingsSearchInput.activeFocus && root.searchResults.length > 0
+          z: 3
+          radius: Config.popupRadiusPx(8)
+           color: Config.popupGlassBg
+          border.color: Config.borderColor
+          border.width: 1
+          Column {
+            anchors.fill: parent
+            Repeater {
+              model: root.searchResults.slice(0, 5)
+              Rectangle {
+                required property var modelData
+                width: parent.width
+                height: Config.scaledSize(30)
+                color: resultMouse.containsMouse ? Config.hoverBg : "transparent"
+                Text { anchors.fill: parent; anchors.margins: Config.scaledSize(8); verticalAlignment: Text.AlignVCenter; text: I18n.tr(parent.modelData.title); color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight }
+                MouseArea { id: resultMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSearchResult(parent.modelData) }
+              }
+            }
           }
         }
+
       }
 
       Row {
@@ -897,6 +967,11 @@ PanelWindow {
                 }
               }
             }
+            SettingsRow { icon: Config.iconDock; title: I18n.tr("Док"); subtitle: Config.dockEnabled ? I18n.tr("Включено") : I18n.tr("Выключено"); ToggleSwitch { checked: Config.dockEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: { Config.dockEnabled = !Config.dockEnabled; root.saveSetting("dockEnabled", Config.dockEnabled) } } }
+            SettingsRow { icon: Config.iconNotifications; title: I18n.tr("Звук уведомлений"); subtitle: Config.notificationSoundEnabled ? I18n.tr("Включено") : I18n.tr("Выключено"); ToggleSwitch { checked: Config.notificationSoundEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: { Config.notificationSoundEnabled = !Config.notificationSoundEnabled; root.saveSetting("notificationSoundEnabled", Config.notificationSoundEnabled) } } }
+            SettingsRow { icon: Config.iconNotifications; title: I18n.tr("Отключённые приложения"); subtitle: I18n.tr("Имена приложений через запятую"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.notificationMutedApps; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.notificationMutedApps = text; root.saveSetting("notificationMutedApps", text) } } } }
+            SettingsRow { icon: Config.iconClipboard; title: I18n.tr("Порядок плиток центра управления"); subtitle: I18n.tr("wifi, bluetooth, dnd, caffeine, screenshot, nightlight"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.controlCenterTiles; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.controlCenterTiles = text; root.saveSetting("controlCenterTiles", text) } } } }
+            SettingsRow { icon: Config.iconMoon; title: I18n.tr("Правило простоя"); subtitle: I18n.tr("0 отключает; применяется после простоя"); Row { width: Config.scaledSize(194); spacing: Config.scaledSize(4); Rectangle { width: Config.scaledSize(52); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.idleTimeoutMinutes.toString(); inputMethodHints: Qt.ImhDigitsOnly; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.idleTimeoutMinutes = parseInt(text) || 0; root.saveSetting("idleTimeoutMinutes", Config.idleTimeoutMinutes) } } } Repeater { model: [{ key: "lock", title: "Блокировка" }, { key: "suspend", title: "Сон" }]; Rectangle { required property var modelData; width: Config.scaledSize(67); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.idleAction === modelData.key ? Config.selectedBg : (idleActionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg); Text { anchors.centerIn: parent; width: parent.width - Config.scaledSize(8); text: I18n.tr(parent.modelData.title); color: Config.idleAction === parent.modelData.key ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter } MouseArea { id: idleActionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { Config.idleAction = parent.modelData.key; root.saveSetting("idleAction", Config.idleAction) } } } } } }
           }
 
           Column {
@@ -1689,6 +1764,42 @@ PanelWindow {
               }
             }
             SettingsRow {
+              icon: Config.iconRoundedCorner
+              title: I18n.tr("Режим закругления")
+              subtitle: Config.barRadiusMode === "separate" ? I18n.tr("Раздельный") : I18n.tr("Полный")
+              Row {
+                width: Config.scaledSize(194)
+                spacing: Config.scaledSize(4)
+                Repeater {
+                  model: [{ key: "linked", label: "Полный" }, { key: "separate", label: "Раздельный" }]
+                  Rectangle {
+                    required property var modelData
+                    width: (parent.width - Config.scaledSize(4)) / 2
+                    height: Config.scaledSize(30)
+                    radius: Config.popupRadiusPx(8)
+                    readonly property bool active: Config.barRadiusMode === modelData.key
+                    color: active ? Config.selectedBg : (barRadiusModeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+                    Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
+                    MouseArea { id: barRadiusModeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarRadiusMode(parent.modelData.key) }
+                  }
+                }
+              }
+            }
+            SettingsRow {
+              visible: Config.barRadiusMode === "separate"
+              icon: Config.iconRoundedCorner
+              title: I18n.tr("Закругление виджетов бара")
+              subtitle: I18n.tr("Радиус углов элементов панели")
+              NumberSlider {
+                value: Config.barWidgetRadius
+                from: 0
+                to: 100
+                defaultValue: 35
+                suffix: "%"
+                onValueEdited: root.applyBarWidgetRadius(value)
+              }
+            }
+            SettingsRow {
               icon: Config.iconBlur
               title: I18n.tr("Размытие фона")
               subtitle: Config.barBlurEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")
@@ -1973,6 +2084,42 @@ PanelWindow {
                 defaultValue: 45
                 suffix: "%"
                 onValueEdited: root.applyPopupRadius(value)
+              }
+            }
+            SettingsRow {
+              icon: Config.iconRoundedCorner
+              title: I18n.tr("Режим закругления")
+              subtitle: Config.popupRadiusMode === "separate" ? I18n.tr("Раздельный") : I18n.tr("Полный")
+              Row {
+                width: Config.scaledSize(194)
+                spacing: Config.scaledSize(4)
+                Repeater {
+                  model: [{ key: "linked", label: "Полный" }, { key: "separate", label: "Раздельный" }]
+                  Rectangle {
+                    required property var modelData
+                    width: (parent.width - Config.scaledSize(4)) / 2
+                    height: Config.scaledSize(30)
+                    radius: Config.popupRadiusPx(8)
+                    readonly property bool active: Config.popupRadiusMode === modelData.key
+                    color: active ? Config.selectedBg : (popupRadiusModeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
+                    Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
+                    MouseArea { id: popupRadiusModeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyPopupRadiusMode(parent.modelData.key) }
+                  }
+                }
+              }
+            }
+            SettingsRow {
+              visible: Config.popupRadiusMode === "separate"
+              icon: Config.iconRoundedCorner
+              title: I18n.tr("Закругление элементов панелей")
+              subtitle: I18n.tr("Радиус углов карточек и кнопок")
+              NumberSlider {
+                value: Config.popupWidgetRadius
+                from: 0
+                to: 100
+                defaultValue: 45
+                suffix: "%"
+                onValueEdited: root.applyPopupWidgetRadius(value)
               }
             }
             SettingsRow {
@@ -2292,32 +2439,38 @@ PanelWindow {
               icon: Config.iconKeyboard
               title: I18n.tr("Закрыть настройки")
               subtitle: I18n.tr("Сочетание клавиш для закрытия окна настроек")
-              Rectangle {
-                width: Config.scaledSize(120)
-                height: Config.scaledSize(34)
-                radius: Config.popupRadiusPx(10)
-                color: Config.searchBg
-                border.color: closeKeybindInput.activeFocus ? Config.activeBorderColor : "#00000000"
-                border.width: closeKeybindInput.activeFocus ? 1 : 0
-                TextInput {
-                  id: closeKeybindInput
-                  anchors.fill: parent
-                  anchors.leftMargin: Config.scaledSize(10)
-                  anchors.rightMargin: Config.scaledSize(10)
-                  verticalAlignment: TextInput.AlignVCenter
-                  horizontalAlignment: TextInput.AlignHCenter
-                  text: Config.settingsCloseKeybind
-                  color: Config.textPrimary
-                  selectedTextColor: Config.textWhite
-                  selectionColor: Config.selectedBg
-                  font.pixelSize: Config.fontSizeSmall
-                  font.family: Config.fontSans
-                  clip: true
-                  onEditingFinished: root.applyCloseKeybind(text)
-                  Keys.onEscapePressed: { text = Config.settingsCloseKeybind; focus = false }
-                }
+                KeybindRecorder { keybind: Config.settingsCloseKeybind; apply: value => { root.applyCloseKeybind(value); return true } }
+            }
+            Text { text: I18n.tr("Глобальные сочетания"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Repeater {
+              model: [
+                { icon: Config.iconLauncher, title: "Меню приложений", configKey: "keybindDrawer" },
+                { icon: Config.iconSettings, title: "Настройки", configKey: "keybindSettings" },
+                { icon: Config.iconClipboard, title: "Буфер обмена", configKey: "keybindClipboard" },
+                { icon: Config.iconNotifications, title: "Уведомления", configKey: "keybindNotifications" },
+                { icon: Config.iconPower, title: "Питание", configKey: "keybindPower" },
+                { icon: Config.iconControlCenter, title: "Центр управления", configKey: "keybindControlCenter" },
+                { icon: Config.iconClock, title: "Дата и время", configKey: "keybindCalendar" },
+                { icon: Config.iconMusic, title: "Медиа-плеер", configKey: "keybindMedia" },
+                { icon: Config.iconWifiConnected, title: "Wi-Fi", configKey: "keybindWiFi" },
+                { icon: Config.iconBluetooth, title: "Bluetooth", configKey: "keybindBluetooth" },
+                { icon: Config.iconBrightHigh, title: "Яркость", configKey: "keybindBrightness" },
+                { icon: Config.iconKeyboard, title: "Раскладка клавиатуры", configKey: "keybindKeyboard" },
+                { icon: Config.iconCpu, title: "Мониторинг системы", configKey: "keybindSystem" }
+              ]
+              SettingsRow {
+                required property var modelData
+                icon: modelData.icon
+                title: I18n.tr(modelData.title)
+                subtitle: Config[modelData.configKey]
+                KeybindRecorder { keybind: Config[modelData.configKey]; apply: value => root.applyGlobalKeybind(modelData.configKey, value) }
               }
             }
+            Text { text: I18n.tr("Навигация настроек"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow { icon: Config.iconKeyboard; title: I18n.tr("Следующий раздел"); subtitle: "Ctrl+Tab" }
+            SettingsRow { icon: Config.iconKeyboard; title: I18n.tr("Предыдущий раздел"); subtitle: "Ctrl+Shift+Tab" }
+            SettingsRow { icon: Config.iconChevronRight; title: I18n.tr("Следующая вкладка"); subtitle: "Alt+Right" }
+            SettingsRow { icon: Config.iconChevronLeft; title: I18n.tr("Предыдущая вкладка"); subtitle: "Alt+Left" }
           }
 
           Column {

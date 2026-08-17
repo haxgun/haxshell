@@ -120,6 +120,15 @@ PanelWindow {
   function filterModel() {
     filteredAppModel.clear()
     let query = searchInput.text.toLowerCase().trim()
+    let expression = root.calculate(query)
+    if (expression !== "") filteredAppModel.append({ name: expression, icon: "accessories-calculator", execCmd: "", desktopId: "", kind: "calculator" })
+    if (query.startsWith(">") && query.length > 1) filteredAppModel.append({ name: I18n.tr("Выполнить команду") + ": " + query.slice(1), icon: "utilities-terminal", execCmd: query.slice(1), desktopId: "", kind: "command" })
+    let windows = CompositorService.toplevels
+    for (let i = 0; i < windows.length; i++) {
+      let window = windows[i]
+      let label = window.title || window.appId
+      if (label && (!query || label.toLowerCase().includes(query))) filteredAppModel.append({ name: label, icon: "", execCmd: "", desktopId: "", kind: "window", window: window })
+    }
 
     for (let i = 0; i < fullAppModel.count; i++) {
       let item = fullAppModel.get(i)
@@ -128,7 +137,8 @@ PanelWindow {
           name: item.name,
           icon: item.icon,
           execCmd: item.execCmd,
-          desktopId: item.desktopId || ""
+          desktopId: item.desktopId || "",
+          kind: "app"
         })
       }
     }
@@ -140,11 +150,21 @@ PanelWindow {
     root.isOpen = false
   }
 
+  function calculate(query) {
+    if (!query || !/^[0-9+*/%().\-\s]+$/.test(query)) return ""
+    try {
+      let value = Function("return (" + query + ")")()
+      return isFinite(value) ? "= " + value : ""
+    } catch (_) { return "" }
+  }
+
   function launchCurrentItem() {
     if (appListView.currentIndex < 0 || appListView.currentIndex >= filteredAppModel.count) return
     let item = filteredAppModel.get(appListView.currentIndex)
     if (item) {
-      root.launchApp(item.execCmd, item.desktopId)
+      if (item.kind === "window") { CompositorService.focusToplevel(item.window); root.isOpen = false }
+      else if (item.kind === "calculator") ClipboardService.copy(item.name.slice(2))
+      else root.launchApp(item.execCmd, item.desktopId)
     }
   }
 
@@ -231,7 +251,7 @@ PanelWindow {
             focus: root.isOpen
 
             Text {
-              text: "Поиск приложений..."
+              text: I18n.tr("Поиск приложений, окон, команд или выражений")
               color: root.textPlaceholderColor
               font.pixelSize: Config.fontSizeTitle
               font.family: Config.fontSans
@@ -278,6 +298,7 @@ PanelWindow {
           required property string icon
           required property string execCmd
           required property string desktopId
+          required property string kind
 
           readonly property bool isSelected: index === appListView.currentIndex
 

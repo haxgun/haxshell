@@ -104,6 +104,12 @@ Scope {
       if (settings.notificationPosition) Config.notificationPosition = settings.notificationPosition
       if (settings.notificationTimeoutMs) Config.notificationTimeoutMs = parseInt(settings.notificationTimeoutMs)
       if (settings.notificationMaxVisible) Config.notificationMaxVisible = parseInt(settings.notificationMaxVisible)
+      if (typeof settings.notificationSoundEnabled === "string") Config.notificationSoundEnabled = settings.notificationSoundEnabled === "true"
+      if (typeof settings.notificationMutedApps === "string") Config.notificationMutedApps = settings.notificationMutedApps
+      if (settings.controlCenterTiles) Config.controlCenterTiles = settings.controlCenterTiles
+      if (typeof settings.dockEnabled === "string") Config.dockEnabled = settings.dockEnabled === "true"
+      if (settings.idleTimeoutMinutes) Config.idleTimeoutMinutes = parseInt(settings.idleTimeoutMinutes)
+      if (settings.idleAction) Config.idleAction = settings.idleAction
       if (settings.osdPosition) Config.osdPosition = settings.osdPosition
       if (typeof settings.showWorkspaceNumbers === "string") Config.showWorkspaceNumbers = settings.showWorkspaceNumbers === "true"
       if (typeof settings.showWorkspacesOnAllMonitors === "string") Config.showWorkspacesOnAllMonitors = settings.showWorkspacesOnAllMonitors === "true"
@@ -114,17 +120,60 @@ Scope {
       if (typeof settings.barAutoHide === "string") Config.barAutoHide = settings.barAutoHide === "true"
       if (settings.barAutoHideDelay) Config.barAutoHideDelay = parseInt(settings.barAutoHideDelay)
       if (settings.settingsCloseKeybind) Config.settingsCloseKeybind = settings.settingsCloseKeybind
+      if (settings.keybindDrawer) Config.keybindDrawer = settings.keybindDrawer
+      if (settings.keybindSettings) Config.keybindSettings = settings.keybindSettings
+      if (settings.keybindClipboard) Config.keybindClipboard = settings.keybindClipboard
+      if (settings.keybindNotifications) Config.keybindNotifications = settings.keybindNotifications
+      if (settings.keybindPower) Config.keybindPower = settings.keybindPower
+      if (settings.keybindControlCenter) Config.keybindControlCenter = settings.keybindControlCenter
+      if (settings.keybindCalendar) Config.keybindCalendar = settings.keybindCalendar
+      if (settings.keybindMedia) Config.keybindMedia = settings.keybindMedia
+      if (settings.keybindWiFi) Config.keybindWiFi = settings.keybindWiFi
+      if (settings.keybindBluetooth) Config.keybindBluetooth = settings.keybindBluetooth
+      if (settings.keybindBrightness) Config.keybindBrightness = settings.keybindBrightness
+      if (settings.keybindKeyboard) Config.keybindKeyboard = settings.keybindKeyboard
+      if (settings.keybindSystem) Config.keybindSystem = settings.keybindSystem
       if (settings.barThickness) Config.barThickness = parseInt(settings.barThickness)
       if (typeof settings.barTopMargin === "string") Config.barTopMargin = parseInt(settings.barTopMargin)
       if (typeof settings.barBottomMargin === "string") Config.barBottomMargin = parseInt(settings.barBottomMargin)
       if (settings.barHorizontalMargin) Config.barHorizontalMargin = parseInt(settings.barHorizontalMargin)
       if (settings.barRadius) Config.barRadius = parseInt(settings.barRadius)
+      if (settings.barRadiusMode) Config.barRadiusMode = settings.barRadiusMode
+      if (settings.barWidgetRadius) Config.barWidgetRadius = parseInt(settings.barWidgetRadius)
       if (settings.barFrostOpacity) Config.barFrostOpacity = parseInt(settings.barFrostOpacity)
       if (settings.popupVerticalAlign) Config.popupVerticalAlign = settings.popupVerticalAlign
       if (settings.popupRadius) Config.popupRadius = parseInt(settings.popupRadius)
+      if (settings.popupRadiusMode) Config.popupRadiusMode = settings.popupRadiusMode
+      if (settings.popupWidgetRadius) Config.popupWidgetRadius = parseInt(settings.popupWidgetRadius)
       if (settings.popupBackgroundOpacity) Config.popupBackgroundOpacity = parseInt(settings.popupBackgroundOpacity)
     } catch(e) {}
   }
+
+  function closePopups() {
+    drawer.isOpen = false
+    calendar.isOpen = false
+    controlCenter.isOpen = false
+    brightness.isOpen = false
+    wifi.isOpen = false
+    bluetooth.isOpen = false
+    audio.isOpen = false
+    battery.isOpen = false
+    notifications.isOpen = false
+    trayMenu.isOpen = false
+    keyboardLayout.isOpen = false
+    settings.isOpen = false
+    power.isOpen = false
+    system.isOpen = false
+    media.isOpen = false
+    clipboard.isOpen = false
+  }
+
+  Shortcut {
+    sequence: "Esc"
+    enabled: drawer.isOpen || calendar.isOpen || controlCenter.isOpen || brightness.isOpen || wifi.isOpen || bluetooth.isOpen || audio.isOpen || battery.isOpen || notifications.isOpen || trayMenu.isOpen || keyboardLayout.isOpen || settings.isOpen || power.isOpen || system.isOpen || media.isOpen || clipboard.isOpen
+    onActivated: root.closePopups()
+  }
+
 
   // Main Top Bar Panel
   Bar {
@@ -148,6 +197,9 @@ Scope {
 
   WallpaperCyclingService { }
   WallpaperOverviewService { }
+  Component.onCompleted: IdlePolicyService.restart()
+  Dock { }
+  ClipboardPopup { id: clipboard }
 
   // Application Drawer Overlay
   AppDrawer {

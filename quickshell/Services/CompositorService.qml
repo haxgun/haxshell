@@ -56,6 +56,23 @@ Singleton {
     return result
   }
   readonly property var workspaces: backend === "niri" ? niriWorkspaces : hyprlandWorkspaces
+  readonly property var toplevels: {
+    let source = backend === "niri" ? niriFallbackWindows : (Hyprland.toplevels && Hyprland.toplevels.values ? Hyprland.toplevels.values : [])
+    let result = []
+    for (let i = 0; i < source.length; i++) {
+      let window = source[i]
+      if (!window) continue
+      let ipc = backend === "hyprland" ? (window.lastIpcObject || {}) : window
+      result.push({
+        id: backend === "niri" ? window.id : (ipc.address || ""),
+        appId: backend === "niri" ? (window.app_id || "") : (ipc.class || ""),
+        title: window.title || ipc.title || "",
+        output: backend === "niri" ? outputForWorkspace(window.workspace_id) : (window.monitor ? window.monitor.name : ""),
+        focused: backend === "niri" ? !!window.is_focused : window === Hyprland.activeToplevel
+      })
+    }
+    return result
+  }
   readonly property string focusedOutputName: {
     if (backend === "niri") {
       if (niriPluginReady) return niriBackend.focusedOutputName
@@ -149,6 +166,28 @@ Singleton {
     }
     if (focusedOutputName) return screen && screen.name === focusedOutputName
     return Quickshell.screens.length === 0 || screen === Quickshell.screens[0]
+  }
+
+  function outputForWorkspace(id) {
+    for (let i = 0; i < niriFallbackWorkspaces.length; i++) {
+      if (niriFallbackWorkspaces[i] && niriFallbackWorkspaces[i].id === id) return niriFallbackWorkspaces[i].output || ""
+    }
+    return ""
+  }
+
+  function toplevelsForOutput(output) {
+    return toplevels.filter(window => !output || window.output === output)
+  }
+
+  function focusToplevel(window) {
+    if (!window || !window.id) return
+    if (backend === "hyprland") {
+      Hyprland.dispatch("focuswindow address:" + window.id)
+      return
+    }
+    niriActionProc.running = false
+    niriActionProc.command = ["niri", "msg", "action", "focus-window", "--id", String(window.id)]
+    niriActionProc.running = true
   }
 
   function switchWorkspace(workspace) {

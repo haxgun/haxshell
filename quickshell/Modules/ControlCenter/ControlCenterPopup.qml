@@ -5,7 +5,6 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Networking
 import Quickshell.Bluetooth
-import "."
 import "../../Common"
 import "../../Widgets"
 import "../../Services"
@@ -136,8 +135,12 @@ PanelWindow {
   }
 
   Process {
+    id: screenshotProc
+  }
+
+  Process {
     id: nightLightDetectProc
-    command: ["sh", "-lc", "command -v gammastep >/dev/null && printf gammastep"]
+    command: ["sh", "-lc", "command -v wlsunset >/dev/null && printf wlsunset"]
     running: true
     stdout: SplitParser { onRead: data => root.nightLightBackend = data.trim() }
   }
@@ -233,7 +236,7 @@ PanelWindow {
   function toggleNightLight() {
     if (!nightLightAvailable) return
     nightLightEnabled = !nightLightEnabled
-    run(["sh", "-lc", nightLightEnabled ? "gammastep -P -O 3500" : "gammastep -x"])
+    run(["sh", "-lc", nightLightEnabled ? "pkill wlsunset; wlsunset -t 3500" : "pkill wlsunset"])
   }
   function toggleTheme() {
     let theme = Config.isLightTheme ? "dark" : "light"
@@ -241,13 +244,13 @@ PanelWindow {
     SettingsStore.setValue("themeName", theme)
   }
   function takeScreenshot() {
-    let delay = root.isOpen ? "0.5" : "0"
     root.isOpen = false
-    if (CompositorService.backend === "niri") {
-      run(["sh", "-lc", "sleep " + delay + " && mkdir -p \"$HOME/Pictures\" && niri msg action screenshot --path \"$HOME/Pictures/Screenshot-$(date +%Y%m%d-%H%M%S).png\""])
-    } else {
-      run(["sh", "-lc", "sleep " + delay + " && mkdir -p \"$HOME/Pictures\" && grim \"$HOME/Pictures/Screenshot-$(date +%Y%m%d-%H%M%S).png\""])
-    }
+    screenshotProc.running = false
+    screenshotProc.command = [
+      "sh", "-c",
+      "sleep 0.25; region=$(slurp) || exit 0; [ -n \"$region\" ] || exit 0; dir=${XDG_PICTURES_DIR:-$HOME/Pictures}; mkdir -p \"$dir\"; file=\"$dir/Screenshot-$(date +%Y%m%d-%H%M%S).png\"; grim -g \"$region\" \"$file\" && wl-copy --type image/png < \"$file\""
+    ]
+    screenshotProc.running = true
   }
   function normalizeArtUrl(value) {
     let url = (value || "").trim()
@@ -260,6 +263,12 @@ PanelWindow {
   function profileName(profile) { return profile === "power-saver" ? "Экономия" : (profile === "performance" ? "Производительность" : "Баланс") }
   function volumeIcon() { return sinkMuted ? Config.iconVolMuted : (sinkVolume >= 70 ? Config.iconVolHigh : (sinkVolume >= 30 ? Config.iconVolMedium : Config.iconVolLow)) }
   function brightnessIcon() { return brightnessPercent >= 75 ? Config.iconBrightHigh : (brightnessPercent >= 35 ? Config.iconBrightMedium : (brightnessPercent > 0 ? Config.iconBrightLow : Config.iconBrightOff)) }
+  function visibleTiles() { return Config.controlCenterTiles.split(",").map(tile => tile.trim()).filter(tile => ["wifi", "bluetooth", "dnd", "caffeine", "screenshot", "nightlight"].indexOf(tile) >= 0) }
+  function tileIcon(tile) { return tile === "wifi" ? (Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected) : (tile === "bluetooth" ? Config.iconBluetooth : (tile === "dnd" ? Config.iconNotificationsActive : (tile === "caffeine" ? Config.iconCoffee : (tile === "nightlight" ? Config.iconNightLight : "󰹑")))) }
+  function tileTitle(tile) { return tile === "wifi" ? "Wi-Fi" : (tile === "bluetooth" ? "Bluetooth" : (tile === "dnd" ? I18n.tr("Не беспокоить") : (tile === "caffeine" ? I18n.tr("Не спать") : (tile === "nightlight" ? I18n.tr("Ночной свет") : I18n.tr("Снимок области"))))) }
+  function tileSubtitle(tile) { return tile === "wifi" ? wifiSubtitle() : (tile === "bluetooth" ? bluetoothSubtitle() : (tile === "dnd" ? (NotificationService.doNotDisturb ? I18n.tr("Включено") : I18n.tr("Выключено")) : (tile === "caffeine" ? (caffeineEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")) : (tile === "nightlight" ? (nightLightEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")) : I18n.tr("Выбрать область"))))) }
+  function tileActive(tile) { return tile === "wifi" ? Networking.wifiEnabled : (tile === "bluetooth" ? !!(adapter && adapter.enabled) : (tile === "dnd" ? NotificationService.doNotDisturb : (tile === "caffeine" ? caffeineEnabled : (tile === "nightlight" ? nightLightEnabled : false)))) }
+  function activateTile(tile) { if (tile === "wifi") toggleWifi(); else if (tile === "bluetooth") toggleBluetooth(); else if (tile === "dnd") NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb); else if (tile === "caffeine") toggleCaffeine(); else if (tile === "nightlight") toggleNightLight(); else takeScreenshot() }
 
   Rectangle {
     id: container
@@ -318,22 +327,10 @@ PanelWindow {
         }
       }
 
-      Column {
+      Flow {
         width: parent.width
         spacing: Config.scaledSize(8)
-        Row {
-          width: parent.width
-          spacing: Config.scaledSize(8)
-          QuickControlTile { icon: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected; title: "Wi-Fi"; subtitle: root.wifiSubtitle(); active: Networking.wifiEnabled; onToggled: root.toggleWifi(); onDetailsRequested: root.openPopup(root.wifiPopup) }
-          QuickControlTile { icon: Config.iconBluetooth; title: "Bluetooth"; subtitle: root.bluetoothSubtitle(); active: root.adapter && root.adapter.enabled; onToggled: root.toggleBluetooth(); onDetailsRequested: root.openPopup(root.bluetoothPopup) }
-        }
-        Row {
-          width: parent.width
-          spacing: Config.scaledSize(8)
-          QuickControlTile { icon: Config.iconNotificationsActive; title: "Не беспокоить"; subtitle: NotificationService.doNotDisturb ? "Включено" : "Выключено"; active: NotificationService.doNotDisturb; onToggled: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb); onDetailsRequested: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb) }
-          QuickControlTile { icon: Config.iconCoffee; title: "Не спать"; subtitle: root.caffeineEnabled ? "Включено" : "Выключено"; active: root.caffeineEnabled; onToggled: root.toggleCaffeine(); onDetailsRequested: root.toggleCaffeine() }
-        }
-        QuickControlTile { wide: true; icon: "󰹑"; title: "Снимок экрана"; subtitle: "Полный снимок экрана"; onToggled: root.takeScreenshot(); onDetailsRequested: root.takeScreenshot() }
+        Repeater { model: root.visibleTiles(); QuickControlTile { required property string modelData; icon: root.tileIcon(modelData); title: root.tileTitle(modelData); subtitle: root.tileSubtitle(modelData); active: root.tileActive(modelData); onToggled: root.activateTile(modelData); onDetailsRequested: root.activateTile(modelData) } }
       }
 
       Column {

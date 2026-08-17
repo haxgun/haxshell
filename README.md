@@ -28,7 +28,8 @@
 - Compact control center with pill quick actions (Wi-Fi, Bluetooth, Do Not Disturb, keep screen on), a screenshot button, brightness and volume sliders, CPU/RAM/disk stats, power profiles, theme, and media controls with track switching.
 - Separate speaker and microphone volume controls with PipeWire device selection.
 - Shared MPRIS controller with album artwork, live playback progress, bar metadata, and a media popup with a blurred artwork backdrop.
-- Notification toasts and notification center.
+- Notification toasts and notification center with per-app muting and optional sound.
+- Searchable launcher with application, window, shell-command, and calculator providers; clipboard history; dock/taskbar; calendar agenda from khal.
 - Wallpaper picker with extracted color palettes and a dynamic theme that colors shell surfaces from the current wallpaper. Seven palette schemes (`vibrant`, `faithful`, `dysfunctional`, `muted`, `soft`, `material`, `monochrome`) with animated color transitions between wallpapers.
 - Persistent settings for the theme, bar, typography (separate sans and mono families with independent scaling), notifications, OSD, wallpaper behavior, and shell appearance.
 
@@ -103,6 +104,11 @@ For Niri, install the event-driven `qml-niri` integration as a required dependen
 | `fontconfig` | selected font lookup for the color picker |
 | `zenity` or `kdialog` | folder picker |
 | `pavucontrol` | volume control GUI |
+| `wl-clipboard` | clipboard history |
+| `slurp`, `grim` | region screenshots |
+| `wlsunset` | night light |
+| `khal` | calendar agenda |
+| `swayidle` | configured idle lock or suspend policy |
 
 ### Build
 
@@ -112,7 +118,7 @@ For Niri, install the event-driven `qml-niri` integration as a required dependen
 
 One of:
 
-- **Hyprland** — `hyprland`, `hyprlock`, `xdg-desktop-portal-hyprland`, `grim`
+- **Hyprland** — `hyprland`, `hyprlock`, `xdg-desktop-portal-hyprland`
 - **Niri** — `niri`, plus `base-devel`, `cmake`, `git` to build the `qml-niri` module
 
 ### Optional
@@ -137,7 +143,7 @@ Rebuild the utility and restart Quickshell after changing files under `core/`.
 - Shared configuration is in `quickshell/Common/Config.qml`.
 - User settings are persisted by `quickshell/Common/SettingsStore.qml` in `quickshell/settings.json`.
 - Appearance settings: blur, borders, shadows, palette, typography (sans/mono family and scale), bar geometry and margins, per-widget bar toggles, popup positioning, notifications, OSD, and wallpaper rotation are available from the Settings popup.
-- Screenshots are taken with the compositor tooling (`niri msg action screenshot` on Niri, `grim` on Hyprland).
+- Region screenshots use `slurp` and `grim`; clipboard history is available through `qs ipc call clipboard toggle`.
 - Dynamic theme stores the extracted wallpaper palette in `dynamicPalette` and applies it to shell surfaces, controls, borders, tracks, and workspace indicators.
 
 ## Verification

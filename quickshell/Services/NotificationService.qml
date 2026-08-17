@@ -4,6 +4,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 import "../Common"
 
@@ -17,6 +18,7 @@ Singleton {
   property bool doNotDisturb: Config.doNotDisturb
 
   signal notificationReceived(var notification)
+  Process { id: soundProc }
 
   NotificationServer {
     id: notificationServer
@@ -34,7 +36,10 @@ Singleton {
     onNotification: notification => {
       notification.tracked = true
       root.addToHistory(notification)
-      root.notificationReceived(notification)
+      if (!root.isMuted(notification)) {
+        root.notificationReceived(notification)
+        root.playSound()
+      }
     }
   }
 
@@ -45,6 +50,19 @@ Singleton {
   function setDoNotDisturb(enabled) {
     Config.doNotDisturb = enabled
     SettingsStore.setValue("doNotDisturb", enabled ? "true" : "false")
+  }
+
+  function isMuted(notification) {
+    let app = (notification.appName || notification.desktopEntry || "").toLowerCase()
+    let muted = Config.notificationMutedApps.toLowerCase().split(",").map(name => name.trim())
+    return muted.indexOf(app) >= 0
+  }
+
+  function playSound() {
+    if (!Config.notificationSoundEnabled || Config.doNotDisturb) return
+    soundProc.running = false
+    soundProc.command = ["paplay", "/usr/share/sounds/freedesktop/stereo/message.oga"]
+    soundProc.running = true
   }
 
   function notificationImageSource(notification) {

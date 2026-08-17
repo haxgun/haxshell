@@ -65,6 +65,7 @@ PanelWindow {
   property string weatherDetails: "Погода недоступна"
   property string weatherHumidity: "--"
   property var holidaysMap: ({})
+  property string agenda: ""
 
   onIsOpenChanged: {
     if (isOpen) {
@@ -73,6 +74,7 @@ PanelWindow {
       updateCalendarGrid()
       refreshWeather()
       refreshHolidays()
+      refreshAgenda()
     }
   }
 
@@ -85,6 +87,7 @@ PanelWindow {
     }
 
   }
+  Process { id: agendaProc; stdout: SplitParser { onRead: data => root.agenda = data.trim() } }
 
   Process {
     id: holidaysProc
@@ -96,6 +99,7 @@ PanelWindow {
     holidaysProc.command = [Config.veyctl, "holidays", root.displayYear.toString()]
     holidaysProc.running = true
   }
+  function refreshAgenda() { agendaProc.running = false; agendaProc.command = ["khal", "list", "now", "7d", "--format", "{start-date} {start-time} {title}"]; agendaProc.running = true }
 
   function applyHolidays(data) {
     try {
@@ -385,6 +389,12 @@ PanelWindow {
           }
 
           Rectangle { width: parent.width; height: 1; color: Config.separatorColor; opacity: 0.45; visible: hourlyModel.count > 0 }
+
+          Column {
+            width: parent.width; spacing: Config.scaledSize(3); visible: root.agenda.length > 0
+            Text { text: I18n.tr("Повестка"); color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
+            Text { width: parent.width; text: root.agenda; color: Config.textSubtle; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; maximumLineCount: 3; elide: Text.ElideRight; wrapMode: Text.Wrap }
+          }
 
           Row {
             width: parent.width

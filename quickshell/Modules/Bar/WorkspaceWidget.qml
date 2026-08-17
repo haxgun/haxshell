@@ -1,7 +1,6 @@
 // WorkspaceWidget.qml - Workspace switcher and launcher button
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import "../../Common"
 import "../../Services"
 
@@ -34,11 +33,6 @@ Rectangle {
 
   // Target AppDrawer reference to toggle
   property var appDrawer: null
-
-  Process {
-    id: launcherProc
-    command: ["setsid", "-f", "sh", "-c", Config.cmdLauncher + " >/dev/null 2>&1"]
-  }
 
   // Indicator style configuration for occupied workspaces
   // Options: "dot" (Bottom Dot), "tint" (Soft Translucent Tint), "border" (Subtle Border Ring)
@@ -104,10 +98,7 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
         onEntered: if (root.tooltip) root.tooltip.show(launcherBtn, I18n.tr("Меню приложений"))
         onExited: if (root.tooltip) root.tooltip.hide()
-        onClicked: {
-          launcherProc.running = false
-          launcherProc.running = true
-        }
+        onClicked: if (root.appDrawer) root.appDrawer.isOpen = !root.appDrawer.isOpen
       }
     }
 

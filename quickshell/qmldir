@@ -17,10 +17,10 @@ ControlCenterPopup 1.0 Modules/ControlCenter/ControlCenterPopup.qml
 WiFiPopup 1.0 Modules/ControlCenter/WiFiPopup.qml
 BluetoothPopup 1.0 Modules/ControlCenter/BluetoothPopup.qml
 AudioPopup 1.0 Modules/ControlCenter/AudioPopup.qml
-AudioSlider 1.0 Modules/ControlCenter/AudioSlider.qml
-AudioDeviceList 1.0 Modules/ControlCenter/AudioDeviceList.qml
+AudioSlider 1.0 Widgets/AudioSlider.qml
+AudioDeviceList 1.0 Widgets/AudioDeviceList.qml
 BatteryPopup 1.0 Modules/ControlCenter/BatteryPopup.qml
-BatteryInfoRow 1.0 Modules/ControlCenter/BatteryInfoRow.qml
+BatteryInfoRow 1.0 Widgets/BatteryInfoRow.qml
 KeyboardLayoutPopup 1.0 Modules/ControlCenter/KeyboardLayoutPopup.qml
 TrayMenuPopup 1.0 Modules/Tray/TrayMenuPopup.qml
 WallpaperButton 1.0 Modules/Wallpapers/WallpaperButton.qml
@@ -35,3 +35,5 @@ NotificationPopup 1.0 Modules/Notifications/NotificationPopup.qml
 PowerPopup 1.0 Modules/Power/PowerPopup.qml
 Osd 1.0 Modules/OSD/Osd.qml
 AppScanner 1.0 Services/AppScanner.qml
+ClipboardPopup 1.0 Modules/ClipboardPopup.qml
+Dock 1.0 Modules/Dock.qml
