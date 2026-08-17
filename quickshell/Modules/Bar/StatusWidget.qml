@@ -893,8 +893,8 @@ Rectangle {
       visible: Config.barDateTimeEnabled || (Config.weatherEnabled && Config.barWeatherEnabled)
       readonly property bool isCalendarActive: root.calendarPopup && root.calendarPopup.isOpen
       color: (isCalendarActive || dateTimeMouse.containsMouse) ? Config.activeHoverBg : Config.controlIdleBg
-      border.color: Config.barBorderColor
-      border.width: Config.barBordersEnabled ? 1 : 0
+      border.color: Config.borderColor
+      border.width: Config.shellBordersEnabled ? 1 : 0
 
       Behavior on color { ColorAnimation { duration: 150 } }
 
