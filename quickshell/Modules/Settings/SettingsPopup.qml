@@ -206,7 +206,7 @@ PanelWindow {
 
   Process {
     id: screenColorProc
-    command: [root.veyctl, "color", "pick"]
+    command: [root.veyctl, "color", "pick", Config.fontMono]
     stdout: SplitParser {
       onRead: data => {
         try {

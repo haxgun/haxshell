@@ -19,6 +19,7 @@ type Config struct {
 	Lowercase    bool
 	Autocopy     bool
 	Notify       bool
+	FontPath     string
 }
 
 type Output struct {
@@ -109,15 +110,6 @@ func (p *Picker) Run() (*Color, error) {
 
 	if p.seat == nil {
 		return nil, fmt.Errorf("no seat available")
-	}
-
-	if err := p.roundtrip(); err != nil {
-		return nil, fmt.Errorf("roundtrip: %w", err)
-	}
-
-	// Extra roundtrip to ensure pointer/keyboard from seat capabilities are registered
-	if err := p.roundtrip(); err != nil {
-		return nil, fmt.Errorf("roundtrip after seat: %w", err)
 	}
 
 	if err := p.createSurfaces(); err != nil {
@@ -349,7 +341,7 @@ func (p *Picker) createLayerSurface(output *Output) (*LayerSurface, error) {
 
 	ls := &LayerSurface{
 		output:    output,
-		state:     NewSurfaceState(p.config.Format, p.config.Lowercase),
+		state:     NewSurfaceState(p.config.Format, p.config.Lowercase, p.config.FontPath),
 		wlSurface: surface,
 		layerSurf: layerSurf,
 		hidden:    true, // Start hidden, will show overlay when pointer enters

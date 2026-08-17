@@ -332,7 +332,7 @@ Rectangle {
 
   Process {
     id: pickerProc
-    command: [Config.veyctl, "color", "pick"]
+    command: [Config.veyctl, "color", "pick", Config.fontMono]
   }
 
   Grid {

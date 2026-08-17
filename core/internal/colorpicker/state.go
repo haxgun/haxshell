@@ -2,11 +2,17 @@ package colorpicker
 
 import (
 	"fmt"
+	"image"
+	stdcolor "image/color"
 	"math"
+	"os"
 	"strings"
 	"sync"
 
 	"github.com/haxgun/vey/core/internal/wayland/shm"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
+	"golang.org/x/image/math/fixed"
 )
 
 type PixelFormat = shm.PixelFormat
@@ -42,18 +48,36 @@ type SurfaceState struct {
 
 	displayFormat OutputFormat
 	lowercase     bool
+	font          font.Face
 
 	readyForDisplay bool
 	colorPicked     bool
 	cancelled       bool
 }
 
-func NewSurfaceState(format OutputFormat, lowercase bool) *SurfaceState {
+func NewSurfaceState(format OutputFormat, lowercase bool, fontPath string) *SurfaceState {
 	return &SurfaceState{
 		scale:         1,
 		displayFormat: format,
 		lowercase:     lowercase,
+		font:          loadPreviewFont(fontPath),
 	}
+}
+
+func loadPreviewFont(path string) font.Face {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	parsed, err := opentype.Parse(data)
+	if err != nil {
+		return nil
+	}
+	face, err := opentype.NewFace(parsed, &opentype.FaceOptions{Size: 14, DPI: 72, Hinting: font.HintingFull})
+	if err != nil {
+		return nil
+	}
+	return face
 }
 
 func (s *SurfaceState) SetScale(scale int32) {
@@ -320,7 +344,7 @@ func (s *SurfaceState) Redraw() *ShmBuffer {
 		px, py, picked, s.yInverted, s.screenFormat,
 	)
 
-	drawColorPreview(dst.Data(), dst.Stride, dst.Width, dst.Height, px, py, picked, s.displayFormat, s.lowercase, s.screenFormat)
+	drawColorPreview(dst.Data(), dst.Stride, dst.Width, dst.Height, px, py, picked, s.displayFormat, s.lowercase, s.screenFormat, s.font)
 
 	return dst
 }
@@ -379,6 +403,10 @@ func (s *SurfaceState) Destroy() {
 			s.renderBufs[i].Close()
 			s.renderBufs[i] = nil
 		}
+	}
+	if s.font != nil {
+		s.font.Close()
+		s.font = nil
 	}
 }
 
@@ -588,18 +616,10 @@ func drawMagnifierCrosshair(
 				continue
 			}
 
-			isOutline := absX == thickness || absY == thickness
-			if isOutline {
-				data[off+0] = 0
-				data[off+1] = 0
-				data[off+2] = 0
-				data[off+3] = 255
-			} else {
-				data[off+0] = 255
-				data[off+1] = 255
-				data[off+2] = 255
-				data[off+3] = 255
-			}
+			data[off+0] = 255
+			data[off+1] = 255
+			data[off+2] = 255
+			data[off+3] = 255
 		}
 	}
 }
@@ -1046,7 +1066,7 @@ var fontGlyphs = map[rune][fontH]uint8{
 	},
 }
 
-func drawColorPreview(data []byte, stride, width, height int, cx, cy int, c Color, format OutputFormat, lowercase bool, pixelFormat PixelFormat) {
+func drawColorPreview(data []byte, stride, width, height int, cx, cy int, c Color, format OutputFormat, lowercase bool, pixelFormat PixelFormat, previewFont font.Face) {
 	text := formatColorForPreview(c, format, lowercase)
 	if len(text) == 0 {
 		return
@@ -1055,12 +1075,10 @@ func drawColorPreview(data []byte, stride, width, height int, cx, cy int, c Colo
 	const (
 		paddingX = 8
 		paddingY = 4
-		space    = 2
 		offset   = 88
 	)
 
-	textW := len(text)*(fontW+space) - space
-	textH := fontH
+	textW, textH, ascent := previewTextMetrics(previewFont, text)
 
 	boxW := textW + paddingX*2
 	boxH := textH + paddingY*2
@@ -1090,7 +1108,51 @@ func drawColorPreview(data []byte, stride, width, height int, cx, cy int, c Colo
 	} else {
 		fg = Color{R: 255, G: 255, B: 255, A: 255}
 	}
-	drawText(data, stride, width, height, x+paddingX, y+paddingY, text, fg, pixelFormat)
+	if previewFont == nil {
+		drawText(data, stride, width, height, x+paddingX, y+paddingY, text, fg, pixelFormat)
+		return
+	}
+	drawFontText(data, stride, width, height, x+paddingX, y+paddingY, text, fg, pixelFormat, previewFont, ascent)
+}
+
+func previewTextMetrics(previewFont font.Face, text string) (width, height, ascent int) {
+	if previewFont == nil {
+		return len(text)*(fontW+2) - 2, fontH, fontH
+	}
+	metrics := previewFont.Metrics()
+	return font.MeasureString(previewFont, text).Ceil(), (metrics.Ascent + metrics.Descent).Ceil(), metrics.Ascent.Ceil()
+}
+
+func drawFontText(data []byte, stride, width, height, x, y int, text string, col Color, pixelFormat PixelFormat, previewFont font.Face, ascent int) {
+	textW, textH, _ := previewTextMetrics(previewFont, text)
+	mask := image.NewAlpha(image.Rect(0, 0, textW, textH))
+	drawer := font.Drawer{Dst: mask, Src: image.NewUniform(stdcolor.Alpha{A: 255}), Face: previewFont, Dot: fixed.P(0, ascent)}
+	drawer.DrawString(text)
+
+	var rOff, bOff int
+	if pixelFormat == FormatABGR8888 || pixelFormat == FormatXBGR8888 {
+		rOff, bOff = 0, 2
+	} else {
+		rOff, bOff = 2, 0
+	}
+	for row := range textH {
+		if yy := y + row; yy >= 0 && yy < height {
+			for column := range textW {
+				alpha := mask.Pix[row*mask.Stride+column]
+				if alpha == 0 {
+					continue
+				}
+				xx := x + column
+				if xx < 0 || xx >= width {
+					continue
+				}
+				off := yy*stride + xx*4
+				data[off+rOff] = uint8((int(col.R)*int(alpha) + int(data[off+rOff])*(255-int(alpha))) / 255)
+				data[off+1] = uint8((int(col.G)*int(alpha) + int(data[off+1])*(255-int(alpha))) / 255)
+				data[off+bOff] = uint8((int(col.B)*int(alpha) + int(data[off+bOff])*(255-int(alpha))) / 255)
+			}
+		}
+	}
 }
 
 func formatColorForPreview(c Color, format OutputFormat, lowercase bool) string {

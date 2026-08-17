@@ -1946,11 +1946,17 @@ func cmdHolidays(args []string) {
 }
 
 func cmdColor(args []string) {
-	if len(args) != 1 || args[0] != "pick" {
+	if len(args) < 1 || len(args) > 2 || args[0] != "pick" {
 		output(map[string]any{"ok": false, "error": "usage: color pick"})
 		return
 	}
-	color, err := colorpicker.New(colorpicker.Config{Format: colorpicker.FormatHex}).Run()
+	fontPath := ""
+	if len(args) == 2 && commandExists("fc-match") {
+		if path, err := exec.Command("fc-match", "-f", "%{file}", args[1]).Output(); err == nil {
+			fontPath = strings.TrimSpace(string(path))
+		}
+	}
+	color, err := colorpicker.New(colorpicker.Config{Format: colorpicker.FormatHex, FontPath: fontPath}).Run()
 	if err != nil {
 		output(map[string]any{"ok": false, "error": err.Error()})
 		return
