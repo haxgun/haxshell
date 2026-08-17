@@ -86,20 +86,22 @@ For Niri, install the event-driven `qml-niri` integration as a required dependen
 
 ### Runtime
 
-- `quickshell` — the shell runtime
-- `curl` — weather, holidays, and the About section
-- `awww` — wallpaper daemon
-- `imagemagick` — palette extraction, thumbnails, wallpaper tiling
-- `ffmpeg` — video wallpaper thumbnails
-- `brightnessctl` — brightness control
-- `power-profiles-daemon` — power profiles
-- `pipewire`, `pipewire-pulse`, `wireplumber` — audio
-- `networkmanager` — Wi-Fi and network status
-- `bluez`, `bluez-utils`, `blueman` — Bluetooth
-- `qt6-declarative`, `qt6-svg`, `qt6-multimedia` — Qt runtime
-- `ttf-jetbrains-mono-nerd` — icon glyphs
-- `zenity` or `kdialog` — folder picker
-- `pavucontrol` — volume control GUI
+| Package | Description |
+| --- | --- |
+| `quickshell` | the shell runtime |
+| `curl` | weather, holidays, and the About section |
+| `awww` | wallpaper daemon |
+| `imagemagick` | palette extraction, thumbnails, wallpaper tiling |
+| `ffmpeg` | video wallpaper thumbnails |
+| `brightnessctl` | brightness control |
+| `power-profiles-daemon` | power profiles |
+| `pipewire`, `pipewire-pulse`, `wireplumber` | audio |
+| `networkmanager` | Wi-Fi and network status |
+| `bluez`, `bluez-utils`, `blueman` | Bluetooth |
+| `qt6-declarative`, `qt6-svg`, `qt6-multimedia` | Qt runtime |
+| `ttf-jetbrains-mono-nerd` | icon glyphs |
+| `zenity` or `kdialog` | folder picker |
+| `pavucontrol` | volume control GUI |
 
 ### Build
 

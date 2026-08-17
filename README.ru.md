@@ -86,20 +86,22 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 ### Рантайм
 
-- `quickshell` — рантайм оболочки
-- `curl` — погода, праздники и раздел «О программе»
-- `awww` — демон обоев
-- `imagemagick` — извлечение палитры, миниатюры, тайлинг обоев
-- `ffmpeg` — миниатюры видеообоев
-- `brightnessctl` — управление яркостью
-- `power-profiles-daemon` — профили питания
-- `pipewire`, `pipewire-pulse`, `wireplumber` — звук
-- `networkmanager` — Wi-Fi и состояние сети
-- `bluez`, `bluez-utils`, `blueman` — Bluetooth
-- `qt6-declarative`, `qt6-svg`, `qt6-multimedia` — рантайм Qt
-- `ttf-jetbrains-mono-nerd` — глифы иконок
-- `zenity` или `kdialog` — выбор папки
-- `pavucontrol` — графический интерфейс громкости
+| Пакет | Описание |
+| --- | --- |
+| `quickshell` | рантайм оболочки |
+| `curl` | погода, праздники и раздел «О программе» |
+| `awww` | демон обоев |
+| `imagemagick` | извлечение палитры, миниатюры, тайлинг обоев |
+| `ffmpeg` | миниатюры видеообоев |
+| `brightnessctl` | управление яркостью |
+| `power-profiles-daemon` | профили питания |
+| `pipewire`, `pipewire-pulse`, `wireplumber` | звук |
+| `networkmanager` | Wi-Fi и состояние сети |
+| `bluez`, `bluez-utils`, `blueman` | Bluetooth |
+| `qt6-declarative`, `qt6-svg`, `qt6-multimedia` | рантайм Qt |
+| `ttf-jetbrains-mono-nerd` | глифы иконок |
+| `zenity` или `kdialog` | выбор папки |
+| `pavucontrol` | графический интерфейс громкости |
 
 ### Сборка
 
