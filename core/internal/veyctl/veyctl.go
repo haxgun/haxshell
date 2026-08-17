@@ -204,6 +204,20 @@ func settingsDefaults() map[string]string {
 		"brightnessSleepMultiplier":   ".2",
 		"barPosition":                 "top",
 		"barStyle":                    "solid",
+		"settingsCloseKeybind":        "Esc",
+		"keybindDrawer":               "Super+Space",
+		"keybindSettings":             "Super+,",
+		"keybindClipboard":            "Super+V",
+		"keybindNotifications":        "Super+N",
+		"keybindPower":                "Super+X",
+		"keybindControlCenter":        "Super+C",
+		"keybindCalendar":             "Super+T",
+		"keybindMedia":                "Super+M",
+		"keybindWiFi":                 "Super+W",
+		"keybindBluetooth":            "Super+B",
+		"keybindBrightness":           "Super+L",
+		"keybindKeyboard":             "Super+K",
+		"keybindSystem":               "Super+I",
 		"barThickness":                "40",
 		"barTopMargin":                "6",
 		"barBottomMargin":             "6",
@@ -1981,6 +1995,177 @@ func copyColor(hex string) {
 	}
 }
 
+func cmdIPC(args []string) {
+	if len(args) < 2 {
+		output(map[string]any{"ok": false, "error": "usage: veyctl ipc <target> <function>"})
+		return
+	}
+	executable, err := os.Executable()
+	if err != nil {
+		output(map[string]any{"ok": false, "error": "locate veyctl executable"})
+		return
+	}
+	if resolved, resolveErr := filepath.EvalSymlinks(executable); resolveErr == nil {
+		executable = resolved
+	}
+	command := exec.Command("quickshell", append([]string{"--path", filepath.Dir(executable), "ipc", "call"}, args...)...)
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	if err := command.Run(); err != nil {
+		fmt.Fprintln(os.Stderr, "quickshell ipc failed:", err)
+	}
+}
+
+var niriKeybinds = []struct {
+	setting string
+	target  string
+}{
+	{"keybindDrawer", "drawer"}, {"keybindSettings", "settings"},
+	{"keybindClipboard", "clipboard"}, {"keybindNotifications", "notifications"},
+	{"keybindPower", "power"}, {"keybindControlCenter", "control-center"},
+	{"keybindCalendar", "calendar"}, {"keybindMedia", "media"},
+	{"keybindWiFi", "wifi"}, {"keybindBluetooth", "bluetooth"},
+	{"keybindBrightness", "brightness"}, {"keybindKeyboard", "keyboard"},
+	{"keybindSystem", "system"},
+}
+
+func niriShortcut(value string) (string, bool) {
+	if !regexp.MustCompile(`^[A-Za-z0-9+,_-]+$`).MatchString(value) {
+		return "", false
+	}
+	parts := strings.Split(value, "+")
+	if len(parts) == 0 || parts[len(parts)-1] == "" {
+		return "", false
+	}
+	for i, part := range parts {
+		if part == "" {
+			return "", false
+		}
+		if part == "Super" {
+			parts[i] = "Mod"
+		} else if part == "," {
+			parts[i] = "Comma"
+		}
+	}
+	return strings.Join(parts, "+"), true
+}
+
+func hyprShortcut(value string) (string, bool) {
+	if !regexp.MustCompile(`^[A-Za-z0-9+,_-]+$`).MatchString(value) {
+		return "", false
+	}
+	parts := strings.Split(value, "+")
+	if len(parts) == 0 || parts[len(parts)-1] == "" {
+		return "", false
+	}
+	mods := make([]string, 0, len(parts)-1)
+	for _, part := range parts[:len(parts)-1] {
+		switch part {
+		case "Super":
+			mods = append(mods, "SUPER")
+		case "Ctrl":
+			mods = append(mods, "CTRL")
+		case "Alt":
+			mods = append(mods, "ALT")
+		case "Shift":
+			mods = append(mods, "SHIFT")
+		default:
+			return "", false
+		}
+	}
+	key := parts[len(parts)-1]
+	if key == "," {
+		key = "comma"
+	}
+	return strings.Join(mods, " ") + ", " + key, true
+}
+
+func cmdKeybind(args []string) {
+	if len(args) != 3 || args[0] != "set" {
+		output(map[string]any{"ok": false, "error": "usage: veyctl keybind set <setting> <shortcut>"})
+		return
+	}
+	_, niri := niriShortcut(args[2])
+	_, hyprland := hyprShortcut(args[2])
+	if isNiriSession() {
+		hyprland = false
+	} else if os.Getenv("HYPRLAND_INSTANCE_SIGNATURE") != "" {
+		niri = false
+	} else {
+		niri, hyprland = false, false
+	}
+	valid := niri || hyprland
+	if !valid {
+		output(map[string]any{"ok": false, "error": "invalid shortcut or unsupported compositor"})
+		return
+	}
+	known := false
+	for _, bind := range niriKeybinds {
+		if bind.setting == args[1] {
+			known = true
+			break
+		}
+	}
+	if !known {
+		output(map[string]any{"ok": false, "error": "unknown keybind"})
+		return
+	}
+	settings := saveSettingValue(args[1], args[2])
+	configPath, include := filepath.Join(homeDir, ".config/niri/config.kdl"), `include "./vey/binds.kdl"`
+	if hyprland {
+		configPath, include = filepath.Join(homeDir, ".config/hypr/hyprland.conf"), "source = ~/.config/hypr/vey/binds.conf"
+	}
+	config, err := os.ReadFile(configPath)
+	if err != nil {
+		output(map[string]any{"ok": false, "error": "read niri config"})
+		return
+	}
+	if !strings.Contains(string(config), include) {
+		if err := os.WriteFile(configPath, append(config, []byte("\n"+include+"\n")...), 0o644); err != nil {
+			output(map[string]any{"ok": false, "error": "update niri config"})
+			return
+		}
+	}
+	var binds strings.Builder
+	if niri {
+		binds.WriteString("binds {\n")
+	}
+	for _, bind := range niriKeybinds {
+		value, ok := niriShortcut(settings[bind.setting])
+		if hyprland {
+			value, ok = hyprShortcut(settings[bind.setting])
+		}
+		if ok {
+			if niri {
+				fmt.Fprintf(&binds, "    %s { spawn \"sh\" \"-c\" \"\\\"$HOME/.config/quickshell/veyctl\\\" ipc %s toggle\"; }\n", value, bind.target)
+			} else {
+				fmt.Fprintf(&binds, "bind = %s, exec, ~/.config/quickshell/veyctl ipc %s toggle\n", value, bind.target)
+			}
+		}
+	}
+	if niri {
+		binds.WriteString("}\n")
+	}
+	path := filepath.Join(homeDir, ".config/niri/vey/binds.kdl")
+	if hyprland {
+		path = filepath.Join(homeDir, ".config/hypr/vey/binds.conf")
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		output(map[string]any{"ok": false, "error": "create keybind directory"})
+		return
+	}
+	if err := os.WriteFile(path, []byte(binds.String()), 0o644); err != nil {
+		output(map[string]any{"ok": false, "error": "write keybind overrides"})
+		return
+	}
+	command := []string{"niri", "msg", "action", "load-config-file"}
+	if hyprland {
+		command = []string{"hyprctl", "reload"}
+	}
+	_, status := run(5*time.Second, command[0], command[1:]...)
+	output(map[string]any{"ok": status == 0})
+}
+
 // Run dispatches veyctl commands from the process arguments.
 func Run() {
 	if len(os.Args) < 2 {
@@ -2009,6 +2194,10 @@ func Run() {
 		cmdHolidays(args)
 	case "i18n":
 		cmdI18n(args)
+	case "ipc":
+		cmdIPC(args)
+	case "keybind":
+		cmdKeybind(args)
 	case "keyboard":
 		cmdKeyboard(args)
 	case "net":

@@ -16,6 +16,7 @@ readonly PACKAGES=(
   ffmpeg
   fontconfig
   grim
+  khal
   go
   hyprland
   hyprlock
@@ -30,6 +31,10 @@ readonly PACKAGES=(
   qt6-multimedia
   qt6-svg
   ttf-jetbrains-mono-nerd
+  slurp
+  swayidle
+  wl-clipboard
+  wlsunset
   wireplumber
   xdg-desktop-portal-hyprland
   zenity
@@ -129,6 +134,36 @@ if [[ -L "$CONFIG_DIR" ]]; then
   fi
 else
   ln -s "$SHELL_DIR" "$CONFIG_DIR"
+fi
+
+if [[ "$COMPOSITOR" == "hyprland" ]]; then
+  HYPR_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
+  HYPR_BINDS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/vey"
+  HYPR_BINDS="$HYPR_BINDS_DIR/binds.conf"
+  HYPR_INCLUDE="source = ~/.config/quickshell/keybinds/hyprland.conf"
+  HYPR_USER_INCLUDE="source = ~/.config/hypr/vey/binds.conf"
+  mkdir -p "$HYPR_BINDS_DIR"
+  [[ -e "$HYPR_BINDS" ]] || : > "$HYPR_BINDS"
+  if [[ -f "$HYPR_CONFIG" ]] && ! grep -Fqx "$HYPR_INCLUDE" "$HYPR_CONFIG"; then
+    printf '\n%s\n' "$HYPR_INCLUDE" >> "$HYPR_CONFIG"
+  fi
+  if [[ -f "$HYPR_CONFIG" ]] && ! grep -Fqx "$HYPR_USER_INCLUDE" "$HYPR_CONFIG"; then
+    printf '\n%s\n' "$HYPR_USER_INCLUDE" >> "$HYPR_CONFIG"
+  fi
+elif [[ "$COMPOSITOR" == "niri" ]]; then
+  NIRI_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
+  NIRI_BINDS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/niri/vey"
+  NIRI_BINDS="$NIRI_BINDS_DIR/binds.kdl"
+  NIRI_INCLUDE='include "../quickshell/keybinds/niri.kdl"'
+  NIRI_USER_INCLUDE='include "./vey/binds.kdl"'
+  mkdir -p "$NIRI_BINDS_DIR"
+  [[ -e "$NIRI_BINDS" ]] || printf 'binds {}\n' > "$NIRI_BINDS"
+  if [[ -f "$NIRI_CONFIG" ]] && ! grep -Fqx "$NIRI_INCLUDE" "$NIRI_CONFIG"; then
+    printf '\n%s\n' "$NIRI_INCLUDE" >> "$NIRI_CONFIG"
+  fi
+  if [[ -f "$NIRI_CONFIG" ]] && ! grep -Fqx "$NIRI_USER_INCLUDE" "$NIRI_CONFIG"; then
+    printf '\n%s\n' "$NIRI_USER_INCLUDE" >> "$NIRI_CONFIG"
+  fi
 fi
 
 printf '\nvey is installed. Start it with:\n  quickshell --path %s\n' "$SHELL_DIR"

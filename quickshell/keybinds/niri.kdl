@@ -1,0 +1,16 @@
+// Include from config.kdl: include "../quickshell/keybinds/niri.kdl"
+binds {
+    Mod+Space { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc drawer toggle"; }
+    Mod+Comma { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc settings toggle"; }
+    Mod+V { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc clipboard toggle"; }
+    Mod+N { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc notifications toggle"; }
+    Mod+X { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc power toggle"; }
+    Mod+C { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc control-center toggle"; }
+    Mod+T { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc calendar toggle"; }
+    Mod+M { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc media toggle"; }
+    Mod+W { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc wifi toggle"; }
+    Mod+B { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc bluetooth toggle"; }
+    Mod+L { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc brightness toggle"; }
+    Mod+K { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc keyboard toggle"; }
+    Mod+I { spawn "sh" "-c" "\"$HOME/.config/quickshell/veyctl\" ipc system toggle"; }
+}
