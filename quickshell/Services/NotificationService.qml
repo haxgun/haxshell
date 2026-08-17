@@ -73,6 +73,7 @@ Singleton {
   function clearAll() {
     let list = notifications.slice()
     for (let i = 0; i < list.length; i++) list[i].dismiss()
+    historyList = []
   }
 
   function removeNotification(notification) {
