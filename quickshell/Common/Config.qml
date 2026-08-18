@@ -329,6 +329,13 @@ Singleton {
   function scaledIconSize(base) { return Math.round(base * uiScale) }
   function scaledSize(base) { return Math.round(base * uiScale) }
 
+  function launcherIconSource() {
+    let value = (launcherIconSvg || "").trim()
+    if (value.length === 0) return ""
+    if (value.indexOf("<svg") === 0) return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(value)
+    return value
+  }
+
   // ==========================================
   // ⚙️ SECTION 4: COMPONENT CONFIGURATION
   // ==========================================
@@ -360,6 +367,7 @@ Singleton {
   property bool barColorPickerEnabled: true
   property bool barWorkspacesEnabled: true
   property bool barLauncherEnabled: true
+  property string launcherIconSvg: ""
   property bool barActiveAppEnabled: true
   property bool barMediaEnabled: true
   property bool barTrayEnabled: true

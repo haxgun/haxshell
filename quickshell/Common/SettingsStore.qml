@@ -53,6 +53,7 @@ Singleton {
   property alias barColorPickerEnabled: adapter.barColorPickerEnabled
   property alias barWorkspacesEnabled: adapter.barWorkspacesEnabled
   property alias barLauncherEnabled: adapter.barLauncherEnabled
+  property alias launcherIconSvg: adapter.launcherIconSvg
   property alias barActiveAppEnabled: adapter.barActiveAppEnabled
   property alias barMediaEnabled: adapter.barMediaEnabled
   property alias barTrayEnabled: adapter.barTrayEnabled
@@ -195,6 +196,7 @@ Singleton {
       property string barColorPickerEnabled: "true"
       property string barWorkspacesEnabled: "true"
       property string barLauncherEnabled: "true"
+      property string launcherIconSvg: ""
       property string barActiveAppEnabled: "true"
       property string barMediaEnabled: "true"
       property string barTrayEnabled: "true"
@@ -320,6 +322,7 @@ Singleton {
       barColorPickerEnabled: adapter.barColorPickerEnabled,
       barWorkspacesEnabled: adapter.barWorkspacesEnabled,
       barLauncherEnabled: adapter.barLauncherEnabled,
+      launcherIconSvg: adapter.launcherIconSvg,
       barActiveAppEnabled: adapter.barActiveAppEnabled,
       barMediaEnabled: adapter.barMediaEnabled,
       barTrayEnabled: adapter.barTrayEnabled,

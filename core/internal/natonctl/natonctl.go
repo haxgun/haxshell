@@ -185,6 +185,7 @@ func settingsDefaults() map[string]string {
 		"barColorPickerEnabled":         "true",
 		"barWorkspacesEnabled":          "true",
 		"barLauncherEnabled":            "true",
+		"launcherIconSvg":               "",
 		"barActiveAppEnabled":           "true",
 		"barMediaEnabled":               "true",
 		"barTrayEnabled":                "true",

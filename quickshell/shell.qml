@@ -76,6 +76,7 @@ Scope {
       if (typeof settings.barColorPickerEnabled === "string") Config.barColorPickerEnabled = settings.barColorPickerEnabled === "true"
       if (typeof settings.barWorkspacesEnabled === "string") Config.barWorkspacesEnabled = settings.barWorkspacesEnabled === "true"
       if (typeof settings.barLauncherEnabled === "string") Config.barLauncherEnabled = settings.barLauncherEnabled === "true"
+      if (typeof settings.launcherIconSvg === "string") Config.launcherIconSvg = settings.launcherIconSvg
       if (typeof settings.barActiveAppEnabled === "string") Config.barActiveAppEnabled = settings.barActiveAppEnabled === "true"
       if (typeof settings.barMediaEnabled === "string") Config.barMediaEnabled = settings.barMediaEnabled === "true"
       if (typeof settings.barTrayEnabled === "string") Config.barTrayEnabled = settings.barTrayEnabled === "true"
