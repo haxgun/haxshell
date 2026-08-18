@@ -81,11 +81,24 @@ Rectangle {
 
       Behavior on color { ColorAnimation { duration: 150 } }
 
+      Image {
+        anchors.centerIn: parent
+        width: Config.scaledSize(20)
+        height: Config.scaledSize(20)
+        source: Config.launcherIconSource()
+        sourceSize: Qt.size(Config.scaledSize(40), Config.scaledSize(40))
+        fillMode: Image.PreserveAspectFit
+        smooth: true
+        asynchronous: true
+        visible: source.length > 0
+      }
+
       Text {
         anchors.centerIn: parent
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         text: Config.iconLauncher
+        visible: Config.launcherIconSource().length === 0
         color: (launcherBtn.isDrawerActive || launcherMouse.containsMouse) ? Config.textWhite : Config.iconColor
         font.pixelSize: Config.fontSizeIconMedium
         font.family: Config.fontIcon
