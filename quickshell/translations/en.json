@@ -177,8 +177,5 @@
   "0 отключает; доступно при источнике idle": "0 disables; requires an idle event source",
   "Отключённые приложения": "Muted apps",
   "Имена приложений через запятую": "Comma-separated application names",
-  "Блокировка": "Lock",
-  "SVG-иконка": "SVG icon",
-  "Своя иконка": "Custom icon",
-  "Вставьте SVG-код или путь к файлу": "Paste SVG markup or a file path"
+  "Блокировка": "Lock"
 }

@@ -177,8 +177,5 @@
   "0 отключает; доступно при источнике idle": "0 deaktiviert; benötigt eine Leerlaufereignisquelle",
   "Отключённые приложения": "Stumme Apps",
   "Имена приложений через запятую": "Kommagetrennte App-Namen",
-  "Блокировка": "Sperren",
-  "SVG-иконка": "SVG-Symbol",
-  "Своя иконка": "Eigenes Symbol",
-  "Вставьте SVG-код или путь к файлу": "SVG-Code oder Dateipfad einfügen"
+  "Блокировка": "Sperren"
 }
