@@ -116,7 +116,6 @@ Singleton {
   property alias notificationSoundEnabled: adapter.notificationSoundEnabled
   property alias notificationMutedApps: adapter.notificationMutedApps
   property alias controlCenterTiles: adapter.controlCenterTiles
-  property alias dockEnabled: adapter.dockEnabled
   property alias idleTimeoutMinutes: adapter.idleTimeoutMinutes
   property alias idleAction: adapter.idleAction
   property alias osdPosition: adapter.osdPosition
@@ -252,7 +251,6 @@ Singleton {
       property string notificationSoundEnabled: "false"
       property string notificationMutedApps: ""
       property string controlCenterTiles: "wifi,bluetooth,dnd,caffeine,screenshot,nightlight"
-      property string dockEnabled: "true"
       property string idleTimeoutMinutes: "0"
       property string idleAction: "lock"
       property string osdPosition: "bottom-center"
@@ -371,7 +369,6 @@ Singleton {
       notificationSoundEnabled: adapter.notificationSoundEnabled,
       notificationMutedApps: adapter.notificationMutedApps,
       controlCenterTiles: adapter.controlCenterTiles,
-      dockEnabled: adapter.dockEnabled,
       idleTimeoutMinutes: adapter.idleTimeoutMinutes,
       idleAction: adapter.idleAction,
       osdPosition: adapter.osdPosition

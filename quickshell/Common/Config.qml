@@ -46,7 +46,6 @@ QtObject {
   property bool notificationSoundEnabled: false
   property string notificationMutedApps: ""
   property string controlCenterTiles: "wifi,bluetooth,dnd,caffeine,screenshot,nightlight"
-  property bool dockEnabled: true
   property int idleTimeoutMinutes: 0
   property string idleAction: "lock"
   property string osdPosition: "bottom-center"
@@ -456,7 +455,6 @@ QtObject {
   readonly property string iconRefreshAuto: "󱣲"
   readonly property string iconWorkspaceNumber: "󰲠"
   readonly property string iconClipboard: "󰅌"
-  readonly property string iconDock: "󰀻"
   readonly property string iconNightLight: "󰖔"
 
   // Volume Icons

@@ -107,7 +107,6 @@ Scope {
       if (typeof settings.notificationSoundEnabled === "string") Config.notificationSoundEnabled = settings.notificationSoundEnabled === "true"
       if (typeof settings.notificationMutedApps === "string") Config.notificationMutedApps = settings.notificationMutedApps
       if (settings.controlCenterTiles) Config.controlCenterTiles = settings.controlCenterTiles
-      if (typeof settings.dockEnabled === "string") Config.dockEnabled = settings.dockEnabled === "true"
       if (settings.idleTimeoutMinutes) Config.idleTimeoutMinutes = parseInt(settings.idleTimeoutMinutes)
       if (settings.idleAction) Config.idleAction = settings.idleAction
       if (settings.osdPosition) Config.osdPosition = settings.osdPosition
@@ -198,7 +197,6 @@ Scope {
   WallpaperCyclingService { }
   WallpaperOverviewService { }
   Component.onCompleted: IdlePolicyService.restart()
-  Dock { }
   ClipboardPopup { id: clipboard }
 
   // Application Drawer Overlay

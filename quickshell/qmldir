@@ -36,4 +36,3 @@ PowerPopup 1.0 Modules/Power/PowerPopup.qml
 Osd 1.0 Modules/OSD/Osd.qml
 AppScanner 1.0 Services/AppScanner.qml
 ClipboardPopup 1.0 Modules/ClipboardPopup.qml
-Dock 1.0 Modules/Dock.qml
