@@ -22,6 +22,12 @@ Item {
     }
   }
 
+  Process {
+    id: startupProc
+    command: [Config.natonctl, "wallpaper", "apply"]
+    running: true
+  }
+
   Timer {
     interval: Math.max(30, Config.wallpaperCyclingInterval) * 1000
     running: Config.wallpaperCyclingEnabled

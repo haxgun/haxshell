@@ -22,6 +22,7 @@ readonly PACKAGES=(
   hyprlock
   imagemagick
   kdialog
+  mpv
   networkmanager
   pavucontrol
   pipewire
@@ -39,7 +40,7 @@ readonly PACKAGES=(
   xdg-desktop-portal-hyprland
   zenity
 )
-readonly AUR_PACKAGES=(vicinae-bin)
+readonly AUR_PACKAGES=(mpvpaper vicinae-bin)
 readonly NIRI_PACKAGES=(base-devel cmake git niri)
 
 die() {

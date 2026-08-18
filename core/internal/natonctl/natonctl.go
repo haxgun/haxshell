@@ -1545,6 +1545,11 @@ func tiledWallpaper(path string, output wallpaperOutput, mode string) string {
 }
 
 func applyWall(path string) {
+	if videoExt[strings.ToLower(filepath.Ext(path))] {
+		applyVideoWall(path)
+		return
+	}
+	killVideoWall()
 	if commandExists("awww-daemon") {
 		_ = exec.Command("awww-daemon").Start()
 	}
@@ -1576,6 +1581,20 @@ func applyWall(path string) {
 		}
 		run(5*time.Second, "awww", path)
 	}
+}
+
+func killVideoWall() {
+	if commandExists("pkill") {
+		_ = exec.Command("pkill", "-x", "mpvpaper").Run()
+	}
+}
+
+func applyVideoWall(path string) {
+	if !commandExists("mpvpaper") {
+		return
+	}
+	killVideoWall()
+	_ = exec.Command("mpvpaper", "-o", "no-audio loop panscan=1.0", "ALL", path).Start()
 }
 
 func applyOverviewBlur(dir string, enabled bool) {
