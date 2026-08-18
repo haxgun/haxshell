@@ -138,6 +138,8 @@
   "Всегда отображается": "Always shown",
   "Задержка скрытия": "Hide delay",
   "Через сколько секунд скрывать панель": "Seconds before the panel hides",
+  "Адаптивный бар": "Adaptive bar",
+  "Прозрачный без окна на весь экран": "Transparent without a fullscreen window",
   "Сочетания клавиш": "Keybinds",
   "Глобальные сочетания": "Global shortcuts",
   "Навигация настроек": "Settings navigation",

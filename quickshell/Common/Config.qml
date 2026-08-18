@@ -190,6 +190,7 @@ QtObject {
   property string barPosition: "top"
   property string barStyle: "solid"
   property string popupVerticalAlign: "top"
+  property bool barAdaptive: true
   property bool barAutoHide: false
   property int barAutoHideDelay: 3
   property string settingsCloseKeybind: "Esc"

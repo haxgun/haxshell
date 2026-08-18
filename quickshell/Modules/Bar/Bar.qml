@@ -1,6 +1,7 @@
 import "."
 import "../../Common"
 import "../../Widgets"
+import "../../Services"
 import QtQuick
 // Bar.qml - Quickshell bar window container
 import Quickshell
@@ -45,6 +46,7 @@ Scope {
             property string targetPos: ""
             property bool barMoveActive: false
             property bool barHidden: false
+            readonly property bool barTransparent: Config.barAdaptive && CompositorService.fullscreenOutputs.indexOf(modelData.name) < 0
 
             function nearestEdge(sx, sy) {
                 let w = modelData.width
@@ -150,10 +152,10 @@ Scope {
                     width: vertical ? Config.barHeight : parent.width - Config.barMargin * 2
                     height: vertical ? parent.height - Config.scaledBarTopMargin - Config.scaledBarBottomMargin : Config.barHeight
                     radius: Config.scaledBarRadius
-                    color: Config.barStyle === "solid" ? Config.barBackgroundBg : "#00000000"
+                    color: Config.barStyle === "solid" && !screenScope.barTransparent ? Config.barBackgroundBg : "#00000000"
 
                     Rectangle {
-                        visible: Config.barStyle === "solid" && Config.barShadowsEnabled
+                        visible: Config.barStyle === "solid" && Config.barShadowsEnabled && !screenScope.barTransparent
                         x: 0
                         y: Config.shellShadowOffsetY
                         width: parent.width
@@ -165,7 +167,7 @@ Scope {
                     }
 
                     Rectangle {
-                        visible: Config.barStyle === "solid" && Config.barBordersEnabled
+                        visible: Config.barStyle === "solid" && Config.barBordersEnabled && !screenScope.barTransparent
                         anchors.fill: parent
                         anchors.margins: Config.innerBorderMargin
                         radius: Math.max(0, barSurface.radius - Config.innerBorderMargin)
@@ -238,10 +240,10 @@ Scope {
 
                             Rectangle {
                                 radius: Config.scaledBarRadius
-                                color: Config.barBackgroundBg
+                                color: screenScope.barTransparent ? "#00000000" : Config.barBackgroundBg
 
                                 Rectangle {
-                                    visible: Config.barShadowsEnabled
+                                    visible: Config.barShadowsEnabled && !screenScope.barTransparent
                                     x: 0
                                     y: Config.shellShadowOffsetY
                                     width: parent.width
@@ -258,7 +260,7 @@ Scope {
                                     radius: Math.max(0, parent.radius - Config.innerBorderMargin)
                                     color: "#00000000"
                                     border.color: Config.barBorderColor
-                                    border.width: Config.barBordersEnabled ? 1 : 0
+                                    border.width: Config.barBordersEnabled && !screenScope.barTransparent ? 1 : 0
                                 }
                             }
                         }
@@ -340,16 +342,16 @@ Scope {
                 }
 
                 BackgroundEffect.blurRegion: Region {
-                    item: Config.barBlurEnabled && Config.barStyle === "solid" ? barSurface : null
+                    item: Config.barBlurEnabled && !screenScope.barTransparent && Config.barStyle === "solid" ? barSurface : null
                     radius: Math.round(barSurface.radius)
 
                     Region {
-                        item: Config.barBlurEnabled && Config.barStyle === "islands" ? barSurface.leftIsland : null
+                        item: Config.barBlurEnabled && !screenScope.barTransparent && Config.barStyle === "islands" ? barSurface.leftIsland : null
                         radius: Math.round(barSurface.radius)
                     }
 
                     Region {
-                        item: Config.barBlurEnabled && Config.barStyle === "islands" ? barSurface.rightIsland : null
+                        item: Config.barBlurEnabled && !screenScope.barTransparent && Config.barStyle === "islands" ? barSurface.rightIsland : null
                         radius: Math.round(barSurface.radius)
                     }
                 }

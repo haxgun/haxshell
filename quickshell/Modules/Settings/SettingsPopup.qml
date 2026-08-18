@@ -476,6 +476,7 @@ PanelWindow {
     if (key === "dynamicDark") Config.dynamicDark = value
     if (key === "showWorkspaceNumbers") Config.showWorkspaceNumbers = value
     if (key === "showWorkspacesOnAllMonitors") Config.showWorkspacesOnAllMonitors = value
+    if (key === "barAdaptive") Config.barAdaptive = value
     if (key === "barBlurEnabled") Config.barBlurEnabled = value
     if (key === "popupBlurEnabled") Config.popupBlurEnabled = value
     if (key === "wallpaperCyclingEnabled") Config.wallpaperCyclingEnabled = value
@@ -1679,6 +1680,18 @@ PanelWindow {
                     MouseArea { id: barStyleMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarStyle(parent.modelData.key) }
                   }
                 }
+              }
+            }
+            SettingsRow {
+              icon: Config.iconRefreshAuto
+              title: I18n.tr("Адаптивный бар")
+              subtitle: I18n.tr("Прозрачный без окна на весь экран")
+              onClicked: root.setBoolSetting("barAdaptive", !Config.barAdaptive)
+              ToggleSwitch {
+                z: 1
+                checked: Config.barAdaptive
+                anchors.verticalCenter: parent.verticalCenter
+                onToggled: root.setBoolSetting("barAdaptive", !Config.barAdaptive)
               }
             }
             SettingsRow {

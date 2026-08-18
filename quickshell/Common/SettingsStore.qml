@@ -100,6 +100,7 @@ Singleton {
   property alias popupRadiusMode: adapter.popupRadiusMode
   property alias popupWidgetRadius: adapter.popupWidgetRadius
   property alias popupBackgroundOpacity: adapter.popupBackgroundOpacity
+  property alias barAdaptive: adapter.barAdaptive
   property alias barBlurEnabled: adapter.barBlurEnabled
   property alias popupBlurEnabled: adapter.popupBlurEnabled
   property alias shellBlurEnabled: adapter.shellBlurEnabled
@@ -235,6 +236,7 @@ Singleton {
       property string popupRadiusMode: "linked"
       property string popupWidgetRadius: "45"
       property string popupBackgroundOpacity: "56"
+      property string barAdaptive: "true"
       property string barBlurEnabled: "true"
       property string popupBlurEnabled: "true"
       property string shellBlurEnabled: "true"
@@ -353,6 +355,7 @@ Singleton {
       popupRadiusMode: adapter.popupRadiusMode,
       popupWidgetRadius: adapter.popupWidgetRadius,
       popupBackgroundOpacity: adapter.popupBackgroundOpacity,
+      barAdaptive: adapter.barAdaptive,
       barBlurEnabled: adapter.barBlurEnabled,
       popupBlurEnabled: adapter.popupBlurEnabled,
       shellBlurEnabled: adapter.shellBlurEnabled,

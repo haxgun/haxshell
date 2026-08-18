@@ -90,6 +90,7 @@ Scope {
       if (typeof settings.shellBlurEnabled === "string") Config.shellBlurEnabled = settings.shellBlurEnabled === "true"
       if (typeof settings.barBlurEnabled === "string") Config.barBlurEnabled = settings.barBlurEnabled === "true"
       else if (typeof settings.shellBlurEnabled === "string") Config.barBlurEnabled = settings.shellBlurEnabled === "true"
+      if (typeof settings.barAdaptive === "string") Config.barAdaptive = settings.barAdaptive === "true"
       if (typeof settings.popupBlurEnabled === "string") Config.popupBlurEnabled = settings.popupBlurEnabled === "true"
       else if (typeof settings.shellBlurEnabled === "string") Config.popupBlurEnabled = settings.shellBlurEnabled === "true"
       if (typeof settings.shellBordersEnabled === "string") Config.shellBordersEnabled = settings.shellBordersEnabled === "true"

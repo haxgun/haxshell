@@ -107,6 +107,25 @@ Singleton {
       output: window && window.monitor ? (window.monitor.name || "") : ""
     }
   }
+  readonly property var fullscreenOutputs: {
+    let result = []
+    if (backend === "hyprland") {
+      let list = Hyprland.workspaces && Hyprland.workspaces.values ? Hyprland.workspaces.values : []
+      for (let i = 0; i < list.length; i++) {
+        let ws = list[i]
+        if (ws && ws.hasFullscreen && ws.monitor && ws.monitor.name) result.push(ws.monitor.name)
+      }
+    } else if (backend === "niri") {
+      for (let i = 0; i < niriFallbackWindows.length; i++) {
+        let w = niriFallbackWindows[i]
+        if (w && w.is_floating === false) {
+          let out = outputForWorkspace(w.workspace_id)
+          if (out && result.indexOf(out) < 0) result.push(out)
+        }
+      }
+    }
+    return result
+  }
   Loader {
     id: niriBackendLoader
     active: root.backend === "niri"
