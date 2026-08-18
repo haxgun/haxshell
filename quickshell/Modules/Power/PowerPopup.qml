@@ -88,7 +88,7 @@ PanelWindow {
         model: [
           { label: "Заблокировать", icon: Config.iconLock, command: "loginctl lock-session" },
           { label: "Сон", icon: Config.iconSuspend, command: "systemctl suspend" },
-          { label: "Выйти", icon: Config.iconLogout, command: CompositorService.exitCommand },
+          { label: "Выйти", icon: Config.iconLogout, command: "loginctl terminate-user $USER" },
           { label: "Перезагрузка", icon: Config.iconRestart, command: "systemctl reboot" },
           { label: "Выключить", icon: Config.iconPower, command: "systemctl poweroff", danger: true }
         ]

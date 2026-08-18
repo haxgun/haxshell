@@ -107,8 +107,6 @@ Singleton {
       output: window && window.monitor ? (window.monitor.name || "") : ""
     }
   }
-  readonly property string exitCommand: backend === "niri" ? "niri msg action quit" : "hyprctl dispatch exit"
-
   Loader {
     id: niriBackendLoader
     active: root.backend === "niri"
