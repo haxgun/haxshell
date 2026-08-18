@@ -114,8 +114,8 @@ Rectangle {
         color: "transparent"
         Image { id: toastImage; anchors.fill: parent; source: toast.toastImageSource; visible: source.toString().length > 0; fillMode: Image.PreserveAspectCrop; asynchronous: true }
       }
-      IconImage { anchors.centerIn: parent; width: Config.scaledSize(28); height: Config.scaledSize(28); source: toast.toastIconSource; visible: !toastImage.visible && source.toString().length > 0 }
-      Text { anchors.centerIn: parent; visible: !toastImage.visible && toast.toastIconSource.length === 0; text: (toast.toastAppName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
+      IconImage { id: toastIcon; anchors.centerIn: parent; width: Config.scaledSize(28); height: Config.scaledSize(28); source: toast.toastIconSource; visible: !toastImage.visible && toast.toastIconSource.length > 0 && toastIcon.status !== Image.Error }
+      Text { anchors.centerIn: parent; visible: !toastImage.visible && (toast.toastIconSource.length === 0 || toastIcon.status === Image.Error); text: (toast.toastAppName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
     }
 
     Column {

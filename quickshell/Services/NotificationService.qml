@@ -80,7 +80,8 @@ Singleton {
     if (!icon && notification && notification.desktopEntry) icon = notification.desktopEntry
     if (!icon) return ""
     if (icon.indexOf("/") === 0) return "file://" + icon
-    return icon.indexOf(":") >= 0 ? icon : "image://icon/" + icon
+    if (icon.indexOf(":") >= 0) return icon
+    return "image://icon/" + icon.replace(/\.desktop$/, "")
   }
 
   function hasThumbnail(notification) {

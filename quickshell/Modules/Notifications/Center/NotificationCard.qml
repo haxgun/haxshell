@@ -52,8 +52,8 @@ Rectangle {
         color: "transparent"
         Image { id: centerImage; anchors.fill: parent; source: imageSource; visible: source.toString().length > 0; fillMode: Image.PreserveAspectCrop; asynchronous: true }
       }
-      IconImage { anchors.centerIn: parent; width: Config.scaledSize(26); height: Config.scaledSize(26); source: iconSource; visible: !centerImage.visible && source.toString().length > 0 }
-      Text { anchors.centerIn: parent; visible: !centerImage.visible && iconSource.length === 0; text: (appName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
+      IconImage { id: centerIcon; anchors.centerIn: parent; width: Config.scaledSize(26); height: Config.scaledSize(26); source: iconSource; visible: !centerImage.visible && iconSource.length > 0 && centerIcon.status !== Image.Error }
+      Text { anchors.centerIn: parent; visible: !centerImage.visible && (iconSource.length === 0 || centerIcon.status === Image.Error); text: (appName || "?").charAt(0).toUpperCase(); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
     }
 
     Column {
