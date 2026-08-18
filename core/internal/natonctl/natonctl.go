@@ -10,6 +10,7 @@ import (
 	"image/jpeg"
 	"io/fs"
 	"math"
+	"net"
 	"net/url"
 	"os"
 	"os/exec"
@@ -146,100 +147,104 @@ func unlockSettings(f *os.File) {
 
 func settingsDefaults() map[string]string {
 	return map[string]string{
-		"themeName":                   "dark",
-		"dynamicDark":                 "true",
-		"fontFamily":                  "Geist Mono",
-		"fontMonoFamily":              "Geist Mono",
-		"fontScale":                   "1.0",
-		"fontMonoScale":               "1.0",
-		"wallpaperDir":                "~/wallpapers/animated",
-		"wallpaperFillMode":           "fill",
-		"wallpaperTransition":         "fade",
-		"wallpaperPaletteScheme":      "vibrant",
-		"wallpaperCyclingEnabled":     "false",
-		"wallpaperCyclingInterval":    "300",
-		"blurWallpaperOnOverview":     "false",
-		"weatherLocation":             "",
-		"dynamicAccent":               "#e2e8f0",
-		"dynamicPalette":              "[\"#e2e8f0\",\"#334155\",\"#64748b\",\"#94a3b8\"]",
-		"manualPalette":               "[\"#282a36\",\"#ff5555\",\"#50fa7b\",\"#f1fa8c\",\"#bd93f9\",\"#ff79c6\",\"#8be9fd\",\"#f8f8f2\",\"#6272a4\",\"#ff6e6e\",\"#69ff94\",\"#ffffa5\",\"#d6acff\",\"#ff92df\",\"#a4ffff\",\"#ffffff\"]",
-		"caffeineEnabled":             "false",
-		"timeFormat":                  "24",
-		"showSeconds":                 "false",
-		"tooltipsEnabled":             "true",
-		"language":                    "ru",
-		"showWorkspaceNumbers":        "true",
-		"showWorkspacesOnAllMonitors": "false",
-		"workspaceIndicatorStyle":     "tint",
-		"uiScale":                     "1.0",
-		"reduceMotion":                "false",
-		"weatherEnabled":              "true",
-		"weatherTenths":               "false",
-		"barDateTimeEnabled":          "true",
-		"barWeatherEnabled":           "true",
-		"barColorPickerEnabled":       "true",
-		"barWorkspacesEnabled":        "true",
-		"barLauncherEnabled":          "true",
-		"barActiveAppEnabled":         "true",
-		"barMediaEnabled":             "true",
-		"barTrayEnabled":              "true",
-		"barKeyboardLayoutEnabled":    "true",
-		"barSystemEnabled":            "true",
-		"barSysCpuEnabled":            "true",
-		"barSysCpuTempEnabled":        "true",
-		"barSysGpuEnabled":            "true",
-		"barSysGpuTempEnabled":        "true",
-		"barSysRamEnabled":            "true",
-		"barSysNetEnabled":            "true",
-		"barNotificationsEnabled":     "true",
-		"barVolumeEnabled":            "true",
-		"barBrightnessEnabled":        "true",
-		"barBatteryEnabled":           "true",
-		"barBluetoothEnabled":         "true",
-		"barNetworkEnabled":           "true",
-		"barControlCenterEnabled":     "true",
-		"barVpnEnabled":               "true",
-		"barPowerEnabled":             "true",
-		"brightnessMonitorBus":        "auto",
-		"brightnessSleepMultiplier":   ".2",
-		"barPosition":                 "top",
-		"barStyle":                    "solid",
-		"settingsCloseKeybind":        "Esc",
-		"keybindDrawer":               "Super+Space",
-		"keybindSettings":             "Super+,",
-		"keybindClipboard":            "Super+V",
-		"keybindNotifications":        "Super+N",
-		"keybindPower":                "Super+X",
-		"keybindControlCenter":        "Super+C",
-		"keybindCalendar":             "Super+T",
-		"keybindMedia":                "Super+M",
-		"keybindWiFi":                 "Super+W",
-		"keybindBluetooth":            "Super+B",
-		"keybindBrightness":           "Super+L",
-		"keybindKeyboard":             "Super+K",
-		"keybindSystem":               "Super+I",
-		"barThickness":                "40",
-		"barTopMargin":                "6",
-		"barBottomMargin":             "6",
-		"barHorizontalMargin":         "12",
-		"barRadius":                   "35",
-		"barFrostOpacity":             "56",
-		"popupVerticalAlign":          "top",
-		"popupRadius":                 "45",
-		"popupBackgroundOpacity":      "56",
-		"barBlurEnabled":              "true",
-		"popupBlurEnabled":            "true",
-		"shellBlurEnabled":            "true",
-		"shellBordersEnabled":         "true",
-		"barBordersEnabled":           "true",
-		"popupBordersEnabled":         "true",
-		"shellShadowsEnabled":         "true",
-		"barShadowsEnabled":           "true",
-		"popupShadowsEnabled":         "true",
-		"doNotDisturb":                "false",
-		"notificationPosition":        "top-right",
-		"notificationTimeoutMs":       "15000",
-		"osdPosition":                 "bottom-center",
+		"themeName":                     "dark",
+		"dynamicDark":                   "true",
+		"fontFamily":                    "Geist Mono",
+		"fontMonoFamily":                "Geist Mono",
+		"fontScale":                     "1.0",
+		"fontMonoScale":                 "1.0",
+		"wallpaperDir":                  "~/wallpapers/animated",
+		"wallpaperFillMode":             "fill",
+		"wallpaperTransition":           "fade",
+		"wallpaperPaletteScheme":        "vibrant",
+		"wallpaperCyclingEnabled":       "false",
+		"wallpaperCyclingInterval":      "300",
+		"blurWallpaperOnOverview":       "false",
+		"videoWallpaperAudio":           "false",
+		"videoWallpaperVolume":          "100",
+		"videoWallpaperHwdec":           "true",
+		"videoWallpaperPauseOnOverview": "true",
+		"weatherLocation":               "",
+		"dynamicAccent":                 "#e2e8f0",
+		"dynamicPalette":                "[\"#e2e8f0\",\"#334155\",\"#64748b\",\"#94a3b8\"]",
+		"manualPalette":                 "[\"#282a36\",\"#ff5555\",\"#50fa7b\",\"#f1fa8c\",\"#bd93f9\",\"#ff79c6\",\"#8be9fd\",\"#f8f8f2\",\"#6272a4\",\"#ff6e6e\",\"#69ff94\",\"#ffffa5\",\"#d6acff\",\"#ff92df\",\"#a4ffff\",\"#ffffff\"]",
+		"caffeineEnabled":               "false",
+		"timeFormat":                    "24",
+		"showSeconds":                   "false",
+		"tooltipsEnabled":               "true",
+		"language":                      "ru",
+		"showWorkspaceNumbers":          "true",
+		"showWorkspacesOnAllMonitors":   "false",
+		"workspaceIndicatorStyle":       "tint",
+		"uiScale":                       "1.0",
+		"reduceMotion":                  "false",
+		"weatherEnabled":                "true",
+		"weatherTenths":                 "false",
+		"barDateTimeEnabled":            "true",
+		"barWeatherEnabled":             "true",
+		"barColorPickerEnabled":         "true",
+		"barWorkspacesEnabled":          "true",
+		"barLauncherEnabled":            "true",
+		"barActiveAppEnabled":           "true",
+		"barMediaEnabled":               "true",
+		"barTrayEnabled":                "true",
+		"barKeyboardLayoutEnabled":      "true",
+		"barSystemEnabled":              "true",
+		"barSysCpuEnabled":              "true",
+		"barSysCpuTempEnabled":          "true",
+		"barSysGpuEnabled":              "true",
+		"barSysGpuTempEnabled":          "true",
+		"barSysRamEnabled":              "true",
+		"barSysNetEnabled":              "true",
+		"barNotificationsEnabled":       "true",
+		"barVolumeEnabled":              "true",
+		"barBrightnessEnabled":          "true",
+		"barBatteryEnabled":             "true",
+		"barBluetoothEnabled":           "true",
+		"barNetworkEnabled":             "true",
+		"barControlCenterEnabled":       "true",
+		"barVpnEnabled":                 "true",
+		"barPowerEnabled":               "true",
+		"brightnessMonitorBus":          "auto",
+		"brightnessSleepMultiplier":     ".2",
+		"barPosition":                   "top",
+		"barStyle":                      "solid",
+		"settingsCloseKeybind":          "Esc",
+		"keybindDrawer":                 "Super+Space",
+		"keybindSettings":               "Super+,",
+		"keybindClipboard":              "Super+V",
+		"keybindNotifications":          "Super+N",
+		"keybindPower":                  "Super+X",
+		"keybindControlCenter":          "Super+C",
+		"keybindCalendar":               "Super+T",
+		"keybindMedia":                  "Super+M",
+		"keybindWiFi":                   "Super+W",
+		"keybindBluetooth":              "Super+B",
+		"keybindBrightness":             "Super+L",
+		"keybindKeyboard":               "Super+K",
+		"keybindSystem":                 "Super+I",
+		"barThickness":                  "40",
+		"barTopMargin":                  "6",
+		"barBottomMargin":               "6",
+		"barHorizontalMargin":           "12",
+		"barRadius":                     "35",
+		"barFrostOpacity":               "56",
+		"popupVerticalAlign":            "top",
+		"popupRadius":                   "45",
+		"popupBackgroundOpacity":        "56",
+		"barBlurEnabled":                "true",
+		"popupBlurEnabled":              "true",
+		"shellBlurEnabled":              "true",
+		"shellBordersEnabled":           "true",
+		"barBordersEnabled":             "true",
+		"popupBordersEnabled":           "true",
+		"shellShadowsEnabled":           "true",
+		"barShadowsEnabled":             "true",
+		"popupShadowsEnabled":           "true",
+		"doNotDisturb":                  "false",
+		"notificationPosition":          "top-right",
+		"notificationTimeoutMs":         "15000",
+		"osdPosition":                   "bottom-center",
 	}
 }
 
@@ -1550,37 +1555,45 @@ func applyWall(path string) {
 		return
 	}
 	killVideoWall()
+	applyAwww(path)
+}
+
+// applyAwww displays a static image through the awww daemon. It is used for
+// regular image wallpapers and as the static fallback frame behind video
+// wallpapers.
+func applyAwww(path string) {
 	if commandExists("awww-daemon") {
 		_ = exec.Command("awww-daemon").Start()
 	}
-	if commandExists("awww") {
-		settings := readSettings()
-		mode := settings["wallpaperFillMode"]
-		transition := wallpaperTransition(settings["wallpaperTransition"])
-		if (mode == "tile" || mode == "tile-v" || mode == "tile-h") && imageExt[strings.ToLower(filepath.Ext(path))] && commandExists("magick") {
-			outputs := wallpaperOutputs()
-			applied := len(outputs) > 0
-			for _, output := range outputs {
-				tile := tiledWallpaper(path, output, mode)
-				if tile == "" {
-					applied = false
-					break
-				}
-				if _, code := run(8*time.Second, "awww", "img", tile, "--outputs", output.name, "--resize", "stretch", "--transition-type", transition, "--transition-duration", "1"); code != 0 {
-					applied = false
-					break
-				}
+	if !commandExists("awww") {
+		return
+	}
+	settings := readSettings()
+	mode := settings["wallpaperFillMode"]
+	transition := wallpaperTransition(settings["wallpaperTransition"])
+	if (mode == "tile" || mode == "tile-v" || mode == "tile-h") && imageExt[strings.ToLower(filepath.Ext(path))] && commandExists("magick") {
+		outputs := wallpaperOutputs()
+		applied := len(outputs) > 0
+		for _, output := range outputs {
+			tile := tiledWallpaper(path, output, mode)
+			if tile == "" {
+				applied = false
+				break
 			}
-			if applied {
-				return
+			if _, code := run(8*time.Second, "awww", "img", tile, "--outputs", output.name, "--resize", "stretch", "--transition-type", transition, "--transition-duration", "1"); code != 0 {
+				applied = false
+				break
 			}
 		}
-		args := []string{"img", path, "--resize", wallpaperResize(mode), "--transition-type", transition, "--transition-duration", "1"}
-		if _, code := run(5*time.Second, "awww", args...); code == 0 {
+		if applied {
 			return
 		}
-		run(5*time.Second, "awww", path)
 	}
+	args := []string{"img", path, "--resize", wallpaperResize(mode), "--transition-type", transition, "--transition-duration", "1"}
+	if _, code := run(5*time.Second, "awww", args...); code == 0 {
+		return
+	}
+	run(5*time.Second, "awww", path)
 }
 
 func killVideoWall() {
@@ -1589,12 +1602,78 @@ func killVideoWall() {
 	}
 }
 
+// videoFirstFrame extracts a poster frame from a video, cached on disk, for
+// use as the static fallback behind the video wallpaper.
+func videoFirstFrame(path string) string {
+	sum := sha1.Sum([]byte(path))
+	target := filepath.Join(homeDir, ".cache/quickshell/video-frames", hex.EncodeToString(sum[:])[:16]+".jpg")
+	if _, err := os.Stat(target); err == nil {
+		return target
+	}
+	_ = os.MkdirAll(filepath.Dir(target), 0o755)
+	if _, code := run(20*time.Second, "ffmpeg", "-y", "-loglevel", "error", "-ss", "00:00:01", "-i", path, "-frames:v", "1", "-q:v", "2", target); code == 0 {
+		return target
+	}
+	return ""
+}
+
 func applyVideoWall(path string) {
 	if !commandExists("mpvpaper") {
 		return
 	}
 	killVideoWall()
-	_ = exec.Command("mpvpaper", "-o", "no-audio loop panscan=1.0", "ALL", path).Start()
+	if frame := videoFirstFrame(path); frame != "" {
+		applyAwww(frame)
+	}
+	_ = exec.Command("mpvpaper", "-o", videoMpvOptions(), "ALL", path).Start()
+}
+
+func videoMpvOptions() string {
+	settings := readSettings()
+	opts := []string{"loop"}
+	if settings["videoWallpaperAudio"] != "true" {
+		opts = append(opts, "no-audio")
+	} else if v := settings["videoWallpaperVolume"]; v != "" {
+		opts = append(opts, "--volume="+v)
+	}
+	if settings["videoWallpaperHwdec"] != "false" {
+		opts = append(opts, "hwdec=auto")
+	}
+	opts = append(opts, videoScaleOption(settings["wallpaperFillMode"]))
+	opts = append(opts, "input-ipc-server="+mpvSocketPath())
+	return strings.Join(opts, " ")
+}
+
+func videoScaleOption(mode string) string {
+	switch mode {
+	case "fit":
+		return "panscan=0"
+	case "stretch":
+		return "keepaspect=no"
+	default: // fill, pad, tile* → cover
+		return "panscan=1.0"
+	}
+}
+
+func mpvSocketPath() string {
+	runtime := os.Getenv("XDG_RUNTIME_DIR")
+	if runtime == "" {
+		runtime = os.TempDir()
+	}
+	return filepath.Join(runtime, "naton-mpvpaper.sock")
+}
+
+func videoControl(paused bool) {
+	conn, err := net.Dial("unix", mpvSocketPath())
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+	if paused {
+		fmt.Fprintf(conn, "{ \"command\": [\"set_property\", \"pause\", true] }\n")
+	} else {
+		fmt.Fprintf(conn, "{ \"command\": [\"set_property\", \"pause\", false] }\n")
+	}
 }
 
 func applyOverviewBlur(dir string, enabled bool) {
@@ -1663,6 +1742,10 @@ func cmdWallpaper(args []string) {
 		}
 		applyOverviewBlur(dir, len(args) > 1 && args[1] == "on")
 		wallState(dir, nil)
+		return
+	}
+	if action == "video-pause" {
+		videoControl(len(args) > 1 && args[1] == "on")
 		return
 	}
 	override := ""

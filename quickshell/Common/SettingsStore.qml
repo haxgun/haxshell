@@ -26,6 +26,10 @@ Singleton {
   property alias wallpaperCyclingEnabled: adapter.wallpaperCyclingEnabled
   property alias wallpaperCyclingInterval: adapter.wallpaperCyclingInterval
   property alias blurWallpaperOnOverview: adapter.blurWallpaperOnOverview
+  property alias videoWallpaperAudio: adapter.videoWallpaperAudio
+  property alias videoWallpaperVolume: adapter.videoWallpaperVolume
+  property alias videoWallpaperHwdec: adapter.videoWallpaperHwdec
+  property alias videoWallpaperPauseOnOverview: adapter.videoWallpaperPauseOnOverview
   property alias weatherLocation: adapter.weatherLocation
   property alias dynamicAccent: adapter.dynamicAccent
   property alias dynamicPalette: adapter.dynamicPalette
@@ -162,6 +166,10 @@ Singleton {
       property string wallpaperCyclingEnabled: "false"
       property string wallpaperCyclingInterval: "300"
       property string blurWallpaperOnOverview: "false"
+      property string videoWallpaperAudio: "false"
+      property string videoWallpaperVolume: "100"
+      property string videoWallpaperHwdec: "true"
+      property string videoWallpaperPauseOnOverview: "true"
       property string weatherLocation: ""
       property string dynamicAccent: "#e2e8f0"
       property string dynamicPalette: "[\"#e2e8f0\",\"#334155\",\"#64748b\",\"#94a3b8\"]"
@@ -281,6 +289,10 @@ Singleton {
       wallpaperCyclingEnabled: adapter.wallpaperCyclingEnabled,
       wallpaperCyclingInterval: adapter.wallpaperCyclingInterval,
       blurWallpaperOnOverview: adapter.blurWallpaperOnOverview,
+      videoWallpaperAudio: adapter.videoWallpaperAudio,
+      videoWallpaperVolume: adapter.videoWallpaperVolume,
+      videoWallpaperHwdec: adapter.videoWallpaperHwdec,
+      videoWallpaperPauseOnOverview: adapter.videoWallpaperPauseOnOverview,
       weatherLocation: adapter.weatherLocation,
       dynamicAccent: adapter.dynamicAccent,
       dynamicPalette: adapter.dynamicPalette,

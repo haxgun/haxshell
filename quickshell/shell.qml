@@ -43,6 +43,10 @@ Scope {
       if (typeof settings.wallpaperCyclingEnabled === "string") Config.wallpaperCyclingEnabled = settings.wallpaperCyclingEnabled === "true"
       if (settings.wallpaperCyclingInterval) Config.wallpaperCyclingInterval = parseInt(settings.wallpaperCyclingInterval)
       if (typeof settings.blurWallpaperOnOverview === "string") Config.blurWallpaperOnOverview = settings.blurWallpaperOnOverview === "true"
+      if (typeof settings.videoWallpaperAudio === "string") Config.videoWallpaperAudio = settings.videoWallpaperAudio === "true"
+      if (settings.videoWallpaperVolume) Config.videoWallpaperVolume = parseInt(settings.videoWallpaperVolume)
+      if (typeof settings.videoWallpaperHwdec === "string") Config.videoWallpaperHwdec = settings.videoWallpaperHwdec === "true"
+      if (typeof settings.videoWallpaperPauseOnOverview === "string") Config.videoWallpaperPauseOnOverview = settings.videoWallpaperPauseOnOverview === "true"
       if (typeof settings.weatherLocation === "string") Config.weatherLocation = settings.weatherLocation
       if (settings.dynamicAccent) Config.dynamicAccent = settings.dynamicAccent
       if (settings.dynamicPalette) {

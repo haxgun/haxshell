@@ -324,6 +324,10 @@ QtObject {
   property bool wallpaperCyclingEnabled: false
   property int wallpaperCyclingInterval: 300
   property bool blurWallpaperOnOverview: false
+  property bool videoWallpaperAudio: false
+  property int videoWallpaperVolume: 100
+  property bool videoWallpaperHwdec: true
+  property bool videoWallpaperPauseOnOverview: true
 
   // ==========================================
   // 🇷🇺 SECTION 5: RUSSIAN LOCALIZATION

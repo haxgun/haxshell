@@ -246,6 +246,13 @@ PanelWindow {
     stdout: SplitParser { onRead: data => root.applyWallpaperState(data) }
   }
 
+  Timer {
+    id: reapplyTimer
+    interval: 250
+    repeat: false
+    onTriggered: root.reapplyWallpaper()
+  }
+
   Process {
     id: fontProc
     stdout: SplitParser { onRead: data => root.applyFonts(data) }
@@ -481,6 +488,9 @@ PanelWindow {
     if (key === "popupBlurEnabled") Config.popupBlurEnabled = value
     if (key === "wallpaperCyclingEnabled") Config.wallpaperCyclingEnabled = value
     if (key === "blurWallpaperOnOverview") Config.blurWallpaperOnOverview = value
+    if (key === "videoWallpaperAudio") Config.videoWallpaperAudio = value
+    if (key === "videoWallpaperHwdec") Config.videoWallpaperHwdec = value
+    if (key === "videoWallpaperPauseOnOverview") Config.videoWallpaperPauseOnOverview = value
     if (key === "reduceMotion") Config.reduceMotion = value
     if (key === "shellBordersEnabled") Config.shellBordersEnabled = value
     if (key === "barBordersEnabled") Config.barBordersEnabled = value
@@ -569,13 +579,19 @@ PanelWindow {
     wallpaperProc.command = [root.natonctl, "wallpaper", "config", nextDir]
     wallpaperProc.running = true
   }
-  function applyWallpaperFillMode(value) { Config.wallpaperFillMode = value; saveSetting("wallpaperFillMode", value); root.wallpaperModeDropdownOpen = false }
+  function applyWallpaperFillMode(value) { Config.wallpaperFillMode = value; saveSetting("wallpaperFillMode", value); root.wallpaperModeDropdownOpen = false; reapplyTimer.restart() }
   function applyWallpaperTransition(value) { Config.wallpaperTransition = value; saveSetting("wallpaperTransition", value); root.wallpaperTransitionDropdownOpen = false }
   function applyWallpaperPaletteScheme(value) { Config.wallpaperPaletteScheme = value; saveSetting("wallpaperPaletteScheme", value); root.wallpaperPaletteDropdownOpen = false; root.refreshWallpapers() }
   function applyWallpaperCyclingInterval(value) {
     let interval = Math.max(30, Math.min(43200, Math.round(value)))
     Config.wallpaperCyclingInterval = interval
     saveSetting("wallpaperCyclingInterval", interval)
+  }
+  function applyVideoWallpaperVolume(value) {
+    let volume = Math.max(0, Math.min(100, Math.round(value)))
+    Config.videoWallpaperVolume = volume
+    saveSetting("videoWallpaperVolume", volume)
+    reapplyTimer.restart()
   }
 
   function refreshFonts() {
@@ -612,6 +628,12 @@ PanelWindow {
   function refreshWallpapers() {
     wallpaperProc.running = false
     wallpaperProc.command = [root.natonctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.running = true
+  }
+
+  function reapplyWallpaper() {
+    wallpaperProc.running = false
+    wallpaperProc.command = [root.natonctl, "wallpaper", "apply"]
     wallpaperProc.running = true
   }
 
@@ -1476,6 +1498,36 @@ PanelWindow {
                 subtitle: Config.blurWallpaperOnOverview ? I18n.tr("Включено") : I18n.tr("Выключено")
                 onClicked: root.setBoolSetting("blurWallpaperOnOverview", !Config.blurWallpaperOnOverview)
                 ToggleSwitch { z: 1; checked: Config.blurWallpaperOnOverview; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("blurWallpaperOnOverview", !Config.blurWallpaperOnOverview) }
+              }
+              Text { text: I18n.tr("Видеообои"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+              SettingsRow {
+                icon: Config.iconSpeaker
+                title: I18n.tr("Звук видеообоев")
+                subtitle: Config.videoWallpaperAudio ? I18n.tr("Включено") : I18n.tr("Выключено")
+                onClicked: root.setBoolSetting("videoWallpaperAudio", !Config.videoWallpaperAudio)
+                ToggleSwitch { z: 1; checked: Config.videoWallpaperAudio; anchors.verticalCenter: parent.verticalCenter; onToggled: { root.setBoolSetting("videoWallpaperAudio", !Config.videoWallpaperAudio); reapplyTimer.restart() } }
+              }
+              SettingsRow {
+                visible: Config.videoWallpaperAudio
+                icon: Config.iconSpeaker
+                title: I18n.tr("Громкость видеообоев")
+                subtitle: I18n.tr("Громкость воспроизведения")
+                NumberSlider { value: Config.videoWallpaperVolume; from: 0; to: 100; defaultValue: 100; suffix: "%"; onValueEdited: root.applyVideoWallpaperVolume(value) }
+              }
+              SettingsRow {
+                icon: Config.iconGpu
+                title: I18n.tr("Аппаратное декодирование")
+                subtitle: Config.videoWallpaperHwdec ? I18n.tr("Включено") : I18n.tr("Выключено")
+                onClicked: root.setBoolSetting("videoWallpaperHwdec", !Config.videoWallpaperHwdec)
+                ToggleSwitch { z: 1; checked: Config.videoWallpaperHwdec; anchors.verticalCenter: parent.verticalCenter; onToggled: { root.setBoolSetting("videoWallpaperHwdec", !Config.videoWallpaperHwdec); reapplyTimer.restart() } }
+              }
+              SettingsRow {
+                visible: CompositorService.backend === "niri"
+                icon: Config.iconPause
+                title: I18n.tr("Пауза видео в Overview")
+                subtitle: Config.videoWallpaperPauseOnOverview ? I18n.tr("Включена") : I18n.tr("Выключена")
+                onClicked: root.setBoolSetting("videoWallpaperPauseOnOverview", !Config.videoWallpaperPauseOnOverview)
+                ToggleSwitch { z: 1; checked: Config.videoWallpaperPauseOnOverview; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("videoWallpaperPauseOnOverview", !Config.videoWallpaperPauseOnOverview) }
               }
             }
             Rectangle {

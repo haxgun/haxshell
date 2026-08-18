@@ -17,10 +17,11 @@ Item {
   }
 
   Process { id: wallpaperProc }
+  Process { id: pauseProc }
 
   Timer {
     interval: 500
-    running: root.available && Config.blurWallpaperOnOverview
+    running: root.available && (Config.blurWallpaperOnOverview || Config.videoWallpaperPauseOnOverview)
     repeat: true
     triggeredOnStart: true
     onTriggered: root.refresh()
@@ -30,6 +31,9 @@ Item {
     target: Config
     function onBlurWallpaperOnOverviewChanged() {
       if (!Config.blurWallpaperOnOverview && root.overviewOpen) root.setBlurred(false)
+    }
+    function onVideoWallpaperPauseOnOverviewChanged() {
+      if (!Config.videoWallpaperPauseOnOverview && root.overviewOpen) root.setVideoPaused(false)
     }
   }
 
@@ -42,14 +46,23 @@ Item {
     try {
       let state = JSON.parse(data)
       let open = !!state.is_open
-      if (open !== root.overviewOpen) root.setBlurred(open)
+      if (open !== root.overviewOpen) {
+        root.overviewOpen = open
+        if (Config.blurWallpaperOnOverview) root.setBlurred(open)
+        if (Config.videoWallpaperPauseOnOverview) root.setVideoPaused(open)
+      }
     } catch (error) {}
   }
 
   function setBlurred(enabled) {
-    root.overviewOpen = enabled
     wallpaperProc.running = false
     wallpaperProc.command = [Config.natonctl, "wallpaper", "overview-blur", enabled ? "on" : "off", Config.wallpaperDir]
     wallpaperProc.running = true
+  }
+
+  function setVideoPaused(paused) {
+    pauseProc.running = false
+    pauseProc.command = [Config.natonctl, "wallpaper", "video-pause", paused ? "on" : "off"]
+    pauseProc.running = true
   }
 }
