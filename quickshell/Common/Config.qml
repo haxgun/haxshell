@@ -3,8 +3,9 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 
-QtObject {
+Singleton {
   id: root
 
   readonly property string natonctl: Quickshell.shellDir + "/natonctl"
@@ -17,6 +18,29 @@ QtObject {
   property string dynamicAccent: "#e2e8f0"
   property var dynamicPalette: ["#e2e8f0", "#334155", "#64748b", "#94a3b8"]
   property var manualPalette: ["#282a36", "#ff5555", "#50fa7b", "#f1fa8c", "#bd93f9", "#ff79c6", "#8be9fd", "#f8f8f2", "#6272a4", "#ff6e6e", "#69ff94", "#ffffa5", "#d6acff", "#ff92df", "#a4ffff", "#ffffff"]
+  property var activeTheme: null
+  property string activePresetFile: ""
+
+  // Watches the active user theme file so edits hot-reload the shell without
+  // a restart. Built-in themes (no file) are not watched.
+  FileView {
+    id: activeThemeFile
+    property bool warmed: false
+    path: root.activePresetFile
+    watchChanges: true
+    printErrors: false
+    onFileChanged: themeReloadTimer.restart()
+    onLoaded: {
+      if (!warmed) { warmed = true; return }
+      root.applyTheme(root.parseTheme(text()))
+    }
+  }
+  Timer {
+    id: themeReloadTimer
+    interval: 150
+    repeat: false
+    onTriggered: activeThemeFile.reload()
+  }
 
   // Animated color state. These mirror the palette-derived colors and are the
   // single source of truth for rendering; applyDynamicPalette writes to them and
@@ -143,6 +167,51 @@ QtObject {
     animatedSurface = colors[0] || "#334155"
     animatedLayer = colors[8] || "#64748b"
     animatedHighlight = colors[7] || "#94a3b8"
+  }
+
+  // Applies a semantic theme (from natonctl presets or a user JSON file).
+  // The explicit accent wins over ANSI red, so a theme can carry a blue accent
+  // while slot 1 stays reserved for danger/status. Callers must set themeName
+  // to "manual" (the gating for status accents) around this.
+  function applyTheme(theme) {
+    if (!theme) return
+    let palette = root.buildThemeColors(theme)
+    if (!palette[0] || !palette[7]) return
+    manualPalette = palette
+    animatedAccent = theme.accent || palette[1] || "#e2e8f0"
+    animatedSurface = palette[0] || "#334155"
+    animatedLayer = palette[8] || "#64748b"
+    animatedHighlight = palette[7] || "#94a3b8"
+  }
+
+  // Normalizes a theme (semantic fields + optional 16-color array) into the
+  // full 16-slot palette the editor and status accents consume.
+  function buildThemeColors(theme) {
+    let c = Array.isArray(theme.colors) ? theme.colors.slice(0, 16) : []
+    while (c.length < 16) c.push("")
+    let valid = v => /^#[0-9A-Fa-f]{6}$/.test(v || "")
+    let pick = (...vs) => { for (let v of vs) if (valid(v)) return v; return "" }
+    c[0] = pick(theme.background, c[0])
+    c[1] = pick(theme.red, theme.accent, c[1])
+    c[2] = pick(theme.green, c[2])
+    c[3] = pick(theme.yellow, c[3])
+    c[4] = pick(theme.blue, c[4])
+    c[5] = pick(theme.magenta, c[5])
+    c[6] = pick(theme.cyan, c[6])
+    c[7] = pick(theme.foreground, c[7])
+    c[8] = pick(theme.layer, theme.muted, c[8])
+    c[9] = pick(theme.brightRed, c[9], theme.red)
+    c[10] = pick(theme.brightGreen, c[10], theme.green)
+    c[11] = pick(theme.brightYellow, c[11], theme.yellow)
+    c[12] = pick(theme.brightBlue, c[12], theme.blue)
+    c[13] = pick(theme.brightMagenta, c[13], theme.magenta)
+    c[14] = pick(theme.brightCyan, c[14], theme.cyan)
+    c[15] = pick(theme.brightForeground, c[15], theme.foreground)
+    return c
+  }
+
+  function parseTheme(data) {
+    try { return JSON.parse(data) } catch(e) { return null }
   }
 
   // ==========================================

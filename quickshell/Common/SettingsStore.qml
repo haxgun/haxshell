@@ -34,6 +34,8 @@ Singleton {
   property alias dynamicAccent: adapter.dynamicAccent
   property alias dynamicPalette: adapter.dynamicPalette
   property alias manualPalette: adapter.manualPalette
+  property alias activeTheme: adapter.activeTheme
+  property alias activePresetFile: adapter.activePresetFile
   property alias caffeineEnabled: adapter.caffeineEnabled
   property alias timeFormat: adapter.timeFormat
   property alias showSeconds: adapter.showSeconds
@@ -174,6 +176,8 @@ Singleton {
       property string dynamicAccent: "#e2e8f0"
       property string dynamicPalette: "[\"#e2e8f0\",\"#334155\",\"#64748b\",\"#94a3b8\"]"
       property string manualPalette: "[\"#282a36\",\"#ff5555\",\"#50fa7b\",\"#f1fa8c\",\"#bd93f9\",\"#ff79c6\",\"#8be9fd\",\"#f8f8f2\",\"#6272a4\",\"#ff6e6e\",\"#69ff94\",\"#ffffa5\",\"#d6acff\",\"#ff92df\",\"#a4ffff\",\"#ffffff\"]"
+      property string activeTheme: ""
+      property string activePresetFile: ""
       property string caffeineEnabled: "false"
       property string timeFormat: "24"
       property string showSeconds: "false"
@@ -297,6 +301,8 @@ Singleton {
       dynamicAccent: adapter.dynamicAccent,
       dynamicPalette: adapter.dynamicPalette,
       manualPalette: adapter.manualPalette,
+      activeTheme: adapter.activeTheme,
+      activePresetFile: adapter.activePresetFile,
       caffeineEnabled: adapter.caffeineEnabled,
       timeFormat: adapter.timeFormat,
       showSeconds: adapter.showSeconds,

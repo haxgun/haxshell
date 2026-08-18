@@ -71,6 +71,48 @@ manual `quickshell` run.
   subprocess dependency (e.g. `golang.org/x/image` for in-process webp/bmp
   decoding).
 
+### Themes
+
+Themes come from two sources, merged by `natonctl presets` (user themes win on
+name collision):
+
+- Built-in 16-color ANSI presets in `core/internal/natonctl/presets.go`. The
+  optional `Accent` field overrides the accent (ANSI red is kept for
+  danger/status) — e.g. the macOS Classic presets carry a blue `Accent`.
+- User themes as JSON files in `~/.config/quickshell/presets/`. A theme file
+  has semantic keys; only `name`, `background` and `foreground` are required:
+
+  ```json
+  {
+    "name": "My Theme",
+    "mode": "dark",
+    "accent": "#077CFD",
+    "background": "#131313",
+    "foreground": "#DEDEDE",
+    "layer": "#8F8F8F",
+    "selection": "#2A2A2A",
+    "muted": "#8F8F8F",
+    "red": "#FF5257",
+    "green": "#30D158",
+    "yellow": "#CC9E00",
+    "blue": "#419CFF",
+    "magenta": "#A550A7",
+    "cyan": "#0AC2A2",
+    "brightRed": "#FF696D",
+    "brightGreen": "#68DC7C",
+    "brightYellow": "#DBBB76",
+    "brightBlue": "#7FAEF9",
+    "brightMagenta": "#B283F8",
+    "brightCyan": "#5CDBC6",
+    "brightForeground": "#F2F9FF"
+  }
+  ```
+
+  `mode` (`dark`/`light`) is optional and falls back to background luminance.
+  An optional 16-element `colors` array provides the ANSI ramp; explicit
+  semantic keys always win over it. Editing the active theme file hot-reloads
+  the shell (watched by a `FileView` in `Config.qml`).
+
 ### Docs
 
 - `README.md` and `README.ru.md` must stay in sync; update both together.

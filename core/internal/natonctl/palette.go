@@ -4,10 +4,10 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"image"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
-	"image"
 	"math"
 	"os"
 	"path/filepath"
@@ -43,6 +43,12 @@ var paletteSchemePresets = map[string]bool{
 // directly, so the palette reacts immediately even before settings.json is
 // flushed to disk. Empty means "read from settings".
 var paletteSchemeOverride string
+
+// paletteModeOverride lets the QML side pass the desired dark/light mode for
+// the same reason: settings.json is written asynchronously by the FileView,
+// so a mode toggle must not depend on it being flushed yet. Empty means
+// "read from settings".
+var paletteModeOverride string
 
 var paletteCache = struct {
 	sync.Mutex
@@ -93,6 +99,12 @@ func extractInProcessPalette(path string) []string {
 		}
 	}
 	lightMode := settings["dynamicDark"] == "false"
+	switch paletteModeOverride {
+	case "dark":
+		lightMode = false
+	case "light":
+		lightMode = true
+	}
 	if lightMode {
 		scheme += ":light"
 	}
@@ -429,7 +441,7 @@ func scoreDysfunctional(buckets []bucket) {
 	for _, f := range close {
 		sort.SliceStable(f.list, func(i, j int) bool { return f.list[i].count > f.list[j].count })
 		for _, b := range f.list {
-			b.score = float64(b.count) * 1000 + b.chroma
+			b.score = float64(b.count)*1000 + b.chroma
 		}
 	}
 }

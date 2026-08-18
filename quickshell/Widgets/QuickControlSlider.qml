@@ -43,7 +43,7 @@ Item {
         width: Math.min(parent.width, Math.max(0, parent.width * (root.value - root.from) / Math.max(root.to - root.from, 1)))
         height: parent.height
         radius: parent.radius
-        color: Config.iconColor
+        color: Config.themeAccent
       }
 
       MouseArea {
@@ -62,7 +62,7 @@ Item {
       anchors.leftMargin: Config.scaledSize(16)
       anchors.verticalCenter: parent.verticalCenter
       text: root.minimumIcon
-      color: root.fillCoversIcon ? Config.textDark : Config.iconColor
+      color: root.fillCoversIcon ? Config.popupGlassBg : Config.iconColor
       font.pixelSize: Config.fontSizeIconMedium
       font.family: Config.fontIcon
     }
@@ -74,7 +74,7 @@ Item {
       anchors.rightMargin: Config.scaledSize(16)
       anchors.verticalCenter: parent.verticalCenter
       text: root.value + "%"
-      color: root.fillCoversText ? Config.textDark : Config.textPrimary
+      color: root.fillCoversText ? Config.popupGlassBg : Config.textPrimary
       font.pixelSize: Config.fontMonoSizeSmall
       font.weight: Font.Medium
       font.family: Config.fontMono

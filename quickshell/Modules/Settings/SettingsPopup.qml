@@ -200,6 +200,7 @@ PanelWindow {
     manualAccentInput.text = root.currentManualHex
     refreshWallpapers()
     refreshFonts()
+    refreshPresets()
   } else {
     weatherSuggestions.clear()
     root.fontSearch = ""
@@ -338,6 +339,12 @@ PanelWindow {
   }
 
   function applyTheme(value) {
+    if (value !== "manual" && Config.activeTheme) {
+      Config.activeTheme = null
+      Config.activePresetFile = ""
+      saveSetting("activeTheme", "")
+      saveSetting("activePresetFile", "")
+    }
     Config.themeName = value
     saveSetting("themeName", value)
     if (value === "dynamic") refreshWallpapers()
@@ -462,6 +469,12 @@ PanelWindow {
   function applyManualSlot(value) {
     let color = value.trim()
     if (!/^#[0-9A-Fa-f]{6}$/.test(color)) return
+    if (Config.activeTheme) {
+      Config.activeTheme = null
+      Config.activePresetFile = ""
+      saveSetting("activeTheme", "")
+      saveSetting("activePresetFile", "")
+    }
     let arr = Config.manualPalette.slice()
     arr[root.manualSlot] = color
     Config.manualPalette = arr
@@ -480,7 +493,10 @@ PanelWindow {
   function setBoolSetting(key, value) {
     if (key === "showSeconds") Config.showSeconds = value
     if (key === "tooltipsEnabled") Config.tooltipsEnabled = value
-    if (key === "dynamicDark") Config.dynamicDark = value
+    if (key === "dynamicDark") {
+      Config.dynamicDark = value
+      root.refreshWallpapers()
+    }
     if (key === "showWorkspaceNumbers") Config.showWorkspaceNumbers = value
     if (key === "showWorkspacesOnAllMonitors") Config.showWorkspacesOnAllMonitors = value
     if (key === "barAdaptive") Config.barAdaptive = value
@@ -626,9 +642,13 @@ PanelWindow {
     folderProc.running = true
   }
 
+  function wallpaperPaletteArg() {
+    return Config.wallpaperPaletteScheme + (Config.dynamicDark ? ":dark" : ":light")
+  }
+
   function refreshWallpapers() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.natonctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "get", Config.wallpaperDir, root.wallpaperPaletteArg()]
     wallpaperProc.running = true
   }
 
@@ -640,7 +660,7 @@ PanelWindow {
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.natonctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "next", Config.wallpaperDir, root.wallpaperPaletteArg()]
     wallpaperProc.running = true
   }
 
@@ -648,7 +668,7 @@ PanelWindow {
     wallpaperGridContentY = wallpaperGrid.contentY
     wallpaperSelectionInProgress = true
     wallpaperProc.running = false
-    wallpaperProc.command = [root.natonctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, root.wallpaperPaletteArg()]
     wallpaperProc.running = true
   }
 
@@ -744,12 +764,15 @@ PanelWindow {
     presetsProc.running = true
   }
 
-  function applyPreset(name, colors) {
-    if (!colors || colors.length < 16) return
-    Config.manualPalette = colors.slice(0, 16)
-    Config.applyManualPalette()
+  function applyPreset(name, theme) {
+    if (!theme) return
+    Config.activeTheme = theme
+    Config.activePresetFile = theme.file || ""
     Config.themeName = "manual"
+    Config.applyTheme(theme)
     saveSetting("themeName", "manual")
+    saveSetting("activeTheme", JSON.stringify(theme))
+    saveSetting("activePresetFile", theme.file || "")
     saveSetting("manualPalette", JSON.stringify(Config.manualPalette))
   }
 
@@ -1320,12 +1343,13 @@ PanelWindow {
                 model: root.presets
                 delegate: Rectangle {
                   required property var modelData
+                  readonly property bool isActive: !!Config.activeTheme && Config.activeTheme.name === modelData.name
                   width: (presetsGrid.width - 20) / 3
                   height: Config.scaledSize(52)
                   radius: Config.cardRadius
                   color: presetMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
-                  border.color: Config.subtleBorder
-                  border.width: 1
+                  border.color: isActive ? Config.themeAccent : Config.subtleBorder
+                  border.width: isActive ? 2 : 1
 
                   Column {
                     anchors.fill: parent
@@ -1351,7 +1375,7 @@ PanelWindow {
                     }
                   }
 
-                  MouseArea { id: presetMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyPreset(modelData.name, modelData.colors) }
+                  MouseArea { id: presetMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyPreset(modelData.name, modelData) }
                 }
               }
             }

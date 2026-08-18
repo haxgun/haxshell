@@ -56,6 +56,14 @@ Scope {
         try { Config.manualPalette = JSON.parse(settings.manualPalette) } catch(e) {}
       }
       if (Config.themeName === "manual") Config.applyManualPalette()
+      if (settings.activeTheme) {
+        try {
+          let theme = JSON.parse(settings.activeTheme)
+          Config.activePresetFile = settings.activePresetFile || ""
+          Config.activeTheme = theme
+          Config.applyTheme(theme)
+        } catch(e) {}
+      }
       if (settings.timeFormat) Config.timeFormat = settings.timeFormat
       if (settings.uiScale) Config.uiScale = parseFloat(settings.uiScale)
       if (settings.language) Config.language = settings.language

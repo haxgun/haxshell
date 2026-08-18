@@ -1756,8 +1756,15 @@ func cmdWallpaper(args []string) {
 		override = args[2]
 	}
 	paletteSchemeOverride = ""
-	if last := args[len(args)-1]; paletteSchemePresets[last] && (action == "get" || action == "next" || action == "set") {
-		paletteSchemeOverride = last
+	paletteModeOverride = ""
+	if action == "get" || action == "next" || action == "set" {
+		last := args[len(args)-1]
+		if base, mode, ok := strings.Cut(last, ":"); ok && paletteSchemePresets[base] && (mode == "dark" || mode == "light") {
+			paletteSchemeOverride = base
+			paletteModeOverride = mode
+		} else if paletteSchemePresets[last] {
+			paletteSchemeOverride = last
+		}
 	}
 	items := wallItems(wallDir(override))
 	idx := cacheIndex(len(items))

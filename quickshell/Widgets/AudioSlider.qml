@@ -82,7 +82,7 @@ Column {
         height: parent.height
         radius: 3
         width: Math.min(parent.width, Math.max(0, parent.width * (sliderArea.tempValue / 100.0)))
-        color: root.muted ? Config.dangerRed : Config.textPrimary
+        color: root.muted ? Config.dangerRed : Config.themeAccent
       }
     }
 

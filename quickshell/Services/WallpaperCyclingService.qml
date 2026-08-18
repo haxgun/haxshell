@@ -37,7 +37,7 @@ Item {
 
   function nextWallpaper() {
     cycleProc.running = false
-    cycleProc.command = [Config.natonctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    cycleProc.command = [Config.natonctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme + (Config.dynamicDark ? ":dark" : ":light")]
     cycleProc.running = true
   }
 }

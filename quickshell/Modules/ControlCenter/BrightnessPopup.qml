@@ -228,7 +228,7 @@ PanelWindow {
             height: parent.height
             radius: 3
             width: Math.min(parent.width, Math.max(0, parent.width * (sliderArea.tempValue / 100.0)))
-            color: Config.textPrimary
+            color: Config.themeAccent
           }
         }
 
