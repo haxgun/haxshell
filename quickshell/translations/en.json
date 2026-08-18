@@ -16,7 +16,7 @@
   "Аппаратное декодирование": "Hardware decoding",
   "Пауза видео в Overview": "Pause video in Overview",
   "Погода": "Weather",
-  "Сон": "Sleep",
+  "Сон": "Suspend",
   "Оформление": "Appearance",
   "Режим закругления": "Corner mode",
   "Полный": "Full",
@@ -178,5 +178,7 @@
   "Отключённые приложения": "Muted apps",
   "Имена приложений через запятую": "Comma-separated application names",
   "Блокировка": "Lock",
-  "Сон": "Suspend"
+  "SVG-иконка": "SVG icon",
+  "Своя иконка": "Custom icon",
+  "Вставьте SVG-код или путь к файлу": "Paste SVG markup or a file path"
 }

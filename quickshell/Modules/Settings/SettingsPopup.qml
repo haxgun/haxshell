@@ -1953,6 +1953,83 @@ PanelWindow {
               ToggleSwitch { z: 1; checked: Config.barLauncherEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barLauncherEnabled", !Config.barLauncherEnabled) }
             }
             SettingsRow {
+              icon: Config.iconLauncher
+              title: I18n.tr("SVG-иконка")
+              subtitle: Config.launcherIconSvg.length > 0 ? I18n.tr("Своя иконка") : I18n.tr("Вставьте SVG-код или путь к файлу")
+              Row {
+                spacing: Config.scaledSize(6)
+                Image {
+                  id: launcherSvgPreview
+                  anchors.verticalCenter: parent.verticalCenter
+                  width: Config.scaledSize(22)
+                  height: Config.scaledSize(22)
+                  source: Config.launcherIconSourceFor(launcherSvgInput.text)
+                  sourceSize: Qt.size(Config.scaledSize(44), Config.scaledSize(44))
+                  fillMode: Image.PreserveAspectFit
+                  smooth: true
+                  asynchronous: true
+                  visible: source.length > 0
+                }
+                Text {
+                  anchors.verticalCenter: parent.verticalCenter
+                  text: Config.iconLauncher
+                  visible: !launcherSvgPreview.visible
+                  color: Config.textPrimary
+                  font.pixelSize: Config.fontSizeIconMedium
+                  font.family: Config.fontIcon
+                }
+                Rectangle {
+                  width: Config.scaledSize(150)
+                  height: Config.scaledSize(30)
+                  radius: Config.popupRadiusPx(8)
+                  color: Config.searchBg
+                  border.color: launcherSvgInput.activeFocus ? Config.activeBorderColor : Config.borderColor
+                  border.width: 1
+                  TextInput {
+                    id: launcherSvgInput
+                    anchors.fill: parent
+                    anchors.margins: Config.scaledSize(7)
+                    text: Config.launcherIconSvg
+                    color: Config.textPrimary
+                    selectedTextColor: Config.textWhite
+                    selectionColor: Config.selectedBg
+                    font.pixelSize: Config.fontSizeTiny
+                    font.family: Config.fontMono
+                    clip: true
+                    onEditingFinished: {
+                      Config.launcherIconSvg = text
+                      root.saveSetting("launcherIconSvg", text)
+                    }
+                  }
+                }
+                Rectangle {
+                  anchors.verticalCenter: parent.verticalCenter
+                  width: Config.scaledSize(28)
+                  height: Config.scaledSize(28)
+                  radius: Config.popupRadiusPx(8)
+                  color: launcherSvgResetMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+                  Text {
+                    anchors.centerIn: parent
+                    text: Config.iconTrash
+                    color: Config.textPrimary
+                    font.pixelSize: Config.fontSizeIconMedium
+                    font.family: Config.fontIcon
+                  }
+                  MouseArea {
+                    id: launcherSvgResetMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                      launcherSvgInput.text = ""
+                      Config.launcherIconSvg = ""
+                      root.saveSetting("launcherIconSvg", "")
+                    }
+                  }
+                }
+              }
+            }
+            SettingsRow {
               icon: Config.iconApplication
               title: I18n.tr("Активное приложение")
               subtitle: Config.barActiveAppEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыто из панели")

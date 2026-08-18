@@ -329,11 +329,15 @@ Singleton {
   function scaledIconSize(base) { return Math.round(base * uiScale) }
   function scaledSize(base) { return Math.round(base * uiScale) }
 
+  function launcherIconSourceFor(value) {
+    let v = (value || "").trim()
+    if (v.length === 0) return ""
+    if (v.indexOf("<svg") === 0) return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(v)
+    return v
+  }
+
   function launcherIconSource() {
-    let value = (launcherIconSvg || "").trim()
-    if (value.length === 0) return ""
-    if (value.indexOf("<svg") === 0) return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(value)
-    return value
+    return launcherIconSourceFor(launcherIconSvg)
   }
 
   // ==========================================

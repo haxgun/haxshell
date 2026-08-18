@@ -16,7 +16,7 @@
   "Аппаратное декодирование": "Hardware-Dekodierung",
   "Пауза видео в Overview": "Video in der Übersicht pausieren",
   "Погода": "Wetter",
-  "Сон": "Ruhemodus",
+  "Сон": "Ruhezustand",
   "Оформление": "Darstellung",
   "Режим закругления": "Eckenmodus",
   "Полный": "Gemeinsam",
@@ -178,5 +178,7 @@
   "Отключённые приложения": "Stumme Apps",
   "Имена приложений через запятую": "Kommagetrennte App-Namen",
   "Блокировка": "Sperren",
-  "Сон": "Ruhezustand"
+  "SVG-иконка": "SVG-Symbol",
+  "Своя иконка": "Eigenes Symbol",
+  "Вставьте SVG-код или путь к файлу": "SVG-Code oder Dateipfad einfügen"
 }
