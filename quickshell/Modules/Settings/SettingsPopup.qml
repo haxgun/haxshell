@@ -550,6 +550,7 @@ PanelWindow {
     property string settingKey: ""
     property string currentValue: ""
     width: Config.scaledSize(194)
+    anchors.verticalCenter: parent.verticalCenter
     columns: 3
     columnSpacing: Config.scaledSize(4)
     rowSpacing: Config.scaledSize(4)
