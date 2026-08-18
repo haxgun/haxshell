@@ -28,7 +28,7 @@
 
 package wlr_screencopy
 
-import "github.com/haxgun/vey/core/pkg/go-wayland/wayland/client"
+import "github.com/haxgun/naton/core/pkg/go-wayland/wayland/client"
 
 // ZwlrScreencopyManagerV1InterfaceName is the name of the interface as it appears in the [client.Registry].
 // It can be used to match the [client.RegistryGlobalEvent.Interface] in the

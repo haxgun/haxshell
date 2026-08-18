@@ -1,4 +1,4 @@
-package veyctl
+package natonctl
 
 import (
 	"math"

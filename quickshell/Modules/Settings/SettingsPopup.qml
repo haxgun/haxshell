@@ -180,7 +180,7 @@ PanelWindow {
   readonly property real manualHue: manualSlotColor.hslHue >= 0 ? manualSlotColor.hslHue : 0
   readonly property real manualSat: manualSlotColor.hslSaturation
   readonly property string currentManualHex: colorToHex(manualSlotColor)
-  readonly property string veyctl: Config.veyctl
+  readonly property string natonctl: Config.natonctl
   property string aboutVersion: ""
   property string aboutLatest: ""
   property var aboutContributors: []
@@ -278,13 +278,13 @@ PanelWindow {
 
   Process {
     id: presetsProc
-    command: [root.veyctl, "presets"]
+    command: [root.natonctl, "presets"]
     stdout: SplitParser { onRead: data => root.applyPresets(data) }
   }
 
   Process {
     id: screenColorProc
-    command: [root.veyctl, "color", "pick", Config.fontMono]
+    command: [root.natonctl, "color", "pick", Config.fontMono]
     stdout: SplitParser {
       onRead: data => {
         try {
@@ -565,7 +565,7 @@ PanelWindow {
     Config.wallpaperDir = nextDir
     saveSetting("wallpaperDir", nextDir)
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "config", nextDir]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "config", nextDir]
     wallpaperProc.running = true
   }
   function applyWallpaperFillMode(value) { Config.wallpaperFillMode = value; saveSetting("wallpaperFillMode", value); root.wallpaperModeDropdownOpen = false }
@@ -579,7 +579,7 @@ PanelWindow {
 
   function refreshFonts() {
     fontProc.running = false
-    fontProc.command = [root.veyctl, "fonts"]
+    fontProc.command = [root.natonctl, "fonts"]
     fontProc.running = true
   }
 
@@ -604,19 +604,19 @@ PanelWindow {
 
   function pickWallpaperDir() {
     folderProc.running = false
-    folderProc.command = [root.veyctl, "pick-folder", Config.wallpaperDir]
+    folderProc.command = [root.natonctl, "pick-folder", Config.wallpaperDir]
     folderProc.running = true
   }
 
   function refreshWallpapers() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
@@ -624,7 +624,7 @@ PanelWindow {
     wallpaperGridContentY = wallpaperGrid.contentY
     wallpaperSelectionInProgress = true
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
@@ -704,7 +704,7 @@ PanelWindow {
 
   function refreshAbout() {
     aboutProc.running = false
-    aboutProc.command = [root.veyctl, "about"]
+    aboutProc.command = [root.natonctl, "about"]
     aboutProc.running = true
   }
 
@@ -716,7 +716,7 @@ PanelWindow {
 
   function refreshPresets() {
     presetsProc.running = false
-    presetsProc.command = [root.veyctl, "presets"]
+    presetsProc.command = [root.natonctl, "presets"]
     presetsProc.running = true
   }
 
@@ -2568,8 +2568,8 @@ PanelWindow {
                   width: parent.width - 84
                   anchors.verticalCenter: parent.verticalCenter
                   spacing: Config.scaledSize(4)
-                  Text { text: "vey"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans }
-                  Text { text: I18n.tr("Vey is a customizable Wayland desktop shell built with Quickshell, QML, and Go."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
+                  Text { text: "Naton"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans }
+                  Text { text: I18n.tr("Naton is a customizable Wayland desktop shell built with Quickshell, QML, and Go."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
                   Text { text: I18n.tr("Установленная версия") + ": " + root.aboutVersion; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
                   Text { text: I18n.tr("Последняя версия") + ": " + root.aboutLatest; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
                 }

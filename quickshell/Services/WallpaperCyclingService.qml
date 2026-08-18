@@ -31,7 +31,7 @@ Item {
 
   function nextWallpaper() {
     cycleProc.running = false
-    cycleProc.command = [Config.veyctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    cycleProc.command = [Config.natonctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     cycleProc.running = true
   }
 }

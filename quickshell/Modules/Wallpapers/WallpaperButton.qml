@@ -11,7 +11,7 @@ Rectangle {
   property string wallName: ""
   property var wallpaperPopup: null
   property var closeFlyouts: null
-  readonly property string veyctl: Config.veyctl
+  readonly property string natonctl: Config.natonctl
 
   width: Config.scaledSize(26)
   height: Config.buttonHeight
@@ -21,7 +21,7 @@ Rectangle {
 
   Process {
     id: wallpaperProc
-    command: [root.veyctl, "wallpaper", "get", Config.wallpaperDir]
+    command: [root.natonctl, "wallpaper", "get", Config.wallpaperDir]
     running: true
 
     stdout: SplitParser {
@@ -36,7 +36,7 @@ Rectangle {
 
   function refresh() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "get", Config.wallpaperDir]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "get", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 
@@ -50,7 +50,7 @@ Rectangle {
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "next", Config.wallpaperDir]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "next", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 

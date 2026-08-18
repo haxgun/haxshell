@@ -12,7 +12,7 @@ Scope {
 
   Process {
     id: loadSettingsProc
-    command: [Config.veyctl, "settings"]
+    command: [Config.natonctl, "settings"]
     running: true
 
     stdout: SplitParser {

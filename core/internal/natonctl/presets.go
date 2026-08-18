@@ -1,4 +1,4 @@
-package veyctl
+package natonctl
 
 // presetThemes are the 16-color ANSI palettes ported from aether
 // (frontend/src/lib/constants/colors.ts). Slot 0 = background,

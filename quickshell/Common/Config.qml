@@ -7,7 +7,7 @@ import Quickshell
 QtObject {
   id: root
 
-  readonly property string veyctl: Quickshell.shellDir + "/veyctl"
+  readonly property string natonctl: Quickshell.shellDir + "/natonctl"
 
   // ==========================================
   // 🎨 SECTION 1: COLOR PALETTE & THEMING
@@ -134,7 +134,7 @@ QtObject {
     animatedHighlight = paletteColor(3, dynamicAccent)
   }
 
-  // Maps the 16-slot manual palette onto vey's 4 rendering colors:
+  // Maps the 16-slot manual palette onto Naton's 4 rendering colors:
   // slot 1 (red) = accent, 0 = surface, 8 = layer, 7 = foreground.
   function applyManualPalette() {
     let colors = manualPalette

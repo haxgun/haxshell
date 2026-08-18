@@ -1,2 +1,2 @@
-// Package pkg contains public Go packages shared by vey tools.
+// Package pkg contains public Go packages shared by Naton tools.
 package pkg

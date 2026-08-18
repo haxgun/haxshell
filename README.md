@@ -1,10 +1,10 @@
 <div align="center">
 
 <p align="center">
-    <img src="docs/logo.svg" alt="vey logo" width="160">
+    <img src="docs/logo.svg" alt="Naton logo" width="160">
 </p>
 
-`vey` is a customizable Wayland desktop shell built with Quickshell, QML, and Go for Hyprland and Niri.
+`Naton` is a customizable Wayland desktop shell built with Quickshell, QML, and Go for Hyprland and Niri.
 
 **English** · [Русский](README.ru.md)
 
@@ -13,10 +13,10 @@
 [![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff.svg)](https://hyprland.org/)
 [![Niri](https://img.shields.io/badge/Niri-Wayland-7c4dff.svg)](https://github.com/YaLTeR/niri)
 [![Go](https://img.shields.io/badge/Go-1.25-00ADD8.svg)](https://go.dev/)
-[![Stars](https://img.shields.io/github/stars/haxgun/vey?style=flat&color=green)](https://github.com/ValoryLabs/Valory/stargazers)
-[![Forks](https://img.shields.io/github/forks/haxgun/vey?style=flat&color=green)](https://github.com/ValoryLabs/Valory/forks)
-[![Issues](https://img.shields.io/github/issues/haxgun/vey?style=flat)](https://github.com/ValoryLabs/Valory/issues)
-![GitHub last commit](https://img.shields.io/github/last-commit/haxgun/vey)
+[![Stars](https://img.shields.io/github/stars/haxgun/naton?style=flat&color=green)](https://github.com/ValoryLabs/Valory/stargazers)
+[![Forks](https://img.shields.io/github/forks/haxgun/naton?style=flat&color=green)](https://github.com/ValoryLabs/Valory/forks)
+[![Issues](https://img.shields.io/github/issues/haxgun/naton?style=flat)](https://github.com/ValoryLabs/Valory/issues)
+![GitHub last commit](https://img.shields.io/github/last-commit/haxgun/naton)
 
 </div>
 
@@ -47,9 +47,9 @@
 │   ├── Services/             # QML services
 │   ├── keybinds/             # Default compositor keybind snippets
 │   └── translations/         # UI translations
-├── core/                     # Go module for veyctl
-│   ├── cmd/veyctl/          # veyctl command entry point
-│   ├── internal/veyctl/     # Shell-specific command implementation
+├── core/                     # Go module for natonctl
+│   ├── cmd/natonctl/          # natonctl command entry point
+│   ├── internal/natonctl/     # Shell-specific command implementation
 │   ├── pkg/                  # Public Go packages
 │   ├── go.mod
 │   └── go.sum
@@ -72,7 +72,7 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 ## Install
 
-The included installer targets Arch Linux. It installs repository and AUR dependencies, builds `veyctl`, and links this repository to `~/.config/quickshell` without replacing an existing configuration.
+The included installer targets Arch Linux. It installs repository and AUR dependencies, builds `natonctl`, and links this repository to `~/.config/quickshell` without replacing an existing configuration.
 
 ```bash
 ./install.sh
@@ -131,12 +131,12 @@ One of:
 
 Quickshell handles notifications itself — disable any other notification daemon (such as Dunst) so toasts are not duplicated.
 
-## Build `veyctl`
+## Build `natonctl`
 
-`veyctl` is used by QML components for system operations including brightness, audio, weather, and wallpaper control.
+`natonctl` is used by QML components for system operations including brightness, audio, weather, and wallpaper control.
 
 ```bash
-go build -C core -o ../quickshell/veyctl ./cmd/veyctl
+go build -C core -o ../quickshell/natonctl ./cmd/natonctl
 ```
 
 Rebuild the utility and restart Quickshell after changing files under `core/`.
@@ -147,7 +147,7 @@ Rebuild the utility and restart Quickshell after changing files under `core/`.
 - User settings are persisted by `quickshell/Common/SettingsStore.qml` in `quickshell/settings.json`.
 - Appearance settings: blur, borders, shadows, palette, typography (sans/mono family and scale), bar geometry and margins, per-widget bar toggles, popup positioning, notifications, OSD, and wallpaper rotation are available from the Settings popup.
 - Region screenshots use `slurp` and `grim`; clipboard history is available through `qs ipc call clipboard toggle`.
-- Global keyboard shortcuts are edited in Settings → System → Keyboard shortcuts. They persist to `settings.json` and are written to per-compositor bind overrides: defaults live in `quickshell/keybinds/`, user overrides under `~/.config/niri/vey/binds.kdl` (Niri) or `~/.config/hypr/vey/binds.conf` (Hyprland), and the compositor reloads them automatically.
+- Global keyboard shortcuts are edited in Settings → System → Keyboard shortcuts. They persist to `settings.json` and are written to per-compositor bind overrides: defaults live in `quickshell/keybinds/`, user overrides under `~/.config/niri/naton/binds.kdl` (Niri) or `~/.config/hypr/naton/binds.conf` (Hyprland), and the compositor reloads them automatically.
 - Dynamic theme stores the extracted wallpaper palette in `dynamicPalette` and applies it to shell surfaces, controls, borders, tracks, and workspace indicators.
 
 ## Verification
@@ -162,11 +162,11 @@ quickshell --path quickshell
 ![Alt](https://repobeats.axiom.co/api/embed/3caf808ce8401c6c39d1913e45a21c801fd6263a.svg "Repobeats analytics image")
 
 <div align="center">
-    <a href="https://github.com/haxgun/vey/graphs/contributors" target="_blank">
+    <a href="https://github.com/haxgun/naton/graphs/contributors" target="_blank">
       <table>
         <tr>
           <th colspan="2">
-            <br><img src="https://contrib.rocks/image?repo=haxgun/vey" /><br><br>
+            <br><img src="https://contrib.rocks/image?repo=haxgun/naton" /><br><br>
           </th>
         </tr>
       </table>

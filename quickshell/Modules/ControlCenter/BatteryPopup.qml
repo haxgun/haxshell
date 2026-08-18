@@ -22,7 +22,7 @@ PanelWindow {
   property double batteryTemp: 0
   property int batteryCycles: 0
   property string powerProfile: "balanced"
-  readonly property string veyctl: Config.veyctl
+  readonly property string natonctl: Config.natonctl
 
   visible: isOpen || container.opacity > 0.01
 
@@ -60,7 +60,7 @@ PanelWindow {
 
   Process {
     id: batteryProc
-    command: [root.veyctl, "battery"]
+    command: [root.natonctl, "battery"]
     running: true
     stdout: SplitParser { onRead: data => root.applyBatteryState(data) }
   }
@@ -76,13 +76,13 @@ PanelWindow {
 
   function refresh() {
     batteryProc.running = false
-    batteryProc.command = [root.veyctl, "battery"]
+    batteryProc.command = [root.natonctl, "battery"]
     batteryProc.running = true
   }
 
   function setProfile(profile) {
     batteryProc.running = false
-    batteryProc.command = [root.veyctl, "battery", "set-profile", profile]
+    batteryProc.command = [root.natonctl, "battery", "set-profile", profile]
     batteryProc.running = true
   }
 

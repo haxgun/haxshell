@@ -168,7 +168,7 @@ Rectangle {
   // Execute external system monitor python script
   Process {
     id: fetchSysProc
-    command: [Config.veyctl, "sys"]
+    command: [Config.natonctl, "sys"]
     running: true
 
     stdout: SplitParser {
@@ -227,7 +227,7 @@ Rectangle {
   // Execute external network monitor python script
   Process {
     id: fetchNetProc
-    command: [Config.veyctl, "net"]
+    command: [Config.natonctl, "net"]
     running: true
 
     stdout: SplitParser {
@@ -332,7 +332,7 @@ Rectangle {
 
   Process {
     id: pickerProc
-    command: [Config.veyctl, "color", "pick", Config.fontMono]
+    command: [Config.natonctl, "color", "pick", Config.fontMono]
   }
 
   Grid {

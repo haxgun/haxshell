@@ -27,7 +27,7 @@
 
 package keyboard_shortcuts_inhibit
 
-import "github.com/haxgun/vey/core/pkg/go-wayland/wayland/client"
+import "github.com/haxgun/naton/core/pkg/go-wayland/wayland/client"
 
 // ZwpKeyboardShortcutsInhibitManagerV1InterfaceName is the name of the interface as it appears in the [client.Registry].
 // It can be used to match the [client.RegistryGlobalEvent.Interface] in the

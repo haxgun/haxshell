@@ -13,7 +13,7 @@ Item {
   // Scanner process execution
   Process {
     id: scannerProcess
-    command: [Config.veyctl, "app-scanner"]
+    command: [Config.natonctl, "app-scanner"]
     running: true
 
     stdout: SplitParser {

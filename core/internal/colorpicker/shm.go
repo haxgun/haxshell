@@ -1,6 +1,6 @@
 package colorpicker
 
-import "github.com/haxgun/vey/core/internal/wayland/shm"
+import "github.com/haxgun/naton/core/internal/wayland/shm"
 
 type ShmBuffer = shm.Buffer
 

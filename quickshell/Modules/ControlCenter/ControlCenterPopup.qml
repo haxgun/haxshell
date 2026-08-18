@@ -40,7 +40,7 @@ PanelWindow {
   readonly property string mediaTitle: MprisController.stableTitle
   readonly property string mediaArtUrl: normalizeArtUrl(MprisController.stableArtUrl)
 
-  readonly property string veyctl: Config.veyctl
+  readonly property string natonctl: Config.natonctl
   readonly property var adapter: Bluetooth.defaultAdapter
   readonly property var bluetoothDevices: adapter && adapter.devices && adapter.devices.values ? adapter.devices.values : []
   readonly property var wifiDevice: {
@@ -104,28 +104,28 @@ PanelWindow {
 
   Process {
     id: brightnessProc
-    command: [root.veyctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
+    command: [root.natonctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
     running: true
     stdout: SplitParser { onRead: data => root.applyBrightnessState(data) }
   }
 
   Process {
     id: audioProc
-    command: [root.veyctl, "audio", "get"]
+    command: [root.natonctl, "audio", "get"]
     running: true
     stdout: SplitParser { onRead: data => root.applyAudioState(data) }
   }
 
   Process {
     id: batteryProc
-    command: [root.veyctl, "battery"]
+    command: [root.natonctl, "battery"]
     running: true
     stdout: SplitParser { onRead: data => root.applyBatteryState(data) }
   }
 
   Process {
     id: caffeineProc
-    command: [root.veyctl, "caffeine", "state"]
+    command: [root.natonctl, "caffeine", "state"]
     running: true
     stdout: SplitParser { onRead: data => root.applyCaffeineState(data) }
   }
@@ -158,10 +158,10 @@ PanelWindow {
     process.running = true
   }
 
-  function refreshBrightness() { restart(brightnessProc, [veyctl, "brightness", "get", activeBrightnessBus, Config.brightnessSleepMultiplier]) }
-  function refreshAudio() { restart(audioProc, [veyctl, "audio", "get"]) }
-  function refreshBattery() { restart(batteryProc, [veyctl, "battery"]) }
-  function refreshCaffeine() { restart(caffeineProc, [veyctl, "caffeine", "state"]) }
+  function refreshBrightness() { restart(brightnessProc, [natonctl, "brightness", "get", activeBrightnessBus, Config.brightnessSleepMultiplier]) }
+  function refreshAudio() { restart(audioProc, [natonctl, "audio", "get"]) }
+  function refreshBattery() { restart(batteryProc, [natonctl, "battery"]) }
+  function refreshCaffeine() { restart(caffeineProc, [natonctl, "caffeine", "state"]) }
 
   function applyBrightnessState(data) {
     try {
@@ -200,13 +200,13 @@ PanelWindow {
     let target = Math.max(0, Math.min(100, value))
     brightnessPercent = target
     if (osd) osd.suppressOnce()
-    run([veyctl, "brightness", "set", target.toString(), activeBrightnessBus, Config.brightnessSleepMultiplier])
+    run([natonctl, "brightness", "set", target.toString(), activeBrightnessBus, Config.brightnessSleepMultiplier])
   }
   function setAudio(action, value) {
     if (osd) osd.suppressOnce()
     if (action === "set-sink-volume") sinkVolume = Math.max(0, Math.min(100, Math.round(value)))
     if (action === "set-sink-mute") sinkMuted = value.toString() === "1"
-    run([veyctl, "audio", action, value.toString()])
+    run([natonctl, "audio", action, value.toString()])
   }
   function openAudioPopup() {
     if (!audioPopup) return
@@ -220,11 +220,11 @@ PanelWindow {
     popup.isOpen = true
     isOpen = false
   }
-  function toggleCaffeine() { restart(caffeineProc, [veyctl, "caffeine", "toggle"]) }
+  function toggleCaffeine() { restart(caffeineProc, [natonctl, "caffeine", "toggle"]) }
   function cyclePowerProfile() {
     let profiles = ["power-saver", "balanced", "performance"]
     let next = profiles[(profiles.indexOf(powerProfile) + 1) % profiles.length]
-    restart(batteryProc, [veyctl, "battery", "set-profile", next])
+    restart(batteryProc, [natonctl, "battery", "set-profile", next])
   }
   function toggleWifi() { Networking.wifiEnabled = !Networking.wifiEnabled }
   function toggleBluetooth() { if (adapter) adapter.enabled = !adapter.enabled }

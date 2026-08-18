@@ -4,7 +4,7 @@ set -euo pipefail
 readonly PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 readonly SHELL_DIR="$PROJECT_DIR/quickshell"
 readonly CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell"
-COMPOSITOR="${VEY_COMPOSITOR:-}"
+COMPOSITOR="${NATON_COMPOSITOR:-}"
 readonly PACKAGES=(
   awww
   blueman
@@ -53,7 +53,7 @@ usage() {
 }
 
 if [[ "$(uname -s)" != "Linux" ]]; then
-  die "vey is supported only on Linux"
+  die "Naton is supported only on Linux"
 fi
 
 if ! command -v pacman >/dev/null; then
@@ -115,12 +115,12 @@ if [[ "$COMPOSITOR" == "niri" ]]; then
   sudo cmake --install "$NIRI_BUILD_DIR/qml-niri/build"
 fi
 
-printf 'Building veyctl...\n'
-go build -C "$PROJECT_DIR/core" -o "$SHELL_DIR/veyctl" ./cmd/veyctl
-chmod +x "$SHELL_DIR/veyctl"
+printf 'Building natonctl...\n'
+go build -C "$PROJECT_DIR/core" -o "$SHELL_DIR/natonctl" ./cmd/natonctl
+chmod +x "$SHELL_DIR/natonctl"
 
 if [[ -e "$CONFIG_DIR" && ! -L "$CONFIG_DIR" ]]; then
-  die "$CONFIG_DIR already exists and is not a symbolic link; move it before installing vey"
+  die "$CONFIG_DIR already exists and is not a symbolic link; move it before installing Naton"
 fi
 
 mkdir -p "$(dirname "$CONFIG_DIR")"
@@ -130,7 +130,7 @@ if [[ -L "$CONFIG_DIR" ]]; then
     rm "$CONFIG_DIR"
     ln -s "$SHELL_DIR" "$CONFIG_DIR"
   elif [[ "$current_target" != "$SHELL_DIR" ]]; then
-    die "$CONFIG_DIR points to $current_target; replace it manually if you want to use vey"
+    die "$CONFIG_DIR points to $current_target; replace it manually if you want to use Naton"
   fi
 else
   ln -s "$SHELL_DIR" "$CONFIG_DIR"
@@ -138,10 +138,10 @@ fi
 
 if [[ "$COMPOSITOR" == "hyprland" ]]; then
   HYPR_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
-  HYPR_BINDS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/vey"
+  HYPR_BINDS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/naton"
   HYPR_BINDS="$HYPR_BINDS_DIR/binds.conf"
   HYPR_INCLUDE="source = ~/.config/quickshell/keybinds/hyprland.conf"
-  HYPR_USER_INCLUDE="source = ~/.config/hypr/vey/binds.conf"
+  HYPR_USER_INCLUDE="source = ~/.config/hypr/naton/binds.conf"
   mkdir -p "$HYPR_BINDS_DIR"
   [[ -e "$HYPR_BINDS" ]] || : > "$HYPR_BINDS"
   if [[ -f "$HYPR_CONFIG" ]] && ! grep -Fqx "$HYPR_INCLUDE" "$HYPR_CONFIG"; then
@@ -152,10 +152,10 @@ if [[ "$COMPOSITOR" == "hyprland" ]]; then
   fi
 elif [[ "$COMPOSITOR" == "niri" ]]; then
   NIRI_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
-  NIRI_BINDS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/niri/vey"
+  NIRI_BINDS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/niri/naton"
   NIRI_BINDS="$NIRI_BINDS_DIR/binds.kdl"
   NIRI_INCLUDE='include "../quickshell/keybinds/niri.kdl"'
-  NIRI_USER_INCLUDE='include "./vey/binds.kdl"'
+  NIRI_USER_INCLUDE='include "./naton/binds.kdl"'
   mkdir -p "$NIRI_BINDS_DIR"
   [[ -e "$NIRI_BINDS" ]] || printf 'binds {}\n' > "$NIRI_BINDS"
   if [[ -f "$NIRI_CONFIG" ]] && ! grep -Fqx "$NIRI_INCLUDE" "$NIRI_CONFIG"; then
@@ -166,5 +166,5 @@ elif [[ "$COMPOSITOR" == "niri" ]]; then
   fi
 fi
 
-printf '\nvey is installed. Start it with:\n  quickshell --path %s\n' "$SHELL_DIR"
+printf '\nNaton is installed. Start it with:\n  quickshell --path %s\n' "$SHELL_DIR"
 printf 'Add this command to your %s startup configuration to launch it automatically.\n' "$COMPOSITOR"

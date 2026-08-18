@@ -1,5 +1,5 @@
-// Package veyctl implements the system helper used by the vey QML shell.
-package veyctl
+// Package natonctl implements the system helper used by the Naton QML shell.
+package natonctl
 
 import (
 	"crypto/sha1"
@@ -24,7 +24,7 @@ import (
 
 	"golang.org/x/image/draw"
 
-	"github.com/haxgun/vey/core/internal/colorpicker"
+	"github.com/haxgun/naton/core/internal/colorpicker"
 )
 
 var homeDir, _ = os.UserHomeDir()
@@ -1837,7 +1837,7 @@ func installedVersion() string {
 
 func githubInfo() (string, []map[string]any) {
 	latest := ""
-	raw, code := run(8*time.Second, "curl", "-fsS", "--max-time", "7", "https://api.github.com/repos/haxgun/vey/commits?per_page=1")
+	raw, code := run(8*time.Second, "curl", "-fsS", "--max-time", "7", "https://api.github.com/repos/haxgun/naton/commits?per_page=1")
 	if code == 0 {
 		var commits []struct {
 			Sha string `json:"sha"`
@@ -1850,7 +1850,7 @@ func githubInfo() (string, []map[string]any) {
 		}
 	}
 
-	raw, code = run(8*time.Second, "curl", "-fsS", "--max-time", "7", "https://api.github.com/repos/haxgun/vey/contributors?per_page=100")
+	raw, code = run(8*time.Second, "curl", "-fsS", "--max-time", "7", "https://api.github.com/repos/haxgun/naton/contributors?per_page=100")
 	if code != 0 {
 		return latest, nil
 	}
@@ -1864,7 +1864,7 @@ func githubInfo() (string, []map[string]any) {
 		return latest, nil
 	}
 
-	avatarDir := filepath.Join(homeDir, ".cache/veyctl/avatars")
+	avatarDir := filepath.Join(homeDir, ".cache/natonctl/avatars")
 	_ = os.MkdirAll(avatarDir, 0o755)
 	result := make([]map[string]any, 0, len(contribs))
 	for _, c := range contribs {
@@ -1886,7 +1886,7 @@ func cmdAbout() {
 	output(map[string]any{"ok": true, "version": version, "latest": latest, "contributors": contributors})
 }
 
-func holidaysCachePath() string { return filepath.Join(homeDir, ".cache/veyctl/holidays.json") }
+func holidaysCachePath() string { return filepath.Join(homeDir, ".cache/natonctl/holidays.json") }
 
 func geocodeCountry(location string) string {
 	raw, code := run(6*time.Second, "curl", "-fsS", "--max-time", "5", "https://geocoding-api.open-meteo.com/v1/search?name="+url.QueryEscape(location)+"&count=1&language=ru&format=json")
@@ -1997,12 +1997,12 @@ func copyColor(hex string) {
 
 func cmdIPC(args []string) {
 	if len(args) < 2 {
-		output(map[string]any{"ok": false, "error": "usage: veyctl ipc <target> <function>"})
+		output(map[string]any{"ok": false, "error": "usage: natonctl ipc <target> <function>"})
 		return
 	}
 	executable, err := os.Executable()
 	if err != nil {
-		output(map[string]any{"ok": false, "error": "locate veyctl executable"})
+		output(map[string]any{"ok": false, "error": "locate natonctl executable"})
 		return
 	}
 	if resolved, resolveErr := filepath.EvalSymlinks(executable); resolveErr == nil {
@@ -2082,7 +2082,7 @@ func hyprShortcut(value string) (string, bool) {
 
 func cmdKeybind(args []string) {
 	if len(args) != 3 || args[0] != "set" {
-		output(map[string]any{"ok": false, "error": "usage: veyctl keybind set <setting> <shortcut>"})
+		output(map[string]any{"ok": false, "error": "usage: natonctl keybind set <setting> <shortcut>"})
 		return
 	}
 	_, niri := niriShortcut(args[2])
@@ -2111,9 +2111,9 @@ func cmdKeybind(args []string) {
 		return
 	}
 	settings := saveSettingValue(args[1], args[2])
-	configPath, include := filepath.Join(homeDir, ".config/niri/config.kdl"), `include "./vey/binds.kdl"`
+	configPath, include := filepath.Join(homeDir, ".config/niri/config.kdl"), `include "./naton/binds.kdl"`
 	if hyprland {
-		configPath, include = filepath.Join(homeDir, ".config/hypr/hyprland.conf"), "source = ~/.config/hypr/vey/binds.conf"
+		configPath, include = filepath.Join(homeDir, ".config/hypr/hyprland.conf"), "source = ~/.config/hypr/naton/binds.conf"
 	}
 	config, err := os.ReadFile(configPath)
 	if err != nil {
@@ -2137,18 +2137,18 @@ func cmdKeybind(args []string) {
 		}
 		if ok {
 			if niri {
-				fmt.Fprintf(&binds, "    %s { spawn \"sh\" \"-c\" \"\\\"$HOME/.config/quickshell/veyctl\\\" ipc %s toggle\"; }\n", value, bind.target)
+				fmt.Fprintf(&binds, "    %s { spawn \"sh\" \"-c\" \"\\\"$HOME/.config/quickshell/natonctl\\\" ipc %s toggle\"; }\n", value, bind.target)
 			} else {
-				fmt.Fprintf(&binds, "bind = %s, exec, ~/.config/quickshell/veyctl ipc %s toggle\n", value, bind.target)
+				fmt.Fprintf(&binds, "bind = %s, exec, ~/.config/quickshell/natonctl ipc %s toggle\n", value, bind.target)
 			}
 		}
 	}
 	if niri {
 		binds.WriteString("}\n")
 	}
-	path := filepath.Join(homeDir, ".config/niri/vey/binds.kdl")
+	path := filepath.Join(homeDir, ".config/niri/naton/binds.kdl")
 	if hyprland {
-		path = filepath.Join(homeDir, ".config/hypr/vey/binds.conf")
+		path = filepath.Join(homeDir, ".config/hypr/naton/binds.conf")
 	}
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		output(map[string]any{"ok": false, "error": "create keybind directory"})
@@ -2166,7 +2166,7 @@ func cmdKeybind(args []string) {
 	output(map[string]any{"ok": status == 0})
 }
 
-// Run dispatches veyctl commands from the process arguments.
+// Run dispatches natonctl commands from the process arguments.
 func Run() {
 	if len(os.Args) < 2 {
 		output(map[string]any{"ok": false, "error": "missing command"})

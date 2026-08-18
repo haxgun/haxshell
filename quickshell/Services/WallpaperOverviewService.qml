@@ -49,7 +49,7 @@ Item {
   function setBlurred(enabled) {
     root.overviewOpen = enabled
     wallpaperProc.running = false
-    wallpaperProc.command = [Config.veyctl, "wallpaper", "overview-blur", enabled ? "on" : "off", Config.wallpaperDir]
+    wallpaperProc.command = [Config.natonctl, "wallpaper", "overview-blur", enabled ? "on" : "off", Config.wallpaperDir]
     wallpaperProc.running = true
   }
 }

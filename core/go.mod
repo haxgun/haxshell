@@ -1,4 +1,4 @@
-module github.com/haxgun/vey/core
+module github.com/haxgun/naton/core
 
 go 1.25.0
 

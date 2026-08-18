@@ -80,7 +80,7 @@ PanelWindow {
 
   Process {
     id: weatherProc
-    command: [Config.veyctl, "weather"]
+    command: [Config.natonctl, "weather"]
 
     stdout: SplitParser {
       onRead: data => root.applyWeather(data)
@@ -96,7 +96,7 @@ PanelWindow {
 
   function refreshHolidays() {
     holidaysProc.running = false
-    holidaysProc.command = [Config.veyctl, "holidays", root.displayYear.toString()]
+    holidaysProc.command = [Config.natonctl, "holidays", root.displayYear.toString()]
     holidaysProc.running = true
   }
   function refreshAgenda() { agendaProc.running = false; agendaProc.command = ["khal", "list", "now", "7d", "--format", "{start-date} {start-time} {title}"]; agendaProc.running = true }
@@ -118,7 +118,7 @@ PanelWindow {
   function refreshWeather() {
     if (!Config.weatherEnabled) return
     weatherProc.running = false
-    weatherProc.command = [Config.veyctl, "weather", "refresh"]
+    weatherProc.command = [Config.natonctl, "weather", "refresh"]
     weatherProc.running = true
   }
 

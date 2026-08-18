@@ -21,7 +21,7 @@ Rectangle {
 
   Process {
     id: weatherProc
-    command: [Config.veyctl, "weather"]
+    command: [Config.natonctl, "weather"]
     running: Config.weatherEnabled
 
     stdout: SplitParser {
@@ -51,7 +51,7 @@ Rectangle {
   function refresh() {
     if (!Config.weatherEnabled) return
     weatherProc.running = false
-    weatherProc.command = [Config.veyctl, "weather"]
+    weatherProc.command = [Config.natonctl, "weather"]
     weatherProc.running = true
   }
 

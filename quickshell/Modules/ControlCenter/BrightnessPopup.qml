@@ -15,7 +15,7 @@ PanelWindow {
   property string activeBrightnessBus: Config.brightnessMonitorBus
   property int lastAppliedBrightness: -1
   property bool brightnessInitialized: false
-  readonly property string veyctl: Config.veyctl
+  readonly property string natonctl: Config.natonctl
 
   visible: isOpen || container.opacity > 0.01
 
@@ -63,7 +63,7 @@ PanelWindow {
   // Fetch initial brightness via ddcutil
   Process {
     id: fetchBrightnessProc
-    command: [root.veyctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
+    command: [root.natonctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
     running: true
 
     stdout: SplitParser {
@@ -85,7 +85,7 @@ PanelWindow {
     repeat: true
     onTriggered: {
       if (fetchBrightnessProc.running) return
-      fetchBrightnessProc.command = [root.veyctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
+      fetchBrightnessProc.command = [root.natonctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
       fetchBrightnessProc.running = true
     }
   }
@@ -117,13 +117,13 @@ PanelWindow {
     if (root.osd) root.osd.suppressOnce()
     root.brightnessPercent = target
     setBrightnessProc.running = false
-    setBrightnessProc.command = [root.veyctl, "brightness", "set", target.toString(), root.activeBrightnessBus, Config.brightnessSleepMultiplier]
+    setBrightnessProc.command = [root.natonctl, "brightness", "set", target.toString(), root.activeBrightnessBus, Config.brightnessSleepMultiplier]
     setBrightnessProc.running = true
   }
 
   onIsOpenChanged: {
     if (isOpen) {
-      fetchBrightnessProc.command = [root.veyctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
+      fetchBrightnessProc.command = [root.natonctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
       fetchBrightnessProc.running = true
     }
   }

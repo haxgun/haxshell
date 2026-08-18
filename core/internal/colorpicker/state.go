@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/haxgun/vey/core/internal/wayland/shm"
+	"github.com/haxgun/naton/core/internal/wayland/shm"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"

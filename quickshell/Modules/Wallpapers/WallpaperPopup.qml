@@ -13,7 +13,7 @@ PanelWindow {
   property string wallName: "Нет обоев"
   property int currentIndex: 0
   property var palette: []
-  readonly property string veyctl: Config.veyctl
+  readonly property string natonctl: Config.natonctl
 
   visible: isOpen || container.opacity > 0.01
 
@@ -42,7 +42,7 @@ PanelWindow {
 
   Process {
     id: wallpaperProc
-    command: [root.veyctl, "wallpaper", "get", Config.wallpaperDir]
+    command: [root.natonctl, "wallpaper", "get", Config.wallpaperDir]
     running: true
     stdout: SplitParser { onRead: data => root.applyState(data) }
   }
@@ -56,19 +56,19 @@ PanelWindow {
 
   function refresh() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "get", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
   function nextWallpaper() {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "next", Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 
   function setWallpaper(index) {
     wallpaperProc.running = false
-    wallpaperProc.command = [root.veyctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, Config.wallpaperPaletteScheme]
+    wallpaperProc.command = [root.natonctl, "wallpaper", "set", index.toString(), Config.wallpaperDir, Config.wallpaperPaletteScheme]
     wallpaperProc.running = true
   }
 

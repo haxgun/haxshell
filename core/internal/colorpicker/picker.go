@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/haxgun/vey/core/internal/log"
-	"github.com/haxgun/vey/core/internal/proto/keyboard_shortcuts_inhibit"
-	"github.com/haxgun/vey/core/internal/proto/wlr_layer_shell"
-	"github.com/haxgun/vey/core/internal/proto/wlr_screencopy"
-	"github.com/haxgun/vey/core/internal/proto/wp_viewporter"
-	wlhelpers "github.com/haxgun/vey/core/internal/wayland/client"
-	"github.com/haxgun/vey/core/pkg/go-wayland/wayland/client"
+	"github.com/haxgun/naton/core/internal/log"
+	"github.com/haxgun/naton/core/internal/proto/keyboard_shortcuts_inhibit"
+	"github.com/haxgun/naton/core/internal/proto/wlr_layer_shell"
+	"github.com/haxgun/naton/core/internal/proto/wlr_screencopy"
+	"github.com/haxgun/naton/core/internal/proto/wp_viewporter"
+	wlhelpers "github.com/haxgun/naton/core/internal/wayland/client"
+	"github.com/haxgun/naton/core/pkg/go-wayland/wayland/client"
 )
 
 type Config struct {

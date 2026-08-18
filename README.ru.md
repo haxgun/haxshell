@@ -1,10 +1,10 @@
 <div align="center">
 
 <p align="center">
-    <img src="docs/logo.svg" alt="vey logo" width="160">
+    <img src="docs/logo.svg" alt="Naton logo" width="160">
 </p>
 
-`vey` - настраиваемая Wayland-оболочка рабочего стола на Quickshell, QML и Go для Hyprland и Niri.
+`Naton` - настраиваемая Wayland-оболочка рабочего стола на Quickshell, QML и Go для Hyprland и Niri.
 
 [English](README.md) · **Русский**
 
@@ -16,7 +16,7 @@
 [![Stars](https://img.shields.io/github/stars/ValoryLabs/Valory?style=flat&color=green)](https://github.com/ValoryLabs/Valory/stargazers)
 [![Forks](https://img.shields.io/github/forks/ValoryLabs/Valory?style=flat&color=green)](https://github.com/ValoryLabs/Valory/forks)
 [![Issues](https://img.shields.io/github/issues/ValoryLabs/Valory?style=flat)](https://github.com/ValoryLabs/Valory/issues)
-![GitHub last commit](https://img.shields.io/github/last-commit/haxgun/vey)
+![GitHub last commit](https://img.shields.io/github/last-commit/haxgun/naton)
 
 </div>
 
@@ -47,9 +47,9 @@
 │   ├── Services/             # QML-сервисы
 │   ├── keybinds/             # Дефолтные сниппеты сочетаний композитора
 │   └── translations/         # Переводы интерфейса
-├── core/                     # Go-модуль veyctl
-│   ├── cmd/veyctl/          # Точка входа команды veyctl
-│   ├── internal/veyctl/     # Реализация команд для оболочки
+├── core/                     # Go-модуль natonctl
+│   ├── cmd/natonctl/          # Точка входа команды natonctl
+│   ├── internal/natonctl/     # Реализация команд для оболочки
 │   ├── pkg/                  # Публичные Go-пакеты
 │   ├── go.mod
 │   └── go.sum
@@ -72,7 +72,7 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 ## Установка
 
-Встроенный установщик предназначен для Arch Linux. Он ставит зависимости из репозиториев и AUR, собирает `veyctl` и создаёт символьную ссылку на этот репозиторий в `~/.config/quickshell`, не заменяя существующую конфигурацию.
+Встроенный установщик предназначен для Arch Linux. Он ставит зависимости из репозиториев и AUR, собирает `natonctl` и создаёт символьную ссылку на этот репозиторий в `~/.config/quickshell`, не заменяя существующую конфигурацию.
 
 ```bash
 ./install.sh
@@ -131,12 +131,12 @@ ln -s "$(pwd)/quickshell" ~/.config/quickshell
 
 Quickshell сам обрабатывает уведомления — отключите любой другой демон уведомлений (например, Dunst), чтобы тосты не дублировались.
 
-## Сборка `veyctl`
+## Сборка `natonctl`
 
-`veyctl` используется QML-компонентами для системных операций: управления яркостью, звуком, погодой, обоями и другими функциями.
+`natonctl` используется QML-компонентами для системных операций: управления яркостью, звуком, погодой, обоями и другими функциями.
 
 ```bash
-go build -C core -o ../quickshell/veyctl ./cmd/veyctl
+go build -C core -o ../quickshell/natonctl ./cmd/natonctl
 ```
 
 После изменения файлов в `core/` пересоберите утилиту и перезапустите Quickshell.
@@ -147,7 +147,7 @@ go build -C core -o ../quickshell/veyctl ./cmd/veyctl
 - Пользовательские параметры сохраняются через `quickshell/Common/SettingsStore.qml` в `quickshell/settings.json`.
 - В Settings доступны параметры blur, границ, теней, palette, типографики (семейство и масштаб sans/mono), геометрии и отступов панели, переключения отдельных виджетов панели, положения всплывающих панелей, уведомлений, OSD и смены обоев.
 - Снимки выделенной области используют `slurp` и `grim`; история буфера открывается через `qs ipc call clipboard toggle`.
-- Глобальные сочетания клавиш редактируются в Settings → Система → Сочетания клавиш. Они сохраняются в `settings.json` и записываются в override-блоки композитора: дефолтные значения лежат в `quickshell/keybinds/`, пользовательские — в `~/.config/niri/vey/binds.kdl` (Niri) или `~/.config/hypr/vey/binds.conf` (Hyprland), композитор перезагружает их автоматически.
+- Глобальные сочетания клавиш редактируются в Settings → Система → Сочетания клавиш. Они сохраняются в `settings.json` и записываются в override-блоки композитора: дефолтные значения лежат в `quickshell/keybinds/`, пользовательские — в `~/.config/niri/naton/binds.kdl` (Niri) или `~/.config/hypr/naton/binds.conf` (Hyprland), композитор перезагружает их автоматически.
 - Динамическая тема сохраняет извлечённую palette обоев в `dynamicPalette` и применяет её к поверхностям оболочки, controls, границам, tracks и индикаторам рабочих столов.
 
 ## Проверка
@@ -162,11 +162,11 @@ quickshell --path quickshell
 ![Alt](https://repobeats.axiom.co/api/embed/3caf808ce8401c6c39d1913e45a21c801fd6263a.svg "Repobeats analytics image")
 
 <div align="center">
-    <a href="https://github.com/haxgun/vey/graphs/contributors" target="_blank">
+    <a href="https://github.com/haxgun/naton/graphs/contributors" target="_blank">
       <table>
         <tr>
           <th colspan="2">
-            <br><img src="https://contrib.rocks/image?repo=haxgun/vey" /><br><br>
+            <br><img src="https://contrib.rocks/image?repo=haxgun/naton" /><br><br>
           </th>
         </tr>
       </table>

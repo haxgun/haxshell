@@ -12,7 +12,7 @@ PanelWindow {
   property int rightMargin: Config.scaledSize(16)
   property string currentLayout: "??"
   property string currentName: "Unknown"
-  readonly property string veyctl: Config.veyctl
+  readonly property string natonctl: Config.natonctl
 
   signal layoutChanged(var state)
 
@@ -53,13 +53,13 @@ PanelWindow {
 
   function refresh() {
     keyboardProc.running = false
-    keyboardProc.command = [root.veyctl, "keyboard"]
+    keyboardProc.command = [root.natonctl, "keyboard"]
     keyboardProc.running = true
   }
 
   function setLayout(index) {
     setLayoutProc.running = false
-    setLayoutProc.command = [root.veyctl, "keyboard", "set", index.toString()]
+    setLayoutProc.command = [root.natonctl, "keyboard", "set", index.toString()]
     setLayoutProc.running = true
   }
 
