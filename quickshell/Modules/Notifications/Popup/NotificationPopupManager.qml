@@ -12,7 +12,7 @@ PanelWindow {
   property var targetScreen: null
   property int rightMargin: Config.scaledSize(16)
   property bool centerOpen: false
-  property var toastItems: []
+  property var toastBlurRegion: null
   readonly property int maxVisibleToasts: Config.notificationMaxVisible
   readonly property bool isTargetScreen: NotificationService.isScreenFocused(targetScreen)
   readonly property int toastTimeoutMs: Config.notificationTimeoutMs
@@ -22,8 +22,13 @@ PanelWindow {
 
   signal centerRequested()
 
+  ListModel {
+    id: toastModel
+    onCountChanged: blurRebuildTimer.restart()
+  }
+
   screen: targetScreen
-  visible: toastItems.length > 0
+  visible: toastModel.count > 0
   WlrLayershell.namespace: "quickshell-bar"
   WlrLayershell.layer: WlrLayer.Overlay
   WlrLayershell.exclusiveZone: 0
@@ -31,9 +36,42 @@ PanelWindow {
   anchors { top: true; left: true; right: true; bottom: true }
   mask: Region { item: toastColumn }
   color: "#00000000"
-  BackgroundEffect.blurRegion: Region {
-    item: Config.popupBlurEnabled ? toastColumn : null
-    radius: Config.overlayRadius
+  BackgroundEffect.blurRegion: panel.toastBlurRegion
+
+  Component { id: blurRootComp; Region {} }
+  Component {
+    id: toastRegionComp
+    Region { property Item target; item: target; radius: Config.overlayRadius }
+  }
+
+  Timer { id: blurRebuildTimer; interval: 0; repeat: false; onTriggered: panel.rebuildBlur() }
+
+  Connections {
+    target: Config
+    function onPopupBlurEnabledChanged() { blurRebuildTimer.restart() }
+  }
+
+  function rebuildBlur() {
+    let old = panel.toastBlurRegion
+    let root = null
+    if (Config.popupBlurEnabled) {
+      root = blurRootComp.createObject(panel)
+      let regions = []
+      for (let i = 0; i < toastRepeater.count; i++) {
+        let toast = toastRepeater.itemAt(i)
+        if (!toast) continue
+        let r = toastRegionComp.createObject(root, { target: toast })
+        if (r) regions.push(r)
+      }
+      if (regions.length === 0) {
+        root.destroy()
+        root = null
+      } else {
+        root.regions = regions
+      }
+    }
+    panel.toastBlurRegion = root
+    if (old) old.destroy()
   }
 
   Connections {
@@ -42,15 +80,21 @@ PanelWindow {
       if (panel.isTargetScreen && !NotificationService.doNotDisturb) panel.showToast(notification)
     }
     function onDoNotDisturbChanged() {
-      if (NotificationService.doNotDisturb) panel.toastItems = []
+      if (NotificationService.doNotDisturb) toastModel.clear()
     }
   }
 
   onCenterOpenChanged: {
-    if (centerOpen) toastItems = []
+    if (centerOpen) toastModel.clear()
   }
 
-  onMaxVisibleToastsChanged: toastItems = toastItems.slice(0, maxVisibleToasts)
+  onMaxVisibleToastsChanged: panel.trimToasts()
+
+  Component.onDestruction: { if (panel.toastBlurRegion) panel.toastBlurRegion.destroy() }
+
+  function trimToasts() {
+    while (toastModel.count > maxVisibleToasts) toastModel.remove(toastModel.count - 1)
+  }
 
   function showToast(notification) {
     if (!notification || centerOpen || NotificationService.doNotDisturb) return
@@ -64,15 +108,14 @@ PanelWindow {
       iconSource: NotificationService.notificationIconSource(notification),
       timeoutMs: notification.expireTimeout >= 0 ? notification.expireTimeout : panel.toastTimeoutMs
     }
-    panel.toastItems = [item].concat(panel.toastItems).slice(0, panel.maxVisibleToasts)
+    toastModel.insert(0, item)
+    panel.trimToasts()
   }
 
   function removeToast(notificationId) {
-    let list = panel.toastItems.slice()
-    for (let i = 0; i < list.length; i++) {
-      if (list[i] && list[i].id === notificationId) {
-        list.splice(i, 1)
-        panel.toastItems = list
+    for (let i = 0; i < toastModel.count; i++) {
+      if (toastModel.get(i).id === notificationId) {
+        toastModel.remove(i)
         return
       }
     }
@@ -94,9 +137,10 @@ PanelWindow {
     spacing: Config.scaledSize(10)
 
     Repeater {
-      model: panel.toastItems
+      id: toastRepeater
+      model: toastModel
       NotificationToast {
-        timeoutMs: modelData.timeoutMs
+        timeoutMs: model.timeoutMs
         onRemoveRequested: id => panel.removeToast(id)
         onCenterRequested: panel.centerRequested()
       }
