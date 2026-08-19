@@ -1450,6 +1450,39 @@ func makeImageThumb(path, target string, tw, th int) bool {
 	return jpeg.Encode(out, dst, &jpeg.Options{Quality: 80}) == nil
 }
 
+func imageDimensions(path string) (int, int) {
+	f, err := os.Open(path)
+	if err != nil {
+		return 0, 0
+	}
+	defer f.Close()
+	cfg, _, err := image.DecodeConfig(f)
+	if err != nil {
+		return 0, 0
+	}
+	return cfg.Width, cfg.Height
+}
+
+func videoDimensions(path string) (int, int) {
+	if !commandExists("ffprobe") {
+		return 0, 0
+	}
+	out, code := run(5*time.Second, "ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=s=x:p=0", path)
+	if code != 0 {
+		return 0, 0
+	}
+	parts := strings.Split(strings.TrimSpace(out), "x")
+	if len(parts) != 2 {
+		return 0, 0
+	}
+	w, err1 := strconv.Atoi(parts[0])
+	h, err2 := strconv.Atoi(parts[1])
+	if err1 != nil || err2 != nil {
+		return 0, 0
+	}
+	return w, h
+}
+
 func makeThumb(path string) string {
 	if path == "" {
 		return ""
@@ -1729,7 +1762,22 @@ func wallState(override string, pendingPalette []string) {
 		wg.Add(1)
 		go func(i int, item string) {
 			defer wg.Done()
-			list[i] = map[string]any{"wallIndex": i, "name": filepath.Base(item), "path": item, "thumbnail": makeThumb(item)}
+			ext := strings.ToLower(filepath.Ext(item))
+			w, h := 0, 0
+			if imageExt[ext] {
+				w, h = imageDimensions(item)
+			} else if videoExt[ext] {
+				w, h = videoDimensions(item)
+			}
+			list[i] = map[string]any{
+				"wallIndex": i,
+				"name":      filepath.Base(item),
+				"path":      item,
+				"thumbnail": makeThumb(item),
+				"wallWidth": w,
+				"wallHeight": h,
+				"isVideo":    videoExt[ext],
+			}
 		}(i, item)
 	}
 	wg.Wait()
