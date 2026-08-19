@@ -8,18 +8,19 @@ import Quickshell.Bluetooth
 import "../../Common"
 import "../../Widgets"
 import "../../Services"
+import "../../"
 
 PanelWindow {
   id: root
 
   property bool isOpen: false
+  property bool settingsView: false
   property int rightMargin: Config.scaledSize(16)
   property var audioPopup: null
   property var osd: null
   property var wifiPopup: null
   property var bluetoothPopup: null
   property var batteryPopup: null
-  property var settingsPopup: null
   property var powerPopup: null
   property string activeSection: "wifi"
   property int brightnessPercent: 100
@@ -76,16 +77,39 @@ PanelWindow {
 
   IpcHandler {
     target: "control-center"
-    function toggle() { root.isOpen = !root.isOpen }
-    function open() { root.isOpen = true }
-    function close() { root.isOpen = false }
-    function focus(section: string) { root.activeSection = section || "wifi"; root.isOpen = true }
+    function toggle() { root.isOpen = !root.isOpen; root.settingsView = false }
+    function open() { root.isOpen = true; root.settingsView = false }
+    function close() { root.isOpen = false; root.settingsView = false }
+    function focus(section: string) { root.activeSection = section || "wifi"; root.isOpen = true; root.settingsView = false }
   }
+
+  IpcHandler {
+    target: "settings"
+    function toggle() {
+      root.settingsView = !root.settingsView
+      root.isOpen = true
+    }
+    function open() { root.settingsView = true; root.isOpen = true }
+    function close() { root.settingsView = false; root.isOpen = false }
+  }
+
+  Shortcut {
+    sequence: Config.settingsCloseKeybind
+    enabled: root.isOpen && root.settingsView
+    onActivated: settingsEmbedded.handleBack()
+  }
+
+  Shortcut { sequence: "Ctrl+Tab"; enabled: root.isOpen && root.settingsView; onActivated: settingsEmbedded.selectRelativeCategory(1) }
+  Shortcut { sequence: "Ctrl+Shift+Tab"; enabled: root.isOpen && root.settingsView; onActivated: settingsEmbedded.selectRelativeCategory(-1) }
+  Shortcut { sequence: "Alt+Right"; enabled: root.isOpen && root.settingsView; onActivated: settingsEmbedded.selectRelativePage(1) }
+  Shortcut { sequence: "Alt+Left"; enabled: root.isOpen && root.settingsView; onActivated: settingsEmbedded.selectRelativePage(-1) }
 
   onIsOpenChanged: if (isOpen) {
     refreshAll()
     if (wifiDevice) wifiDevice.scannerEnabled = true
     if (adapter && adapter.enabled) adapter.discovering = true
+  } else {
+    root.settingsView = false
   }
 
   Timer {
@@ -220,6 +244,17 @@ PanelWindow {
     popup.isOpen = true
     isOpen = false
   }
+  function openSettings() {
+    root.settingsView = true
+    settingsEmbedded.openSectionList()
+  }
+  function closeSettings() {
+    root.settingsView = false
+  }
+  function back() {
+    if (settingsView) root.settingsView = false
+    else root.isOpen = false
+  }
   function toggleCaffeine() { restart(caffeineProc, [natonctl, "caffeine", "toggle"]) }
   function cyclePowerProfile() {
     let profiles = ["power-saver", "balanced", "performance"]
@@ -283,7 +318,7 @@ PanelWindow {
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
     color: Config.popupGlassBg
-    clip: false
+    clip: true
 
     Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
     Behavior on opacity { NumberAnimation { duration: 160 } }
@@ -291,13 +326,28 @@ PanelWindow {
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
     Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
+    SettingsPopup {
+      id: settingsEmbedded
+      width: parent.width
+      height: parent.height
+      x: root.settingsView ? 0 : parent.width
+      isOpen: root.isOpen
+      rightMargin: 0
+      opacity: root.isOpen ? 1.0 : 0.0
+      Behavior on x { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+      onBackRequested: root.closeSettings()
+      onHideRequested: root.isOpen = false
+      onShowRequested: root.isOpen = true
+    }
+
     Column {
       id: content
       width: parent.width - 28
+      x: Config.scaledSize(14) - (root.settingsView ? parent.width : 0)
       anchors.top: parent.top
       anchors.topMargin: Config.scaledSize(14)
-      anchors.horizontalCenter: parent.horizontalCenter
       spacing: Config.scaledSize(8)
+      Behavior on x { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
       Row {
         width: parent.width
@@ -314,7 +364,7 @@ PanelWindow {
         Rectangle {
           width: Config.scaledSize(38); height: Config.scaledSize(38); radius: Config.popupPillRadius(width); anchors.verticalCenter: parent.verticalCenter; color: settingsMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
           Text { anchors.centerIn: parent; text: Config.iconSettings; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-          MouseArea { id: settingsMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openPopup(root.settingsPopup) }
+          MouseArea { id: settingsMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.openSettings() }
         }
         Rectangle {
           width: Config.scaledSize(38); height: Config.scaledSize(38); radius: Config.popupPillRadius(width); anchors.verticalCenter: parent.verticalCenter; color: themeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg

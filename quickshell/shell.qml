@@ -175,7 +175,6 @@ Scope {
     notifications.isOpen = false
     trayMenu.isOpen = false
     keyboardLayout.isOpen = false
-    settings.isOpen = false
     power.isOpen = false
     system.isOpen = false
     media.isOpen = false
@@ -184,7 +183,7 @@ Scope {
 
   Shortcut {
     sequence: "Esc"
-    enabled: drawer.isOpen || calendar.isOpen || controlCenter.isOpen || brightness.isOpen || wifi.isOpen || bluetooth.isOpen || audio.isOpen || battery.isOpen || notifications.isOpen || trayMenu.isOpen || keyboardLayout.isOpen || settings.isOpen || power.isOpen || system.isOpen || media.isOpen || clipboard.isOpen
+    enabled: (drawer.isOpen || calendar.isOpen || controlCenter.isOpen || brightness.isOpen || wifi.isOpen || bluetooth.isOpen || audio.isOpen || battery.isOpen || notifications.isOpen || trayMenu.isOpen || keyboardLayout.isOpen || power.isOpen || system.isOpen || media.isOpen || clipboard.isOpen) && !(controlCenter.isOpen && controlCenter.settingsView)
     onActivated: root.closePopups()
   }
 
@@ -202,7 +201,6 @@ Scope {
     notificationPopup: notifications
     trayMenuPopup: trayMenu
     keyboardLayoutPopup: keyboardLayout
-    settingsPopup: settings
     powerPopup: power
     systemPopup: system
     mediaPopup: media
@@ -238,7 +236,6 @@ Scope {
     wifiPopup: wifi
     bluetoothPopup: bluetooth
     batteryPopup: battery
-    settingsPopup: settings
     powerPopup: power
   }
 
@@ -274,10 +271,6 @@ Scope {
 
   KeyboardLayoutPopup {
     id: keyboardLayout
-  }
-
-  SettingsPopup {
-    id: settings
   }
 
   PowerPopup {

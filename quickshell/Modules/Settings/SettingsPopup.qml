@@ -9,10 +9,14 @@ import "../../Widgets"
 import "../../Common"
 import "../../Services"
 
-PanelWindow {
+Item {
   id: root
 
   property bool isOpen: false
+  property bool sectionListVisible: true
+  signal backRequested()
+  signal hideRequested()
+  signal showRequested()
   property int rightMargin: Config.scaledSize(16)
   property string activeSection: "general"
   property string pendingSection: "general"
@@ -70,7 +74,8 @@ PanelWindow {
   readonly property var sectionCategories: [
     { key: "appearance", icon: Config.iconTheme, title: "Оформление", pages: [{ key: "general", title: "Интерфейс" }, { key: "palette", title: "Цветовая палитра" }, { key: "fontPicker", hidden: true }] },
     { key: "bar", icon: Config.iconPanel, title: "Бар и попапы", pages: [{ key: "bar", title: "Панель" }, { key: "popups", title: "Попапы" }, { key: "monitoring", title: "Мониторинг" }] },
-    { key: "desktop", icon: Config.iconWallpaper, title: "Обои", pages: [{ key: "wallpaper", title: "Обои" }, { key: "location", title: "Время и локация" }] },
+    { key: "desktop", icon: Config.iconWallpaper, title: "Обои", pages: [{ key: "wallpaper", title: "Обои" }] },
+    { key: "time", icon: Config.iconClock, title: "Время и локация", pages: [{ key: "location", title: "Время и локация" }] },
     { key: "notifications", icon: Config.iconNotifications, title: "Уведомления", pages: [{ key: "notifications", title: "Уведомления" }, { key: "osd", title: "OSD" }] },
     { key: "system", icon: Config.iconKeyboard, title: "Система", pages: [{ key: "system", title: "Сочетания клавиш" }] },
     { key: "advanced", icon: Config.iconMonitor, title: "Дополнительно", pages: [{ key: "advanced", title: "Яркость" }] },
@@ -84,6 +89,7 @@ PanelWindow {
     { section: "palette", title: "Цветовая палитра" }, { section: "bar", title: "Панель" },
     { section: "monitoring", title: "Мониторинг" }, { section: "wallpaper", title: "Обои" },
     { section: "location", title: "Время и локация" }, { section: "popups", title: "Попапы" },
+    { section: "time", title: "Время и локация" },
     { section: "notifications", title: "Уведомления" }, { section: "osd", title: "OSD" },
     { section: "system", title: "Сочетания клавиш" }, { section: "advanced", title: "Яркость" },
     { section: "about", title: "О программе" }
@@ -105,7 +111,11 @@ PanelWindow {
   property string wallpaperFilterText: ""
 
   function selectSection(section) {
-    if (section === root.activeSection || sectionTransition.running) return
+    if (section === root.activeSection) {
+      settingsFlickable.opacity = 1.0
+      return
+    }
+    if (sectionTransition.running) return
     root.pendingSection = section
     sectionTransition.restart()
   }
@@ -145,6 +155,7 @@ PanelWindow {
 
   function selectSearchResult(result) {
     settingsSearchInput.text = ""
+    root.sectionListVisible = false
     selectSection(result.section)
   }
 
@@ -166,6 +177,21 @@ PanelWindow {
       }
     }
     NumberAnimation { target: settingsFlickable; property: "opacity"; to: 1; duration: Config.reduceMotion ? 0 : 90; easing.type: Easing.OutCubic }
+  }
+
+  SequentialAnimation {
+    id: backTransition
+    NumberAnimation { target: settingsFlickable; property: "opacity"; to: 0; duration: Config.reduceMotion ? 0 : 80; easing.type: Easing.OutCubic }
+    ScriptAction {
+      script: {
+        root.sectionListVisible = true
+        root.activeSection = "general"
+        settingsSearchInput.text = ""
+        root.settingsSearch = ""
+        sectionListFlickable.contentY = 0
+      }
+    }
+    NumberAnimation { target: sectionListFlickable; property: "opacity"; to: 1; duration: Config.reduceMotion ? 0 : 100; easing.type: Easing.OutCubic }
   }
 
   Timer {
@@ -207,36 +233,24 @@ PanelWindow {
   }
 
   visible: isOpen || container.opacity > 0.01
-  WlrLayershell.namespace: "quickshell-bar"
-  WlrLayershell.layer: WlrLayer.Overlay
-  WlrLayershell.exclusiveZone: 0
-  WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-  anchors { top: true; left: true; right: true; bottom: true }
-  color: "#00000000"
-  BackgroundEffect.blurRegion: Region {
-    item: Config.popupBlurEnabled ? container : null
-    radius: Math.round(container.radius)
+
+  function openSectionList() {
+    root.sectionListVisible = true
+    root.activeSection = "general"
+    settingsSearchInput.text = ""
+    root.settingsSearch = ""
+    sectionListFlickable.opacity = 1.0
+    settingsFlickable.opacity = 1.0
   }
 
-  MouseArea { anchors.fill: parent; enabled: root.isOpen; onClicked: root.isOpen = false }
-
-  IpcHandler {
-    target: "settings"
-    function toggle() { root.isOpen = !root.isOpen }
-    function open() { root.isOpen = true }
-    function close() { root.isOpen = false }
+  function handleBack() {
+    if (!root.sectionListVisible) {
+      root.pendingSection = "general"
+      backTransition.restart()
+    } else {
+      root.backRequested()
+    }
   }
-
-  Shortcut {
-    sequence: Config.settingsCloseKeybind
-    enabled: root.isOpen
-    onActivated: root.isOpen = false
-  }
-
-  Shortcut { sequence: "Ctrl+Tab"; enabled: root.isOpen; onActivated: root.selectRelativeCategory(1) }
-  Shortcut { sequence: "Ctrl+Shift+Tab"; enabled: root.isOpen; onActivated: root.selectRelativeCategory(-1) }
-  Shortcut { sequence: "Alt+Right"; enabled: root.isOpen; onActivated: root.selectRelativePage(1) }
-  Shortcut { sequence: "Alt+Left"; enabled: root.isOpen; onActivated: root.selectRelativePage(-1) }
 
   ListModel { id: wallpapersModel }
   ListModel { id: weatherSuggestions }
@@ -301,7 +315,7 @@ PanelWindow {
         } catch (_) {}
       }
     }
-    onExited: root.isOpen = true
+    onExited: root.showRequested()
   }
 
   Timer { id: citySearchTimer; interval: 350; repeat: false; onTriggered: if (weatherLocationInput.activeFocus) root.searchCities(weatherLocationInput.text) }
@@ -487,7 +501,7 @@ PanelWindow {
     applyManualSlot(colorToHex(Qt.hsla(hue, sat, 0.5, 1)))
   }
   function pickManualColor() {
-    root.isOpen = false
+    root.hideRequested()
     screenColorProc.running = true
   }
   function setBoolSetting(key, value) {
@@ -517,6 +531,7 @@ PanelWindow {
     if (key === "weatherEnabled") Config.weatherEnabled = value
     if (key === "weatherTenths") Config.weatherTenths = value
     if (key === "barDateTimeEnabled") Config.barDateTimeEnabled = value
+    if (key === "barDateEnabled") Config.barDateEnabled = value
     if (key === "barWeatherEnabled") Config.barWeatherEnabled = value
     if (key === "barColorPickerEnabled") Config.barColorPickerEnabled = value
     if (key === "barWorkspacesEnabled") Config.barWorkspacesEnabled = value
@@ -785,10 +800,7 @@ PanelWindow {
 
   Rectangle {
     id: container
-    width: Math.min(Config.scaledSize(620), root.width - Config.scaledSize(8))
-    height: Math.min(480, root.height - 32)
-    x: (parent.width - width) / 2
-    y: (parent.height - height) / 2
+    anchors.fill: parent
     opacity: root.isOpen ? 1.0 : 0.0
     radius: Config.overlayRadius
     color: Config.popupGlassBg
@@ -811,21 +823,6 @@ PanelWindow {
     MouseArea { anchors.fill: parent; onClicked: mouse => { mouse.accepted = true } }
     Rectangle { anchors.fill: parent; anchors.margins: Config.innerBorderMargin; radius: Config.overlayRadius - 2; color: "#00000000"; border.color: Config.popupBorderColor; border.width: Config.popupBordersEnabled ? 1 : 0 }
 
-    Rectangle {
-      id: settingsClose
-      width: Config.scaledSize(28)
-      height: Config.scaledSize(28)
-      radius: Config.popupRadiusPx(9)
-      z: 2
-      anchors.top: parent.top
-      anchors.topMargin: Config.scaledSize(14)
-      anchors.right: parent.right
-      anchors.rightMargin: Config.scaledSize(14)
-      color: settingsCloseMouse.containsMouse ? Config.hoverBg : "#00000000"
-      Text { anchors.centerIn: parent; text: "×"; color: settingsCloseMouse.containsMouse ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeLarge; font.family: Config.fontSans }
-      MouseArea { id: settingsCloseMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: mouse => { mouse.accepted = true; root.isOpen = false } }
-    }
-
     Column {
       id: contentRoot
       width: parent.width - 28
@@ -838,12 +835,25 @@ PanelWindow {
         width: parent.width
         height: Config.scaledSize(30)
 
-        Text { id: settingsTitleIcon; text: Config.iconSettings; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter }
-        Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsTitleIcon.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter }
-        Rectangle { id: settingsSearchBox; anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(42); anchors.verticalCenter: parent.verticalCenter; width: Config.scaledSize(180); height: Config.scaledSize(28); radius: Config.popupRadiusPx(8); color: Config.searchBg
+        Rectangle {
+          id: settingsBackButton
+          width: Config.scaledSize(30)
+          height: Config.scaledSize(30)
+          radius: Config.popupRadiusPx(9)
+          anchors.left: parent.left
+          anchors.verticalCenter: parent.verticalCenter
+          color: settingsBackMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+          border.color: Config.borderColor
+          border.width: 1
+          Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+          MouseArea { id: settingsBackMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.handleBack() }
+        }
+        Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsBackButton.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter }
+        Rectangle { id: settingsSearchBox; visible: root.sectionListVisible; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; width: Config.scaledSize(180); height: Config.scaledSize(28); radius: Config.popupRadiusPx(8); color: Config.searchBg
           TextInput { id: settingsSearchInput; anchors.fill: parent; anchors.margins: Config.scaledSize(8); verticalAlignment: TextInput.AlignVCenter; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; onTextChanged: root.settingsSearch = text; onAccepted: root.searchSettings(); Text { anchors.verticalCenter: parent.verticalCenter; text: I18n.tr("Поиск настроек"); visible: !parent.text; color: Config.textPlaceholder; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans } }
         }
         Rectangle {
+          id: settingsSearchDropdown
           anchors.top: settingsSearchBox.bottom
           anchors.topMargin: Config.scaledSize(4)
           anchors.right: settingsSearchBox.right
@@ -873,44 +883,55 @@ PanelWindow {
 
       }
 
-      Row {
+      Flickable {
+        id: sectionListFlickable
+        visible: root.sectionListVisible
         width: parent.width
         height: container.height - 70
-        spacing: Config.scaledSize(12)
+        clip: true
+        contentWidth: width
+        contentHeight: sectionListColumn.implicitHeight
 
         Column {
-          id: sectionNav
-          width: Config.scaledSize(118)
-          spacing: Config.scaledSize(5)
+          id: sectionListColumn
+          width: parent.width
+          spacing: Config.scaledSize(6)
 
           Repeater {
             model: root.sectionCategories
             Rectangle {
               required property var modelData
-              width: sectionNav.width
-              height: Config.scaledSize(34)
+              width: parent.width
+              height: Config.scaledSize(46)
               radius: Config.cardRadius
-              readonly property bool active: root.currentCategory.key === modelData.key
-              color: active ? Config.selectedBg : (sectionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
-              border.color: active ? Config.activeBorderColor : Config.subtleBorder
+              color: sectionListMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+              border.color: Config.subtleBorder
               border.width: 1
 
               Row {
                 anchors.left: parent.left
-                anchors.leftMargin: Config.scaledSize(9)
+                anchors.leftMargin: Config.scaledSize(12)
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: Config.scaledSize(7)
-                Text { text: parent.parent.modelData.icon; color: parent.parent.active ? Config.textWhite : Config.textMuted; font.pixelSize: Config.fontSizeIconSmall; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-                Text { text: I18n.tr(parent.parent.modelData.title); color: parent.parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight; width: Config.scaledSize(78); anchors.verticalCenter: parent.verticalCenter }
+                spacing: Config.scaledSize(10)
+                Text { text: parent.parent.modelData.icon; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
+                Text { text: I18n.tr(parent.parent.modelData.title); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
               }
-              MouseArea { id: sectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectCategory(parent.modelData) }
+              Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(12); anchors.verticalCenter: parent.verticalCenter; text: Config.iconChevronRight; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+              MouseArea { id: sectionListMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.sectionListVisible = false; root.selectCategory(parent.modelData) } }
             }
           }
         }
+      }
+
+      Row {
+        visible: !root.sectionListVisible
+        width: parent.width
+        height: container.height - 70
+        spacing: Config.scaledSize(12)
 
       Flickable {
         id: settingsFlickable
-        width: parent.width - sectionNav.width - 12
+        width: parent.width
         height: parent.height
         contentWidth: width
         contentHeight: sectionContent.implicitHeight
@@ -1016,7 +1037,7 @@ PanelWindow {
             }
             SettingsRow { icon: Config.iconNotifications; title: I18n.tr("Звук уведомлений"); subtitle: Config.notificationSoundEnabled ? I18n.tr("Включено") : I18n.tr("Выключено"); ToggleSwitch { checked: Config.notificationSoundEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: { Config.notificationSoundEnabled = !Config.notificationSoundEnabled; root.saveSetting("notificationSoundEnabled", Config.notificationSoundEnabled) } } }
             SettingsRow { icon: Config.iconNotifications; title: I18n.tr("Отключённые приложения"); subtitle: I18n.tr("Имена приложений через запятую"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.notificationMutedApps; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.notificationMutedApps = text; root.saveSetting("notificationMutedApps", text) } } } }
-            SettingsRow { icon: Config.iconClipboard; title: I18n.tr("Порядок плиток центра управления"); subtitle: I18n.tr("wifi, bluetooth, dnd, caffeine, screenshot, nightlight"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.controlCenterTiles; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.controlCenterTiles = text; root.saveSetting("controlCenterTiles", text) } } } }
+            SettingsRow { icon: Config.iconClipboard; title: I18n.tr("Порядок плиток центра управления"); subtitle: I18n.tr("wifi, bluetooth, airplane, dnd, caffeine, screenshot, power, nightlight"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.controlCenterTiles; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.controlCenterTiles = text; root.saveSetting("controlCenterTiles", text) } } } }
             SettingsRow { icon: Config.iconMoon; title: I18n.tr("Правило простоя"); subtitle: I18n.tr("0 отключает; применяется после простоя"); Row { width: Config.scaledSize(194); spacing: Config.scaledSize(4); Rectangle { width: Config.scaledSize(52); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.idleTimeoutMinutes.toString(); inputMethodHints: Qt.ImhDigitsOnly; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.idleTimeoutMinutes = parseInt(text) || 0; root.saveSetting("idleTimeoutMinutes", Config.idleTimeoutMinutes) } } } Repeater { model: [{ key: "lock", title: "Блокировка" }, { key: "suspend", title: "Сон" }]; Rectangle { required property var modelData; width: Config.scaledSize(67); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.idleAction === modelData.key ? Config.selectedBg : (idleActionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg); Text { anchors.centerIn: parent; width: parent.width - Config.scaledSize(8); text: I18n.tr(parent.modelData.title); color: Config.idleAction === parent.modelData.key ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter } MouseArea { id: idleActionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { Config.idleAction = parent.modelData.key; root.saveSetting("idleAction", Config.idleAction) } } } } } }
           }
 
@@ -1038,7 +1059,7 @@ PanelWindow {
                 border.color: Config.borderColor
                 border.width: 1
                 Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-                MouseArea { id: backMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.activeSection = "general" }
+                MouseArea { id: backMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.handleBack() }
               }
               Text { text: root.fontPickerTarget === "mono" ? I18n.tr("Моноширинный шрифт") : I18n.tr("Основной шрифт"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
             }
@@ -2313,6 +2334,13 @@ PanelWindow {
               title: I18n.tr("Секунды в часах")
               subtitle: Config.showSeconds ? I18n.tr("Показываются") : I18n.tr("Скрыты")
               ToggleSwitch { checked: Config.showSeconds; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showSeconds", !Config.showSeconds) }
+            }
+            SettingsRow {
+              icon: Config.iconCalendar
+              title: I18n.tr("Дата")
+              subtitle: Config.barDateEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              onClicked: root.setBoolSetting("barDateEnabled", !Config.barDateEnabled)
+              ToggleSwitch { z: 1; checked: Config.barDateEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barDateEnabled", !Config.barDateEnabled) }
             }
             SettingsRow {
               icon: Config.iconWeather

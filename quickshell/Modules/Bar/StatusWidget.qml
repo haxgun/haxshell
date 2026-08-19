@@ -43,7 +43,6 @@ Rectangle {
   property var notificationPopup: null
   property var trayMenuPopup: null
   property var keyboardLayoutPopup: null
-  property var settingsPopup: null
   property var powerPopup: null
   property var systemPopup: null
   property var mediaPopup: null
@@ -63,7 +62,6 @@ Rectangle {
     if (exceptName !== "notifications" && root.notificationPopup) root.notificationPopup.isOpen = false
     if (exceptName !== "trayMenu" && root.trayMenuPopup) root.trayMenuPopup.isOpen = false
     if (exceptName !== "keyboard" && root.keyboardLayoutPopup) root.keyboardLayoutPopup.isOpen = false
-    if (exceptName !== "settings" && root.settingsPopup) root.settingsPopup.isOpen = false
     if (exceptName !== "calendar" && root.calendarPopup) root.calendarPopup.isOpen = false
     if (exceptName !== "power" && root.powerPopup) root.powerPopup.isOpen = false
     if (exceptName !== "system" && root.systemPopup) root.systemPopup.isOpen = false
