@@ -188,21 +188,6 @@
   "keyboard": {
     "title": "布局"
   },
-  "keybind": {
-    "drawer": "应用菜单",
-    "settings": "设置",
-    "clipboard": "剪贴板",
-    "notifications": "通知",
-    "power": "电源",
-    "controlCenter": "控制中心",
-    "calendar": "日期和时间",
-    "media": "媒体播放器",
-    "wifi": "Wi-Fi",
-    "bluetooth": "蓝牙",
-    "brightness": "亮度",
-    "keyboardLayout": "键盘布局",
-    "systemMonitor": "系统监视器"
-  },
   "settings": {
     "title": "设置",
     "searchPlaceholder": "搜索设置",
@@ -370,7 +355,6 @@
     },
     "system": {
       "keybinds": "快捷键",
-      "global": "全局快捷键",
       "nav": "设置导航",
       "nextSection": "下一部分",
       "prevSection": "上一部分",

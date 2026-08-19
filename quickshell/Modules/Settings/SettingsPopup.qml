@@ -683,7 +683,6 @@ Item {
     if (key === "shellBordersEnabled") Config.shellBordersEnabled = value
     if (key === "barBordersEnabled") Config.barBordersEnabled = value
     if (key === "popupBordersEnabled") Config.popupBordersEnabled = value
-    if (key === "shellShadowsEnabled") Config.shellShadowsEnabled = value
     if (key === "barShadowsEnabled") Config.barShadowsEnabled = value
     if (key === "popupShadowsEnabled") Config.popupShadowsEnabled = value
     if (key === "weatherEnabled") Config.weatherEnabled = value
@@ -795,7 +794,6 @@ Item {
       let res = JSON.parse(data)
       let fonts = res.fonts || []
       root.allFonts = fonts
-      if (fonts.length > 0) Config.availableFonts = fonts
       root.filterFonts()
     } catch(e) {}
   }
@@ -828,12 +826,6 @@ Item {
   function reapplyWallpaper() {
     wallpaperProc.running = false
     wallpaperProc.command = [root.natonctl, "wallpaper", "apply"]
-    wallpaperProc.running = true
-  }
-
-  function nextWallpaper() {
-    wallpaperProc.running = false
-    wallpaperProc.command = [root.natonctl, "wallpaper", "next", Config.wallpaperDir, root.wallpaperPaletteArg()]
     wallpaperProc.running = true
   }
 
@@ -2780,31 +2772,6 @@ Item {
               title: I18n.tr("settings.system.closeSettings")
               subtitle: I18n.tr("settings.system.closeSettingsHint")
                 KeybindRecorder { keybind: Config.settingsCloseKeybind; apply: value => { root.applyCloseKeybind(value); return true } }
-            }
-            Text { text: I18n.tr("settings.system.global"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            Repeater {
-              model: [
-                { icon: Config.iconLauncher, title: "keybind.drawer", configKey: "keybindDrawer" },
-                { icon: Config.iconSettings, title: "keybind.settings", configKey: "keybindSettings" },
-                { icon: Config.iconClipboard, title: "keybind.clipboard", configKey: "keybindClipboard" },
-                { icon: Config.iconNotifications, title: "keybind.notifications", configKey: "keybindNotifications" },
-                { icon: Config.iconPower, title: "keybind.power", configKey: "keybindPower" },
-                { icon: Config.iconControlCenter, title: "keybind.controlCenter", configKey: "keybindControlCenter" },
-                { icon: Config.iconClock, title: "keybind.calendar", configKey: "keybindCalendar" },
-                { icon: Config.iconMusic, title: "keybind.media", configKey: "keybindMedia" },
-                { icon: Config.iconWifiConnected, title: "keybind.wifi", configKey: "keybindWiFi" },
-                { icon: Config.iconBluetooth, title: "keybind.bluetooth", configKey: "keybindBluetooth" },
-                { icon: Config.iconBrightHigh, title: "keybind.brightness", configKey: "keybindBrightness" },
-                { icon: Config.iconKeyboard, title: "keybind.keyboardLayout", configKey: "keybindKeyboard" },
-                { icon: Config.iconCpu, title: "keybind.systemMonitor", configKey: "keybindSystem" }
-              ]
-              SettingsRow {
-                required property var modelData
-                icon: modelData.icon
-                title: I18n.tr(modelData.title)
-                subtitle: Config[modelData.configKey]
-                KeybindRecorder { keybind: Config[modelData.configKey]; apply: value => root.applyGlobalKeybind(modelData.configKey, value) }
-              }
             }
             Text { text: I18n.tr("settings.system.nav"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow { icon: Config.iconKeyboard; title: I18n.tr("settings.system.nextSection"); subtitle: "Ctrl+Tab" }

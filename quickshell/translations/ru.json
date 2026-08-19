@@ -188,21 +188,6 @@
   "keyboard": {
     "title": "Раскладка"
   },
-  "keybind": {
-    "drawer": "Меню приложений",
-    "settings": "Настройки",
-    "clipboard": "Буфер обмена",
-    "notifications": "Уведомления",
-    "power": "Питание",
-    "controlCenter": "Центр управления",
-    "calendar": "Дата и время",
-    "media": "Медиа-плеер",
-    "wifi": "Wi-Fi",
-    "bluetooth": "Bluetooth",
-    "brightness": "Яркость",
-    "keyboardLayout": "Раскладка клавиатуры",
-    "systemMonitor": "Мониторинг системы"
-  },
   "settings": {
     "title": "Настройки",
     "searchPlaceholder": "Поиск настроек",
@@ -370,7 +355,6 @@
     },
     "system": {
       "keybinds": "Сочетания клавиш",
-      "global": "Глобальные сочетания",
       "nav": "Навигация настроек",
       "nextSection": "Следующий раздел",
       "prevSection": "Предыдущий раздел",

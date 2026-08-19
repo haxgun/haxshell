@@ -54,13 +54,11 @@ Singleton {
   Behavior on animatedSurface { ColorAnimation { duration: Config.reduceMotion ? 0 : 400; easing.type: Easing.InOutQuad } }
   Behavior on animatedLayer { ColorAnimation { duration: Config.reduceMotion ? 0 : 400; easing.type: Easing.InOutQuad } }
   Behavior on animatedHighlight { ColorAnimation { duration: Config.reduceMotion ? 0 : 400; easing.type: Easing.InOutQuad } }
-  property bool shellBlurEnabled: true
   property bool barBlurEnabled: true
   property bool popupBlurEnabled: true
   property bool shellBordersEnabled: true
   property bool barBordersEnabled: true
   property bool popupBordersEnabled: true
-  property bool shellShadowsEnabled: true
   property bool barShadowsEnabled: true
   property bool popupShadowsEnabled: true
   property bool doNotDisturb: false
@@ -120,8 +118,6 @@ Singleton {
   readonly property color iconColor: isPaletteTheme ? dynamicOnSurface : (isLightTheme ? "#1a1a1a" : "#ffffff")
 
   // Accent & Status Colors
-  readonly property color accentGreen: isManualTheme ? (manualPalette[2] || "#1db954") : "#1db954"       // Spotify & Success green
-  readonly property color accentBlue: isManualTheme ? (manualPalette[4] || "#60a5fa") : (isLightTheme ? "#2563eb" : "#60a5fa")
   readonly property color warningAmber: isManualTheme ? (manualPalette[3] || "#f59e0b") : "#f59e0b"      // High usage / Connecting amber
   readonly property color dangerRed: isManualTheme ? (manualPalette[1] || "#f87171") : "#f87171"         // Mute / Critical usage / Power red
 
@@ -240,9 +236,7 @@ Singleton {
   readonly property int scaledBarWidgetRadius: Math.round(barHeight * (barRadiusMode === "separate" ? barWidgetRadius : barRadius) / 100)
   readonly property color barBackgroundBg: Qt.rgba(glassBg.r, glassBg.g, glassBg.b, barFrostOpacity / 100)
   readonly property color popupGlassBg: Qt.rgba(glassBg.r, glassBg.g, glassBg.b, popupBackgroundOpacity / 100)
-  readonly property int barPadding: Math.round(16 * uiScale)
 
-  readonly property real barRadiusScale: barRadius / 35.0
   readonly property real barWidgetRadiusScale: (barRadiusMode === "separate" ? barWidgetRadius : barRadius) / 35.0
   readonly property real popupRadiusScale: (popupRadiusMode === "separate" ? popupWidgetRadius : popupRadius) / 45.0
   function barRadiusPx(base) { return Math.round(base * uiScale * barWidgetRadiusScale) }
@@ -263,24 +257,10 @@ Singleton {
   property bool barAutoHide: false
   property int barAutoHideDelay: 3
   property string settingsCloseKeybind: "Esc"
-  property string keybindDrawer: "Super+Space"
-  property string keybindSettings: "Super+,"
-  property string keybindClipboard: "Super+V"
-  property string keybindNotifications: "Super+N"
-  property string keybindPower: "Super+X"
-  property string keybindControlCenter: "Super+C"
-  property string keybindCalendar: "Super+T"
-  property string keybindMedia: "Super+M"
-  property string keybindWiFi: "Super+W"
-  property string keybindBluetooth: "Super+B"
-  property string keybindBrightness: "Super+L"
-  property string keybindKeyboard: "Super+K"
-  property string keybindSystem: "Super+I"
-  readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
+  property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property int barRotation: barPosition === "left" ? -90 : (barPosition === "right" ? 90 : 0)
   readonly property bool popupsAtBottom: barPosition === "bottom" || (isBarVertical && popupVerticalAlign === "bottom")
   readonly property bool popupsAtLeft: barPosition === "left"
-  readonly property bool popupsAtRight: barPosition === "right"
 
   readonly property int buttonHeight: Math.round(28 * uiScale)
   readonly property int buttonWidth: Math.round(28 * uiScale)
@@ -300,7 +280,6 @@ Singleton {
   property string fontMonoFamily: "Geist Mono"
   property real fontScale: 1.0
   property real fontMonoScale: 1.0
-  property var availableFonts: ["Geist Mono", "JetBrains Mono", "Inter", "Noto Sans", "Cantarell", "Sans Serif"]
   readonly property string fontSans: fontFamily
   readonly property string fontMono: fontMonoFamily
   readonly property string fontIcon: "JetBrainsMono Nerd Font"
@@ -322,7 +301,6 @@ Singleton {
   readonly property int fontMonoSizeSmall: Math.round(12 * uiScale * fontMonoScale)
   readonly property int fontMonoSizeNormal: Math.round(13 * uiScale * fontMonoScale)
   readonly property int fontMonoSizeMedium: Math.round(14 * uiScale * fontMonoScale)
-  readonly property int fontMonoSizeLarge: Math.round(15 * uiScale * fontMonoScale)
   readonly property int fontMonoSizeTitle: Math.round(18 * uiScale * fontMonoScale)
 
   function scaledFontSize(base) { return Math.round(base * uiScale * fontScale) }
@@ -345,17 +323,10 @@ Singleton {
   property string workspaceIndicatorStyle: "tint"
   property bool showWorkspaceNumbers: true
   property bool showWorkspacesOnAllMonitors: false
-  property int defaultMinWorkspaces: 5
   property string timeFormat: "24"
   property bool showSeconds: false
   property bool tooltipsEnabled: true
   property string language: "ru"
-
-  // MPRIS Media Player Options
-  // Options: "progress" (Linear Progress Bar) or "visualizer" (Animated Soundwave)
-  property string mprisRightDisplayMode: "visualizer"
-  property int mprisVisualizerBarCount: 8
-  property int mprisTargetSideWidth: 190
 
   // Hardware & Hardware Monitoring Options
   property int sysCheckIntervalMs: 3000
@@ -391,8 +362,6 @@ Singleton {
   property bool barPowerEnabled: true
   property string weatherLocation: ""
   property int weatherRefreshIntervalMs: 900000
-  property string weatherText: "--"
-  property string weatherDetails: ""
   property string brightnessMonitorBus: "auto"
   property string brightnessSleepMultiplier: ".2"
   property string wallpaperDir: "~/wallpapers/animated"
@@ -485,7 +454,6 @@ Singleton {
   readonly property string iconKeyboard: "󰌌"
   readonly property string iconWallpaper: "󰸉"
   readonly property string iconVideo: ""
-  readonly property string iconImage: "󰋩"
   readonly property string iconBattery: "󰁹"
   readonly property string iconBatteryCharging: "󰚥"
   readonly property string iconPowerSaver: "󰌪"
@@ -499,7 +467,6 @@ Singleton {
   readonly property string iconControlCenter: "󰕮"
   readonly property string iconAirplane: "󰀝"
   readonly property string iconMoon: "󰖔"
-  readonly property string iconSun: "󰖙"
   readonly property string iconTheme: "󰔎"
   readonly property string iconVpnShield: "󰒃"
   readonly property string iconColorPicker: "󰈋"
@@ -561,5 +528,4 @@ Singleton {
   readonly property string cmdVolumeControl: "pavucontrol"
   readonly property string cmdBluetoothControl: "blueman-manager"
   readonly property string cmdNetworkControl: "nm-connection-editor"
-  readonly property string cmdPowerMenu: "quickshell ipc call power toggle"
 }

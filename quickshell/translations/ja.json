@@ -188,21 +188,6 @@
   "keyboard": {
     "title": "レイアウト"
   },
-  "keybind": {
-    "drawer": "アプリケーションメニュー",
-    "settings": "設定",
-    "clipboard": "クリップボード",
-    "notifications": "通知",
-    "power": "電源",
-    "controlCenter": "コントロールセンター",
-    "calendar": "日付と時刻",
-    "media": "メディアプレーヤー",
-    "wifi": "Wi-Fi",
-    "bluetooth": "Bluetooth",
-    "brightness": "明るさ",
-    "keyboardLayout": "キーボードレイアウト",
-    "systemMonitor": "システムモニター"
-  },
   "settings": {
     "title": "設定",
     "searchPlaceholder": "設定を検索",
@@ -370,7 +355,6 @@
     },
     "system": {
       "keybinds": "キーバインド",
-      "global": "グローバルショートカット",
       "nav": "設定のナビゲーション",
       "nextSection": "次のセクション",
       "prevSection": "前のセクション",

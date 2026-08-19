@@ -105,13 +105,6 @@ PanelWindow {
     return Math.max(0, value / 1024 / 1024)
   }
 
-  function speedText(value) {
-    let mb = mib(value)
-    if (mb >= 10) return mb.toFixed(0)
-    if (mb >= 1) return mb.toFixed(1)
-    return (value / 1024).toFixed(0) + "K"
-  }
-
   function cellLabel(key) {
     if (key === "net") return I18n.tr("system.net")
     if (key === "disk") return I18n.tr("system.disk")

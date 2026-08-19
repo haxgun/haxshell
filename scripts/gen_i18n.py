@@ -198,21 +198,6 @@ K("audio.noInputs", "Устройства ввода не найдены", "No i
 # ---------------- keyboardLayout ----------------
 K("keyboard.title", "Раскладка", "Layout", "Layout", "レイアウト", "布局")
 
-# ---------------- keybinds ----------------
-K("keybind.drawer", "Меню приложений", "App menu", "Anwendungsmenü", "アプリケーションメニュー", "应用菜单")
-K("keybind.settings", "Настройки", "Settings", "Einstellungen", "設定", "设置")
-K("keybind.clipboard", "Буфер обмена", "Clipboard", "Zwischenablage", "クリップボード", "剪贴板")
-K("keybind.notifications", "Уведомления", "Notifications", "Benachrichtigungen", "通知", "通知")
-K("keybind.power", "Питание", "Power", "Energie", "電源", "电源")
-K("keybind.controlCenter", "Центр управления", "Control center", "Kontrollzentrum", "コントロールセンター", "控制中心")
-K("keybind.calendar", "Дата и время", "Date & time", "Datum und Uhrzeit", "日付と時刻", "日期和时间")
-K("keybind.media", "Медиа-плеер", "Media player", "Mediaplayer", "メディアプレーヤー", "媒体播放器")
-K("keybind.wifi", "Wi-Fi", "Wi-Fi", "WLAN", "Wi-Fi", "Wi-Fi")
-K("keybind.bluetooth", "Bluetooth", "Bluetooth", "Bluetooth", "Bluetooth", "蓝牙")
-K("keybind.brightness", "Яркость", "Brightness", "Helligkeit", "明るさ", "亮度")
-K("keybind.keyboardLayout", "Раскладка клавиатуры", "Keyboard layout", "Tastaturlayout", "キーボードレイアウト", "键盘布局")
-K("keybind.systemMonitor", "Мониторинг системы", "System monitor", "Systemmonitor", "システムモニター", "系统监视器")
-
 # ---------------- settings (shared) ----------------
 K("settings.title", "Настройки", "Settings", "Einstellungen", "設定", "设置")
 K("settings.searchPlaceholder", "Поиск настроек", "Search settings", "Einstellungen suchen", "設定を検索", "搜索设置")
@@ -377,7 +362,6 @@ K("settings.location.weatherInBar", "Погода на панели", "Weather i
 
 # ---------------- settings.system ----------------
 K("settings.system.keybinds", "Сочетания клавиш", "Keybinds", "Tastenkombinationen", "キーバインド", "快捷键")
-K("settings.system.global", "Глобальные сочетания", "Global shortcuts", "Globale Tastenkombinationen", "グローバルショートカット", "全局快捷键")
 K("settings.system.nav", "Навигация настроек", "Settings navigation", "Einstellungsnavigation", "設定のナビゲーション", "设置导航")
 K("settings.system.nextSection", "Следующий раздел", "Next section", "Nächster Bereich", "次のセクション", "下一部分")
 K("settings.system.prevSection", "Предыдущий раздел", "Previous section", "Vorheriger Bereich", "前のセクション", "上一部分")

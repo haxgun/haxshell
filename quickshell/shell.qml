@@ -106,20 +106,14 @@ Scope {
       if (typeof settings.barPowerEnabled === "string") Config.barPowerEnabled = settings.barPowerEnabled === "true"
       if (settings.brightnessMonitorBus) Config.brightnessMonitorBus = settings.brightnessMonitorBus
       if (settings.brightnessSleepMultiplier) Config.brightnessSleepMultiplier = settings.brightnessSleepMultiplier
-      if (typeof settings.shellBlurEnabled === "string") Config.shellBlurEnabled = settings.shellBlurEnabled === "true"
       if (typeof settings.barBlurEnabled === "string") Config.barBlurEnabled = settings.barBlurEnabled === "true"
-      else if (typeof settings.shellBlurEnabled === "string") Config.barBlurEnabled = settings.shellBlurEnabled === "true"
       if (typeof settings.barAdaptive === "string") Config.barAdaptive = settings.barAdaptive === "true"
       if (typeof settings.popupBlurEnabled === "string") Config.popupBlurEnabled = settings.popupBlurEnabled === "true"
-      else if (typeof settings.shellBlurEnabled === "string") Config.popupBlurEnabled = settings.shellBlurEnabled === "true"
       if (typeof settings.shellBordersEnabled === "string") Config.shellBordersEnabled = settings.shellBordersEnabled === "true"
       if (typeof settings.barBordersEnabled === "string") Config.barBordersEnabled = settings.barBordersEnabled === "true"
       if (typeof settings.popupBordersEnabled === "string") Config.popupBordersEnabled = settings.popupBordersEnabled === "true"
-      if (typeof settings.shellShadowsEnabled === "string") Config.shellShadowsEnabled = settings.shellShadowsEnabled === "true"
       if (typeof settings.barShadowsEnabled === "string") Config.barShadowsEnabled = settings.barShadowsEnabled === "true"
-      else if (typeof settings.shellShadowsEnabled === "string") Config.barShadowsEnabled = settings.shellShadowsEnabled === "true"
       if (typeof settings.popupShadowsEnabled === "string") Config.popupShadowsEnabled = settings.popupShadowsEnabled === "true"
-      else if (typeof settings.shellShadowsEnabled === "string") Config.popupShadowsEnabled = settings.shellShadowsEnabled === "true"
       if (typeof settings.doNotDisturb === "string") Config.doNotDisturb = settings.doNotDisturb === "true"
       if (settings.notificationPosition) Config.notificationPosition = settings.notificationPosition
       if (settings.notificationTimeoutMs) Config.notificationTimeoutMs = parseInt(settings.notificationTimeoutMs)
@@ -139,19 +133,6 @@ Scope {
       if (typeof settings.barAutoHide === "string") Config.barAutoHide = settings.barAutoHide === "true"
       if (settings.barAutoHideDelay) Config.barAutoHideDelay = parseInt(settings.barAutoHideDelay)
       if (settings.settingsCloseKeybind) Config.settingsCloseKeybind = settings.settingsCloseKeybind
-      if (settings.keybindDrawer) Config.keybindDrawer = settings.keybindDrawer
-      if (settings.keybindSettings) Config.keybindSettings = settings.keybindSettings
-      if (settings.keybindClipboard) Config.keybindClipboard = settings.keybindClipboard
-      if (settings.keybindNotifications) Config.keybindNotifications = settings.keybindNotifications
-      if (settings.keybindPower) Config.keybindPower = settings.keybindPower
-      if (settings.keybindControlCenter) Config.keybindControlCenter = settings.keybindControlCenter
-      if (settings.keybindCalendar) Config.keybindCalendar = settings.keybindCalendar
-      if (settings.keybindMedia) Config.keybindMedia = settings.keybindMedia
-      if (settings.keybindWiFi) Config.keybindWiFi = settings.keybindWiFi
-      if (settings.keybindBluetooth) Config.keybindBluetooth = settings.keybindBluetooth
-      if (settings.keybindBrightness) Config.keybindBrightness = settings.keybindBrightness
-      if (settings.keybindKeyboard) Config.keybindKeyboard = settings.keybindKeyboard
-      if (settings.keybindSystem) Config.keybindSystem = settings.keybindSystem
       if (settings.barThickness) Config.barThickness = parseInt(settings.barThickness)
       if (typeof settings.barTopMargin === "string") Config.barTopMargin = parseInt(settings.barTopMargin)
       if (typeof settings.barBottomMargin === "string") Config.barBottomMargin = parseInt(settings.barBottomMargin)

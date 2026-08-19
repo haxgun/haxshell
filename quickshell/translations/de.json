@@ -188,21 +188,6 @@
   "keyboard": {
     "title": "Layout"
   },
-  "keybind": {
-    "drawer": "Anwendungsmenü",
-    "settings": "Einstellungen",
-    "clipboard": "Zwischenablage",
-    "notifications": "Benachrichtigungen",
-    "power": "Energie",
-    "controlCenter": "Kontrollzentrum",
-    "calendar": "Datum und Uhrzeit",
-    "media": "Mediaplayer",
-    "wifi": "WLAN",
-    "bluetooth": "Bluetooth",
-    "brightness": "Helligkeit",
-    "keyboardLayout": "Tastaturlayout",
-    "systemMonitor": "Systemmonitor"
-  },
   "settings": {
     "title": "Einstellungen",
     "searchPlaceholder": "Einstellungen suchen",
@@ -370,7 +355,6 @@
     },
     "system": {
       "keybinds": "Tastenkombinationen",
-      "global": "Globale Tastenkombinationen",
       "nav": "Einstellungsnavigation",
       "nextSection": "Nächster Bereich",
       "prevSection": "Vorheriger Bereich",

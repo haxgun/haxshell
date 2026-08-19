@@ -33,7 +33,6 @@
 - Wallpaper picker with extracted color palettes and a dynamic theme that colors shell surfaces from the current wallpaper. Seven palette schemes (`vibrant`, `faithful`, `dysfunctional`, `muted`, `soft`, `material`, `monochrome`) with animated color transitions between wallpapers.
 - Video wallpapers via `mpvpaper`, with a static first-frame fallback through `awww` and settings for audio, hardware decoding, scaling, and pausing in Niri's overview.
 - Persistent settings for the theme, bar, typography (separate sans and mono families with independent scaling), notifications, OSD, wallpaper behavior, and shell appearance.
-- Remappable global keyboard shortcuts for opening popups (launcher, settings, clipboard, notifications, power, control center, calendar, media, Wi-Fi, Bluetooth, brightness, keyboard layout, system monitor), edited from Settings and applied to live per-compositor bind overrides.
 - Idle policy that locks the session or suspends after a configurable timeout via `swayidle`.
 
 ## Structure
@@ -151,7 +150,6 @@ Rebuild the utility and restart Quickshell after changing files under `core/`.
 - Appearance settings: blur, borders, shadows, palette, typography (sans/mono family and scale), bar geometry and margins, per-widget bar toggles, popup positioning, notifications, OSD, and wallpaper rotation are available from the Settings popup.
 - Video wallpaper settings (audio, volume, hardware decoding, and pause in Niri's overview) live in Settings → Wallpaper.
 - Region screenshots use `slurp` and `grim`; clipboard history is available through `qs ipc call clipboard toggle`.
-- Global keyboard shortcuts are edited in Settings → System → Keyboard shortcuts. They persist to `settings.json` and are written to per-compositor bind overrides: defaults live in `quickshell/keybinds/`, user overrides under `~/.config/niri/naton/binds.kdl` (Niri) or `~/.config/hypr/naton/binds.conf` (Hyprland), and the compositor reloads them automatically.
 - Dynamic theme stores the extracted wallpaper palette in `dynamicPalette` and applies it to shell surfaces, controls, borders, tracks, and workspace indicators.
 
 ## Verification

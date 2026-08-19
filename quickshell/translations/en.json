@@ -188,21 +188,6 @@
   "keyboard": {
     "title": "Layout"
   },
-  "keybind": {
-    "drawer": "App menu",
-    "settings": "Settings",
-    "clipboard": "Clipboard",
-    "notifications": "Notifications",
-    "power": "Power",
-    "controlCenter": "Control center",
-    "calendar": "Date & time",
-    "media": "Media player",
-    "wifi": "Wi-Fi",
-    "bluetooth": "Bluetooth",
-    "brightness": "Brightness",
-    "keyboardLayout": "Keyboard layout",
-    "systemMonitor": "System monitor"
-  },
   "settings": {
     "title": "Settings",
     "searchPlaceholder": "Search settings",
@@ -370,7 +355,6 @@
     },
     "system": {
       "keybinds": "Keybinds",
-      "global": "Global shortcuts",
       "nav": "Settings navigation",
       "nextSection": "Next section",
       "prevSection": "Previous section",
