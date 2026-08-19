@@ -69,7 +69,7 @@ Singleton {
   property int notificationMaxVisible: 5
   property bool notificationSoundEnabled: false
   property string notificationMutedApps: ""
-  property string controlCenterTiles: "wifi,bluetooth,dnd,caffeine,screenshot,nightlight"
+  property string controlCenterTiles: "wifi,bluetooth,airplane,dnd,caffeine,screenshot,power,nightlight"
   property int idleTimeoutMinutes: 0
   property string idleAction: "lock"
   property string osdPosition: "bottom-center"
