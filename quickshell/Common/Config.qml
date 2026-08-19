@@ -484,6 +484,8 @@ Singleton {
   readonly property string iconMic: "󰍬"
   readonly property string iconKeyboard: "󰌌"
   readonly property string iconWallpaper: "󰸉"
+  readonly property string iconVideo: ""
+  readonly property string iconImage: "󰋩"
   readonly property string iconBattery: "󰁹"
   readonly property string iconBatteryCharging: "󰚥"
   readonly property string iconPowerSaver: "󰌪"

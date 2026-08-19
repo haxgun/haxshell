@@ -1826,6 +1826,9 @@ Item {
                 required property int wallIndex
                 required property string name
                 required property string thumbnail
+                required property int wallWidth
+                required property int wallHeight
+                required property bool isVideo
                 width: GridView.view.cellWidth
                 height: GridView.view.cellHeight
 
@@ -1860,6 +1863,46 @@ Item {
                       sourceSize.width: Config.scaledSize(220)
                       sourceSize.height: Config.scaledSize(150)
                       visible: thumbnail.length > 0
+                    }
+
+                    Rectangle {
+                      anchors.left: parent.left
+                      anchors.top: parent.top
+                      anchors.margins: Config.scaledSize(6)
+                      height: Config.scaledSize(20)
+                      width: dimsRow.width + Config.scaledSize(10)
+                      radius: Config.scaledSize(10)
+                      color: "#b0000000"
+                      visible: wallWidth > 0 && wallHeight > 0
+                      Row {
+                        id: dimsRow
+                        anchors.centerIn: parent
+                        spacing: Config.scaledSize(3)
+                        Text {
+                          text: wallWidth + "×" + wallHeight
+                          color: Config.textWhite
+                          font.pixelSize: Config.fontSizeTiny
+                          font.family: Config.fontSans
+                        }
+                      }
+                    }
+
+                    Rectangle {
+                      anchors.right: parent.right
+                      anchors.top: parent.top
+                      anchors.margins: Config.scaledSize(6)
+                      width: Config.scaledSize(20)
+                      height: Config.scaledSize(20)
+                      radius: Config.scaledSize(10)
+                      color: "#b0000000"
+                      visible: tile.isVideo
+                      Text {
+                        anchors.centerIn: parent
+                        text: Config.iconVideo
+                        color: Config.textWhite
+                        font.pixelSize: Config.fontSizeTiny + 2
+                        font.family: Config.fontIcon
+                      }
                     }
 
                     Rectangle {
