@@ -88,6 +88,22 @@ Rectangle {
     return true
   }
 
+  function toggleAnchoredFlyout(name, popup, item) {
+    if (!popup) return
+    let wasOpen = popup.isOpen
+    closeFlyouts(name)
+    if (wasOpen) return
+    positionPopupFor(name, item, popup)
+    popup.isOpen = true
+  }
+
+  function toggleFlyout(name, popup) {
+    if (!popup) return
+    let wasOpen = popup.isOpen
+    closeFlyouts(name)
+    popup.isOpen = !wasOpen
+  }
+
   // Brightness scroll wheel debounce timer
   Timer {
     id: brightnessDebounceTimer
