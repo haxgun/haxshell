@@ -143,7 +143,6 @@ Item {
     { key: "system", icon: Config.iconKeyboard, title: "settings.sections.system", description: "settings.sections.systemDesc", pages: [{ key: "system", title: "settings.pages.systemPage" }] },
     { key: "advanced", icon: Config.iconMonitor, title: "settings.sections.advanced", description: "settings.sections.advancedDesc", pages: [{ key: "advanced", title: "settings.pages.advancedPage" }] },
     { key: "battery", icon: Config.iconBattery, title: "settings.sections.battery", description: "settings.sections.batteryDesc", pages: [{ key: "battery", title: "settings.pages.battery" }] },
-    { key: "brightness", icon: Config.iconBrightHigh, title: "settings.sections.brightness", description: "settings.sections.brightnessDesc", pages: [{ key: "brightness", title: "settings.pages.brightness" }] },
     { key: "audio", icon: Config.iconVolHigh, title: "settings.sections.audio", description: "settings.sections.audioDesc", pages: [{ key: "audio", title: "settings.pages.audio" }] },
     { key: "wifi", icon: Config.iconWifiConnected, title: "settings.sections.wifi", description: "settings.sections.wifiDesc", pages: [{ key: "wifi", title: "settings.pages.wifi" }] },
     { key: "bluetooth", icon: Config.iconBluetooth, title: "settings.sections.bluetooth", description: "settings.sections.bluetoothDesc", pages: [{ key: "bluetooth", title: "settings.pages.bluetooth" }] },
@@ -176,8 +175,8 @@ Item {
     { section: "bar", title: "bar.appMenu" }, { section: "bar", title: "bar.activeApp" },
     { section: "bar", title: "bar.mediaPlayerHyphen" }, { section: "bar", title: "bar.tray" },
     { section: "bar", title: "bar.keyboardLayout" }, { section: "bar", title: "bar.systemMonitor" },
-    { section: "bar", title: "bar.notifications" }, { section: "bar", title: "bar.volume" },
-    { section: "bar", title: "bar.brightness" }, { section: "bar", title: "bar.battery" },
+    { section: "bar", title: "bar.notifications" },     { section: "bar", title: "bar.volume" },
+    { section: "bar", title: "bar.battery" },
     { section: "bar", title: "bar.bluetooth" }, { section: "bar", title: "bar.network" },
     { section: "bar", title: "bar.clock" }, { section: "bar", title: "settings.location.weather" },
     { section: "bar", title: "bar.vpn" }, { section: "bar", title: "bar.colorPicker" },
@@ -207,7 +206,6 @@ Item {
     { section: "advanced", title: "settings.pages.advancedPage" }, { section: "advanced", title: "settings.system.monitorBus" },
     { section: "advanced", title: "settings.system.ddcDelay" },
     { section: "battery", title: "settings.pages.battery" }, { section: "battery", title: "battery.title" },
-    { section: "brightness", title: "settings.pages.brightness" }, { section: "brightness", title: "brightness.title" },
     { section: "audio", title: "settings.pages.audio" }, { section: "audio", title: "audio.title" },
     { section: "wifi", title: "settings.pages.wifi" }, { section: "wifi", title: "wifi.title" },
     { section: "bluetooth", title: "settings.pages.bluetooth" }, { section: "bluetooth", title: "bt.title" }
@@ -879,7 +877,6 @@ Item {
     if (key === "barSysNetEnabled") Config.barSysNetEnabled = value
     if (key === "barNotificationsEnabled") Config.barNotificationsEnabled = value
     if (key === "barVolumeEnabled") Config.barVolumeEnabled = value
-    if (key === "barBrightnessEnabled") Config.barBrightnessEnabled = value
     if (key === "barBatteryEnabled") Config.barBatteryEnabled = value
     if (key === "barBluetoothEnabled") Config.barBluetoothEnabled = value
     if (key === "barNetworkEnabled") Config.barNetworkEnabled = value
@@ -2412,13 +2409,6 @@ Item {
               ToggleSwitch { z: 1; checked: Config.barVolumeEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barVolumeEnabled", !Config.barVolumeEnabled) }
             }
             SettingsRow {
-              icon: Config.iconBrightHigh
-              title: I18n.tr("bar.brightness")
-              subtitle: Config.barBrightnessEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
-              onClicked: root.setBoolSetting("barBrightnessEnabled", !Config.barBrightnessEnabled)
-              ToggleSwitch { z: 1; checked: Config.barBrightnessEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barBrightnessEnabled", !Config.barBrightnessEnabled) }
-            }
-            SettingsRow {
               icon: Config.iconBattery
               title: I18n.tr("bar.battery")
               subtitle: Config.barBatteryEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
@@ -3109,50 +3099,6 @@ Item {
               title: I18n.tr("cc.performance")
               onClicked: BatteryService.setProfile("performance")
               ToggleSwitch { z: 1; checked: BatteryService.powerProfile === "performance"; anchors.verticalCenter: parent.verticalCenter; onToggled: BatteryService.setProfile("performance") }
-            }
-          }
-
-          Column {
-            width: parent.width
-            spacing: Config.scaledSize(10)
-            visible: root.activeSection === "brightness"
-            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
-            clip: true
-            Text { text: I18n.tr("settings.sections.brightness"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            SettingsRow {
-              icon: BrightnessService.brightnessPercent >= 75 ? Config.iconBrightHigh : (BrightnessService.brightnessPercent >= 35 ? Config.iconBrightMedium : (BrightnessService.brightnessPercent > 0 ? Config.iconBrightLow : Config.iconBrightOff))
-              title: I18n.tr("brightness.title")
-              subtitle: BrightnessService.brightnessPercent + "%"
-              NumberSlider {
-                anchors.verticalCenter: parent.verticalCenter
-                value: BrightnessService.brightnessPercent
-                from: 0
-                to: 100
-                suffix: "%"
-                defaultValue: 100
-                onValueEdited: value => BrightnessService.applyBrightness(value)
-              }
-            }
-            Text { text: I18n.tr("brightness.presets"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            SettingsRow {
-              icon: Config.iconBrightLow
-              title: "25%"
-              onClicked: BrightnessService.applyBrightness(25)
-            }
-            SettingsRow {
-              icon: Config.iconBrightMedium
-              title: "50%"
-              onClicked: BrightnessService.applyBrightness(50)
-            }
-            SettingsRow {
-              icon: Config.iconBrightHigh
-              title: "75%"
-              onClicked: BrightnessService.applyBrightness(75)
-            }
-            SettingsRow {
-              icon: Config.iconBrightHigh
-              title: "100%"
-              onClicked: BrightnessService.applyBrightness(100)
             }
           }
 

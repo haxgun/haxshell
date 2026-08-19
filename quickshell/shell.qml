@@ -96,7 +96,6 @@ Scope {
       if (typeof settings.barSysNetEnabled === "string") Config.barSysNetEnabled = settings.barSysNetEnabled === "true"
       if (typeof settings.barNotificationsEnabled === "string") Config.barNotificationsEnabled = settings.barNotificationsEnabled === "true"
       if (typeof settings.barVolumeEnabled === "string") Config.barVolumeEnabled = settings.barVolumeEnabled === "true"
-      if (typeof settings.barBrightnessEnabled === "string") Config.barBrightnessEnabled = settings.barBrightnessEnabled === "true"
       if (typeof settings.barBatteryEnabled === "string") Config.barBatteryEnabled = settings.barBatteryEnabled === "true"
       if (typeof settings.barBluetoothEnabled === "string") Config.barBluetoothEnabled = settings.barBluetoothEnabled === "true"
       if (typeof settings.barNetworkEnabled === "string") Config.barNetworkEnabled = settings.barNetworkEnabled === "true"

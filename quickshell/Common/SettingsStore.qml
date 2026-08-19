@@ -68,7 +68,6 @@ Singleton {
   property alias barSysNetEnabled: adapter.barSysNetEnabled
   property alias barNotificationsEnabled: adapter.barNotificationsEnabled
   property alias barVolumeEnabled: adapter.barVolumeEnabled
-  property alias barBrightnessEnabled: adapter.barBrightnessEnabled
   property alias barBatteryEnabled: adapter.barBatteryEnabled
   property alias barBluetoothEnabled: adapter.barBluetoothEnabled
   property alias barNetworkEnabled: adapter.barNetworkEnabled
@@ -197,7 +196,6 @@ Singleton {
       property string barSysNetEnabled: "true"
       property string barNotificationsEnabled: "true"
       property string barVolumeEnabled: "true"
-      property string barBrightnessEnabled: "true"
       property string barBatteryEnabled: "true"
       property string barBluetoothEnabled: "true"
       property string barNetworkEnabled: "true"
@@ -309,7 +307,6 @@ Singleton {
       barSysNetEnabled: adapter.barSysNetEnabled,
       barNotificationsEnabled: adapter.barNotificationsEnabled,
       barVolumeEnabled: adapter.barVolumeEnabled,
-      barBrightnessEnabled: adapter.barBrightnessEnabled,
       barBatteryEnabled: adapter.barBatteryEnabled,
       barBluetoothEnabled: adapter.barBluetoothEnabled,
       barNetworkEnabled: adapter.barNetworkEnabled,

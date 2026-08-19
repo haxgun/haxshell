@@ -104,13 +104,6 @@ PanelWindow {
   }
 
   IpcHandler {
-    target: "brightness"
-    function toggle() { root.openSettingsSection("brightness") }
-    function open() { root.openSettingsSection("brightness") }
-    function close() { root.isOpen = false }
-  }
-
-  IpcHandler {
     target: "audio"
     function toggle() { root.openSettingsSection("audio") }
     function open() { root.openSettingsSection("audio") }

@@ -43,7 +43,6 @@ Rectangle {
   property var systemPopup: null
   property var mediaPopup: null
   property var osd: null
-  readonly property int brightnessPercent: BrightnessService.brightnessPercent
   readonly property int iconButtonPadding: 7
   readonly property bool wifiEnabled: Networking.wifiEnabled
   readonly property bool bluetoothEnabled: Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled
@@ -99,16 +98,6 @@ Rectangle {
     let wasOpen = popup.isOpen
     closeFlyouts(name)
     popup.isOpen = !wasOpen
-  }
-
-  // Brightness scroll wheel debounce timer
-  Timer {
-    id: brightnessDebounceTimer
-    interval: 350
-    repeat: false
-    onTriggered: {
-      BrightnessService.applyBrightness(root.brightnessPercent)
-    }
   }
 
   // Keep the default output bound so the indicator and OSD update together.
@@ -591,51 +580,6 @@ Rectangle {
         }
 
         onEntered: if (root.tooltip) root.tooltip.show(volContainer, I18n.tr("bar.volume"))
-        onExited: if (root.tooltip) root.tooltip.hide()
-      }
-    }
-
-    // Brightness Control Button
-    Rectangle {
-      id: brightContainer
-      visible: Config.barBrightnessEnabled
-      width: Config.buttonWidth
-      height: Config.buttonHeight
-      radius: Config.buttonRadius
-      clip: true
-      readonly property bool isBrightnessActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "brightness"
-      color: (isBrightnessActive || brightMouse.containsMouse) ? Config.activeHoverBg : "#00000000"
-
-      Behavior on color { ColorAnimation { duration: 150 } }
-
-      Text {
-        anchors.centerIn: parent
-        text: root.brightnessPercent >= 75 ? Config.iconBrightHigh : (root.brightnessPercent >= 35 ? Config.iconBrightMedium : (root.brightnessPercent > 0 ? Config.iconBrightLow : Config.iconBrightOff))
-        color: (brightContainer.isBrightnessActive || brightMouse.containsMouse) ? Config.textWhite : Config.iconColor
-        font.pixelSize: Config.fontSizeIconMedium
-        font.family: Config.fontIcon
-      }
-
-      MouseArea {
-        id: brightMouse
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-
-        onClicked: {
-          root.openSettingsSection("brightness", brightContainer)
-        }
-
-        onWheel: (wheel) => {
-          if (wheel.angleDelta.y === 0) return
-          let delta = wheel.angleDelta.y > 0 ? 5 : -5
-          let newPct = Math.max(0, Math.min(100, root.brightnessPercent + delta))
-          BrightnessService.applyBrightness(newPct)
-          if (root.osd) root.osd.showBrightness(newPct)
-          brightnessDebounceTimer.restart()
-        }
-
-        onEntered: if (root.tooltip) root.tooltip.show(brightContainer, I18n.tr("bar.brightness"))
         onExited: if (root.tooltip) root.tooltip.hide()
       }
     }

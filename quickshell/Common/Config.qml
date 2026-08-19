@@ -353,7 +353,6 @@ Singleton {
   property bool barSysNetEnabled: true
   property bool barNotificationsEnabled: true
   property bool barVolumeEnabled: true
-  property bool barBrightnessEnabled: true
   property bool barBatteryEnabled: true
   property bool barBluetoothEnabled: true
   property bool barNetworkEnabled: true
