@@ -18,8 +18,8 @@ Rectangle {
   readonly property color activeFg: Config.popupGlassBg
   readonly property color activeMuted: Config.textMuted
 
-  width: wide ? (parent ? parent.width : 250) : (parent ? (parent.width - 8) / 2 : 250)
-  height: wide ? 62 : 64
+  width: wide ? (parent ? parent.width : 250) : (parent ? (parent.width - Config.scaledSize(8)) / 2 : 250)
+  height: Config.scaledSize(wide ? 62 : 64)
   radius: Config.popupPillRadius(height)
   color: root.active ? root.activeBg : (bodyMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
 

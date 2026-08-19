@@ -1370,22 +1370,11 @@ Item {
               icon: Config.iconScale
               title: I18n.tr("settings.general.uiScale")
               subtitle: Math.round(Config.uiScale * 100) + "%"
-              Row {
-                width: Config.scaledSize(194)
-                spacing: Config.scaledSize(4)
-                Repeater {
-                  model: [{ v: 75 }, { v: 90 }, { v: 100 }, { v: 125 }]
-                  Rectangle {
-                    required property var modelData
-                    width: (parent.width - 12) / 4
-                    height: Config.scaledSize(30)
-                    radius: Config.popupRadiusPx(8)
-                    readonly property bool active: Math.round(Config.uiScale * 100) === modelData.v
-                    color: active ? Config.selectedBg : (uiScaleMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
-                    Text { anchors.centerIn: parent; text: parent.modelData.v + "%"; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
-                    MouseArea { id: uiScaleMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyUiScale(parent.modelData.v / 100) }
-                  }
-                }
+              StepSlider {
+                value: Math.round(Config.uiScale * 100)
+                steps: [75, 90, 100, 110, 125]
+                suffix: "%"
+                onValueEdited: root.applyUiScale(value / 100)
               }
             }
             SettingsRow { icon: Config.iconNotifications; title: I18n.tr("settings.general.notificationSound"); subtitle: Config.notificationSoundEnabled ? I18n.tr("common.on") : I18n.tr("common.off"); ToggleSwitch { checked: Config.notificationSoundEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: { Config.notificationSoundEnabled = !Config.notificationSoundEnabled; root.saveSetting("notificationSoundEnabled", Config.notificationSoundEnabled) } } }

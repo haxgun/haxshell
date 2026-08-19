@@ -12,3 +12,4 @@ QuickControlSlider 1.0 QuickControlSlider.qml
 AudioSlider 1.0 AudioSlider.qml
 AudioDeviceList 1.0 AudioDeviceList.qml
 BatteryInfoRow 1.0 BatteryInfoRow.qml
+StepSlider 1.0 StepSlider.qml
