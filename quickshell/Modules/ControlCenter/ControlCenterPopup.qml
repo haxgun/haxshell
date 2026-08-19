@@ -16,11 +16,7 @@ PanelWindow {
   property bool isOpen: false
   property bool settingsView: false
   property int rightMargin: Config.scaledSize(16)
-  property var audioPopup: null
   property var osd: null
-  property var wifiPopup: null
-  property var bluetoothPopup: null
-  property var batteryPopup: null
   property var powerPopup: null
   property string activeSection: "wifi"
   property int brightnessPercent: 100
@@ -91,6 +87,41 @@ PanelWindow {
     }
     function open() { root.settingsView = true; root.isOpen = true }
     function close() { root.settingsView = false; root.isOpen = false }
+  }
+
+  IpcHandler {
+    target: "wifi"
+    function toggle() { root.openSettingsSection("wifi") }
+    function open() { root.openSettingsSection("wifi") }
+    function close() { root.isOpen = false }
+  }
+
+  IpcHandler {
+    target: "bluetooth"
+    function toggle() { root.openSettingsSection("bluetooth") }
+    function open() { root.openSettingsSection("bluetooth") }
+    function close() { root.isOpen = false }
+  }
+
+  IpcHandler {
+    target: "brightness"
+    function toggle() { root.openSettingsSection("brightness") }
+    function open() { root.openSettingsSection("brightness") }
+    function close() { root.isOpen = false }
+  }
+
+  IpcHandler {
+    target: "audio"
+    function toggle() { root.openSettingsSection("audio") }
+    function open() { root.openSettingsSection("audio") }
+    function close() { root.isOpen = false }
+  }
+
+  IpcHandler {
+    target: "battery"
+    function toggle() { root.openSettingsSection("battery") }
+    function open() { root.openSettingsSection("battery") }
+    function close() { root.isOpen = false }
   }
 
   Shortcut {
@@ -242,6 +273,13 @@ PanelWindow {
     root.settingsView = true
     settingsEmbedded.openSectionList()
   }
+  function openSettingsSection(section) {
+    root.settingsView = true
+    root.activeSection = section
+    root.isOpen = true
+    settingsEmbedded.openSectionList()
+    settingsEmbedded.selectSection(section)
+  }
   function closeSettings() {
     root.settingsView = false
   }
@@ -294,6 +332,13 @@ PanelWindow {
   function tileSubtitle(tile) { return tile === "wifi" ? wifiSubtitle() : (tile === "bluetooth" ? bluetoothSubtitle() : (tile === "airplane" ? (airplaneModeEnabled ? I18n.tr("cc.on") : I18n.tr("common.off")) : (tile === "dnd" ? (NotificationService.doNotDisturb ? I18n.tr("cc.on") : I18n.tr("common.off")) : (tile === "caffeine" ? (caffeineEnabled ? I18n.tr("cc.on") : I18n.tr("common.off")) : (tile === "power" ? profileName(powerProfile) : (tile === "nightlight" ? (nightLightEnabled ? I18n.tr("cc.on") : I18n.tr("common.off")) : I18n.tr("cc.selectRegion"))))))) }
   function tileActive(tile) { return tile === "wifi" ? Networking.wifiEnabled : (tile === "bluetooth" ? !!(adapter && adapter.enabled) : (tile === "airplane" ? airplaneModeEnabled : (tile === "dnd" ? NotificationService.doNotDisturb : (tile === "caffeine" ? caffeineEnabled : (tile === "power" ? true : (tile === "nightlight" ? nightLightEnabled : false)))))) }
   function activateTile(tile) { if (tile === "wifi") toggleWifi(); else if (tile === "bluetooth") toggleBluetooth(); else if (tile === "airplane") toggleAirplaneMode(); else if (tile === "dnd") NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb); else if (tile === "caffeine") toggleCaffeine(); else if (tile === "power") cyclePowerProfile(); else if (tile === "nightlight") toggleNightLight(); else takeScreenshot() }
+  function tileDetailsRequested(tile) {
+    if (tile === "wifi" || tile === "bluetooth" || tile === "battery") {
+      root.openSettingsSection(tile)
+    } else {
+      root.activateTile(tile)
+    }
+  }
 
   Rectangle {
     id: container
@@ -370,7 +415,7 @@ PanelWindow {
       Flow {
         width: parent.width
         spacing: Config.scaledSize(8)
-        Repeater { model: root.visibleTiles(); QuickControlTile { required property string modelData; icon: root.tileIcon(modelData); title: root.tileTitle(modelData); subtitle: root.tileSubtitle(modelData); active: root.tileActive(modelData); onToggled: root.activateTile(modelData); onDetailsRequested: root.activateTile(modelData) } }
+        Repeater { model: root.visibleTiles(); QuickControlTile { required property string modelData; icon: root.tileIcon(modelData); title: root.tileTitle(modelData); subtitle: root.tileSubtitle(modelData); active: root.tileActive(modelData); onToggled: root.activateTile(modelData); onDetailsRequested: root.tileDetailsRequested(modelData) } }
       }
 
       Column {

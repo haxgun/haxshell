@@ -176,7 +176,8 @@
     "voltageUnit": " V"
   },
   "brightness": {
-    "title": "Screen brightness"
+    "title": "Screen brightness",
+    "presets": "Presets"
   },
   "audio": {
     "title": "Sound",

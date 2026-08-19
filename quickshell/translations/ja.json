@@ -176,7 +176,8 @@
     "voltageUnit": " V"
   },
   "brightness": {
-    "title": "画面の明るさ"
+    "title": "画面の明るさ",
+    "presets": "プリセット"
   },
   "audio": {
     "title": "サウンド",

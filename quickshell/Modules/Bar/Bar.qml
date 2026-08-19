@@ -14,11 +14,6 @@ Scope {
     property var appDrawer: null
     property var calendarPopup: null
     property var controlCenterPopup: null
-    property var brightnessPopup: null
-    property var wifiPopup: null
-    property var bluetoothPopup: null
-    property var audioPopup: null
-    property var batteryPopup: null
     property var notificationPopup: null
     property var trayMenuPopup: null
     property var keyboardLayoutPopup: null
@@ -28,7 +23,7 @@ Scope {
     property var osd: null
 
     function closeBarFlyouts() {
-        let popups = [root.appDrawer, root.calendarPopup, root.brightnessPopup, root.wifiPopup, root.bluetoothPopup, root.audioPopup, root.batteryPopup, root.notificationPopup, root.trayMenuPopup, root.keyboardLayoutPopup, root.powerPopup, root.systemPopup, root.mediaPopup, root.controlCenterPopup];
+        let popups = [root.appDrawer, root.calendarPopup, root.notificationPopup, root.trayMenuPopup, root.keyboardLayoutPopup, root.powerPopup, root.systemPopup, root.mediaPopup, root.controlCenterPopup];
         for (let p of popups) {
             if (p && typeof p.isOpen !== "undefined")
                 p.isOpen = false;
@@ -317,11 +312,6 @@ Scope {
                             embeddedInBar: true
                             calendarPopup: root.calendarPopup
                             controlCenterPopup: root.controlCenterPopup
-                            brightnessPopup: root.brightnessPopup
-                            wifiPopup: root.wifiPopup
-                            bluetoothPopup: root.bluetoothPopup
-                            audioPopup: root.audioPopup
-                            batteryPopup: root.batteryPopup
                             notificationPopup: root.notificationPopup
                             trayMenuPopup: root.trayMenuPopup
                             keyboardLayoutPopup: root.keyboardLayoutPopup

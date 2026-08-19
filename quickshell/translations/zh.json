@@ -176,7 +176,8 @@
     "voltageUnit": " V"
   },
   "brightness": {
-    "title": "屏幕亮度"
+    "title": "屏幕亮度",
+    "presets": "预设"
   },
   "audio": {
     "title": "声音",

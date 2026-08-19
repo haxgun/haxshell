@@ -153,11 +153,6 @@ Scope {
     drawer.isOpen = false
     calendar.isOpen = false
     controlCenter.isOpen = false
-    brightness.isOpen = false
-    wifi.isOpen = false
-    bluetooth.isOpen = false
-    audio.isOpen = false
-    battery.isOpen = false
     notifications.isOpen = false
     trayMenu.isOpen = false
     keyboardLayout.isOpen = false
@@ -169,7 +164,7 @@ Scope {
 
   Shortcut {
     sequence: "Esc"
-    enabled: (drawer.isOpen || calendar.isOpen || controlCenter.isOpen || brightness.isOpen || wifi.isOpen || bluetooth.isOpen || audio.isOpen || battery.isOpen || notifications.isOpen || trayMenu.isOpen || keyboardLayout.isOpen || power.isOpen || system.isOpen || media.isOpen || clipboard.isOpen) && !(controlCenter.isOpen && controlCenter.settingsView)
+    enabled: (drawer.isOpen || calendar.isOpen || controlCenter.isOpen || notifications.isOpen || trayMenu.isOpen || keyboardLayout.isOpen || power.isOpen || system.isOpen || media.isOpen || clipboard.isOpen) && !(controlCenter.isOpen && controlCenter.settingsView)
     onActivated: root.closePopups()
   }
 
@@ -179,11 +174,6 @@ Scope {
     appDrawer: drawer
     calendarPopup: calendar
     controlCenterPopup: controlCenter
-    brightnessPopup: brightness
-    wifiPopup: wifi
-    bluetoothPopup: bluetooth
-    audioPopup: audio
-    batteryPopup: battery
     notificationPopup: notifications
     trayMenuPopup: trayMenu
     keyboardLayoutPopup: keyboardLayout
@@ -214,37 +204,11 @@ Scope {
     screenInfo: calendar.screen
   }
 
-  // Display Brightness Control Overlay
+  // Control Center Overlay
   ControlCenterPopup {
     id: controlCenter
-    audioPopup: audio
     osd: osd
-    wifiPopup: wifi
-    bluetoothPopup: bluetooth
-    batteryPopup: battery
     powerPopup: power
-  }
-
-  BrightnessPopup {
-    id: brightness
-    osd: osd
-  }
-
-  WiFiPopup {
-    id: wifi
-  }
-
-  BluetoothPopup {
-    id: bluetooth
-  }
-
-  AudioPopup {
-    id: audio
-    osd: osd
-  }
-
-  BatteryPopup {
-    id: battery
   }
 
   NotificationPopup {

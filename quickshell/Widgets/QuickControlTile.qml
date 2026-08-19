@@ -39,11 +39,22 @@ Rectangle {
     anchors.left: iconTile.right
     anchors.leftMargin: Config.scaledSize(9)
     anchors.right: parent.right
-    anchors.rightMargin: Config.scaledSize(10)
+    anchors.rightMargin: Config.scaledSize(24)
     anchors.verticalCenter: parent.verticalCenter
     spacing: Config.scaledSize(2)
     Text { width: parent.width; text: root.title; color: root.active ? root.activeFg : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
     Text { width: parent.width; text: root.subtitle; color: root.active ? root.activeMuted : Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+  }
+
+  Text {
+    anchors.right: parent.right
+    anchors.rightMargin: Config.scaledSize(10)
+    anchors.verticalCenter: parent.verticalCenter
+    text: Config.iconChevronRight
+    color: root.active ? root.activeFg : Config.textMuted
+    font.pixelSize: Config.fontSizeIconSmall
+    font.family: Config.fontIcon
+    opacity: 0.7
   }
 
   MouseArea {

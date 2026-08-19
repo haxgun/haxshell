@@ -7,6 +7,7 @@ import Quickshell.Networking
 import Quickshell.Bluetooth
 import "."
 import "../../Common"
+import "../../Services"
 import "../../Widgets"
 
 Rectangle {
@@ -32,14 +33,9 @@ Rectangle {
     border.width: 1
   }
 
-  // Target BrightnessPopup reference to toggle
+  // Target popup references to toggle
   property var calendarPopup: null
   property var controlCenterPopup: null
-  property var brightnessPopup: null
-  property var wifiPopup: null
-  property var bluetoothPopup: null
-  property var audioPopup: null
-  property var batteryPopup: null
   property var notificationPopup: null
   property var trayMenuPopup: null
   property var keyboardLayoutPopup: null
@@ -47,18 +43,13 @@ Rectangle {
   property var systemPopup: null
   property var mediaPopup: null
   property var osd: null
-  readonly property int brightnessPercent: brightnessPopup ? brightnessPopup.brightnessPercent : 100
+  readonly property int brightnessPercent: BrightnessService.brightnessPercent
   readonly property int iconButtonPadding: 7
   readonly property bool wifiEnabled: Networking.wifiEnabled
   readonly property bool bluetoothEnabled: Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled
 
   function closeFlyouts(exceptName) {
     if (exceptName !== "controlCenter" && root.controlCenterPopup) root.controlCenterPopup.isOpen = false
-    if (exceptName !== "audio" && root.audioPopup) root.audioPopup.isOpen = false
-    if (exceptName !== "brightness" && root.brightnessPopup) root.brightnessPopup.isOpen = false
-    if (exceptName !== "bluetooth" && root.bluetoothPopup) root.bluetoothPopup.isOpen = false
-    if (exceptName !== "wifi" && root.wifiPopup) root.wifiPopup.isOpen = false
-    if (exceptName !== "battery" && root.batteryPopup) root.batteryPopup.isOpen = false
     if (exceptName !== "notifications" && root.notificationPopup) root.notificationPopup.isOpen = false
     if (exceptName !== "trayMenu" && root.trayMenuPopup) root.trayMenuPopup.isOpen = false
     if (exceptName !== "keyboard" && root.keyboardLayoutPopup) root.keyboardLayoutPopup.isOpen = false
@@ -87,16 +78,13 @@ Rectangle {
     return true
   }
 
-  function toggleAnchoredFlyout(name, popup, item) {
-    positionPopupFor(name, item, popup)
-    return toggleFlyout(name, popup)
-  }
-
-  function toggleFlyout(name, popup) {
-    if (!popup) return false
-    let shouldOpen = !popup.isOpen
-    closeFlyouts(name)
-    popup.isOpen = shouldOpen
+  function openSettingsSection(section, item) {
+    if (!root.controlCenterPopup) return false
+    closeFlyouts("controlCenter")
+    root.controlCenterPopup.activeSection = section
+    root.controlCenterPopup.settingsView = true
+    root.controlCenterPopup.isOpen = true
+    root.controlCenterPopup.openSettings()
     return true
   }
 
@@ -106,9 +94,7 @@ Rectangle {
     interval: 350
     repeat: false
     onTriggered: {
-      if (root.brightnessPopup) {
-        root.brightnessPopup.applyBrightness(root.brightnessPercent)
-      }
+      BrightnessService.applyBrightness(root.brightnessPercent)
     }
   }
 
@@ -330,22 +316,7 @@ Rectangle {
 
   Component.onCompleted: audioReadyTimer.restart()
 
-  // Command Processes for interactable buttons
-  Process {
-    id: volumeProc
-    command: ["setsid", "-f", Config.cmdVolumeControl]
-  }
-
-  Process {
-    id: bluetoothProc
-    command: ["setsid", "-f", Config.cmdBluetoothControl]
-  }
-
-  Process {
-    id: networkProc
-    command: ["setsid", "-f", Config.cmdNetworkControl]
-  }
-
+  // Command Process for interactable buttons
   Process {
     id: pickerProc
     command: [Config.natonctl, "color", "pick", Config.fontMono]
@@ -571,7 +542,7 @@ Rectangle {
       width: Config.buttonWidth
       height: Config.buttonHeight
       radius: Config.buttonRadius
-      readonly property bool isAudioActive: (root.audioPopup && root.audioPopup.isOpen)
+      readonly property bool isAudioActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "audio"
       color: (isAudioActive || volMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -595,9 +566,7 @@ Rectangle {
           if (mouse.button === Qt.RightButton) {
             if (root.sink && root.sink.audio) root.sink.audio.muted = !root.sink.audio.muted
           } else {
-            if (!root.toggleAnchoredFlyout("audio", root.audioPopup, volContainer)) {
-              volumeProc.running = true
-            }
+            root.openSettingsSection("audio", volContainer)
           }
         }
 
@@ -621,7 +590,7 @@ Rectangle {
       height: Config.buttonHeight
       radius: Config.buttonRadius
       clip: true
-      readonly property bool isBrightnessActive: (root.brightnessPopup && root.brightnessPopup.isOpen)
+      readonly property bool isBrightnessActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "brightness"
       color: (isBrightnessActive || brightMouse.containsMouse) ? Config.activeHoverBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -641,17 +610,16 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
 
         onClicked: {
-          root.toggleAnchoredFlyout("brightness", root.brightnessPopup, brightContainer)
+          root.openSettingsSection("brightness", brightContainer)
         }
 
         onWheel: (wheel) => {
-          if (root.brightnessPopup) {
-            let delta = wheel.angleDelta.y > 0 ? 5 : -5
-            let newPct = Math.max(0, Math.min(100, root.brightnessPercent + delta))
-            root.brightnessPopup.brightnessPercent = newPct
-            if (root.osd) root.osd.showBrightness(newPct)
-            brightnessDebounceTimer.restart()
-          }
+          if (wheel.angleDelta.y === 0) return
+          let delta = wheel.angleDelta.y > 0 ? 5 : -5
+          let newPct = Math.max(0, Math.min(100, root.brightnessPercent + delta))
+          BrightnessService.applyBrightness(newPct)
+          if (root.osd) root.osd.showBrightness(newPct)
+          brightnessDebounceTimer.restart()
         }
 
         onEntered: if (root.tooltip) root.tooltip.show(brightContainer, I18n.tr("bar.brightness"))
@@ -666,8 +634,8 @@ Rectangle {
       width: Config.buttonWidth
       height: Config.buttonHeight
       radius: Config.buttonRadius
-      readonly property bool isBatteryActive: (root.batteryPopup && root.batteryPopup.isOpen)
-      readonly property int batteryPercent: root.batteryPopup ? root.batteryPopup.percent() : 0
+      readonly property bool isBatteryActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "battery"
+      readonly property int batteryPercent: BatteryService.percent()
       color: (isBatteryActive || batteryMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -712,7 +680,7 @@ Rectangle {
 
           Text {
             anchors.centerIn: parent
-            visible: root.batteryPopup && (root.batteryPopup.batteryCharging || root.batteryPopup.acOnline)
+            visible: BatteryService.batteryCharging || BatteryService.acOnline
             text: Config.iconBatteryCharging
             color: root.chargingIconColor(batteryContainer.batteryPercent)
             font.pixelSize: Config.fontSizeIconTiny
@@ -738,7 +706,7 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
         onEntered: if (root.tooltip) root.tooltip.show(batteryContainer, I18n.tr("bar.battery"))
         onExited: if (root.tooltip) root.tooltip.hide()
-        onClicked: root.toggleAnchoredFlyout("battery", root.batteryPopup, batteryContainer)
+        onClicked: root.openSettingsSection("battery", batteryContainer)
       }
     }
 
@@ -749,7 +717,7 @@ Rectangle {
       width: btIcon.implicitWidth + root.iconButtonPadding * 2
       height: Config.buttonHeight
       radius: Config.buttonRadius
-      readonly property bool isBluetoothActive: (root.bluetoothPopup && root.bluetoothPopup.isOpen)
+      readonly property bool isBluetoothActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "bluetooth"
       color: (isBluetoothActive || btMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -782,9 +750,7 @@ Rectangle {
         onEntered: if (root.tooltip) root.tooltip.show(btContainer, I18n.tr("bar.bluetooth"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
-          if (!root.toggleAnchoredFlyout("bluetooth", root.bluetoothPopup, btContainer)) {
-            bluetoothProc.running = true
-          }
+          root.openSettingsSection("bluetooth", btContainer)
         }
       }
     }
@@ -796,7 +762,7 @@ Rectangle {
       height: Config.buttonHeight
       radius: Config.buttonRadius
       visible: Config.barNetworkEnabled
-      readonly property bool isNetworkActive: (root.wifiPopup && root.wifiPopup.isOpen)
+      readonly property bool isNetworkActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "wifi"
       color: (isNetworkActive || netMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -830,9 +796,7 @@ Rectangle {
         onEntered: if (root.tooltip) root.tooltip.show(netContainer, I18n.tr("bar.network"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
-          if (!root.toggleAnchoredFlyout("wifi", root.wifiPopup, netContainer)) {
-            networkProc.running = true
-          }
+          root.openSettingsSection("wifi", netContainer)
         }
       }
     }
@@ -844,7 +808,7 @@ Rectangle {
       height: Config.buttonHeight
       radius: Config.buttonRadius
       visible: false
-      readonly property bool isNetworkActive: (root.wifiPopup && root.wifiPopup.isOpen)
+      readonly property bool isNetworkActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "wifi"
       color: (isNetworkActive || disMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -864,9 +828,7 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-          if (!root.toggleAnchoredFlyout("wifi", root.wifiPopup, disContainer)) {
-            networkProc.running = true
-          }
+          root.openSettingsSection("wifi", disContainer)
         }
       }
     }

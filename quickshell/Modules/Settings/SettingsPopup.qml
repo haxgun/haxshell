@@ -8,7 +8,9 @@ import Quickshell.Widgets
 import "../../Widgets"
 import "../../Common"
 import "../../Services"
-import "../ControlCenter"
+import Quickshell.Services.Pipewire
+import Quickshell.Networking
+import Quickshell.Bluetooth
 
 Item {
   id: root
@@ -50,6 +52,58 @@ Item {
     { key: "zh", label: "ZH", name: "中文" },
     { key: "de", label: "DE", name: "Deutsch" }
   ]
+  readonly property var sink: Pipewire.defaultAudioSink
+  readonly property var source: Pipewire.defaultAudioSource
+  readonly property int sinkVolume: sink && sink.audio ? Math.round(sink.audio.volume * 100) : 0
+  readonly property bool sinkMuted: sink && sink.audio ? sink.audio.muted : false
+  readonly property int sourceVolume: source && source.audio ? Math.round(source.audio.volume * 100) : 0
+  readonly property bool sourceMuted: source && source.audio ? source.audio.muted : false
+  property bool wifiRefreshActive: false
+  property var wifiPendingNetwork: null
+  property string wifiPassword: ""
+  readonly property var wifiDevice: {
+    let list = Networking.devices && Networking.devices.values ? Networking.devices.values : []
+    for (let i = 0; i < list.length; i++) {
+      if (list[i] && list[i].type === DeviceType.Wifi) return list[i]
+    }
+    return null
+  }
+  readonly property var wifiNetworks: root.wifiDevice && root.wifiDevice.networks && root.wifiDevice.networks.values ? root.wifiDevice.networks.values : []
+  readonly property var sortedNetworks: {
+    let arr = root.wifiNetworks.slice()
+    arr.sort((a, b) => (b.known ? 1 : 0) - (a.known ? 1 : 0))
+    return arr
+  }
+  readonly property string connectedNetworkName: {
+    for (let i = 0; i < root.wifiNetworks.length; i++) {
+      if (root.wifiNetworks[i] && root.wifiNetworks[i].connected) return root.wifiNetworks[i].name
+    }
+    return ""
+  }
+  readonly property var btAdapter: Bluetooth.defaultAdapter
+  readonly property var bluetoothDevices: root.btAdapter && root.btAdapter.devices && root.btAdapter.devices.values ? root.btAdapter.devices.values : []
+  readonly property string connectedBtDeviceName: {
+    for (let i = 0; i < root.bluetoothDevices.length; i++) {
+      if (root.bluetoothDevices[i] && root.bluetoothDevices[i].connected) return root.bluetoothDevices[i].name || root.bluetoothDevices[i].deviceName
+    }
+    return ""
+  }
+  readonly property var audioSinks: {
+    let out = []
+    let nodes = Pipewire.nodes && Pipewire.nodes.values ? Pipewire.nodes.values : []
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i] && nodes[i].audio && !nodes[i].isStream && nodes[i].isSink) out.push(nodes[i])
+    }
+    return out
+  }
+  readonly property var audioSources: {
+    let out = []
+    let nodes = Pipewire.nodes && Pipewire.nodes.values ? Pipewire.nodes.values : []
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i] && nodes[i].audio && !nodes[i].isStream && !nodes[i].isSink) out.push(nodes[i])
+    }
+    return out
+  }
   readonly property var wallpaperFillModes: [
     { key: "stretch", label: "settings.dropdown.stretch" }, { key: "fit", label: "settings.dropdown.fit" },
     { key: "fill", label: "settings.dropdown.fill" }, { key: "tile", label: "settings.dropdown.tile" },
@@ -378,7 +432,11 @@ Item {
   property var aboutContributors: []
   property var presets: []
 
-  onActiveSectionChanged: if (root.activeSection === "about") root.refreshAbout()
+  onActiveSectionChanged: {
+    if (root.activeSection === "about") root.refreshAbout()
+    if (root.activeSection === "wifi" && root.wifiDevice) root.wifiRefreshNetworks()
+    if (root.activeSection === "bluetooth" && root.btAdapter && root.btAdapter.enabled) root.btAdapter.discovering = true
+  }
 
   Component.onCompleted: {
     root.refreshAbout()
@@ -637,6 +695,93 @@ Item {
     multiplier = Math.max(0.01, Math.min(5, multiplier))
     Config.brightnessSleepMultiplier = String(multiplier)
     saveSetting("brightnessSleepMultiplier", multiplier)
+  }
+  function wifiSignalPercent(network) {
+    let value = network && typeof network.signalStrength !== "undefined" ? network.signalStrength : 0
+    return Math.max(0, Math.min(100, Math.round(value <= 1 ? value * 100 : value)))
+  }
+  function wifiSignalIcon(network) {
+    let pct = root.wifiSignalPercent(network)
+    if (pct >= 75) return Config.iconWifiConnected
+    if (pct >= 50) return Config.iconWifiSignalHigh
+    if (pct >= 25) return Config.iconWifiSignalMid
+    return Config.iconWifiSignalLow
+  }
+  function wifiSignalColor(network) {
+    let pct = root.wifiSignalPercent(network)
+    if (network && network.connected) return Config.textWhite
+    if (pct >= 50) return Config.textPrimary
+    if (pct >= 25) return Config.warningAmber
+    return Config.dangerRed
+  }
+  function wifiStatusText(network) {
+    if (network.connected) return I18n.tr("wifi.connected")
+    if (network.state === ConnectionState.Connecting || network.stateChanging) return I18n.tr("wifi.connecting")
+    return network.known ? I18n.tr("wifi.saved") : I18n.tr("wifi.available")
+  }
+  function wifiSecured(network) {
+    return network && network.security !== WifiSecurityType.Open
+  }
+  function wifiConnectNetwork(network) {
+    if (!network) return
+    if (network.connected) {
+      network.disconnect()
+      return
+    }
+    if (network.known || network.security === WifiSecurityType.Open) {
+      network.connect()
+      return
+    }
+    root.wifiPendingNetwork = network
+    root.wifiPassword = ""
+  }
+  function wifiIsPending(network) {
+    return root.wifiPendingNetwork && network && root.wifiPendingNetwork.name === network.name
+  }
+  function wifiRefreshNetworks() {
+    if (!root.wifiDevice) return
+    root.wifiRefreshActive = true
+    wifiRefreshTimer.restart()
+    root.wifiDevice.scannerEnabled = false
+    root.wifiDevice.scannerEnabled = true
+  }
+  function btDeviceName(device) {
+    return device.name || device.deviceName || device.address || I18n.tr("bt.device")
+  }
+  function btDeviceIcon(device) {
+    if (!device || !device.icon) return Config.iconBluetooth
+    let icon = device.icon.toLowerCase()
+    if (icon.indexOf("head") !== -1) return Config.iconHeadphones
+    if (icon.indexOf("speaker") !== -1) return Config.iconSpeaker
+    return Config.iconBluetooth
+  }
+  function btDeviceStatus(device) {
+    if (device.connected) return I18n.tr("bt.connected")
+    if (device.state === BluetoothDeviceState.Connecting) return I18n.tr("bt.connecting")
+    if (device.pairing) return I18n.tr("bt.pairing")
+    if (device.paired || device.bonded) return I18n.tr("bt.paired")
+    return I18n.tr("bt.available")
+  }
+  function btToggleDevice(device) {
+    if (!device) return
+    if (device.connected) {
+      device.disconnect()
+    } else if (device.paired || device.bonded || device.trusted) {
+      device.connect()
+    } else {
+      device.trusted = true
+      device.pair()
+    }
+  }
+  function btToggleScanning() {
+    if (!root.btAdapter) return
+    root.btAdapter.discovering = !root.btAdapter.discovering
+  }
+  Timer {
+    id: wifiRefreshTimer
+    interval: 1800
+    repeat: false
+    onTriggered: root.wifiRefreshActive = false
   }
   function slotLabel(index) {
     let names = ["BG", "Red", "Grn", "Ylw", "Blu", "Mgn", "Cyn", "FG", "Dim", "Rd+", "Gr+", "Yl+", "Bl+", "Mg+", "Cy+", "FG+"]
@@ -1009,7 +1154,7 @@ Item {
           Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
           MouseArea { id: settingsBackMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.handleBack() }
         }
-        Text { text: I18n.tr("settings.title"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsBackButton.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter }
+        Text { text: root.sectionListVisible ? I18n.tr("settings.title") : I18n.tr(root.currentCategory.title); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsBackButton.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; elide: Text.ElideRight; width: parent.width - settingsBackButton.width - Config.scaledSize(20) }
       }
 
       Rectangle {
@@ -2865,25 +3010,88 @@ Item {
             height: visible ? implicitHeight : 0
             clip: true
             Text { text: I18n.tr("settings.sections.battery"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            Rectangle {
-              width: parent.width
-              implicitHeight: batterySettingsPanel.implicitHeight
-              radius: Config.overlayRadius
-              color: Config.popupGlassBg
-              border.color: Config.popupBorderColor
-              border.width: Config.popupBordersEnabled ? 1 : 0
-              Column {
-                width: parent.width - 32
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: Config.scaledSize(14)
-                anchors.bottomMargin: Config.scaledSize(14)
-                BatteryPanel {
-                  id: batterySettingsPanel
-                  width: parent.width
-                  active: root.activeSection === "battery"
+            SettingsRow {
+              icon: Config.iconBattery
+              title: I18n.tr("battery.title")
+              subtitle: BatteryService.stateText()
+              Rectangle {
+                width: Config.scaledSize(60)
+                height: Config.scaledSize(34)
+                radius: Config.popupRadiusPx(9)
+                color: Config.searchBg
+                border.color: Config.borderColor
+                border.width: 1
+                Text { anchors.centerIn: parent; text: BatteryService.percent() + "%"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
+              }
+            }
+            SettingsRow {
+              icon: Config.iconBattery
+              title: BatteryService.batteryCharging ? I18n.tr("battery.chargeLabel") : I18n.tr("battery.remainingLabel")
+              subtitle: BatteryService.timeText()
+              Rectangle {
+                width: Config.scaledSize(170)
+                height: Config.scaledSize(10)
+                radius: Config.popupPillRadius(height)
+                color: Config.meterTrack
+                clip: true
+                anchors.verticalCenter: parent.verticalCenter
+                Rectangle {
+                  width: Math.max(parent.height, Math.round(parent.width * BatteryService.percent() / 100))
+                  height: parent.height
+                  radius: parent.radius
+                  color: BatteryService.percent() <= 20 ? Config.dangerRed : (BatteryService.percent() <= 45 ? Config.warningAmber : Config.activeBorderColor)
+                  Behavior on width { NumberAnimation { duration: 240; easing.type: Easing.OutCubic } }
                 }
               }
+            }
+            SettingsRow {
+              icon: Config.iconBattery
+              title: "RATE"
+              Text { anchors.verticalCenter: parent.verticalCenter; text: BatteryService.batteryRate.toFixed(2) + " W"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
+            }
+            SettingsRow {
+              icon: Config.iconBattery
+              title: "CAPACITY"
+              Text { anchors.verticalCenter: parent.verticalCenter; text: BatteryService.batteryCapacity + "%"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
+            }
+            SettingsRow {
+              icon: Config.iconBattery
+              title: "STATUS"
+              Text { anchors.verticalCenter: parent.verticalCenter; text: BatteryService.acOnline ? "AC" : "BAT"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
+            }
+            SettingsRow {
+              icon: Config.iconBattery
+              title: I18n.tr("battery.voltage")
+              Text { anchors.verticalCenter: parent.verticalCenter; text: BatteryService.batteryVoltage > 0 ? BatteryService.batteryVoltage.toFixed(2) + I18n.tr("battery.voltageUnit") : "--"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
+            }
+            SettingsRow {
+              icon: Config.iconBattery
+              title: I18n.tr("battery.temperature")
+              Text { anchors.verticalCenter: parent.verticalCenter; text: BatteryService.batteryTemp !== 0 ? BatteryService.batteryTemp.toFixed(1) + "°C" : "--"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
+            }
+            SettingsRow {
+              icon: Config.iconBattery
+              title: I18n.tr("battery.cycles")
+              Text { anchors.verticalCenter: parent.verticalCenter; text: BatteryService.batteryCycles > 0 ? String(BatteryService.batteryCycles) : "--"; color: Config.textPrimary; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono }
+            }
+            Text { text: I18n.tr("battery.powerProfile"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconPowerSaver
+              title: I18n.tr("cc.powerSaver")
+              onClicked: BatteryService.setProfile("power-saver")
+              ToggleSwitch { z: 1; checked: BatteryService.powerProfile === "power-saver"; anchors.verticalCenter: parent.verticalCenter; onToggled: BatteryService.setProfile("power-saver") }
+            }
+            SettingsRow {
+              icon: Config.iconBalanced
+              title: I18n.tr("cc.balanced")
+              onClicked: BatteryService.setProfile("balanced")
+              ToggleSwitch { z: 1; checked: BatteryService.powerProfile === "balanced"; anchors.verticalCenter: parent.verticalCenter; onToggled: BatteryService.setProfile("balanced") }
+            }
+            SettingsRow {
+              icon: Config.iconPerformance
+              title: I18n.tr("cc.performance")
+              onClicked: BatteryService.setProfile("performance")
+              ToggleSwitch { z: 1; checked: BatteryService.powerProfile === "performance"; anchors.verticalCenter: parent.verticalCenter; onToggled: BatteryService.setProfile("performance") }
             }
           }
 
@@ -2894,25 +3102,40 @@ Item {
             height: visible ? implicitHeight : 0
             clip: true
             Text { text: I18n.tr("settings.sections.brightness"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            Rectangle {
-              width: parent.width
-              implicitHeight: brightnessSettingsPanel.implicitHeight
-              radius: Config.overlayRadius
-              color: Config.popupGlassBg
-              border.color: Config.popupBorderColor
-              border.width: Config.popupBordersEnabled ? 1 : 0
-              Column {
-                width: parent.width - 32
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: Config.scaledSize(14)
-                anchors.bottomMargin: Config.scaledSize(14)
-                BrightnessPanel {
-                  id: brightnessSettingsPanel
-                  width: parent.width
-                  active: root.activeSection === "brightness"
-                }
+            SettingsRow {
+              icon: BrightnessService.brightnessPercent >= 75 ? Config.iconBrightHigh : (BrightnessService.brightnessPercent >= 35 ? Config.iconBrightMedium : (BrightnessService.brightnessPercent > 0 ? Config.iconBrightLow : Config.iconBrightOff))
+              title: I18n.tr("brightness.title")
+              subtitle: BrightnessService.brightnessPercent + "%"
+              NumberSlider {
+                anchors.verticalCenter: parent.verticalCenter
+                value: BrightnessService.brightnessPercent
+                from: 0
+                to: 100
+                suffix: "%"
+                defaultValue: 100
+                onValueEdited: value => BrightnessService.applyBrightness(value)
               }
+            }
+            Text { text: I18n.tr("brightness.presets"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow {
+              icon: Config.iconBrightLow
+              title: "25%"
+              onClicked: BrightnessService.applyBrightness(25)
+            }
+            SettingsRow {
+              icon: Config.iconBrightMedium
+              title: "50%"
+              onClicked: BrightnessService.applyBrightness(50)
+            }
+            SettingsRow {
+              icon: Config.iconBrightHigh
+              title: "75%"
+              onClicked: BrightnessService.applyBrightness(75)
+            }
+            SettingsRow {
+              icon: Config.iconBrightHigh
+              title: "100%"
+              onClicked: BrightnessService.applyBrightness(100)
             }
           }
 
@@ -2923,25 +3146,39 @@ Item {
             height: visible ? implicitHeight : 0
             clip: true
             Text { text: I18n.tr("settings.sections.audio"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            Rectangle {
+            AudioSlider {
               width: parent.width
-              implicitHeight: audioSettingsPanel.implicitHeight
-              radius: Config.overlayRadius
-              color: Config.popupGlassBg
-              border.color: Config.popupBorderColor
-              border.width: Config.popupBordersEnabled ? 1 : 0
-              Column {
-                width: parent.width - 32
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: Config.scaledSize(14)
-                anchors.bottomMargin: Config.scaledSize(14)
-                AudioPanel {
-                  id: audioSettingsPanel
-                  width: parent.width
-                  active: root.activeSection === "audio"
-                }
-              }
+              title: I18n.tr("audio.speakers")
+              iconText: root.sinkMuted ? Config.iconVolMuted : Config.iconVolHigh
+              value: root.sinkVolume
+              muted: root.sinkMuted
+              onApplyValue: val => { if (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio) { Pipewire.defaultAudioSink.audio.volume = val / 100 } }
+              onToggleMute: if (Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio) Pipewire.defaultAudioSink.audio.muted = !Pipewire.defaultAudioSink.audio.muted
+            }
+            Text { text: I18n.tr("audio.mic"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            AudioSlider {
+              width: parent.width
+              title: I18n.tr("audio.mic")
+              iconText: Config.iconMic
+              value: root.sourceVolume
+              muted: root.sourceMuted
+              onApplyValue: val => { if (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.audio) Pipewire.defaultAudioSource.audio.volume = val / 100 }
+              onToggleMute: if (Pipewire.defaultAudioSource && Pipewire.defaultAudioSource.audio) Pipewire.defaultAudioSource.audio.muted = !Pipewire.defaultAudioSource.audio.muted
+            }
+            AudioDeviceList {
+              width: parent.width
+              model: root.audioSinks
+              currentDevice: root.sink
+              emptyText: I18n.tr("audio.noOutputs")
+              onSelectDevice: node => { if (node) Pipewire.preferredDefaultAudioSink = node }
+            }
+            Text { text: I18n.tr("audio.speakers"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            AudioDeviceList {
+              width: parent.width
+              model: root.audioSources
+              currentDevice: root.source
+              emptyText: I18n.tr("audio.noInputs")
+              onSelectDevice: node => { if (node) Pipewire.preferredDefaultAudioSource = node }
             }
           }
 
@@ -2952,23 +3189,207 @@ Item {
             height: visible ? implicitHeight : 0
             clip: true
             Text { text: I18n.tr("settings.sections.wifi"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            Rectangle {
+            SettingsRow {
+              icon: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected
+              title: "Wi-Fi"
+              subtitle: root.connectedNetworkName || (Networking.wifiEnabled ? I18n.tr("wifi.notConnected") : I18n.tr("wifi.off"))
+              Rectangle {
+                width: Config.scaledSize(28)
+                height: Config.scaledSize(26)
+                radius: Config.popupRadiusPx(8)
+                color: wifiRefreshMouse.containsMouse ? Config.activeHoverBg : "#00000000"
+                anchors.verticalCenter: parent.verticalCenter
+                Text {
+                  id: wifiRefreshIcon
+                  anchors.centerIn: parent
+                  text: Config.iconRefresh
+                  color: Config.textPrimary
+                  font.pixelSize: Config.fontSizeIconMedium
+                  font.family: Config.fontIcon
+                  RotationAnimation on rotation { running: root.wifiRefreshActive; from: 0; to: 360; duration: 700; loops: Animation.Infinite }
+                }
+                MouseArea {
+                  id: wifiRefreshMouse
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: root.wifiRefreshNetworks()
+                }
+              }
+              ToggleSwitch { z: 1; anchors.verticalCenter: parent.verticalCenter; checked: Networking.wifiEnabled; onToggled: Networking.wifiEnabled = !Networking.wifiEnabled }
+            }
+            Text { width: parent.width; visible: !root.wifiDevice; text: I18n.tr("wifi.adapterNotFound"); color: Config.textMuted; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter }
+            ListView {
+              id: settingsNetworkList
               width: parent.width
-              implicitHeight: wifiSettingsPanel.implicitHeight
-              radius: Config.overlayRadius
-              color: Config.popupGlassBg
-              border.color: Config.popupBorderColor
-              border.width: Config.popupBordersEnabled ? 1 : 0
-              Column {
-                width: parent.width - 32
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: Config.scaledSize(14)
-                anchors.bottomMargin: Config.scaledSize(14)
-                WifiPanel {
-                  id: wifiSettingsPanel
-                  width: parent.width
-                  active: root.activeSection === "wifi"
+              height: Math.min(310, contentHeight)
+              visible: !!root.wifiDevice
+              clip: true
+              spacing: Config.scaledSize(6)
+              model: root.sortedNetworks
+              section.property: "known"
+              section.criteria: ViewSection.FullString
+              section.delegate: Rectangle {
+                width: settingsNetworkList.width
+                height: Config.scaledSize(26)
+                color: "#00000000"
+                Text {
+                  text: section === "true" ? I18n.tr("wifi.known") : I18n.tr("wifi.other")
+                  color: Config.textMuted
+                  font.pixelSize: Config.fontSizeExtraSmall
+                  font.weight: Font.Medium
+                  font.family: Config.fontSans
+                  font.letterSpacing: 1.2
+                  anchors.verticalCenter: parent.verticalCenter
+                }
+              }
+              delegate: Rectangle {
+                required property var modelData
+                readonly property bool passwordOpen: root.wifiIsPending(modelData)
+                width: settingsNetworkList.width
+                height: passwordOpen ? 142 : 46
+                radius: Config.cardRadius
+                color: networkMouse.containsMouse || modelData.connected ? Config.hoverBg : "#00000000"
+                clip: true
+                Behavior on height { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+                onPasswordOpenChanged: if (passwordOpen) focusPasswordTimer.restart()
+                Timer {
+                  id: focusPasswordTimer
+                  interval: 120
+                  repeat: false
+                  onTriggered: settingsInlinePasswordInput.forceActiveFocus()
+                }
+                Row {
+                  id: settingsNetworkRow
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  anchors.top: parent.top
+                  height: Config.scaledSize(46)
+                  anchors.leftMargin: Config.scaledSize(12)
+                  anchors.rightMargin: Config.scaledSize(12)
+                  spacing: Config.scaledSize(10)
+                  Text {
+                    text: root.wifiSignalIcon(modelData)
+                    color: root.wifiSignalColor(modelData)
+                    font.pixelSize: Config.fontSizeIconMedium
+                    font.family: Config.fontIcon
+                    anchors.verticalCenter: parent.verticalCenter
+                  }
+                  Column {
+                    width: parent.width - 54
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Config.scaledSize(1)
+                    Text {
+                      text: modelData.name || I18n.tr("wifi.hidden")
+                      color: modelData.connected ? Config.textWhite : Config.textPrimary
+                      font.pixelSize: Config.fontSizeNormal
+                      font.family: Config.fontSans
+                      elide: Text.ElideRight
+                      width: parent.width
+                    }
+                    Text {
+                      text: root.wifiStatusText(modelData)
+                      color: Config.textMuted
+                      font.pixelSize: Config.fontSizeSmall
+                      font.family: Config.fontSans
+                    }
+                  }
+                  Text {
+                    width: 18
+                    text: root.wifiSecured(modelData) ? Config.iconLock : Config.iconUnlock
+                    color: root.wifiSecured(modelData) ? Config.textSubtle : Config.textMuted
+                    font.pixelSize: Config.fontSizeIconSmall
+                    font.family: Config.fontIcon
+                    horizontalAlignment: Text.AlignRight
+                    anchors.verticalCenter: parent.verticalCenter
+                  }
+                }
+                Column {
+                  id: settingsPasswordPanel
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  anchors.top: settingsNetworkRow.bottom
+                  anchors.leftMargin: Config.scaledSize(12)
+                  anchors.rightMargin: Config.scaledSize(12)
+                  spacing: Config.scaledSize(8)
+                  opacity: parent.passwordOpen ? 1 : 0
+                  visible: opacity > 0.01
+                  Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
+                  Rectangle { width: parent.width; height: 1; color: Config.separatorColor; opacity: 0.45 }
+                  Text {
+                    width: parent.width
+                    text: I18n.tr("wifi.passwordFor") + (modelData.name || "сети")
+                    color: Config.textSubtle
+                    font.pixelSize: Config.fontSizeSmall
+                    font.family: Config.fontSans
+                    elide: Text.ElideRight
+                  }
+                  Rectangle {
+                    width: parent.width
+                    height: Config.scaledSize(34)
+                    radius: Config.popupRadiusPx(10)
+                    color: Config.searchBg
+                    border.color: settingsInlinePasswordInput.activeFocus ? Config.activeBorderColor : Config.borderColor
+                    border.width: 1
+                    TextInput {
+                      id: settingsInlinePasswordInput
+                      anchors.fill: parent
+                      anchors.leftMargin: Config.scaledSize(12)
+                      anchors.rightMargin: Config.scaledSize(12)
+                      verticalAlignment: TextInput.AlignVCenter
+                      text: root.wifiPassword
+                      echoMode: TextInput.Password
+                      color: Config.textPrimary
+                      selectedTextColor: Config.textWhite
+                      selectionColor: Config.selectedBg
+                      font.pixelSize: Config.fontSizeNormal
+                      font.family: Config.fontSans
+                      clip: true
+                      onTextChanged: if (parent.passwordOpen) root.wifiPassword = text
+                      Keys.onReturnPressed: settingsConnectButton.clicked()
+                      Keys.onEscapePressed: root.wifiPendingNetwork = null
+                    }
+                  }
+                  Row {
+                    width: parent.width
+                    spacing: Config.scaledSize(8)
+                    Rectangle {
+                      width: (parent.width - 8) / 2
+                      height: Config.scaledSize(28)
+                      radius: Config.popupRadiusPx(8)
+                      color: settingsCancelMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+                      border.color: Config.borderColor
+                      border.width: 1
+                      Text { anchors.centerIn: parent; text: I18n.tr("wifi.cancel"); color: Config.textSubtle; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                      MouseArea { id: settingsCancelMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.wifiPendingNetwork = null }
+                    }
+                    Rectangle {
+                      id: settingsConnectButton
+                      width: (parent.width - 8) / 2
+                      height: Config.scaledSize(28)
+                      radius: Config.popupRadiusPx(8)
+                      color: settingsConnectMouse.containsMouse ? Config.activeHoverBg : Config.selectedBg
+                      border.color: Config.activeBorderColor
+                      border.width: 1
+                      signal clicked()
+                      onClicked: {
+                        if (root.wifiPendingNetwork) root.wifiPendingNetwork.connectWithPsk(root.wifiPassword)
+                        root.wifiPendingNetwork = null
+                      }
+                      Text { anchors.centerIn: parent; text: I18n.tr("wifi.connect"); color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
+                      MouseArea { id: settingsConnectMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: settingsConnectButton.clicked() }
+                    }
+                  }
+                }
+                MouseArea {
+                  id: networkMouse
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  anchors.top: parent.top
+                  height: settingsNetworkRow.height
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: root.wifiConnectNetwork(modelData)
                 }
               }
             }
@@ -2981,23 +3402,90 @@ Item {
             height: visible ? implicitHeight : 0
             clip: true
             Text { text: I18n.tr("settings.sections.bluetooth"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            Rectangle {
+            SettingsRow {
+              icon: Config.iconBluetooth
+              title: "Bluetooth"
+              subtitle: root.connectedBtDeviceName || (root.btAdapter && root.btAdapter.enabled ? I18n.tr("bt.notConnected") : I18n.tr("bt.off"))
+              Rectangle {
+                width: Config.scaledSize(28)
+                height: Config.scaledSize(26)
+                radius: Config.popupRadiusPx(8)
+                color: btRefreshMouse.containsMouse ? Config.activeHoverBg : (root.btAdapter && root.btAdapter.discovering ? Config.selectedBg : "#00000000")
+                border.color: root.btAdapter && root.btAdapter.discovering ? Config.activeBorderColor : "#00000000"
+                border.width: 1
+                anchors.verticalCenter: parent.verticalCenter
+                Text {
+                  id: btRefreshIcon
+                  anchors.centerIn: parent
+                  text: Config.iconRefresh
+                  color: root.btAdapter && root.btAdapter.discovering ? Config.textWhite : Config.textPrimary
+                  font.pixelSize: Config.fontSizeIconMedium
+                  font.family: Config.fontIcon
+                  RotationAnimation on rotation { running: root.btAdapter && root.btAdapter.discovering; from: 0; to: 360; duration: 700; loops: Animation.Infinite }
+                }
+                MouseArea {
+                  id: btRefreshMouse
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: root.btToggleScanning()
+                }
+              }
+              ToggleSwitch { z: 1; anchors.verticalCenter: parent.verticalCenter; checked: root.btAdapter && root.btAdapter.enabled; onToggled: if (root.btAdapter) root.btAdapter.enabled = !root.btAdapter.enabled }
+            }
+            Text { width: parent.width; visible: !root.btAdapter; text: I18n.tr("bt.adapterNotFound"); color: Config.textMuted; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter }
+            ListView {
+              id: settingsBtDeviceList
               width: parent.width
-              implicitHeight: bluetoothSettingsPanel.implicitHeight
-              radius: Config.overlayRadius
-              color: Config.popupGlassBg
-              border.color: Config.popupBorderColor
-              border.width: Config.popupBordersEnabled ? 1 : 0
-              Column {
-                width: parent.width - 32
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: Config.scaledSize(14)
-                anchors.bottomMargin: Config.scaledSize(14)
-                BluetoothPanel {
-                  id: bluetoothSettingsPanel
-                  width: parent.width
-                  active: root.activeSection === "bluetooth"
+              height: Math.min(250, contentHeight)
+              visible: !!root.btAdapter
+              clip: true
+              spacing: Config.scaledSize(6)
+              model: root.bluetoothDevices
+              delegate: Rectangle {
+                required property var modelData
+                width: settingsBtDeviceList.width
+                height: Config.scaledSize(46)
+                radius: Config.cardRadius
+                color: btDeviceMouse.containsMouse || modelData.connected ? Config.hoverBg : "#00000000"
+                Row {
+                  anchors.fill: parent
+                  anchors.leftMargin: Config.scaledSize(12)
+                  anchors.rightMargin: Config.scaledSize(12)
+                  spacing: Config.scaledSize(10)
+                  Text {
+                    text: root.btDeviceIcon(modelData)
+                    color: modelData.connected ? Config.textWhite : Config.textMuted
+                    font.pixelSize: Config.fontSizeIconMedium
+                    font.family: Config.fontIcon
+                    anchors.verticalCenter: parent.verticalCenter
+                  }
+                  Column {
+                    width: parent.width - 40
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Config.scaledSize(1)
+                    Text {
+                      text: root.btDeviceName(modelData)
+                      color: modelData.connected ? Config.textWhite : Config.textPrimary
+                      font.pixelSize: Config.fontSizeNormal
+                      font.family: Config.fontSans
+                      elide: Text.ElideRight
+                      width: parent.width
+                    }
+                    Text {
+                      text: root.btDeviceStatus(modelData)
+                      color: Config.textMuted
+                      font.pixelSize: Config.fontSizeSmall
+                      font.family: Config.fontSans
+                    }
+                  }
+                }
+                MouseArea {
+                  id: btDeviceMouse
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: root.btToggleDevice(modelData)
                 }
               }
             }

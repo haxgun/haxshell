@@ -176,7 +176,8 @@
     "voltageUnit": " В"
   },
   "brightness": {
-    "title": "Яркость экрана"
+    "title": "Яркость экрана",
+    "presets": "Пресеты"
   },
   "audio": {
     "title": "Звук",
