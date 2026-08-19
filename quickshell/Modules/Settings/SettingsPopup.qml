@@ -1370,7 +1370,6 @@ Item {
               icon: Config.iconScale
               title: I18n.tr("settings.general.uiScale")
               subtitle: Math.round(Config.uiScale * 100) + "%"
-              last: true
               Row {
                 width: Config.scaledSize(194)
                 spacing: Config.scaledSize(4)
@@ -2472,7 +2471,6 @@ Item {
               icon: Config.iconPower
               title: I18n.tr("bar.power")
               subtitle: Config.barPowerEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarN")
-              last: true
               onClicked: root.setBoolSetting("barPowerEnabled", !Config.barPowerEnabled)
               ToggleSwitch { z: 1; checked: Config.barPowerEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barPowerEnabled", !Config.barPowerEnabled) }
             }
@@ -2487,7 +2485,6 @@ Item {
               icon: Config.iconWorkspace
               title: I18n.tr("bar.workspacesAllScreens")
               subtitle: Config.showWorkspacesOnAllMonitors ? I18n.tr("common.shownPlural") : I18n.tr("bar.ownScreens")
-              last: true
               onClicked: root.setBoolSetting("showWorkspacesOnAllMonitors", !Config.showWorkspacesOnAllMonitors)
               ToggleSwitch { z: 1; checked: Config.showWorkspacesOnAllMonitors; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showWorkspacesOnAllMonitors", !Config.showWorkspacesOnAllMonitors) }
             }
@@ -2495,7 +2492,6 @@ Item {
               icon: Config.iconControlCenter
               title: I18n.tr("bar.workspaceIndicator")
               subtitle: Config.workspaceIndicatorStyle === "dot" ? I18n.tr("settings.popups.dot") : (Config.workspaceIndicatorStyle === "border" ? I18n.tr("settings.popups.border") : I18n.tr("settings.popups.highlight"))
-              last: true
               Row {
                 width: Config.scaledSize(194)
                 height: Config.scaledSize(30)
@@ -2666,7 +2662,6 @@ Item {
               icon: Config.iconNotifications
               title: I18n.tr("notifications.maxToasts")
               subtitle: I18n.tr("notifications.visibleAtOnce")
-              last: true
               NumberSlider { value: Config.notificationMaxVisible; from: 1; to: 10; defaultValue: 5; suffix: ""; onValueEdited: root.applyNotificationMaxVisible(value) }
             }
           }

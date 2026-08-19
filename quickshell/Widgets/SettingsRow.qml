@@ -8,7 +8,6 @@ Item {
   property string icon: ""
   property string title: ""
   property string subtitle: ""
-  property bool last: false
   property bool highlighted: false
   readonly property bool hovered: rowMouse.containsMouse
   signal clicked()
@@ -79,6 +78,4 @@ Item {
     readonly property real controlHeight: controlSlot.children.length > 0 ? Math.max(0, Math.max(controlSlot.children[controlSlot.children.length - 1].height, controlSlot.children[controlSlot.children.length - 1].implicitHeight)) : 0
     height: controlHeight
   }
-
-  Rectangle { anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom; height: 1; color: Config.separatorColor; opacity: 0.45; visible: !root.last }
 }
