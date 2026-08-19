@@ -61,7 +61,6 @@ Item {
   property bool wifiRefreshActive: false
   property var wifiPendingNetwork: null
   property string wifiPassword: ""
-  readonly property real settingsContentHeight: sectionContent.implicitHeight + Config.scaledSize(82)
   readonly property var wifiDevice: {
     let list = Networking.devices && Networking.devices.values ? Networking.devices.values : []
     for (let i = 0; i < list.length; i++) {
