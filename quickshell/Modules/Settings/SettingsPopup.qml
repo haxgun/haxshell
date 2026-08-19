@@ -3209,32 +3209,33 @@ Item {
               icon: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected
               title: "Wi-Fi"
               subtitle: root.connectedNetworkName || (Networking.wifiEnabled ? I18n.tr("wifi.notConnected") : I18n.tr("wifi.off"))
-              Rectangle {
-                width: Config.scaledSize(28)
-                height: Config.scaledSize(26)
-                radius: Config.popupRadiusPx(8)
-                color: wifiRefreshMouse.containsMouse ? Config.activeHoverBg : "#00000000"
-                anchors.right: wifiToggle.left
-                anchors.rightMargin: Config.scaledSize(6)
-                anchors.verticalCenter: parent.verticalCenter
-                Text {
-                  id: wifiRefreshIcon
-                  anchors.centerIn: parent
-                  text: Config.iconRefresh
-                  color: Config.textPrimary
-                  font.pixelSize: Config.fontSizeIconMedium
-                  font.family: Config.fontIcon
-                  RotationAnimation on rotation { running: root.wifiRefreshActive; from: 0; to: 360; duration: 700; loops: Animation.Infinite }
+              Row {
+                spacing: Config.scaledSize(6)
+                Rectangle {
+                  width: Config.scaledSize(28)
+                  height: Config.scaledSize(26)
+                  radius: Config.popupRadiusPx(8)
+                  color: wifiRefreshMouse.containsMouse ? Config.activeHoverBg : "#00000000"
+                  anchors.verticalCenter: parent.verticalCenter
+                  Text {
+                    id: wifiRefreshIcon
+                    anchors.centerIn: parent
+                    text: Config.iconRefresh
+                    color: Config.textPrimary
+                    font.pixelSize: Config.fontSizeIconMedium
+                    font.family: Config.fontIcon
+                    RotationAnimation on rotation { running: root.wifiRefreshActive; from: 0; to: 360; duration: 700; loops: Animation.Infinite }
+                  }
+                  MouseArea {
+                    id: wifiRefreshMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.wifiRefreshNetworks()
+                  }
                 }
-                MouseArea {
-                  id: wifiRefreshMouse
-                  anchors.fill: parent
-                  hoverEnabled: true
-                  cursorShape: Qt.PointingHandCursor
-                  onClicked: root.wifiRefreshNetworks()
-                }
+                ToggleSwitch { id: wifiToggle; z: 1; anchors.verticalCenter: parent.verticalCenter; checked: Networking.wifiEnabled; onToggled: Networking.wifiEnabled = !Networking.wifiEnabled }
               }
-              ToggleSwitch { id: wifiToggle; z: 1; anchors.verticalCenter: parent.verticalCenter; checked: Networking.wifiEnabled; onToggled: Networking.wifiEnabled = !Networking.wifiEnabled }
             }
             Text { width: parent.width; visible: !root.wifiDevice; text: I18n.tr("wifi.adapterNotFound"); color: Config.textMuted; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter }
             ListView {
@@ -3424,34 +3425,35 @@ Item {
               icon: Config.iconBluetooth
               title: "Bluetooth"
               subtitle: root.connectedBtDeviceName || (root.btAdapter && root.btAdapter.enabled ? I18n.tr("bt.notConnected") : I18n.tr("bt.off"))
-              Rectangle {
-                width: Config.scaledSize(28)
-                height: Config.scaledSize(26)
-                radius: Config.popupRadiusPx(8)
-                color: btRefreshMouse.containsMouse ? Config.activeHoverBg : (root.btAdapter && root.btAdapter.discovering ? Config.selectedBg : "#00000000")
-                border.color: root.btAdapter && root.btAdapter.discovering ? Config.activeBorderColor : "#00000000"
-                border.width: 1
-                anchors.right: btToggle.left
-                anchors.rightMargin: Config.scaledSize(6)
-                anchors.verticalCenter: parent.verticalCenter
-                Text {
-                  id: btRefreshIcon
-                  anchors.centerIn: parent
-                  text: Config.iconRefresh
-                  color: root.btAdapter && root.btAdapter.discovering ? Config.textWhite : Config.textPrimary
-                  font.pixelSize: Config.fontSizeIconMedium
-                  font.family: Config.fontIcon
-                  RotationAnimation on rotation { running: root.btAdapter && root.btAdapter.discovering; from: 0; to: 360; duration: 700; loops: Animation.Infinite }
+              Row {
+                spacing: Config.scaledSize(6)
+                Rectangle {
+                  width: Config.scaledSize(28)
+                  height: Config.scaledSize(26)
+                  radius: Config.popupRadiusPx(8)
+                  color: btRefreshMouse.containsMouse ? Config.activeHoverBg : (root.btAdapter && root.btAdapter.discovering ? Config.selectedBg : "#00000000")
+                  border.color: root.btAdapter && root.btAdapter.discovering ? Config.activeBorderColor : "#00000000"
+                  border.width: 1
+                  anchors.verticalCenter: parent.verticalCenter
+                  Text {
+                    id: btRefreshIcon
+                    anchors.centerIn: parent
+                    text: Config.iconRefresh
+                    color: root.btAdapter && root.btAdapter.discovering ? Config.textWhite : Config.textPrimary
+                    font.pixelSize: Config.fontSizeIconMedium
+                    font.family: Config.fontIcon
+                    RotationAnimation on rotation { running: root.btAdapter && root.btAdapter.discovering; from: 0; to: 360; duration: 700; loops: Animation.Infinite }
+                  }
+                  MouseArea {
+                    id: btRefreshMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.btToggleScanning()
+                  }
                 }
-                MouseArea {
-                  id: btRefreshMouse
-                  anchors.fill: parent
-                  hoverEnabled: true
-                  cursorShape: Qt.PointingHandCursor
-                  onClicked: root.btToggleScanning()
-                }
+                ToggleSwitch { id: btToggle; z: 1; anchors.verticalCenter: parent.verticalCenter; checked: root.btAdapter && root.btAdapter.enabled; onToggled: if (root.btAdapter) root.btAdapter.enabled = !root.btAdapter.enabled }
               }
-              ToggleSwitch { id: btToggle; z: 1; anchors.verticalCenter: parent.verticalCenter; checked: root.btAdapter && root.btAdapter.enabled; onToggled: if (root.btAdapter) root.btAdapter.enabled = !root.btAdapter.enabled }
             }
             Text { width: parent.width; visible: !root.btAdapter; text: I18n.tr("bt.adapterNotFound"); color: Config.textMuted; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter }
             ListView {
