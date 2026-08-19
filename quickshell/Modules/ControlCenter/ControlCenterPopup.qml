@@ -278,6 +278,7 @@ PanelWindow {
     root.activeSection = section
     root.isOpen = true
     settingsEmbedded.openSectionList()
+    settingsEmbedded.sectionListVisible = false
     settingsEmbedded.selectSection(section)
   }
   function closeSettings() {
