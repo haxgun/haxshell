@@ -1046,7 +1046,7 @@ Item {
             Rectangle {
               required property var modelData
               width: parent.width
-              height: root.hasSearchText ? Config.scaledSize(46) : Config.scaledSize(46)
+              height: root.hasSearchText ? Config.scaledSize(46) : Config.scaledSize(64)
               radius: Config.cardRadius
               color: listRowMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
               border.color: Config.subtleBorder
@@ -1059,9 +1059,10 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: Config.scaledSize(34)
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: Config.scaledSize(1)
+                spacing: Config.scaledSize(2)
                 Text { width: parent.width; text: I18n.tr(parent.parent.modelData.title); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-                Text { width: parent.width; visible: parent.parent.modelData.section !== undefined; text: root.sectionBreadcrumb(parent.parent.modelData.section); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+                Text { width: parent.width; visible: !root.hasSearchText; text: I18n.tr(parent.parent.modelData.description || ""); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+                Text { width: parent.width; visible: root.hasSearchText; text: root.sectionBreadcrumb(parent.parent.modelData.section); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
               }
               Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(12); anchors.verticalCenter: parent.verticalCenter; text: Config.iconChevronRight; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
               MouseArea {
@@ -1137,17 +1138,6 @@ Item {
                 MouseArea { id: sectionTabMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSection(parent.modelData.key) }
               }
             }
-          }
-
-          Text {
-            width: parent.width
-            text: I18n.tr(root.currentCategory.description || "")
-            color: Config.textMuted
-            font.pixelSize: Config.fontSizeSmall
-            font.family: Config.fontSans
-            wrapMode: Text.WordWrap
-            lineHeight: 1.2
-            visible: text.length > 0
           }
 
           Column {
