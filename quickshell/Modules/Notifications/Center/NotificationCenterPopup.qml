@@ -144,6 +144,7 @@ PanelWindow {
         clip: true
         spacing: Config.scaledSize(8)
         model: panel.centerModel
+        verticalLayoutDirection: Config.popupsAtBottom ? ListView.BottomToTop : ListView.TopToBottom
         delegate: NotificationCard {}
         add: Transition { NumberAnimation { properties: "opacity"; from: 0; to: 1; duration: Config.reduceMotion ? 0 : 160; easing.type: Easing.OutCubic } }
         remove: Transition { NumberAnimation { properties: "opacity"; to: 0; duration: Config.reduceMotion ? 0 : 120; easing.type: Easing.InCubic } }

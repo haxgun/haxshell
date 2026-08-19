@@ -131,7 +131,7 @@ Singleton {
       urgency: notification.urgency || 0,
       timestamp: Date.now()
     }
-    historyList = [item].concat(historyList).slice(0, historyLimit)
+    historyList = historyList.concat(item).slice(-historyLimit)
   }
 
   function invokeDefault(notification) {
