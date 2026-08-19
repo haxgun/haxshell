@@ -129,28 +129,28 @@ PanelWindow {
   Process {
     id: brightnessProc
     command: [root.natonctl, "brightness", "get", root.activeBrightnessBus, Config.brightnessSleepMultiplier]
-    running: true
+    running: root.isOpen
     stdout: SplitParser { onRead: data => root.applyBrightnessState(data) }
   }
 
   Process {
     id: audioProc
     command: [root.natonctl, "audio", "get"]
-    running: true
+    running: root.isOpen
     stdout: SplitParser { onRead: data => root.applyAudioState(data) }
   }
 
   Process {
     id: batteryProc
     command: [root.natonctl, "battery"]
-    running: true
+    running: root.isOpen
     stdout: SplitParser { onRead: data => root.applyBatteryState(data) }
   }
 
   Process {
     id: caffeineProc
     command: [root.natonctl, "caffeine", "state"]
-    running: true
+    running: root.isOpen
     stdout: SplitParser { onRead: data => root.applyCaffeineState(data) }
   }
 
@@ -165,7 +165,7 @@ PanelWindow {
   Process {
     id: nightLightDetectProc
     command: ["sh", "-lc", "command -v wlsunset >/dev/null && printf wlsunset"]
-    running: true
+    running: root.isOpen
     stdout: SplitParser { onRead: data => root.nightLightBackend = data.trim() }
   }
 
@@ -232,12 +232,6 @@ PanelWindow {
     if (action === "set-sink-mute") sinkMuted = value.toString() === "1"
     run([natonctl, "audio", action, value.toString()])
   }
-  function openAudioPopup() {
-    if (!audioPopup) return
-    audioPopup.rightMargin = rightMargin
-    audioPopup.isOpen = true
-    isOpen = false
-  }
   function openPopup(popup) {
     if (!popup) return
     popup.rightMargin = rightMargin
@@ -250,10 +244,6 @@ PanelWindow {
   }
   function closeSettings() {
     root.settingsView = false
-  }
-  function back() {
-    if (settingsView) root.settingsView = false
-    else root.isOpen = false
   }
   function toggleCaffeine() { restart(caffeineProc, [natonctl, "caffeine", "toggle"]) }
   function cyclePowerProfile() {
@@ -294,7 +284,6 @@ PanelWindow {
   }
   function wifiSubtitle() { return !Networking.wifiEnabled ? I18n.tr("cc.off") : (connectedNetworkName || I18n.tr("cc.notConnected")) }
   function bluetoothSubtitle() { return !adapter || !adapter.enabled ? I18n.tr("cc.off") : (connectedDeviceName || I18n.tr("cc.on")) }
-  function batterySubtitle() { return (batteryCharging ? I18n.tr("cc.charging") : (acOnline ? I18n.tr("cc.onAc") : I18n.tr("cc.battery"))) + " · " + profileName(powerProfile) }
   function profileName(profile) { return profile === "power-saver" ? I18n.tr("cc.powerSaver") : (profile === "performance" ? I18n.tr("cc.performance") : I18n.tr("cc.balanced")) }
   function profileIcon(profile) { return profile === "power-saver" ? Config.iconPowerSaver : (profile === "performance" ? Config.iconPerformance : Config.iconBalanced) }
   function volumeIcon() { return sinkMuted ? Config.iconVolMuted : (sinkVolume >= 70 ? Config.iconVolHigh : (sinkVolume >= 30 ? Config.iconVolMedium : Config.iconVolLow)) }

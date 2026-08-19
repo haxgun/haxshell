@@ -11,7 +11,7 @@ Singleton {
   readonly property int limit: 50
   Process { id: pasteProc; stdout: SplitParser { onRead: data => root.add(data) } }
   Process { id: copyProc }
-  Timer { interval: 1000; running: true; repeat: true; triggeredOnStart: true; onTriggered: root.readClipboard() }
+  Timer { interval: 5000; running: true; repeat: true; triggeredOnStart: true; onTriggered: root.readClipboard() }
   function readClipboard() { pasteProc.running = false; pasteProc.command = ["wl-paste", "--no-newline"]; pasteProc.running = true }
   function add(text) {
     let value = (text || "").trim()

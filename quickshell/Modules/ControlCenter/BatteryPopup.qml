@@ -61,13 +61,13 @@ PanelWindow {
   Process {
     id: batteryProc
     command: [root.natonctl, "battery"]
-    running: true
+    running: root.isOpen
     stdout: SplitParser { onRead: data => root.applyBatteryState(data) }
   }
 
   Timer {
     interval: 10000
-    running: true
+    running: root.isOpen
     repeat: true
     onTriggered: root.refresh()
   }

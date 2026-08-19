@@ -75,7 +75,7 @@ Rectangle {
 
       SequentialAnimation {
         id: trackMarquee
-        running: trackText.implicitWidth > trackViewport.width
+        running: mediaMouse.containsMouse && trackText.implicitWidth > trackViewport.width
         loops: Animation.Infinite
         PauseAnimation { duration: 1200 }
         NumberAnimation { target: trackText; property: "x"; from: 0; to: -(trackText.implicitWidth - trackViewport.width); duration: Math.max(1800, (trackText.implicitWidth - trackViewport.width) * 28); easing.type: Easing.InOutSine }

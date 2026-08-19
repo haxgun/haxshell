@@ -12,6 +12,14 @@ Rectangle {
   property var keyboardLayoutPopup: null
   property var closeFlyouts: null
   property var tooltip: null
+
+  Connections {
+    target: keyboardLayoutPopup
+    function onLayoutChanged(state) {
+      root.layout = state.layout || "??"
+      root.layoutName = state.name || "Unknown"
+    }
+  }
   implicitWidth: keyRow.implicitWidth + 12
   implicitHeight: Config.buttonHeight
   radius: Config.buttonRadius
@@ -28,7 +36,7 @@ Rectangle {
   Process {
     id: layoutProc
     command: [Config.natonctl, "keyboard"]
-    running: true
+    running: false
 
     stdout: SplitParser {
       onRead: data => root.applyState(data)
@@ -36,11 +44,13 @@ Rectangle {
   }
 
   Timer {
-    interval: 1000
+    interval: 10000
     running: true
     repeat: true
-    onTriggered: layoutProc.running = true
+    onTriggered: if (!layoutProc.running) layoutProc.running = true
   }
+
+  Component.onCompleted: layoutProc.running = true
 
   Row {
     id: keyRow

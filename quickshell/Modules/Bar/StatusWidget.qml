@@ -163,11 +163,15 @@ Rectangle {
     return Config.isLightTheme ? "#ffffff" : "#020617"
   }
 
+  // System resource polling only runs while its bar indicators are visible.
+  readonly property bool sysPollingEnabled: Config.barSystemEnabled && (Config.barSysCpuEnabled || Config.barSysCpuTempEnabled || Config.barSysGpuEnabled || Config.barSysGpuTempEnabled || Config.barSysRamEnabled || Config.barSysNetEnabled)
+  readonly property bool netPollingEnabled: Config.barNetworkEnabled || Config.barVpnEnabled
+
   // Execute external system monitor python script
   Process {
     id: fetchSysProc
     command: [Config.natonctl, "sys"]
-    running: true
+    running: false
 
     stdout: SplitParser {
       onRead: data => {
@@ -212,9 +216,13 @@ Rectangle {
   // Periodic System Resource Query Timer
   Timer {
     interval: Config.sysCheckIntervalMs
-    running: true
+    running: root.sysPollingEnabled
     repeat: true
     onTriggered: if (!fetchSysProc.running) fetchSysProc.running = true
+  }
+
+  onSysPollingEnabledChanged: {
+    if (sysPollingEnabled) fetchSysProc.running = true
   }
 
   SystemClock {
@@ -226,7 +234,7 @@ Rectangle {
   Process {
     id: fetchNetProc
     command: [Config.natonctl, "net"]
-    running: true
+    running: false
 
     stdout: SplitParser {
       onRead: data => {
@@ -243,7 +251,7 @@ Rectangle {
   Process {
     id: fetchVpnProc
     command: ["sh", "-c", "nmcli -t -f TYPE,STATE connection show --active 2>/dev/null | grep -Eq '^(vpn|tun|wireguard|ip-tunnel):activated$' && echo yes || echo no"]
-    running: true
+    running: false
 
     stdout: SplitParser {
       onRead: data => root.vpnConnected = data.trim() === "yes"
@@ -254,7 +262,7 @@ Rectangle {
   Process {
     id: nmMonitorProc
     command: ["nmcli", "monitor"]
-    running: true
+    running: root.netPollingEnabled
 
     stdout: SplitParser {
       onRead: data => {
@@ -267,11 +275,21 @@ Rectangle {
   // Periodic Network Status Query Timer
   Timer {
     interval: Config.netCheckIntervalMs
-    running: true
+    running: root.netPollingEnabled
     repeat: true
     onTriggered: {
       if (!fetchNetProc.running) fetchNetProc.running = true
       if (!fetchVpnProc.running) fetchVpnProc.running = true
+    }
+  }
+
+  onNetPollingEnabledChanged: {
+    if (netPollingEnabled) {
+      if (!fetchNetProc.running) fetchNetProc.running = true
+      if (!fetchVpnProc.running) fetchVpnProc.running = true
+      nmMonitorProc.running = true
+    } else {
+      nmMonitorProc.running = false
     }
   }
 

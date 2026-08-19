@@ -147,7 +147,7 @@ Singleton {
   Process { id: niriActionProc }
 
   Timer {
-    interval: 500
+    interval: 1000
     running: root.backend === "niri" && !root.niriPluginReady
     repeat: true
     triggeredOnStart: true
