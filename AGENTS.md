@@ -43,10 +43,11 @@ Verify:
 ```bash
 git diff --check
 cd core && go build ./...
+quickshell --path quickshell -d   # must reach "Configuration Loaded" with zero WARN/ERROR
 ```
 
 There is no test suite; verification is the Go build, `git diff --check`, and a
-manual `quickshell` run.
+manual `quickshell` run (see "Testing and verification" below).
 
 ## Conventions
 
@@ -115,9 +116,33 @@ name collision):
 
 ### Docs
 
-- `README.md` and `README.ru.md` must stay in sync; update both together.
+- `README.md`, `README.ru.md`, `README.zh.md`, and `README.de.md` must stay in
+  sync; update all four together.
 - `DESIGN_PHILOSOPHY.md` documents design rationale (aesthetics and the "why"),
   not commands or structure.
+
+### Testing and verification
+
+Do NOT declare a task done until the shell actually runs. "It compiles" or
+"qmllint is clean" is not enough — Quickshell can fail at runtime with
+TypeErrors, binding loops, and missing-import crashes that no linter catches.
+
+- **Launch check is mandatory before handing a task back.** Start the shell
+  with `quickshell --path quickshell -d` under a real compositor session and
+  confirm it reaches `Configuration Loaded` with zero `ERROR` and zero
+  `WARN` lines in the log. If the environment has no running compositor, say
+  so explicitly and give the user the exact launch command to verify.
+- **Leave the log clean.** Warnings such as "Binding loop detected for
+  property" or "Property X is not a function" are bugs, not noise — track down
+  and fix them rather than shipping them.
+- Do not suppress warnings by silencing output or adding `console.log`
+  debug code; remove debug code before finishing.
+- A task is only "done" when:
+  1. `git diff --check` passes,
+  2. `cd core && go build ./...` passes,
+  3. every changed `.qml` file passes `qmllint`, and
+  4. `quickshell --path quickshell` starts with a clean log and no runtime
+     errors.
 
 ## Agent tooling
 
