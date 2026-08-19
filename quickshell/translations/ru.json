@@ -207,7 +207,17 @@
       "advanced": "Дополнительно",
       "advancedDesc": "Питание и подсветка.",
       "about": "О программе",
-      "aboutDesc": "Версия и компоненты."
+      "aboutDesc": "Версия и компоненты.",
+      "battery": "Батарея",
+      "batteryDesc": "Заряд и профиль питания",
+      "brightness": "Яркость",
+      "brightnessDesc": "Подсветка экрана",
+      "audio": "Звук",
+      "audioDesc": "Динамики и микрофон",
+      "wifi": "Wi-Fi",
+      "wifiDesc": "Беспроводные сети",
+      "bluetooth": "Bluetooth",
+      "bluetoothDesc": "Беспроводные устройства"
     },
     "pages": {
       "general": "Интерфейс",
@@ -220,7 +230,12 @@
       "osd": "OSD",
       "systemPage": "Сочетания клавиш",
       "advancedPage": "Яркость",
-      "aboutPage": "О программе"
+      "aboutPage": "О программе",
+      "batteryPage": "Батарея",
+      "brightnessPage": "Яркость",
+      "audioPage": "Звук",
+      "wifiPage": "Wi-Fi",
+      "bluetoothPage": "Bluetooth"
     },
     "fontPreview": "19:37 пн, июл. 20  ·  Быстрая лиса 123",
     "general": {

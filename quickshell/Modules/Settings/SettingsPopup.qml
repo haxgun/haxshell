@@ -8,6 +8,7 @@ import Quickshell.Widgets
 import "../../Widgets"
 import "../../Common"
 import "../../Services"
+import "../ControlCenter"
 
 Item {
   id: root
@@ -82,6 +83,11 @@ Item {
     { key: "notifications", icon: Config.iconNotifications, title: "settings.sections.notifications", description: "settings.sections.notificationsDesc", pages: [{ key: "notifications", title: "notifications.title" }, { key: "osd", title: "settings.pages.osd" }] },
     { key: "system", icon: Config.iconKeyboard, title: "settings.sections.system", description: "settings.sections.systemDesc", pages: [{ key: "system", title: "settings.pages.systemPage" }] },
     { key: "advanced", icon: Config.iconMonitor, title: "settings.sections.advanced", description: "settings.sections.advancedDesc", pages: [{ key: "advanced", title: "settings.pages.advancedPage" }] },
+    { key: "battery", icon: Config.iconBattery, title: "settings.sections.battery", description: "settings.sections.batteryDesc", pages: [{ key: "battery", title: "settings.pages.battery" }] },
+    { key: "brightness", icon: Config.iconBrightHigh, title: "settings.sections.brightness", description: "settings.sections.brightnessDesc", pages: [{ key: "brightness", title: "settings.pages.brightness" }] },
+    { key: "audio", icon: Config.iconVolHigh, title: "settings.sections.audio", description: "settings.sections.audioDesc", pages: [{ key: "audio", title: "settings.pages.audio" }] },
+    { key: "wifi", icon: Config.iconWifiConnected, title: "settings.sections.wifi", description: "settings.sections.wifiDesc", pages: [{ key: "wifi", title: "settings.pages.wifi" }] },
+    { key: "bluetooth", icon: Config.iconBluetooth, title: "settings.sections.bluetooth", description: "settings.sections.bluetoothDesc", pages: [{ key: "bluetooth", title: "settings.pages.bluetooth" }] },
     { key: "about", icon: Config.iconInfo, title: "settings.sections.about", description: "settings.sections.aboutDesc", pages: [{ key: "about", title: "settings.pages.aboutPage" }] }
   ]
   readonly property var searchableSettings: [
@@ -140,7 +146,12 @@ Item {
     { section: "system", title: "settings.system.prevSection" }, { section: "system", title: "settings.system.nextTab" },
     { section: "system", title: "settings.system.prevTab" },
     { section: "advanced", title: "settings.pages.advancedPage" }, { section: "advanced", title: "settings.system.monitorBus" },
-    { section: "advanced", title: "settings.system.ddcDelay" }
+    { section: "advanced", title: "settings.system.ddcDelay" },
+    { section: "battery", title: "settings.pages.battery" }, { section: "battery", title: "battery.title" },
+    { section: "brightness", title: "settings.pages.brightness" }, { section: "brightness", title: "brightness.title" },
+    { section: "audio", title: "settings.pages.audio" }, { section: "audio", title: "audio.title" },
+    { section: "wifi", title: "settings.pages.wifi" }, { section: "wifi", title: "wifi.title" },
+    { section: "bluetooth", title: "settings.pages.bluetooth" }, { section: "bluetooth", title: "bt.title" }
   ]
   readonly property bool hasSearchText: settingsSearch.trim().length > 0
   readonly property var searchResults: {
@@ -2842,6 +2853,151 @@ Item {
                   inputMethodHints: Qt.ImhFormattedNumbersOnly
                   onEditingFinished: root.applyBrightnessSleepMultiplier(text)
                   Keys.onEscapePressed: { text = Config.brightnessSleepMultiplier; focus = false }
+                }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Config.scaledSize(10)
+            visible: root.activeSection === "battery"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("settings.sections.battery"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Rectangle {
+              width: parent.width
+              implicitHeight: batterySettingsPanel.implicitHeight
+              radius: Config.overlayRadius
+              color: Config.popupGlassBg
+              border.color: Config.popupBorderColor
+              border.width: Config.popupBordersEnabled ? 1 : 0
+              Column {
+                width: parent.width - 32
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: Config.scaledSize(14)
+                anchors.bottomMargin: Config.scaledSize(14)
+                BatteryPanel {
+                  id: batterySettingsPanel
+                  width: parent.width
+                  active: root.activeSection === "battery"
+                }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Config.scaledSize(10)
+            visible: root.activeSection === "brightness"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("settings.sections.brightness"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Rectangle {
+              width: parent.width
+              implicitHeight: brightnessSettingsPanel.implicitHeight
+              radius: Config.overlayRadius
+              color: Config.popupGlassBg
+              border.color: Config.popupBorderColor
+              border.width: Config.popupBordersEnabled ? 1 : 0
+              Column {
+                width: parent.width - 32
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: Config.scaledSize(14)
+                anchors.bottomMargin: Config.scaledSize(14)
+                BrightnessPanel {
+                  id: brightnessSettingsPanel
+                  width: parent.width
+                  active: root.activeSection === "brightness"
+                }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Config.scaledSize(10)
+            visible: root.activeSection === "audio"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("settings.sections.audio"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Rectangle {
+              width: parent.width
+              implicitHeight: audioSettingsPanel.implicitHeight
+              radius: Config.overlayRadius
+              color: Config.popupGlassBg
+              border.color: Config.popupBorderColor
+              border.width: Config.popupBordersEnabled ? 1 : 0
+              Column {
+                width: parent.width - 32
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: Config.scaledSize(14)
+                anchors.bottomMargin: Config.scaledSize(14)
+                AudioPanel {
+                  id: audioSettingsPanel
+                  width: parent.width
+                  active: root.activeSection === "audio"
+                }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Config.scaledSize(10)
+            visible: root.activeSection === "wifi"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("settings.sections.wifi"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Rectangle {
+              width: parent.width
+              implicitHeight: wifiSettingsPanel.implicitHeight
+              radius: Config.overlayRadius
+              color: Config.popupGlassBg
+              border.color: Config.popupBorderColor
+              border.width: Config.popupBordersEnabled ? 1 : 0
+              Column {
+                width: parent.width - 32
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: Config.scaledSize(14)
+                anchors.bottomMargin: Config.scaledSize(14)
+                WifiPanel {
+                  id: wifiSettingsPanel
+                  width: parent.width
+                  active: root.activeSection === "wifi"
+                }
+              }
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Config.scaledSize(10)
+            visible: root.activeSection === "bluetooth"
+            height: visible ? implicitHeight : 0
+            clip: true
+            Text { text: I18n.tr("settings.sections.bluetooth"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Rectangle {
+              width: parent.width
+              implicitHeight: bluetoothSettingsPanel.implicitHeight
+              radius: Config.overlayRadius
+              color: Config.popupGlassBg
+              border.color: Config.popupBorderColor
+              border.width: Config.popupBordersEnabled ? 1 : 0
+              Column {
+                width: parent.width - 32
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: Config.scaledSize(14)
+                anchors.bottomMargin: Config.scaledSize(14)
+                BluetoothPanel {
+                  id: bluetoothSettingsPanel
+                  width: parent.width
+                  active: root.activeSection === "bluetooth"
                 }
               }
             }

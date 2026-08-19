@@ -207,7 +207,17 @@
       "advanced": "Erweitert",
       "advancedDesc": "Energie und Helligkeit.",
       "about": "Über",
-      "aboutDesc": "Version und Laufzeit."
+      "aboutDesc": "Version und Laufzeit.",
+      "battery": "Akku",
+      "batteryDesc": "Ladezustand und Energiesparmodus",
+      "brightness": "Helligkeit",
+      "brightnessDesc": "Bildschirm-Hintergrundbeleuchtung",
+      "audio": "Ton",
+      "audioDesc": "Lautsprecher und Mikrofon",
+      "wifi": "WLAN",
+      "wifiDesc": "Drahtlose Netzwerke",
+      "bluetooth": "Bluetooth",
+      "bluetoothDesc": "Drahtlose Geräte"
     },
     "pages": {
       "general": "Oberfläche",
@@ -220,7 +230,12 @@
       "osd": "OSD",
       "systemPage": "Tastenkombinationen",
       "advancedPage": "Helligkeit",
-      "aboutPage": "Über"
+      "aboutPage": "Über",
+      "batteryPage": "Akku",
+      "brightnessPage": "Helligkeit",
+      "audioPage": "Ton",
+      "wifiPage": "WLAN",
+      "bluetoothPage": "Bluetooth"
     },
     "fontPreview": "19:37 Mo, 20. Jul  ·  Schneller Fuchs 123",
     "general": {

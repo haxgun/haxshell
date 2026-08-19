@@ -207,7 +207,17 @@
       "advanced": "Advanced",
       "advancedDesc": "Power and backlight options.",
       "about": "About",
-      "aboutDesc": "Version and runtime info."
+      "aboutDesc": "Version and runtime info.",
+      "battery": "Battery",
+      "batteryDesc": "Charge and power profile",
+      "brightness": "Brightness",
+      "brightnessDesc": "Screen backlight",
+      "audio": "Sound",
+      "audioDesc": "Speakers and microphone",
+      "wifi": "Wi-Fi",
+      "wifiDesc": "Wireless networks",
+      "bluetooth": "Bluetooth",
+      "bluetoothDesc": "Wireless devices"
     },
     "pages": {
       "general": "Interface",
@@ -220,7 +230,12 @@
       "osd": "OSD",
       "systemPage": "Keybinds",
       "advancedPage": "Brightness",
-      "aboutPage": "About"
+      "aboutPage": "About",
+      "batteryPage": "Battery",
+      "brightnessPage": "Brightness",
+      "audioPage": "Sound",
+      "wifiPage": "Wi-Fi",
+      "bluetoothPage": "Bluetooth"
     },
     "fontPreview": "19:37 Mon, Jul 20  ·  The quick fox 123",
     "general": {

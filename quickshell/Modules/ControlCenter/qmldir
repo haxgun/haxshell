@@ -5,3 +5,8 @@ WiFiPopup 1.0 WiFiPopup.qml
 BluetoothPopup 1.0 BluetoothPopup.qml
 BatteryPopup 1.0 BatteryPopup.qml
 KeyboardLayoutPopup 1.0 KeyboardLayoutPopup.qml
+BatteryPanel 1.0 BatteryPanel.qml
+BrightnessPanel 1.0 BrightnessPanel.qml
+AudioPanel 1.0 AudioPanel.qml
+WifiPanel 1.0 WifiPanel.qml
+BluetoothPanel 1.0 BluetoothPanel.qml

@@ -207,7 +207,17 @@
       "advanced": "詳細",
       "advancedDesc": "電源と輝度のオプション。",
       "about": "このプログラムについて",
-      "aboutDesc": "バージョンと実行情報。"
+      "aboutDesc": "バージョンと実行情報。",
+      "battery": "バッテリー",
+      "batteryDesc": "充電と電源プロファイル",
+      "brightness": "明るさ",
+      "brightnessDesc": "画面のバックライト",
+      "audio": "サウンド",
+      "audioDesc": "スピーカーとマイク",
+      "wifi": "Wi-Fi",
+      "wifiDesc": "ワイヤレスネットワーク",
+      "bluetooth": "Bluetooth",
+      "bluetoothDesc": "ワイヤレスデバイス"
     },
     "pages": {
       "general": "インターフェース",
@@ -220,7 +230,12 @@
       "osd": "OSD",
       "systemPage": "キーバインド",
       "advancedPage": "明るさ",
-      "aboutPage": "このプログラムについて"
+      "aboutPage": "このプログラムについて",
+      "batteryPage": "バッテリー",
+      "brightnessPage": "明るさ",
+      "audioPage": "サウンド",
+      "wifiPage": "Wi-Fi",
+      "bluetoothPage": "Bluetooth"
     },
     "fontPreview": "19:37 月, 7月20日  ·  素早い狐 123",
     "general": {

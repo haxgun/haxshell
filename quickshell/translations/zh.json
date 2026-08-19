@@ -207,7 +207,17 @@
       "advanced": "高级",
       "advancedDesc": "电源和亮度选项。",
       "about": "关于",
-      "aboutDesc": "版本和运行信息。"
+      "aboutDesc": "版本和运行信息。",
+      "battery": "电池",
+      "batteryDesc": "充电和电源计划",
+      "brightness": "亮度",
+      "brightnessDesc": "屏幕背光",
+      "audio": "声音",
+      "audioDesc": "扬声器和麦克风",
+      "wifi": "Wi-Fi",
+      "wifiDesc": "无线网络",
+      "bluetooth": "蓝牙",
+      "bluetoothDesc": "无线设备"
     },
     "pages": {
       "general": "界面",
@@ -220,7 +230,12 @@
       "osd": "OSD",
       "systemPage": "快捷键",
       "advancedPage": "亮度",
-      "aboutPage": "关于"
+      "aboutPage": "关于",
+      "batteryPage": "电池",
+      "brightnessPage": "亮度",
+      "audioPage": "声音",
+      "wifiPage": "Wi-Fi",
+      "bluetoothPage": "蓝牙"
     },
     "fontPreview": "19:37 周一, 7月20日  ·  敏捷的狐狸 123",
     "general": {
