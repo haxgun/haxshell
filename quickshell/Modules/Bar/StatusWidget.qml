@@ -555,7 +555,7 @@ Rectangle {
       width: Config.buttonWidth
       height: Config.buttonHeight
       radius: Config.buttonRadius
-      readonly property bool isAudioActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "audio"
+      readonly property bool isAudioActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "audio"
       color: (isAudioActive || volMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -603,7 +603,7 @@ Rectangle {
       height: Config.buttonHeight
       radius: Config.buttonRadius
       clip: true
-      readonly property bool isBrightnessActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "brightness"
+      readonly property bool isBrightnessActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "brightness"
       color: (isBrightnessActive || brightMouse.containsMouse) ? Config.activeHoverBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -647,7 +647,7 @@ Rectangle {
       width: Config.buttonWidth
       height: Config.buttonHeight
       radius: Config.buttonRadius
-      readonly property bool isBatteryActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "battery"
+      readonly property bool isBatteryActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "battery"
       readonly property int batteryPercent: BatteryService.percent()
       color: (isBatteryActive || batteryMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
@@ -730,7 +730,7 @@ Rectangle {
       width: btIcon.implicitWidth + root.iconButtonPadding * 2
       height: Config.buttonHeight
       radius: Config.buttonRadius
-      readonly property bool isBluetoothActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "bluetooth"
+      readonly property bool isBluetoothActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "bluetooth"
       color: (isBluetoothActive || btMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -775,7 +775,7 @@ Rectangle {
       height: Config.buttonHeight
       radius: Config.buttonRadius
       visible: Config.barNetworkEnabled
-      readonly property bool isNetworkActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "wifi"
+      readonly property bool isNetworkActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "wifi"
       color: (isNetworkActive || netMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
@@ -821,7 +821,7 @@ Rectangle {
       height: Config.buttonHeight
       radius: Config.buttonRadius
       visible: false
-      readonly property bool isNetworkActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.activeSection === "wifi"
+      readonly property bool isNetworkActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "wifi"
       color: (isNetworkActive || disMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
