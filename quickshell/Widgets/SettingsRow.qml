@@ -9,6 +9,7 @@ Item {
   property string title: ""
   property string subtitle: ""
   property bool last: false
+  property bool highlighted: false
   property bool hovered: rowMouse.containsMouse
   signal clicked()
   default property alias control: controlSlot.data
@@ -23,6 +24,17 @@ Item {
     radius: Config.cardRadius
     color: root.hovered ? Config.hoverBg : "#00000000"
     Behavior on color { ColorAnimation { duration: Config.reduceMotion ? 0 : 120 } }
+  }
+
+  Rectangle {
+    anchors.fill: parent
+    anchors.topMargin: Config.scaledSize(3)
+    anchors.bottomMargin: Config.scaledSize(3)
+    radius: Config.cardRadius
+    color: root.highlighted ? Config.selectedBg : "#00000000"
+    opacity: root.highlighted ? 1.0 : 0.0
+    Behavior on color { ColorAnimation { duration: Config.reduceMotion ? 0 : 120 } }
+    Behavior on opacity { NumberAnimation { duration: Config.reduceMotion ? 0 : 120 } }
   }
 
   MouseArea {

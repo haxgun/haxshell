@@ -180,5 +180,6 @@
   "0 отключает; доступно при источнике idle": "0 disables; requires an idle event source",
   "Отключённые приложения": "Muted apps",
   "Имена приложений через запятую": "Comma-separated application names",
-  "Блокировка": "Lock"
+  "Блокировка": "Lock",
+  "Ничего не найдено": "Nothing found"
 }

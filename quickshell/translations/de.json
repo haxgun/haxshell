@@ -180,5 +180,6 @@
   "0 отключает; доступно при источнике idle": "0 deaktiviert; benötigt eine Leerlaufereignisquelle",
   "Отключённые приложения": "Stumme Apps",
   "Имена приложений через запятую": "Kommagetrennte App-Namen",
-  "Блокировка": "Sperren"
+  "Блокировка": "Sperren",
+  "Ничего не найдено": "Nichts gefunden"
 }

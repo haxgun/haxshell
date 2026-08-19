@@ -23,6 +23,9 @@ Item {
   property string fontSearch: ""
   property string fontPickerTarget: "sans"
   property string settingsSearch: ""
+  property string pendingHighlight: ""
+  property string lastSearchQuery: ""
+  property bool flickingToHighlight: false
   property bool languageDropdownOpen: false
   property real languageDropdownX: 0
   property real languageDropdownY: 0
@@ -83,21 +86,71 @@ Item {
   ]
   readonly property var searchableSettings: [
     { section: "general", title: "Интерфейс" }, { section: "general", title: "Оформление" },
+    { section: "general", title: "Меньше анимаций" }, { section: "general", title: "Подсказки" },
     { section: "general", title: "Основной шрифт" }, { section: "general", title: "Моноширинный шрифт" },
-    { section: "general", title: "Размер текста" }, { section: "general", title: "Док" },
-    { section: "general", title: "Звук уведомлений" }, { section: "general", title: "Правило простоя" },
-    { section: "palette", title: "Цветовая палитра" }, { section: "bar", title: "Панель" },
-    { section: "monitoring", title: "Мониторинг" }, { section: "wallpaper", title: "Обои" },
-    { section: "location", title: "Время и локация" }, { section: "popups", title: "Попапы" },
-    { section: "time", title: "Время и локация" },
-    { section: "notifications", title: "Уведомления" }, { section: "osd", title: "OSD" },
-    { section: "system", title: "Сочетания клавиш" }, { section: "advanced", title: "Яркость" },
-    { section: "about", title: "О программе" }
+    { section: "general", title: "Размер текста" }, { section: "general", title: "Звук уведомлений" },
+    { section: "general", title: "Отключённые приложения" }, { section: "general", title: "Порядок плиток центра управления" },
+    { section: "general", title: "Правило простоя" },
+    { section: "palette", title: "Цветовая палитра" }, { section: "palette", title: "Тема" },
+    { section: "palette", title: "Пресет палитры" }, { section: "palette", title: "Тёмная тема" },
+    { section: "wallpaper", title: "Обои" }, { section: "wallpaper", title: "Папка обоев" },
+    { section: "wallpaper", title: "Отображение обоев" }, { section: "wallpaper", title: "Эффект смены" },
+    { section: "wallpaper", title: "Автоматическая смена" }, { section: "wallpaper", title: "Интервал смены" },
+    { section: "wallpaper", title: "Размывать обои в Overview" }, { section: "wallpaper", title: "Звук видеообоев" },
+    { section: "wallpaper", title: "Громкость видеообоев" }, { section: "wallpaper", title: "Аппаратное декодирование" },
+    { section: "wallpaper", title: "Пауза видео в Overview" },
+    { section: "bar", title: "Панель" }, { section: "bar", title: "Положение панели" },
+    { section: "bar", title: "Дизайн панели" }, { section: "bar", title: "Адаптивный бар" },
+    { section: "bar", title: "Толщина панели" }, { section: "bar", title: "Автоскрытие" },
+    { section: "bar", title: "Задержка скрытия" }, { section: "bar", title: "Отступ сверху" },
+    { section: "bar", title: "Отступ снизу" }, { section: "bar", title: "Отступы слева и справа" },
+    { section: "bar", title: "Закругление бара" }, { section: "bar", title: "Режим закругления" },
+    { section: "bar", title: "Закругление виджетов бара" }, { section: "bar", title: "Размытие фона" },
+    { section: "bar", title: "Обводка бара" }, { section: "bar", title: "Тень бара" },
+    { section: "bar", title: "Непрозрачность фона" }, { section: "bar", title: "Рабочие столы" },
+    { section: "bar", title: "Меню приложений" }, { section: "bar", title: "Активное приложение" },
+    { section: "bar", title: "Медиа-плеер" }, { section: "bar", title: "Системный трей" },
+    { section: "bar", title: "Раскладка клавиатуры" }, { section: "bar", title: "Мониторинг системы" },
+    { section: "bar", title: "Уведомления" }, { section: "bar", title: "Громкость" },
+    { section: "bar", title: "Яркость" }, { section: "bar", title: "Батарея" },
+    { section: "bar", title: "Bluetooth" }, { section: "bar", title: "Сеть" },
+    { section: "bar", title: "Дата и время" }, { section: "bar", title: "Погода" },
+    { section: "bar", title: "VPN" }, { section: "bar", title: "Пипетка цвета" },
+    { section: "bar", title: "Питание" }, { section: "bar", title: "Цифры рабочих столов" },
+    { section: "bar", title: "Рабочие столы на всех экранах" }, { section: "bar", title: "Индикатор занятого стола" },
+    { section: "popups", title: "Попапы" }, { section: "popups", title: "Положение всплывающих панелей" },
+    { section: "popups", title: "Размытие всплывающих панелей" }, { section: "popups", title: "Обводка всплывающих панелей" },
+    { section: "popups", title: "Тень всплывающих панелей" }, { section: "popups", title: "Закругление панелей" },
+    { section: "popups", title: "Режим закругления" }, { section: "popups", title: "Закругление элементов панелей" },
+    { section: "popups", title: "Непрозрачность панелей" },
+    { section: "notifications", title: "Уведомления" }, { section: "notifications", title: "Не беспокоить" },
+    { section: "notifications", title: "Положение тостов" }, { section: "notifications", title: "Время показа" },
+    { section: "notifications", title: "Максимум тостов" },
+    { section: "osd", title: "OSD" }, { section: "osd", title: "Положение OSD" },
+    { section: "location", title: "Время и локация" }, { section: "location", title: "Формат времени" },
+    { section: "location", title: "Секунды в часах" }, { section: "location", title: "Дата" },
+    { section: "location", title: "Погода на панели" }, { section: "location", title: "Точность до десятых" },
+    { section: "location", title: "Город погоды" },
+    { section: "monitoring", title: "Мониторинг" }, { section: "monitoring", title: "Загрузка CPU" },
+    { section: "monitoring", title: "Температура CPU" }, { section: "monitoring", title: "Загрузка GPU" },
+    { section: "monitoring", title: "Температура GPU" }, { section: "monitoring", title: "Оперативная память" },
+    { section: "monitoring", title: "Сеть" },
+    { section: "system", title: "Сочетания клавиш" }, { section: "system", title: "Язык" },
+    { section: "system", title: "Закрыть настройки" }, { section: "system", title: "Следующий раздел" },
+    { section: "system", title: "Предыдущий раздел" }, { section: "system", title: "Следующая вкладка" },
+    { section: "system", title: "Предыдущая вкладка" },
+    { section: "advanced", title: "Яркость" }, { section: "advanced", title: "Шина монитора" },
+    { section: "advanced", title: "Задержка DDC/CI" }
   ]
+  readonly property bool hasSearchText: settingsSearch.trim().length > 0
   readonly property var searchResults: {
     let needle = settingsSearch.trim().toLowerCase()
     if (!needle) return []
-    return searchableSettings.filter(entry => I18n.tr(entry.title).toLowerCase().indexOf(needle) >= 0)
+    return searchableSettings.filter(entry => {
+      let title = I18n.tr(entry.title).toLowerCase()
+      let crumb = root.sectionBreadcrumb(entry.section).toLowerCase()
+      return title.indexOf(needle) >= 0 || crumb.indexOf(needle) >= 0
+    })
   }
   readonly property var currentCategory: categoryForSection(activeSection)
   property var allFonts: []
@@ -113,6 +166,11 @@ Item {
   function selectSection(section) {
     if (section === root.activeSection) {
       settingsFlickable.opacity = 1.0
+      if (root.pendingHighlight.length > 0) {
+        let title = root.pendingHighlight
+        root.pendingHighlight = ""
+        root.highlightSetting(title)
+      }
       return
     }
     if (sectionTransition.running) return
@@ -149,14 +207,84 @@ Item {
     selectSection(pages[index].key)
   }
 
+  function sectionBreadcrumb(section) {
+    for (let i = 0; i < sectionCategories.length; i++) {
+      let category = sectionCategories[i]
+      for (let j = 0; j < category.pages.length; j++) {
+        if (category.pages[j].key === section) {
+          return category.title + " › " + category.pages[j].title
+        }
+      }
+    }
+    return ""
+  }
+
   function searchSettings() {
     if (searchResults.length) selectSearchResult(searchResults[0])
   }
 
   function selectSearchResult(result) {
+    root.lastSearchQuery = settingsSearchInput.text.trim()
     settingsSearchInput.text = ""
+    root.settingsSearch = ""
+    root.pendingHighlight = result.title
     root.sectionListVisible = false
     selectSection(result.section)
+  }
+
+  function findSettingsRow(item, title) {
+    let wanted = I18n.tr(title)
+    for (let i = 0; i < item.children.length; i++) {
+      let child = item.children[i]
+      if (typeof child.highlighted === "boolean") {
+        if (child.title === wanted) return child
+      } else {
+        let found = root.findSettingsRow(child, title)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
+  function expandAncestorSpoilers(item) {
+    let p = item.parent
+    while (p && p !== sectionContent) {
+      if (typeof p.expanded === "boolean" && p.title !== undefined) {
+        if (!p.expanded) {
+          p.expanded = true
+          return true
+        }
+      }
+      p = p.parent
+    }
+    return false
+  }
+
+  function highlightSetting(title) {
+    root.pendingHighlight = ""
+    let row = root.findSettingsRow(sectionContent, title)
+    if (!row) return
+    if (root.expandAncestorSpoilers(row)) {
+      highlightRetryTimer.title = title
+      highlightRetryTimer.start()
+      return
+    }
+    root.clearHighlight()
+    root.flickingToHighlight = true
+    let pos = row.mapToItem(settingsFlickable.contentItem, 0, 0)
+    settingsFlickable.contentY = Math.max(0, pos.y - settingsFlickable.height / 3)
+    root.flickingToHighlight = false
+    row.highlighted = true
+    highlightTimer.restart()
+  }
+
+  function clearHighlight() {
+    for (let i = 0; i < sectionContent.children.length; i++) {
+      let child = sectionContent.children[i]
+      if (typeof child.highlighted === "boolean" && child.highlighted) {
+        child.highlighted = false
+      }
+    }
   }
 
   function visiblePageCount(category) {
@@ -177,6 +305,15 @@ Item {
       }
     }
     NumberAnimation { target: settingsFlickable; property: "opacity"; to: 1; duration: Config.reduceMotion ? 0 : 90; easing.type: Easing.OutCubic }
+    ScriptAction {
+      script: {
+        if (root.pendingHighlight.length > 0) {
+          let title = root.pendingHighlight
+          root.pendingHighlight = ""
+          root.highlightSetting(title)
+        }
+      }
+    }
   }
 
   SequentialAnimation {
@@ -186,12 +323,30 @@ Item {
       script: {
         root.sectionListVisible = true
         root.activeSection = "general"
-        settingsSearchInput.text = ""
-        root.settingsSearch = ""
+        if (root.lastSearchQuery.length > 0) {
+          settingsSearchInput.text = root.lastSearchQuery
+          root.settingsSearch = root.lastSearchQuery
+        }
         sectionListFlickable.contentY = 0
+        root.clearHighlight()
       }
     }
     NumberAnimation { target: sectionListFlickable; property: "opacity"; to: 1; duration: Config.reduceMotion ? 0 : 100; easing.type: Easing.OutCubic }
+  }
+
+  Timer {
+    id: highlightTimer
+    interval: 5000
+    repeat: false
+    onTriggered: root.clearHighlight()
+  }
+
+  Timer {
+    id: highlightRetryTimer
+    interval: 300
+    repeat: false
+    property string title: ""
+    onTriggered: root.highlightSetting(title)
   }
 
   Timer {
@@ -239,6 +394,9 @@ Item {
     root.activeSection = "general"
     settingsSearchInput.text = ""
     root.settingsSearch = ""
+    root.pendingHighlight = ""
+    root.lastSearchQuery = ""
+    root.clearHighlight()
     sectionListFlickable.opacity = 1.0
     settingsFlickable.opacity = 1.0
   }
@@ -849,76 +1007,97 @@ Item {
           MouseArea { id: settingsBackMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.handleBack() }
         }
         Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsBackButton.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter }
-        Rectangle { id: settingsSearchBox; visible: root.sectionListVisible; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; width: Config.scaledSize(180); height: Config.scaledSize(28); radius: Config.popupRadiusPx(8); color: Config.searchBg
-          TextInput { id: settingsSearchInput; anchors.fill: parent; anchors.margins: Config.scaledSize(8); verticalAlignment: TextInput.AlignVCenter; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; onTextChanged: root.settingsSearch = text; onAccepted: root.searchSettings(); Text { anchors.verticalCenter: parent.verticalCenter; text: I18n.tr("Поиск настроек"); visible: !parent.text; color: Config.textPlaceholder; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans } }
-        }
-        Rectangle {
-          id: settingsSearchDropdown
-          anchors.top: settingsSearchBox.bottom
-          anchors.topMargin: Config.scaledSize(4)
-          anchors.right: settingsSearchBox.right
-          width: settingsSearchBox.width
-          height: Math.min(root.searchResults.length, 5) * Config.scaledSize(30)
-          visible: settingsSearchInput.activeFocus && root.searchResults.length > 0
-          z: 3
-          radius: Config.popupRadiusPx(8)
-           color: Config.popupGlassBg
-          border.color: Config.borderColor
-          border.width: 1
-          Column {
-            anchors.fill: parent
-            Repeater {
-              model: root.searchResults.slice(0, 5)
-              Rectangle {
-                required property var modelData
-                width: parent.width
-                height: Config.scaledSize(30)
-                color: resultMouse.containsMouse ? Config.hoverBg : "transparent"
-                Text { anchors.fill: parent; anchors.margins: Config.scaledSize(8); verticalAlignment: Text.AlignVCenter; text: I18n.tr(parent.modelData.title); color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight }
-                MouseArea { id: resultMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSearchResult(parent.modelData) }
-              }
-            }
-          }
-        }
+      }
 
+      Rectangle {
+        id: settingsSearchBox
+        visible: root.sectionListVisible
+        width: parent.width
+        height: Config.scaledSize(38)
+        radius: Config.cardRadius
+        color: Config.searchBg
+        border.color: Config.subtleBorder
+        border.width: 1
+        Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(12); anchors.verticalCenter: parent.verticalCenter; text: Config.iconSearch; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+        TextInput {
+          id: settingsSearchInput
+          anchors.left: parent.left
+          anchors.leftMargin: Config.scaledSize(40)
+          anchors.right: parent.right
+          anchors.rightMargin: Config.scaledSize(12)
+          anchors.verticalCenter: parent.verticalCenter
+          color: Config.textPrimary
+          font.pixelSize: Config.fontSizeSmall
+          font.family: Config.fontSans
+          onTextChanged: root.settingsSearch = text
+          onAccepted: root.searchSettings()
+          Text { anchors.verticalCenter: parent.verticalCenter; text: I18n.tr("Поиск настроек"); visible: !parent.text; color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+        }
       }
 
       Flickable {
         id: sectionListFlickable
         visible: root.sectionListVisible
         width: parent.width
-        height: container.height - 70
+        height: container.height - 120
         clip: true
         contentWidth: width
-        contentHeight: sectionListColumn.implicitHeight
+        contentHeight: contentColumn.implicitHeight
 
         Column {
-          id: sectionListColumn
+          id: contentColumn
           width: parent.width
           spacing: Config.scaledSize(6)
 
           Repeater {
-            model: root.sectionCategories
+            model: root.hasSearchText ? root.searchResults : root.sectionCategories
             Rectangle {
               required property var modelData
               width: parent.width
-              height: Config.scaledSize(46)
+              height: root.hasSearchText ? Config.scaledSize(46) : Config.scaledSize(46)
               radius: Config.cardRadius
-              color: sectionListMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
+              color: listRowMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
               border.color: Config.subtleBorder
               border.width: 1
 
-              Row {
+              Text { text: root.hasSearchText ? Config.iconSearch : parent.modelData.icon; anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(12); anchors.verticalCenter: parent.verticalCenter; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
+              Column {
                 anchors.left: parent.left
-                anchors.leftMargin: Config.scaledSize(12)
+                anchors.leftMargin: Config.scaledSize(40)
+                anchors.right: parent.right
+                anchors.rightMargin: Config.scaledSize(34)
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: Config.scaledSize(10)
-                Text { text: parent.parent.modelData.icon; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-                Text { text: I18n.tr(parent.parent.modelData.title); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+                spacing: Config.scaledSize(1)
+                Text { width: parent.width; text: I18n.tr(parent.parent.modelData.title); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+                Text { width: parent.width; visible: parent.parent.modelData.section !== undefined; text: I18n.tr(root.sectionBreadcrumb(parent.parent.modelData.section)); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
               }
               Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(12); anchors.verticalCenter: parent.verticalCenter; text: Config.iconChevronRight; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-              MouseArea { id: sectionListMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { root.sectionListVisible = false; root.selectCategory(parent.modelData) } }
+              MouseArea {
+                id: listRowMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                  if (root.hasSearchText) {
+                    root.selectSearchResult(parent.modelData)
+                  } else {
+                    root.sectionListVisible = false
+                    root.selectCategory(parent.modelData)
+                  }
+                }
+              }
             }
+          }
+
+          Text {
+            visible: root.hasSearchText && root.searchResults.length === 0
+            width: parent.width
+            horizontalAlignment: Text.AlignHCenter
+            text: I18n.tr("Ничего не найдено")
+            color: Config.textMuted
+            font.pixelSize: Config.fontSizeSmall
+            font.family: Config.fontSans
+            topPadding: Config.scaledSize(18)
           }
         }
       }
@@ -936,6 +1115,7 @@ Item {
         contentWidth: width
         contentHeight: sectionContent.implicitHeight
         clip: true
+        onContentYChanged: if (!root.flickingToHighlight) root.clearHighlight()
 
         Column {
           id: sectionContent
