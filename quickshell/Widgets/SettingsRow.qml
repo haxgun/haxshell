@@ -77,7 +77,7 @@ Item {
     anchors.rightMargin: Config.scaledSize(10)
     anchors.verticalCenter: parent.verticalCenter
     width: childrenRect.width
-    height: Config.scaledSize(36)
+    height: childrenRect.height
   }
 
   Rectangle { anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom; height: 1; color: Config.separatorColor; opacity: 0.45; visible: !root.last }
