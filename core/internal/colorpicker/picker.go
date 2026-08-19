@@ -14,12 +14,9 @@ import (
 )
 
 type Config struct {
-	Format       OutputFormat
-	CustomFormat string
-	Lowercase    bool
-	Autocopy     bool
-	Notify       bool
-	FontPath     string
+	Format    OutputFormat
+	Lowercase bool
+	FontPath  string
 }
 
 type Output struct {
