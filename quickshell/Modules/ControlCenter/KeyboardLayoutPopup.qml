@@ -1,9 +1,10 @@
-// KeyboardLayoutPopup.qml - Hyprland keyboard layout selector
+// KeyboardLayoutPopup.qml - Keyboard layout selector
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import "../../Common"
+import "../../Services"
 
 PanelWindow {
   id: root
@@ -41,6 +42,13 @@ PanelWindow {
 
   ListModel { id: layoutModel }
 
+  // niri: keep the popup in sync with live compositor state instantly.
+  Connections {
+    target: CompositorService
+    function onKeyboardCurrentNameChanged() { if (root.isOpen) root.refresh() }
+    function onKeyboardLayoutNamesChanged() { if (root.isOpen) root.refresh() }
+  }
+
   Process {
     id: keyboardProc
     stdout: SplitParser { onRead: data => root.applyState(data, false) }
@@ -52,12 +60,36 @@ PanelWindow {
   }
 
   function refresh() {
+    if (CompositorService.keyboardLayoutLive) {
+      let names = CompositorService.keyboardLayoutNames
+      let idx = CompositorService.keyboardCurrentIndex
+      let activeName = CompositorService.keyboardCurrentName
+      root.currentLayout = CompositorService.keyboardShortName(activeName)
+      root.currentName = activeName || "Unknown"
+      layoutModel.clear()
+      for (let i = 0; i < names.length; i++) {
+        layoutModel.append({
+          index: i,
+          layout: CompositorService.keyboardShortName(names[i]),
+          name: names[i],
+          active: i === idx
+        })
+      }
+      root.layoutChanged({ layout: root.currentLayout, name: root.currentName, index: idx, layouts: [] })
+      return
+    }
     keyboardProc.running = false
     keyboardProc.command = [root.natonctl, "keyboard"]
     keyboardProc.running = true
   }
 
   function setLayout(index) {
+    if (CompositorService.keyboardLayoutLive) {
+      CompositorService.switchKeyboardLayout(index)
+      // The live connection will refresh the model; close immediately.
+      root.isOpen = false
+      return
+    }
     setLayoutProc.running = false
     setLayoutProc.command = [root.natonctl, "keyboard", "set", index.toString()]
     setLayoutProc.running = true

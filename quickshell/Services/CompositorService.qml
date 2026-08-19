@@ -126,6 +126,33 @@ Singleton {
     }
     return result
   }
+  // Keyboard layout — unified facade.
+  // On niri this is reactive (event-driven from qml-niri, instant updates).
+  // On Hyprland the caller falls back to polling natonctl, since Quickshell's
+  // Hyprland module exposes no live layout signal.
+  readonly property var keyboardLayoutNames: niriPluginReady && niriBackend ? niriBackend.keyboardLayoutNames : []
+  readonly property int keyboardCurrentIndex: niriPluginReady && niriBackend ? niriBackend.keyboardCurrentIndex : 0
+  readonly property string keyboardCurrentName: niriPluginReady && niriBackend ? niriBackend.keyboardCurrentName : ""
+  readonly property bool keyboardLayoutLive: backend === "niri" && niriPluginReady
+
+  function keyboardShortName(active) {
+    let lower = (active || "").toLowerCase()
+    if (lower.indexOf("russian") >= 0 || lower === "ru" || lower === "rus") return "RU"
+    if (lower.indexOf("english") >= 0 || lower.indexOf("us") >= 0 || lower === "en") return "EN"
+    if (active && active.length > 0) return active.substring(0, 2).toUpperCase()
+    return "??"
+  }
+
+  function switchKeyboardLayout(index) {
+    if (backend === "niri" && niriPluginReady && niriBackend) {
+      niriBackend.switchKeyboardLayout(index)
+      return
+    }
+    niriActionProc.running = false
+    niriActionProc.command = [Config.natonctl, "keyboard", "set", index.toString()]
+    niriActionProc.running = true
+  }
+
   Loader {
     id: niriBackendLoader
     active: root.backend === "niri"

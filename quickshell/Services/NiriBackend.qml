@@ -9,6 +9,17 @@ Item {
   property var activeApp: ({ appId: "", title: "", iconPath: "", output: "" })
   property bool connected: false
 
+  // Keyboard layout — reactive, event-driven from qml-niri (instant updates,
+  // no polling). niri.keyboardLayouts emits namesChanged/currentIndexChanged
+  // whenever the compositor reports a layout switch.
+  readonly property var keyboardLayoutNames: niri.keyboardLayouts ? niri.keyboardLayouts.names : []
+  readonly property int keyboardCurrentIndex: niri.keyboardLayouts ? niri.keyboardLayouts.currentIndex : 0
+  readonly property string keyboardCurrentName: niri.keyboardLayouts ? niri.keyboardLayouts.currentName : ""
+
+  function switchKeyboardLayout(index) {
+    niri.switchKeyboardLayoutByIndex(index)
+  }
+
   Timer {
     id: refreshTimer
     interval: 50

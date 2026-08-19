@@ -1,8 +1,9 @@
-// KeyboardLayoutWidget.qml - Hyprland keyboard layout indicator
+// KeyboardLayoutWidget.qml - Keyboard layout indicator
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../../Common"
+import "../../Services"
 
 Rectangle {
   id: root
@@ -25,6 +26,23 @@ Rectangle {
   radius: Config.buttonRadius
   color: keyMouse.containsMouse ? Config.hoverBg : "#00000000"
 
+  // niri: reactive, event-driven from qml-niri via CompositorService — instant.
+  // Hyprland: fall back to polling natonctl (no live layout signal available).
+  Connections {
+    target: CompositorService
+    function onKeyboardCurrentNameChanged() { root.syncFromCompositor() }
+    function onKeyboardLayoutNamesChanged() { root.syncFromCompositor() }
+  }
+
+  function syncFromCompositor() {
+    if (!CompositorService.keyboardLayoutLive) return
+    let names = CompositorService.keyboardLayoutNames
+    let idx = CompositorService.keyboardCurrentIndex
+    let name = CompositorService.keyboardCurrentName
+    root.layoutName = name || "Unknown"
+    root.layout = CompositorService.keyboardShortName(name)
+  }
+
   function applyState(data) {
     try {
       let res = JSON.parse(data)
@@ -43,14 +61,18 @@ Rectangle {
     }
   }
 
+  // Polling only runs on Hyprland. On niri, qml-niri pushes instant updates.
   Timer {
     interval: 10000
-    running: true
+    running: !CompositorService.keyboardLayoutLive
     repeat: true
     onTriggered: if (!layoutProc.running) layoutProc.running = true
   }
 
-  Component.onCompleted: layoutProc.running = true
+  Component.onCompleted: {
+    if (CompositorService.keyboardLayoutLive) root.syncFromCompositor()
+    else layoutProc.running = true
+  }
 
   Row {
     id: keyRow
