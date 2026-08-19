@@ -58,6 +58,7 @@ Item {
   readonly property bool sinkMuted: sink && sink.audio ? sink.audio.muted : false
   readonly property int sourceVolume: source && source.audio ? Math.round(source.audio.volume * 100) : 0
   readonly property bool sourceMuted: source && source.audio ? source.audio.muted : false
+  readonly property real sectionViewHeight: settingsFlickable.height - (sectionTabs.visible ? sectionTabs.height + Config.scaledSize(12) : Config.scaledSize(12))
   property bool wifiRefreshActive: false
   property var wifiPendingNetwork: null
   property string wifiPassword: ""
@@ -1316,7 +1317,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "general"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.appearance"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -1390,7 +1391,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "fontPicker"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Row {
               width: parent.width
@@ -1482,7 +1483,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "palette"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             SettingsRow {
               icon: Config.iconPalette
@@ -1751,7 +1752,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "wallpaper"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Spoiler {
               title: I18n.tr("settings.wallpaper.settings")
@@ -2121,7 +2122,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "bar"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.pages.barPage"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -2521,7 +2522,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "popups"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.popups.popupPanels"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -2639,7 +2640,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "notifications"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("bar.notifications"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -2673,7 +2674,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "osd"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.general.screenIndicators"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -2688,7 +2689,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "location"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.time"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -2810,7 +2811,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "monitoring"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("bar.systemMonitor"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Rectangle {
@@ -2878,7 +2879,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "system"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.system"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -2957,7 +2958,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "advanced"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.advanced"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -3023,7 +3024,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "battery"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.battery"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -3115,7 +3116,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "brightness"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.brightness"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -3159,7 +3160,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "audio"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.audio"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             AudioSlider {
@@ -3202,10 +3203,11 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "wifi"
-            height: visible ? implicitHeight : 0
+            height: visible ? settingsFlickable.height - (sectionTabs.visible ? sectionTabs.height + Config.scaledSize(12) : Config.scaledSize(12)) : 0
             clip: true
-            Text { text: I18n.tr("settings.sections.wifi"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { id: wifiHeaderText; text: I18n.tr("settings.sections.wifi"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
+              id: wifiSettingsRow
               icon: Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected
               title: "Wi-Fi"
               subtitle: root.connectedNetworkName || (Networking.wifiEnabled ? I18n.tr("wifi.notConnected") : I18n.tr("wifi.off"))
@@ -3241,7 +3243,7 @@ Item {
             ListView {
               id: settingsNetworkList
               width: parent.width
-              height: Math.min(310, contentHeight)
+              height: Math.min(Math.max(Config.scaledSize(80), parent.height - wifiHeaderText.height - wifiSettingsRow.height - Config.scaledSize(20)), contentHeight)
               visible: !!root.wifiDevice
               clip: true
               spacing: Config.scaledSize(6)
@@ -3418,7 +3420,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "bluetooth"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.bluetooth"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
@@ -3517,7 +3519,7 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "about"
-            height: visible ? implicitHeight : 0
+            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
             clip: true
             Text { text: I18n.tr("settings.sections.about"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Rectangle {
