@@ -10,17 +10,18 @@ Item {
   property string subtitle: ""
   property bool last: false
   property bool highlighted: false
-  property bool hovered: rowMouse.containsMouse
+  readonly property bool hovered: rowMouse.containsMouse
   signal clicked()
   default property alias control: controlSlot.data
 
+  readonly property real vPadding: Config.scaledSize(10)
+  readonly property real hPadding: Config.scaledSize(14)
+
   width: parent ? parent.width : 0
-  height: Math.max(46, textColumn.implicitHeight + 14)
+  height: Math.max(iconText.implicitHeight, textColumn.implicitHeight, controlSlot.controlHeight) + vPadding * 2
 
   Rectangle {
     anchors.fill: parent
-    anchors.topMargin: Config.scaledSize(3)
-    anchors.bottomMargin: Config.scaledSize(3)
     radius: Config.cardRadius
     color: root.hovered ? Config.hoverBg : "#00000000"
     Behavior on color { ColorAnimation { duration: Config.reduceMotion ? 0 : 120 } }
@@ -28,8 +29,6 @@ Item {
 
   Rectangle {
     anchors.fill: parent
-    anchors.topMargin: Config.scaledSize(3)
-    anchors.bottomMargin: Config.scaledSize(3)
     radius: Config.cardRadius
     color: root.highlighted ? Config.selectedBg : "#00000000"
     opacity: root.highlighted ? 1.0 : 0.0
@@ -48,7 +47,7 @@ Item {
   Text {
     id: iconText
     anchors.left: parent.left
-    anchors.leftMargin: Config.scaledSize(12)
+    anchors.leftMargin: root.hPadding
     anchors.verticalCenter: parent.verticalCenter
     width: 18
     horizontalAlignment: Text.AlignHCenter
@@ -74,7 +73,7 @@ Item {
   Item {
     id: controlSlot
     anchors.right: parent.right
-    anchors.rightMargin: Config.scaledSize(10)
+    anchors.rightMargin: root.hPadding
     anchors.verticalCenter: parent.verticalCenter
     width: childrenRect.width
     readonly property real controlHeight: controlSlot.children.length > 0 ? Math.max(0, Math.max(controlSlot.children[controlSlot.children.length - 1].height, controlSlot.children[controlSlot.children.length - 1].implicitHeight)) : 0
