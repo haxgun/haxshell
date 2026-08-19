@@ -71,7 +71,11 @@ Item {
   readonly property var wifiNetworks: root.wifiDevice && root.wifiDevice.networks && root.wifiDevice.networks.values ? root.wifiDevice.networks.values : []
   readonly property var sortedNetworks: {
     let arr = root.wifiNetworks.slice()
-    arr.sort((a, b) => (b.known ? 1 : 0) - (a.known ? 1 : 0))
+    arr.sort((a, b) => {
+      let sigA = root.wifiSignalPercent(a)
+      let sigB = root.wifiSignalPercent(b)
+      return (b.connected ? 1 : 0) - (a.connected ? 1 : 0) || sigB - sigA
+    })
     return arr
   }
   readonly property string connectedNetworkName: {
@@ -3210,6 +3214,8 @@ Item {
                 height: Config.scaledSize(26)
                 radius: Config.popupRadiusPx(8)
                 color: wifiRefreshMouse.containsMouse ? Config.activeHoverBg : "#00000000"
+                anchors.right: wifiToggle.left
+                anchors.rightMargin: Config.scaledSize(6)
                 anchors.verticalCenter: parent.verticalCenter
                 Text {
                   id: wifiRefreshIcon
@@ -3228,7 +3234,7 @@ Item {
                   onClicked: root.wifiRefreshNetworks()
                 }
               }
-              ToggleSwitch { z: 1; anchors.verticalCenter: parent.verticalCenter; checked: Networking.wifiEnabled; onToggled: Networking.wifiEnabled = !Networking.wifiEnabled }
+              ToggleSwitch { id: wifiToggle; z: 1; anchors.verticalCenter: parent.verticalCenter; checked: Networking.wifiEnabled; onToggled: Networking.wifiEnabled = !Networking.wifiEnabled }
             }
             Text { width: parent.width; visible: !root.wifiDevice; text: I18n.tr("wifi.adapterNotFound"); color: Config.textMuted; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter }
             ListView {
@@ -3425,6 +3431,8 @@ Item {
                 color: btRefreshMouse.containsMouse ? Config.activeHoverBg : (root.btAdapter && root.btAdapter.discovering ? Config.selectedBg : "#00000000")
                 border.color: root.btAdapter && root.btAdapter.discovering ? Config.activeBorderColor : "#00000000"
                 border.width: 1
+                anchors.right: btToggle.left
+                anchors.rightMargin: Config.scaledSize(6)
                 anchors.verticalCenter: parent.verticalCenter
                 Text {
                   id: btRefreshIcon
@@ -3443,7 +3451,7 @@ Item {
                   onClicked: root.btToggleScanning()
                 }
               }
-              ToggleSwitch { z: 1; anchors.verticalCenter: parent.verticalCenter; checked: root.btAdapter && root.btAdapter.enabled; onToggled: if (root.btAdapter) root.btAdapter.enabled = !root.btAdapter.enabled }
+              ToggleSwitch { id: btToggle; z: 1; anchors.verticalCenter: parent.verticalCenter; checked: root.btAdapter && root.btAdapter.enabled; onToggled: if (root.btAdapter) root.btAdapter.enabled = !root.btAdapter.enabled }
             }
             Text { width: parent.width; visible: !root.btAdapter; text: I18n.tr("bt.adapterNotFound"); color: Config.textMuted; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; horizontalAlignment: Text.AlignHCenter }
             ListView {
