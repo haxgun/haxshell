@@ -138,33 +138,40 @@ else
 fi
 
 if [[ "$COMPOSITOR" == "hyprland" ]]; then
-  HYPR_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
-  HYPR_BINDS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/naton"
-  HYPR_BINDS="$HYPR_BINDS_DIR/binds.conf"
-  HYPR_INCLUDE="source = ~/.config/quickshell/keybinds/hyprland.conf"
-  HYPR_USER_INCLUDE="source = ~/.config/hypr/naton/binds.conf"
+  HYPR_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hypr"
+  HYPR_BINDS_DIR="$HYPR_DIR/naton"
   mkdir -p "$HYPR_BINDS_DIR"
-  [[ -e "$HYPR_BINDS" ]] || : > "$HYPR_BINDS"
-  if [[ -f "$HYPR_CONFIG" ]] && ! grep -Fqx "$HYPR_INCLUDE" "$HYPR_CONFIG"; then
-    printf '\n%s\n' "$HYPR_INCLUDE" >> "$HYPR_CONFIG"
-  fi
-  if [[ -f "$HYPR_CONFIG" ]] && ! grep -Fqx "$HYPR_USER_INCLUDE" "$HYPR_CONFIG"; then
-    printf '\n%s\n' "$HYPR_USER_INCLUDE" >> "$HYPR_CONFIG"
+  if [[ -f "$HYPR_DIR/hyprland.lua" ]]; then
+    cp -f "$SHELL_DIR/keybinds/hyprland.lua" "$HYPR_BINDS_DIR/keybinds.lua"
+    HYPR_BINDS="$HYPR_BINDS_DIR/binds.lua"
+    [[ -e "$HYPR_BINDS" ]] || : > "$HYPR_BINDS"
+    for HYPR_INCLUDE in 'require("naton.keybinds")' 'require("naton.binds")'; do
+      if ! grep -Fqx "$HYPR_INCLUDE" "$HYPR_DIR/hyprland.lua"; then
+        printf '%s\n' "$HYPR_INCLUDE" >> "$HYPR_DIR/hyprland.lua"
+      fi
+    done
+  else
+    cp -f "$SHELL_DIR/keybinds/hyprland.conf" "$HYPR_BINDS_DIR/keybinds.conf"
+    HYPR_BINDS="$HYPR_BINDS_DIR/binds.conf"
+    [[ -e "$HYPR_BINDS" ]] || : > "$HYPR_BINDS"
+    for HYPR_INCLUDE in "source = ~/.config/hypr/naton/keybinds.conf" "source = ~/.config/hypr/naton/binds.conf"; do
+      if [[ -f "$HYPR_DIR/hyprland.conf" ]] && ! grep -Fqx "$HYPR_INCLUDE" "$HYPR_DIR/hyprland.conf"; then
+        printf '\n%s\n' "$HYPR_INCLUDE" >> "$HYPR_DIR/hyprland.conf"
+      fi
+    done
   fi
 elif [[ "$COMPOSITOR" == "niri" ]]; then
-  NIRI_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
-  NIRI_BINDS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/niri/naton"
+  NIRI_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/niri"
+  NIRI_BINDS_DIR="$NIRI_DIR/naton"
   NIRI_BINDS="$NIRI_BINDS_DIR/binds.kdl"
-  NIRI_INCLUDE='include "../quickshell/keybinds/niri.kdl"'
-  NIRI_USER_INCLUDE='include "./naton/binds.kdl"'
   mkdir -p "$NIRI_BINDS_DIR"
+  cp -f "$SHELL_DIR/keybinds/niri.kdl" "$NIRI_BINDS_DIR/keybinds.kdl"
   [[ -e "$NIRI_BINDS" ]] || printf 'binds {}\n' > "$NIRI_BINDS"
-  if [[ -f "$NIRI_CONFIG" ]] && ! grep -Fqx "$NIRI_INCLUDE" "$NIRI_CONFIG"; then
-    printf '\n%s\n' "$NIRI_INCLUDE" >> "$NIRI_CONFIG"
-  fi
-  if [[ -f "$NIRI_CONFIG" ]] && ! grep -Fqx "$NIRI_USER_INCLUDE" "$NIRI_CONFIG"; then
-    printf '\n%s\n' "$NIRI_USER_INCLUDE" >> "$NIRI_CONFIG"
-  fi
+  for NIRI_INCLUDE in 'include "./naton/keybinds.kdl"' 'include "./naton/binds.kdl"'; do
+    if [[ -f "$NIRI_DIR/config.kdl" ]] && ! grep -Fqx "$NIRI_INCLUDE" "$NIRI_DIR/config.kdl"; then
+      printf '\n%s\n' "$NIRI_INCLUDE" >> "$NIRI_DIR/config.kdl"
+    fi
+  done
 fi
 
 printf '\nNaton is installed. Start it with:\n  quickshell --path %s\n' "$SHELL_DIR"

@@ -1,4 +1,4 @@
-// Include from config.kdl: include "../quickshell/keybinds/niri.kdl"
+// Installed to ~/.config/niri/naton/keybinds.kdl and included from config.kdl via: include "./naton/keybinds.kdl"
 binds {
     Mod+Space { spawn "sh" "-c" "\"$HOME/.config/quickshell/natonctl\" ipc drawer toggle"; }
     Mod+Comma { spawn "sh" "-c" "\"$HOME/.config/quickshell/natonctl\" ipc settings toggle"; }
