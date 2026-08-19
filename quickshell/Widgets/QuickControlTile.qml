@@ -10,6 +10,7 @@ Rectangle {
   property string subtitle: ""
   property bool active: false
   property bool wide: false
+  property bool showChevron: true
   signal toggled()
   signal detailsRequested()
 
@@ -47,6 +48,7 @@ Rectangle {
   }
 
   Text {
+    visible: root.showChevron
     anchors.right: parent.right
     anchors.rightMargin: Config.scaledSize(10)
     anchors.verticalCenter: parent.verticalCenter

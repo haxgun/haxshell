@@ -415,7 +415,7 @@ PanelWindow {
       Flow {
         width: parent.width
         spacing: Config.scaledSize(8)
-        Repeater { model: root.visibleTiles(); QuickControlTile { required property string modelData; icon: root.tileIcon(modelData); title: root.tileTitle(modelData); subtitle: root.tileSubtitle(modelData); active: root.tileActive(modelData); onToggled: root.activateTile(modelData); onDetailsRequested: root.tileDetailsRequested(modelData) } }
+        Repeater { model: root.visibleTiles(); QuickControlTile { required property string modelData; icon: root.tileIcon(modelData); title: root.tileTitle(modelData); subtitle: root.tileSubtitle(modelData); active: root.tileActive(modelData); showChevron: modelData === "wifi" || modelData === "bluetooth"; onToggled: root.activateTile(modelData); onDetailsRequested: root.tileDetailsRequested(modelData) } }
       }
 
       Column {
