@@ -49,6 +49,7 @@ Singleton {
   property alias weatherEnabled: adapter.weatherEnabled
   property alias weatherTenths: adapter.weatherTenths
   property alias barDateTimeEnabled: adapter.barDateTimeEnabled
+  property alias barDateEnabled: adapter.barDateEnabled
   property alias barWeatherEnabled: adapter.barWeatherEnabled
   property alias barColorPickerEnabled: adapter.barColorPickerEnabled
   property alias barWorkspacesEnabled: adapter.barWorkspacesEnabled
@@ -192,6 +193,7 @@ Singleton {
       property string weatherEnabled: "true"
       property string weatherTenths: "false"
       property string barDateTimeEnabled: "true"
+      property string barDateEnabled: "true"
       property string barWeatherEnabled: "true"
       property string barColorPickerEnabled: "true"
       property string barWorkspacesEnabled: "true"
@@ -318,6 +320,7 @@ Singleton {
       weatherEnabled: adapter.weatherEnabled,
       weatherTenths: adapter.weatherTenths,
       barDateTimeEnabled: adapter.barDateTimeEnabled,
+      barDateEnabled: adapter.barDateEnabled,
       barWeatherEnabled: adapter.barWeatherEnabled,
       barColorPickerEnabled: adapter.barColorPickerEnabled,
       barWorkspacesEnabled: adapter.barWorkspacesEnabled,

@@ -920,9 +920,21 @@ Rectangle {
         }
 
         Text {
-          visible: Config.barDateTimeEnabled
+          visible: Config.barDateTimeEnabled && Config.barDateEnabled
           height: Config.scaledSize(20)
           text: root.vertical ? Config.formatTime24(statusClock.date) : Config.formatBarDateTimeRu(statusClock.date)
+          color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+          font.pixelSize: Config.fontSizeSmall
+          font.weight: Font.Medium
+          font.family: Config.fontSans
+          verticalAlignment: Text.AlignVCenter
+          anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Text {
+          visible: Config.barDateTimeEnabled && !Config.barDateEnabled
+          height: Config.scaledSize(20)
+          text: root.vertical ? Config.formatTime24(statusClock.date) : Config.formatBarTime(statusClock.date)
           color: (dateTimeContainer.isCalendarActive || dateTimeMouse.containsMouse) ? Config.textWhite : Config.textPrimary
           font.pixelSize: Config.fontSizeSmall
           font.weight: Font.Medium

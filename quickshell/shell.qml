@@ -72,6 +72,7 @@ Scope {
       if (typeof settings.weatherEnabled === "string") Config.weatherEnabled = settings.weatherEnabled === "true"
       if (typeof settings.weatherTenths === "string") Config.weatherTenths = settings.weatherTenths === "true"
       if (typeof settings.barDateTimeEnabled === "string") Config.barDateTimeEnabled = settings.barDateTimeEnabled === "true"
+      if (typeof settings.barDateEnabled === "string") Config.barDateEnabled = settings.barDateEnabled === "true"
       if (typeof settings.barWeatherEnabled === "string") Config.barWeatherEnabled = settings.barWeatherEnabled === "true"
       if (typeof settings.barColorPickerEnabled === "string") Config.barColorPickerEnabled = settings.barColorPickerEnabled === "true"
       if (typeof settings.barWorkspacesEnabled === "string") Config.barWorkspacesEnabled = settings.barWorkspacesEnabled === "true"

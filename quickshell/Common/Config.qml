@@ -363,6 +363,7 @@ Singleton {
   property bool weatherEnabled: true
   property bool weatherTenths: false
   property bool barDateTimeEnabled: true
+  property bool barDateEnabled: true
   property bool barWeatherEnabled: true
   property bool barColorPickerEnabled: true
   property bool barWorkspacesEnabled: true
@@ -508,6 +509,7 @@ Singleton {
   readonly property string iconSuspend: "󰤄"
   readonly property string iconRestart: "󰜉"
   readonly property string iconClock: "󰥔"
+  readonly property string iconCalendar: "󰃭"
   readonly property string iconStopwatch: "󰔟"
   readonly property string iconMusic: "󰝚"
   readonly property string iconMotion: "󰿎"
