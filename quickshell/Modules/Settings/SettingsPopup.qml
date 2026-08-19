@@ -470,6 +470,18 @@ Item {
     settingsFlickable.opacity = 1.0
   }
 
+  function openSectionDirect(section) {
+    settingsSearchInput.text = ""
+    root.settingsSearch = ""
+    root.pendingHighlight = ""
+    root.lastSearchQuery = ""
+    root.clearHighlight()
+    root.sectionListVisible = false
+    sectionListFlickable.opacity = 1.0
+    settingsFlickable.opacity = 1.0
+    selectSection(section)
+  }
+
   function handleBack() {
     if (!root.sectionListVisible) {
       root.pendingSection = "general"

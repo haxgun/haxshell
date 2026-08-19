@@ -277,9 +277,7 @@ PanelWindow {
     root.settingsView = true
     root.activeSection = section
     root.isOpen = true
-    settingsEmbedded.openSectionList()
-    settingsEmbedded.sectionListVisible = false
-    settingsEmbedded.selectSection(section)
+    settingsEmbedded.openSectionDirect(section)
   }
   function closeSettings() {
     root.settingsView = false
