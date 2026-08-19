@@ -1,0 +1,2108 @@
+{
+ "Включено": [
+  "common.on"
+ ],
+ "Enabled": [
+  "common.on",
+  "settings.general.femOn"
+ ],
+ "Выключено": [
+  "bt.off",
+  "common.off",
+  "wifi.off"
+ ],
+ "Disabled": [
+  "bt.off",
+  "common.off",
+  "settings.general.femOff",
+  "wifi.off"
+ ],
+ "Показывается": [
+  "common.shown"
+ ],
+ "Shown": [
+  "common.shown",
+  "common.shownPlural"
+ ],
+ "Показываются": [
+  "common.shownPlural"
+ ],
+ "Скрыта": [
+  "common.hidden"
+ ],
+ "Hidden": [
+  "common.hidden",
+  "common.hiddenPlural"
+ ],
+ "Скрыты": [
+  "common.hiddenPlural"
+ ],
+ "Показывается в панели": [
+  "common.shownInBar"
+ ],
+ "Shown in bar": [
+  "common.shownInBar",
+  "common.shownInBarPlural"
+ ],
+ "Показываются в панели": [
+  "common.shownInBarPlural"
+ ],
+ "Скрыт из панели": [
+  "common.hiddenFromBar"
+ ],
+ "Hidden from bar": [
+  "common.hiddenFromBar",
+  "common.hiddenFromBarF",
+  "common.hiddenFromBarN",
+  "common.hiddenFromBarPlural"
+ ],
+ "Скрыта из панели": [
+  "common.hiddenFromBarF"
+ ],
+ "Скрыто из панели": [
+  "common.hiddenFromBarN"
+ ],
+ "Скрыты из панели": [
+  "common.hiddenFromBarPlural"
+ ],
+ "Ничего не найдено": [
+  "common.nothingFound"
+ ],
+ "Nothing found": [
+  "common.nothingFound"
+ ],
+ "Буфер обмена": [
+  "clipboard.title",
+  "keybind.clipboard"
+ ],
+ "Clipboard history": [
+  "clipboard.title"
+ ],
+ "Очистить": [
+  "clipboard.clear"
+ ],
+ "Clear": [
+  "clipboard.clear"
+ ],
+ "Поиск приложений, окон, команд или выражений": [
+  "appDrawer.searchPlaceholder"
+ ],
+ "Search apps, windows, commands, or expressions": [
+  "appDrawer.searchPlaceholder"
+ ],
+ "Выполнить команду": [
+  "appDrawer.runCommand"
+ ],
+ "Run command": [
+  "appDrawer.runCommand"
+ ],
+ "Рабочие столы": [
+  "bar.workspaces"
+ ],
+ "Workspaces": [
+  "bar.workspaces"
+ ],
+ "Активное приложение": [
+  "bar.activeApp"
+ ],
+ "Active app": [
+  "bar.activeApp"
+ ],
+ "Медиа-плеер": [
+  "bar.mediaPlayerHyphen",
+  "keybind.media"
+ ],
+ "Media player": [
+  "bar.mediaPlayer",
+  "bar.mediaPlayerHyphen",
+  "keybind.media"
+ ],
+ "Медиаплеер": [
+  "bar.mediaPlayer"
+ ],
+ "Системный трей": [
+  "bar.tray"
+ ],
+ "System tray": [
+  "bar.tray"
+ ],
+ "Раскладка клавиатуры": [
+  "bar.keyboardLayout",
+  "keybind.keyboardLayout"
+ ],
+ "Keyboard layout": [
+  "bar.keyboardLayout",
+  "keybind.keyboardLayout"
+ ],
+ "Мониторинг системы": [
+  "bar.systemMonitor",
+  "keybind.systemMonitor"
+ ],
+ "System monitor": [
+  "bar.systemMonitor",
+  "keybind.systemMonitor"
+ ],
+ "Меню приложений": [
+  "bar.appMenu",
+  "keybind.drawer"
+ ],
+ "App menu": [
+  "bar.appMenu",
+  "keybind.drawer"
+ ],
+ "Рабочий стол": [
+  "bar.desktop"
+ ],
+ "Workspace": [
+  "bar.desktop"
+ ],
+ "Дата и время": [
+  "bar.clock",
+  "keybind.calendar"
+ ],
+ "Date & time": [
+  "bar.clock",
+  "keybind.calendar"
+ ],
+ "Дата": [
+  "bar.date"
+ ],
+ "Date": [
+  "bar.date"
+ ],
+ "Громкость": [
+  "bar.volume",
+  "osd.volume"
+ ],
+ "Volume": [
+  "bar.volume",
+  "osd.volume"
+ ],
+ "Яркость": [
+  "bar.brightness",
+  "keybind.brightness",
+  "osd.brightness",
+  "settings.pages.advancedPage"
+ ],
+ "Brightness": [
+  "bar.brightness",
+  "keybind.brightness",
+  "osd.brightness",
+  "settings.pages.advancedPage"
+ ],
+ "Батарея": [
+  "bar.battery",
+  "battery.title"
+ ],
+ "Battery": [
+  "bar.battery",
+  "battery.title",
+  "cc.battery"
+ ],
+ "Центр управления": [
+  "bar.controlCenter",
+  "keybind.controlCenter"
+ ],
+ "Control center": [
+  "bar.controlCenter",
+  "keybind.controlCenter"
+ ],
+ "Пипетка цвета": [
+  "bar.colorPicker"
+ ],
+ "Color picker": [
+  "bar.colorPicker"
+ ],
+ "Питание": [
+  "bar.power",
+  "keybind.power",
+  "power.title"
+ ],
+ "Power": [
+  "bar.power",
+  "keybind.power",
+  "power.title"
+ ],
+ "Сеть": [
+  "bar.network"
+ ],
+ "Network": [
+  "bar.network"
+ ],
+ "Bluetooth": [
+  "bar.bluetooth",
+  "keybind.bluetooth"
+ ],
+ "VPN": [
+  "bar.vpn"
+ ],
+ "Уведомления": [
+  "bar.notifications",
+  "keybind.notifications",
+  "notifications.title",
+  "settings.sections.notifications"
+ ],
+ "Notifications": [
+  "bar.notifications",
+  "keybind.notifications",
+  "notifications.title",
+  "settings.sections.notifications"
+ ],
+ "Рабочие столы на всех экранах": [
+  "bar.workspacesAllScreens"
+ ],
+ "Workspaces on all screens": [
+  "bar.workspacesAllScreens"
+ ],
+ "На своих экранах": [
+  "bar.ownScreens"
+ ],
+ "On their own screens": [
+  "bar.ownScreens"
+ ],
+ "Цифры рабочих столов": [
+  "bar.workspaceNumbers"
+ ],
+ "Workspace numbers": [
+  "bar.workspaceNumbers"
+ ],
+ "Индикатор занятого стола": [
+  "bar.workspaceIndicator"
+ ],
+ "Occupied workspace indicator": [
+  "bar.workspaceIndicator"
+ ],
+ "Авиарежим": [
+  "cc.airplane"
+ ],
+ "Airplane mode": [
+  "cc.airplane"
+ ],
+ "Режим питания": [
+  "cc.powerProfile"
+ ],
+ "Power mode": [
+  "cc.powerProfile"
+ ],
+ "Не беспокоить": [
+  "cc.dnd",
+  "notifications.dnd"
+ ],
+ "Do Not Disturb": [
+  "cc.dnd",
+  "notifications.dnd"
+ ],
+ "Не спать": [
+  "cc.caffeine"
+ ],
+ "Stay awake": [
+  "cc.caffeine"
+ ],
+ "Ночной свет": [
+  "cc.nightLight"
+ ],
+ "Night light": [
+  "cc.nightLight"
+ ],
+ "Снимок области": [
+  "cc.screenshot"
+ ],
+ "Region screenshot": [
+  "cc.screenshot"
+ ],
+ "Выбрать область": [
+  "cc.selectRegion"
+ ],
+ "Select region": [
+  "cc.selectRegion"
+ ],
+ "Музыка": [
+  "cc.music"
+ ],
+ "Music": [
+  "cc.music"
+ ],
+ "Неизвестный исполнитель": [
+  "cc.unknownArtist"
+ ],
+ "Unknown artist": [
+  "cc.unknownArtist",
+  "media.unknownArtist"
+ ],
+ "Нет активного плеера": [
+  "cc.noPlayer"
+ ],
+ "No active player": [
+  "cc.noPlayer"
+ ],
+ "Включен": [
+  "cc.on"
+ ],
+ "On": [
+  "cc.on"
+ ],
+ "Выключен": [
+  "cc.off"
+ ],
+ "Off": [
+  "cc.off",
+  "osd.off"
+ ],
+ "Не подключено": [
+  "bt.notConnected",
+  "cc.notConnected",
+  "wifi.notConnected"
+ ],
+ "Not connected": [
+  "bt.notConnected",
+  "cc.notConnected",
+  "wifi.notConnected"
+ ],
+ "Заряжается": [
+  "battery.charging",
+  "cc.charging"
+ ],
+ "Charging": [
+  "battery.charging",
+  "cc.charging"
+ ],
+ "От сети": [
+  "cc.onAc"
+ ],
+ "On AC": [
+  "cc.onAc"
+ ],
+ "Аккумулятор": [
+  "cc.battery"
+ ],
+ "Экономия": [
+  "cc.powerSaver"
+ ],
+ "Power saver": [
+  "cc.powerSaver"
+ ],
+ "Производительность": [
+  "cc.performance"
+ ],
+ "Performance": [
+  "cc.performance"
+ ],
+ "Баланс": [
+  "cc.balanced"
+ ],
+ "Balanced": [
+  "cc.balanced"
+ ],
+ "Сон и idle заблокированы": [
+  "cc.caffeineBlocked"
+ ],
+ "Sleep and idle are blocked": [
+  "cc.caffeineBlocked"
+ ],
+ "Обычный режим сна": [
+  "cc.caffeineNormal"
+ ],
+ "Normal sleep mode": [
+  "cc.caffeineNormal"
+ ],
+ "Повестка": [
+  "calendar.agenda"
+ ],
+ "Agenda": [
+  "calendar.agenda"
+ ],
+ "Погода недоступна": [
+  "calendar.weatherUnavailable"
+ ],
+ "Weather unavailable": [
+  "calendar.weatherUnavailable"
+ ],
+ "Погода": [
+  "calendar.weather",
+  "settings.location.weather"
+ ],
+ "Weather": [
+  "calendar.weather",
+  "settings.location.weather"
+ ],
+ " · влажность ": [
+  "calendar.humidity"
+ ],
+ " · humidity ": [
+  "calendar.humidity"
+ ],
+ "Прогноз": [
+  "calendar.forecast"
+ ],
+ "Forecast": [
+  "calendar.forecast"
+ ],
+ "Нет данных": [
+  "calendar.noData"
+ ],
+ "No data": [
+  "calendar.noData"
+ ],
+ "Сегодня": [
+  "calendar.today"
+ ],
+ "Today": [
+  "calendar.today"
+ ],
+ "Текущий город": [
+  "calendar.currentCity"
+ ],
+ "Current city": [
+  "calendar.currentCity"
+ ],
+ "История": [
+  "notifications.history"
+ ],
+ "History": [
+  "notifications.history"
+ ],
+ "Нет уведомлений": [
+  "notifications.empty"
+ ],
+ "No notifications": [
+  "notifications.empty"
+ ],
+ "Текущие": [
+  "notifications.current"
+ ],
+ "Current": [
+  "notifications.current",
+  "settings.palette.current"
+ ],
+ "Уведомление": [
+  "notifications.fallback"
+ ],
+ "Notification": [
+  "notifications.fallback"
+ ],
+ "Максимум тостов": [
+  "notifications.maxToasts"
+ ],
+ "Maximum toasts": [
+  "notifications.maxToasts"
+ ],
+ "Одновременно на экране": [
+  "notifications.visibleAtOnce"
+ ],
+ "Visible at once": [
+  "notifications.visibleAtOnce"
+ ],
+ "Всплывающие тосты включены": [
+  "notifications.toastsOn"
+ ],
+ "Popup toasts enabled": [
+  "notifications.toastsOn"
+ ],
+ "Всплывающие тосты выключены": [
+  "notifications.toastsOff"
+ ],
+ "Popup toasts disabled": [
+  "notifications.toastsOff"
+ ],
+ "Место появления уведомлений": [
+  "notifications.position"
+ ],
+ "Notification position": [
+  "notifications.position"
+ ],
+ "CPU": [
+  "system.cpu"
+ ],
+ "GPU": [
+  "system.gpu"
+ ],
+ "RAM": [
+  "system.ram"
+ ],
+ "UP": [
+  "system.up"
+ ],
+ "СИСТЕМА": [
+  "system.title"
+ ],
+ "SYSTEM": [
+  "system.title"
+ ],
+ "СЕТЬ · МБ/С": [
+  "system.net"
+ ],
+ "NET · MB/S": [
+  "system.net"
+ ],
+ "ДИСК · %": [
+  "system.disk"
+ ],
+ "DISK · %": [
+  "system.disk"
+ ],
+ "SWAP · ГБ": [
+  "system.swap"
+ ],
+ "SWAP · GB": [
+  "system.swap"
+ ],
+ "VRAM · ГБ": [
+  "system.vram"
+ ],
+ "VRAM · GB": [
+  "system.vram"
+ ],
+ " ГБ": [
+  "system.ramSuffix"
+ ],
+ " GB": [
+  "system.ramSuffix"
+ ],
+ "0м": [
+  "system.uptimeFallback"
+ ],
+ "0m": [
+  "system.uptimeFallback"
+ ],
+ "Заблокировать": [
+  "power.lock"
+ ],
+ "Lock": [
+  "power.lock",
+  "settings.general.lock"
+ ],
+ "Сон": [
+  "power.sleep"
+ ],
+ "Suspend": [
+  "power.sleep"
+ ],
+ "Выйти": [
+  "power.logout"
+ ],
+ "Log out": [
+  "power.logout"
+ ],
+ "Перезагрузка": [
+  "power.reboot"
+ ],
+ "Reboot": [
+  "power.reboot"
+ ],
+ "Выключить": [
+  "power.shutdown"
+ ],
+ "Shut down": [
+  "power.shutdown"
+ ],
+ "Звук выключен": [
+  "osd.muted"
+ ],
+ "Sound muted": [
+  "osd.muted"
+ ],
+ "Выкл.": [
+  "osd.off"
+ ],
+ "Нет трека": [
+  "media.noTrack"
+ ],
+ "No track": [
+  "media.noTrack"
+ ],
+ "Неизвестный артист": [
+  "media.unknownArtist"
+ ],
+ "Нет обоев": [
+  "wallpaper.none"
+ ],
+ "No wallpapers": [
+  "wallpaper.none"
+ ],
+ "Следующие обои": [
+  "wallpaper.next"
+ ],
+ "Next wallpapers": [
+  "wallpaper.next"
+ ],
+ "В папке нет поддерживаемых изображений или видео": [
+  "wallpaper.folderEmpty"
+ ],
+ "No supported images or videos in this folder": [
+  "wallpaper.folderEmpty"
+ ],
+ "Подключено": [
+  "bt.connected",
+  "wifi.connected"
+ ],
+ "Connected": [
+  "bt.connected",
+  "wifi.connected"
+ ],
+ "Подключение...": [
+  "bt.connecting",
+  "wifi.connecting"
+ ],
+ "Connecting...": [
+  "bt.connecting",
+  "wifi.connecting"
+ ],
+ "Сохранено": [
+  "wifi.saved"
+ ],
+ "Saved": [
+  "wifi.saved"
+ ],
+ "Доступно": [
+  "bt.available",
+  "wifi.available"
+ ],
+ "Available": [
+  "bt.available",
+  "wifi.available"
+ ],
+ "Wi-Fi адаптер не найден": [
+  "wifi.adapterNotFound"
+ ],
+ "Wi-Fi adapter not found": [
+  "wifi.adapterNotFound"
+ ],
+ "Знакомые сети": [
+  "wifi.known"
+ ],
+ "Known networks": [
+  "wifi.known"
+ ],
+ "Другие сети": [
+  "wifi.other"
+ ],
+ "Other networks": [
+  "wifi.other"
+ ],
+ "Скрытая сеть": [
+  "wifi.hidden"
+ ],
+ "Hidden network": [
+  "wifi.hidden"
+ ],
+ "Пароль для ": [
+  "wifi.passwordFor"
+ ],
+ "Password for ": [
+  "wifi.passwordFor"
+ ],
+ "Отмена": [
+  "wifi.cancel"
+ ],
+ "Cancel": [
+  "wifi.cancel"
+ ],
+ "Подключить": [
+  "wifi.connect"
+ ],
+ "Connect": [
+  "wifi.connect"
+ ],
+ "Bluetooth устройство": [
+  "bt.device"
+ ],
+ "Bluetooth device": [
+  "bt.device"
+ ],
+ "Сопряжение...": [
+  "bt.pairing"
+ ],
+ "Pairing...": [
+  "bt.pairing"
+ ],
+ "Сопряжено": [
+  "bt.paired"
+ ],
+ "Paired": [
+  "bt.paired"
+ ],
+ "Bluetooth адаптер не найден": [
+  "bt.adapterNotFound"
+ ],
+ "Bluetooth adapter not found": [
+  "bt.adapterNotFound"
+ ],
+ "Полностью заряжена, подключена": [
+  "battery.fullChargedConnected"
+ ],
+ "Fully charged, connected": [
+  "battery.fullChargedConnected"
+ ],
+ "Разряжается": [
+  "battery.discharging"
+ ],
+ "Discharging": [
+  "battery.discharging"
+ ],
+ "Полностью заряжена": [
+  "battery.full"
+ ],
+ "Fully charged": [
+  "battery.full"
+ ],
+ "Подключена к сети": [
+  "battery.onAc"
+ ],
+ "Connected to AC": [
+  "battery.onAc"
+ ],
+ "Неизвестно": [
+  "battery.unknown"
+ ],
+ "Unknown": [
+  "battery.unknown"
+ ],
+ "{h}ч {m}м": [
+  "battery.hoursMinutes"
+ ],
+ "{h}h {m}m": [
+  "battery.hoursMinutes"
+ ],
+ "Осталось": [
+  "battery.remaining"
+ ],
+ "Remaining": [
+  "battery.remaining",
+  "battery.remainingLabel"
+ ],
+ "Напряжение": [
+  "battery.voltage"
+ ],
+ "Voltage": [
+  "battery.voltage"
+ ],
+ "Температура": [
+  "battery.temperature"
+ ],
+ "Temperature": [
+  "battery.temperature"
+ ],
+ "Циклы": [
+  "battery.cycles"
+ ],
+ "Cycles": [
+  "battery.cycles"
+ ],
+ "Заряд": [
+  "battery.chargeLabel"
+ ],
+ "Charge": [
+  "battery.chargeLabel"
+ ],
+ "Остаток": [
+  "battery.remainingLabel"
+ ],
+ "Профиль питания": [
+  "battery.powerProfile"
+ ],
+ "Power profile": [
+  "battery.powerProfile"
+ ],
+ " В": [
+  "battery.voltageUnit"
+ ],
+ " V": [
+  "battery.voltageUnit"
+ ],
+ "Яркость экрана": [
+  "brightness.title"
+ ],
+ "Screen brightness": [
+  "brightness.title"
+ ],
+ "Звук": [
+  "audio.title"
+ ],
+ "Sound": [
+  "audio.title"
+ ],
+ "Динамики": [
+  "audio.speakers"
+ ],
+ "Speakers": [
+  "audio.speakers"
+ ],
+ "Микрофон": [
+  "audio.mic"
+ ],
+ "Microphone": [
+  "audio.mic"
+ ],
+ "Устройства вывода не найдены": [
+  "audio.noOutputs"
+ ],
+ "No output devices found": [
+  "audio.noOutputs"
+ ],
+ "Устройства ввода не найдены": [
+  "audio.noInputs"
+ ],
+ "No input devices found": [
+  "audio.noInputs"
+ ],
+ "Раскладка": [
+  "keyboard.title"
+ ],
+ "Layout": [
+  "keyboard.title"
+ ],
+ "Настройки": [
+  "keybind.settings",
+  "settings.title"
+ ],
+ "Settings": [
+  "keybind.settings",
+  "settings.title"
+ ],
+ "Clipboard": [
+  "keybind.clipboard"
+ ],
+ "Wi-Fi": [
+  "keybind.wifi"
+ ],
+ "Поиск настроек": [
+  "settings.searchPlaceholder"
+ ],
+ "Search settings": [
+  "settings.searchPlaceholder"
+ ],
+ "Оформление": [
+  "settings.sections.appearance"
+ ],
+ "Appearance": [
+  "settings.sections.appearance"
+ ],
+ "Бар и попапы": [
+  "settings.sections.bar"
+ ],
+ "Bar & popups": [
+  "settings.sections.bar"
+ ],
+ "Обои": [
+  "settings.pages.wallpaper",
+  "settings.sections.desktop"
+ ],
+ "Wallpapers": [
+  "settings.pages.wallpaper",
+  "settings.sections.desktop"
+ ],
+ "Время и локация": [
+  "settings.pages.location",
+  "settings.sections.time"
+ ],
+ "Time & location": [
+  "settings.pages.location",
+  "settings.sections.time"
+ ],
+ "Система": [
+  "settings.sections.system"
+ ],
+ "System": [
+  "settings.sections.system"
+ ],
+ "Дополнительно": [
+  "settings.sections.advanced"
+ ],
+ "Advanced": [
+  "settings.sections.advanced"
+ ],
+ "О программе": [
+  "settings.pages.aboutPage",
+  "settings.sections.about"
+ ],
+ "About": [
+  "settings.pages.aboutPage",
+  "settings.sections.about"
+ ],
+ "Интерфейс": [
+  "settings.pages.general"
+ ],
+ "Interface": [
+  "settings.pages.general"
+ ],
+ "Цветовая палитра": [
+  "settings.pages.palette"
+ ],
+ "Color palette": [
+  "settings.pages.palette"
+ ],
+ "Панель": [
+  "settings.pages.barPage"
+ ],
+ "Bar": [
+  "settings.pages.barPage"
+ ],
+ "Попапы": [
+  "settings.pages.popups",
+  "settings.popups.popups"
+ ],
+ "Popups": [
+  "settings.pages.popups",
+  "settings.popups.popups"
+ ],
+ "Мониторинг": [
+  "settings.pages.monitoring"
+ ],
+ "Monitoring": [
+  "settings.pages.monitoring"
+ ],
+ "OSD": [
+  "settings.pages.osd"
+ ],
+ "Сочетания клавиш": [
+  "settings.pages.systemPage",
+  "settings.system.keybinds"
+ ],
+ "Keybinds": [
+  "settings.pages.systemPage",
+  "settings.system.keybinds"
+ ],
+ "19:37 пн, июл. 20  ·  Быстрая лиса 123": [
+  "settings.fontPreview"
+ ],
+ "19:37 Mon, Jul 20  ·  The quick fox 123": [
+  "settings.fontPreview"
+ ],
+ "Меньше анимаций": [
+  "settings.general.reduceMotion"
+ ],
+ "Reduce motion": [
+  "settings.general.reduceMotion"
+ ],
+ "Анимации сокращены": [
+  "settings.general.reduced"
+ ],
+ "Animations reduced": [
+  "settings.general.reduced"
+ ],
+ "Обычные анимации": [
+  "settings.general.normal"
+ ],
+ "Normal animations": [
+  "settings.general.normal"
+ ],
+ "Подсказки": [
+  "settings.general.tooltips"
+ ],
+ "Tooltips": [
+  "settings.general.tooltips"
+ ],
+ "Основной шрифт": [
+  "settings.general.sansFont"
+ ],
+ "Main font": [
+  "settings.general.sansFont"
+ ],
+ "Моноширинный шрифт": [
+  "settings.general.monoFont"
+ ],
+ "Monospaced font": [
+  "settings.general.monoFont"
+ ],
+ "Поиск шрифта": [
+  "settings.general.fontSearch"
+ ],
+ "Search font": [
+  "settings.general.fontSearch"
+ ],
+ "Размер текста": [
+  "settings.general.uiScale"
+ ],
+ "Text size": [
+  "settings.general.uiScale"
+ ],
+ "Звук уведомлений": [
+  "settings.general.notificationSound"
+ ],
+ "Notification sound": [
+  "settings.general.notificationSound"
+ ],
+ "Отключённые приложения": [
+  "settings.general.mutedApps"
+ ],
+ "Muted apps": [
+  "settings.general.mutedApps"
+ ],
+ "Имена приложений через запятую": [
+  "settings.general.mutedAppsHint"
+ ],
+ "Comma-separated application names": [
+  "settings.general.mutedAppsHint"
+ ],
+ "Порядок плиток центра управления": [
+  "settings.general.tileOrder"
+ ],
+ "Control center tile order": [
+  "settings.general.tileOrder"
+ ],
+ "wifi, bluetooth, airplane, dnd, caffeine, screenshot, power, nightlight": [
+  "settings.general.tileOrderHint"
+ ],
+ "Правило простоя": [
+  "settings.general.idlePolicy"
+ ],
+ "Idle policy": [
+  "settings.general.idlePolicy"
+ ],
+ "0 отключает; применяется после простоя": [
+  "settings.general.idleHint"
+ ],
+ "0 disables; applies after the idle timeout": [
+  "settings.general.idleHint"
+ ],
+ "0 отключает; доступно при источнике idle": [
+  "settings.general.idleHint2"
+ ],
+ "0 disables; requires an idle event source": [
+  "settings.general.idleHint2"
+ ],
+ "Виджеты панели": [
+  "settings.general.barWidgets"
+ ],
+ "Bar widgets": [
+  "settings.general.barWidgets"
+ ],
+ "Язык": [
+  "settings.general.language"
+ ],
+ "Language": [
+  "settings.general.language"
+ ],
+ "Блокировка": [
+  "settings.general.lock"
+ ],
+ "Включена": [
+  "settings.general.femOn"
+ ],
+ "Выключена": [
+  "settings.general.femOff"
+ ],
+ "Экранные индикаторы": [
+  "settings.general.screenIndicators"
+ ],
+ "Screen indicators": [
+  "settings.general.screenIndicators"
+ ],
+ "Время показа": [
+  "settings.general.showTime"
+ ],
+ "Show duration": [
+  "settings.general.showTime"
+ ],
+ "Громкость и яркость": [
+  "settings.general.volumeBrightness"
+ ],
+ "Volume and brightness": [
+  "settings.general.volumeBrightness"
+ ],
+ "Положение панели": [
+  "settings.popups.positionOfPanel"
+ ],
+ "Panel position": [
+  "settings.popups.positionOfPanel"
+ ],
+ "Непрозрачность фона": [
+  "settings.popups.backgroundOpacity"
+ ],
+ "Background opacity": [
+  "settings.popups.backgroundOpacity"
+ ],
+ "Дизайн панели": [
+  "settings.barPage.design"
+ ],
+ "Bar design": [
+  "settings.barPage.design"
+ ],
+ "Островки": [
+  "settings.barPage.islands"
+ ],
+ "Islands": [
+  "settings.barPage.islands"
+ ],
+ "Сплошной": [
+  "settings.barPage.solid"
+ ],
+ "Solid": [
+  "settings.barPage.solid"
+ ],
+ "Толщина панели": [
+  "settings.barPage.thickness"
+ ],
+ "Panel thickness": [
+  "settings.barPage.thickness"
+ ],
+ "Закругление бара": [
+  "settings.barPage.radius"
+ ],
+ "Bar rounding": [
+  "settings.barPage.radius"
+ ],
+ "Радиус углов панели": [
+  "settings.barPage.radiusCorner"
+ ],
+ "Corner radius of the bar": [
+  "settings.barPage.radiusCorner"
+ ],
+ "Режим закругления": [
+  "settings.barPage.radiusMode"
+ ],
+ "Corner mode": [
+  "settings.barPage.radiusMode"
+ ],
+ "Полный": [
+  "settings.barPage.full"
+ ],
+ "Full": [
+  "settings.barPage.full"
+ ],
+ "Раздельный": [
+  "settings.barPage.separate"
+ ],
+ "Separate": [
+  "settings.barPage.separate"
+ ],
+ "Закругление виджетов бара": [
+  "settings.barPage.widgetRadius"
+ ],
+ "Bar widget rounding": [
+  "settings.barPage.widgetRadius"
+ ],
+ "Радиус углов элементов панели": [
+  "settings.barPage.widgetRadiusCorner"
+ ],
+ "Corner radius of panel elements": [
+  "settings.barPage.widgetRadiusCorner"
+ ],
+ "Закругление элементов панелей": [
+  "settings.barPage.popupElementRadius"
+ ],
+ "Popup element rounding": [
+  "settings.barPage.popupElementRadius"
+ ],
+ "Радиус углов карточек и кнопок": [
+  "settings.barPage.cardButtonRadius"
+ ],
+ "Corner radius of cards and buttons": [
+  "settings.barPage.cardButtonRadius"
+ ],
+ "Непрозрачность фона панели": [
+  "settings.barPage.opacity"
+ ],
+ "Panel background opacity": [
+  "settings.barPage.opacity"
+ ],
+ "Размытие фона": [
+  "settings.barPage.blur"
+ ],
+ "Background blur": [
+  "settings.barPage.blur"
+ ],
+ "Обводка бара": [
+  "settings.barPage.outline"
+ ],
+ "Bar outline": [
+  "settings.barPage.outline"
+ ],
+ "Тень бара": [
+  "settings.barPage.shadow"
+ ],
+ "Bar shadow": [
+  "settings.barPage.shadow"
+ ],
+ "Автоскрытие": [
+  "settings.barPage.autoHide"
+ ],
+ "Auto-hide": [
+  "settings.barPage.autoHide"
+ ],
+ "Скрывается автоматически": [
+  "settings.barPage.hidesAutomatically"
+ ],
+ "Hides automatically": [
+  "settings.barPage.hidesAutomatically"
+ ],
+ "Всегда отображается": [
+  "settings.barPage.alwaysShown"
+ ],
+ "Always shown": [
+  "settings.barPage.alwaysShown"
+ ],
+ "Задержка скрытия": [
+  "settings.barPage.hideDelay"
+ ],
+ "Hide delay": [
+  "settings.barPage.hideDelay"
+ ],
+ "Через сколько секунд скрывать панель": [
+  "settings.barPage.hideDelayHint"
+ ],
+ "Seconds before the panel hides": [
+  "settings.barPage.hideDelayHint"
+ ],
+ "Адаптивный бар": [
+  "settings.barPage.adaptive"
+ ],
+ "Adaptive bar": [
+  "settings.barPage.adaptive"
+ ],
+ "Прозрачный без окна на весь экран": [
+  "settings.barPage.adaptiveHint"
+ ],
+ "Transparent without a fullscreen window": [
+  "settings.barPage.adaptiveHint"
+ ],
+ "Всплывающие панели": [
+  "settings.popups.popupPanels"
+ ],
+ "Popup panels": [
+  "settings.popups.popupPanels"
+ ],
+ "Положение всплывающих панелей": [
+  "settings.popups.position"
+ ],
+ "Popup position": [
+  "settings.popups.position"
+ ],
+ "Закругление панелей": [
+  "settings.popups.radius"
+ ],
+ "Popup rounding": [
+  "settings.popups.radius"
+ ],
+ "Обводка всплывающих панелей": [
+  "settings.popups.outline"
+ ],
+ "Popup outline": [
+  "settings.popups.outline"
+ ],
+ "Тень всплывающих панелей": [
+  "settings.popups.shadow"
+ ],
+ "Popup shadow": [
+  "settings.popups.shadow"
+ ],
+ "Непрозрачность панелей": [
+  "settings.popups.opacity"
+ ],
+ "Popup opacity": [
+  "settings.popups.opacity"
+ ],
+ "Размытие всплывающих панелей": [
+  "settings.popups.blur"
+ ],
+ "Popup blur": [
+  "settings.popups.blur"
+ ],
+ "Фон выпадающих меню и уведомлений": [
+  "settings.popups.menuBg"
+ ],
+ "Background of dropdowns and notifications": [
+  "settings.popups.menuBg"
+ ],
+ "Радиус углов выпадающих меню": [
+  "settings.popups.dropdownRadius"
+ ],
+ "Corner radius of dropdowns": [
+  "settings.popups.dropdownRadius"
+ ],
+ "Положение OSD": [
+  "settings.popups.osdPosition"
+ ],
+ "OSD position": [
+  "settings.popups.osdPosition"
+ ],
+ "Положение тостов": [
+  "settings.popups.toastPosition"
+ ],
+ "Toast position": [
+  "settings.popups.toastPosition"
+ ],
+ "Выбор для левой и правой панели": [
+  "settings.popups.edges"
+ ],
+ "Choice for the left and right panel": [
+  "settings.popups.edges"
+ ],
+ "Высота или ширина панели": [
+  "settings.popups.wh"
+ ],
+ "Panel height or width": [
+  "settings.popups.wh"
+ ],
+ "Одинаковое расстояние от боковых краёв": [
+  "settings.popups.sameSideGap"
+ ],
+ "Same distance from the side edges": [
+  "settings.popups.sameSideGap"
+ ],
+ "Отступ сверху": [
+  "settings.popups.topPadding"
+ ],
+ "Top padding": [
+  "settings.popups.topPadding"
+ ],
+ "Расстояние от верхнего края": [
+  "settings.popups.topDistance"
+ ],
+ "Distance from the top edge": [
+  "settings.popups.topDistance"
+ ],
+ "Отступ снизу": [
+  "settings.popups.bottomPadding"
+ ],
+ "Bottom padding": [
+  "settings.popups.bottomPadding"
+ ],
+ "Расстояние от нижнего края": [
+  "settings.popups.bottomDistance"
+ ],
+ "Distance from the bottom edge": [
+  "settings.popups.bottomDistance"
+ ],
+ "Отступы слева и справа": [
+  "settings.popups.sidePadding"
+ ],
+ "Left and right padding": [
+  "settings.popups.sidePadding"
+ ],
+ "Слева": [
+  "settings.popups.left"
+ ],
+ "Left": [
+  "settings.popups.left"
+ ],
+ "Справа": [
+  "settings.popups.right"
+ ],
+ "Right": [
+  "settings.popups.right"
+ ],
+ "Сверху": [
+  "settings.popups.top"
+ ],
+ "Top": [
+  "settings.popups.top"
+ ],
+ "Снизу": [
+  "settings.popups.bottom"
+ ],
+ "Bottom": [
+  "settings.popups.bottom"
+ ],
+ "Точка": [
+  "settings.popups.dot"
+ ],
+ "Dot": [
+  "settings.popups.dot"
+ ],
+ "Рамка": [
+  "settings.popups.border"
+ ],
+ "Border": [
+  "settings.popups.border"
+ ],
+ "Подсветка": [
+  "settings.popups.highlight"
+ ],
+ "Highlight": [
+  "settings.popups.highlight"
+ ],
+ "Метрики в панели": [
+  "settings.monitoring.metrics"
+ ],
+ "Bar metrics": [
+  "settings.monitoring.metrics"
+ ],
+ "Загрузка CPU": [
+  "settings.monitoring.cpuUsage"
+ ],
+ "CPU usage": [
+  "settings.monitoring.cpuUsage"
+ ],
+ "Температура CPU": [
+  "settings.monitoring.cpuTemp"
+ ],
+ "CPU temperature": [
+  "settings.monitoring.cpuTemp"
+ ],
+ "Загрузка GPU": [
+  "settings.monitoring.gpuUsage"
+ ],
+ "GPU usage": [
+  "settings.monitoring.gpuUsage"
+ ],
+ "Температура GPU": [
+  "settings.monitoring.gpuTemp"
+ ],
+ "GPU temperature": [
+  "settings.monitoring.gpuTemp",
+  "settings.monitoring.gpuTempLong"
+ ],
+ "Оперативная память": [
+  "settings.monitoring.memory"
+ ],
+ "Memory": [
+  "settings.monitoring.memory"
+ ],
+ "Процент использования процессора": [
+  "settings.monitoring.cpuPercent"
+ ],
+ "Processor usage percentage": [
+  "settings.monitoring.cpuPercent"
+ ],
+ "Температура процессора": [
+  "settings.monitoring.cpuTempLong"
+ ],
+ "Processor temperature": [
+  "settings.monitoring.cpuTempLong"
+ ],
+ "Процент использования видеокарты": [
+  "settings.monitoring.gpuPercent"
+ ],
+ "GPU usage percentage": [
+  "settings.monitoring.gpuPercent"
+ ],
+ "Температура видеокарты": [
+  "settings.monitoring.gpuTempLong"
+ ],
+ "Использование RAM": [
+  "settings.monitoring.ramUsage"
+ ],
+ "RAM usage": [
+  "settings.monitoring.ramUsage"
+ ],
+ "Скорость загрузки": [
+  "settings.monitoring.downloadSpeed"
+ ],
+ "Download speed": [
+  "settings.monitoring.downloadSpeed"
+ ],
+ "Системные метрики": [
+  "settings.monitoring.sysMetrics"
+ ],
+ "System metrics": [
+  "settings.monitoring.sysMetrics"
+ ],
+ "CPU, память, сеть и накопители отображаются на панели и в системном попапе.": [
+  "settings.monitoring.sysMetricsHint"
+ ],
+ "CPU, memory, network and storage are shown in the bar and system popup.": [
+  "settings.monitoring.sysMetricsHint"
+ ],
+ " сек.": [
+  "settings.monitoring.secSuffix"
+ ],
+ " s": [
+  "settings.general.secSuffixShort",
+  "settings.monitoring.secSuffix"
+ ],
+ " с": [
+  "settings.general.secSuffixShort"
+ ],
+ "Тема": [
+  "settings.palette.theme"
+ ],
+ "Theme": [
+  "settings.palette.theme"
+ ],
+ "Ручной акцент": [
+  "settings.palette.manualAccent"
+ ],
+ "Manual accent": [
+  "settings.palette.manualAccent"
+ ],
+ "Кликни по цвету, чтобы выбрать его": [
+  "settings.palette.clickToPick"
+ ],
+ "Click a color to select it": [
+  "settings.palette.clickToPick"
+ ],
+ "Акцент из обоев": [
+  "settings.palette.wallpaperAccent"
+ ],
+ "Wallpaper accent": [
+  "settings.palette.wallpaperAccent"
+ ],
+ "Светлая палитра": [
+  "settings.palette.lightPalette"
+ ],
+ "Light palette": [
+  "settings.palette.lightPalette"
+ ],
+ "Тёмная палитра": [
+  "settings.palette.darkPalette"
+ ],
+ "Dark palette": [
+  "settings.palette.darkPalette"
+ ],
+ "Тёмная тема": [
+  "settings.palette.darkTheme"
+ ],
+ "Dark theme": [
+  "settings.palette.darkTheme"
+ ],
+ "Тёмные цвета из обоев": [
+  "settings.palette.darkFromWall"
+ ],
+ "Dark colors from wallpaper": [
+  "settings.palette.darkFromWall"
+ ],
+ "Светлые цвета из обоев": [
+  "settings.palette.lightFromWall"
+ ],
+ "Light colors from wallpaper": [
+  "settings.palette.lightFromWall"
+ ],
+ "Свет": [
+  "settings.palette.light"
+ ],
+ "Light": [
+  "settings.palette.light"
+ ],
+ "Тьма": [
+  "settings.palette.dark"
+ ],
+ "Dark": [
+  "settings.palette.dark"
+ ],
+ "Дин.": [
+  "settings.palette.dynamic"
+ ],
+ "Dyn.": [
+  "settings.palette.dynamic"
+ ],
+ "Своя": [
+  "settings.palette.custom"
+ ],
+ "Custom": [
+  "settings.palette.custom"
+ ],
+ "Акцент": [
+  "settings.palette.accent"
+ ],
+ "Accent": [
+  "settings.palette.accent"
+ ],
+ "тёмная": [
+  "settings.palette.accentDark"
+ ],
+ "dark": [
+  "settings.palette.accentDark"
+ ],
+ "светлая": [
+  "settings.palette.accentLight"
+ ],
+ "light": [
+  "settings.palette.accentLight"
+ ],
+ "Пресеты": [
+  "settings.palette.presets"
+ ],
+ "Presets": [
+  "settings.palette.presets"
+ ],
+ "Пресет": [
+  "settings.palette.preset"
+ ],
+ "Preset": [
+  "settings.palette.preset"
+ ],
+ "Пресет палитры": [
+  "settings.palette.palettePreset"
+ ],
+ "Palette preset": [
+  "settings.palette.palettePreset"
+ ],
+ "Как извлекать цвета из обоев": [
+  "settings.palette.extractMethod"
+ ],
+ "How to extract colors from wallpapers": [
+  "settings.palette.extractMethod"
+ ],
+ "Точность до десятых": [
+  "settings.palette.tenths"
+ ],
+ "Precision to tenths": [
+  "settings.palette.tenths"
+ ],
+ "С десятыми": [
+  "settings.palette.withTenths"
+ ],
+ "With tenths": [
+  "settings.palette.withTenths"
+ ],
+ "Целые градусы": [
+  "settings.palette.wholeDegrees"
+ ],
+ "Whole degrees": [
+  "settings.palette.wholeDegrees"
+ ],
+ "Текущий": [
+  "settings.palette.current"
+ ],
+ "Формат времени": [
+  "settings.location.timeFormat"
+ ],
+ "Time format": [
+  "settings.location.timeFormat"
+ ],
+ "12-часовой формат": [
+  "settings.location.h12"
+ ],
+ "12-hour format": [
+  "settings.location.h12"
+ ],
+ "24-часовой формат": [
+  "settings.location.h24"
+ ],
+ "24-hour format": [
+  "settings.location.h24"
+ ],
+ "Секунды в часах": [
+  "settings.location.showSeconds"
+ ],
+ "Clock seconds": [
+  "settings.location.showSeconds"
+ ],
+ "Город погоды": [
+  "settings.location.weatherCity"
+ ],
+ "Weather city": [
+  "settings.location.weatherCity"
+ ],
+ "Автоматически по IP": [
+  "settings.location.autoIp"
+ ],
+ "Automatic by IP": [
+  "settings.location.autoIp"
+ ],
+ "авто по IP": [
+  "settings.location.autoIpShort"
+ ],
+ "auto by IP": [
+  "settings.location.autoIpShort"
+ ],
+ "Погода на панели": [
+  "settings.location.weatherInBar"
+ ],
+ "Weather in bar": [
+  "settings.location.weatherInBar"
+ ],
+ "Глобальные сочетания": [
+  "settings.system.global"
+ ],
+ "Global shortcuts": [
+  "settings.system.global"
+ ],
+ "Навигация настроек": [
+  "settings.system.nav"
+ ],
+ "Settings navigation": [
+  "settings.system.nav"
+ ],
+ "Следующий раздел": [
+  "settings.system.nextSection"
+ ],
+ "Next section": [
+  "settings.system.nextSection"
+ ],
+ "Предыдущий раздел": [
+  "settings.system.prevSection"
+ ],
+ "Previous section": [
+  "settings.system.prevSection"
+ ],
+ "Следующая вкладка": [
+  "settings.system.nextTab"
+ ],
+ "Next tab": [
+  "settings.system.nextTab"
+ ],
+ "Предыдущая вкладка": [
+  "settings.system.prevTab"
+ ],
+ "Previous tab": [
+  "settings.system.prevTab"
+ ],
+ "Закрыть настройки": [
+  "settings.system.closeSettings"
+ ],
+ "Close settings": [
+  "settings.system.closeSettings"
+ ],
+ "Сочетание клавиш для закрытия окна настроек": [
+  "settings.system.closeSettingsHint"
+ ],
+ "Shortcut to close the settings window": [
+  "settings.system.closeSettingsHint"
+ ],
+ "Шина монитора": [
+  "settings.system.monitorBus"
+ ],
+ "Monitor bus": [
+  "settings.system.monitorBus"
+ ],
+ "Задержка DDC/CI": [
+  "settings.system.ddcDelay"
+ ],
+ "DDC/CI delay": [
+  "settings.system.ddcDelay"
+ ],
+ "Множитель паузы между командами": [
+  "settings.system.ddcMultiplier"
+ ],
+ "Delay multiplier between commands": [
+  "settings.system.ddcMultiplier"
+ ],
+ "Выбрать цвет с экрана": [
+  "settings.system.pickColor"
+ ],
+ "Pick color from screen": [
+  "settings.system.pickColor"
+ ],
+ "Установленная версия": [
+  "settings.about.installed"
+ ],
+ "Installed version": [
+  "settings.about.installed"
+ ],
+ "Последняя версия": [
+  "settings.about.latest"
+ ],
+ "Latest version": [
+  "settings.about.latest"
+ ],
+ "Контрибьюторы": [
+  "settings.about.contributors"
+ ],
+ "Contributors": [
+  "settings.about.contributors"
+ ],
+ "Naton is a customizable Wayland desktop shell built with Quickshell, QML, and Go.": [
+  "settings.about.description"
+ ],
+ "коммит": [
+  "settings.about.commitSuffix"
+ ],
+ "commit": [
+  "settings.about.commitSuffix"
+ ],
+ "коммита": [
+  "settings.about.commitSuffixGen"
+ ],
+ "commits": [
+  "settings.about.commitSuffixGen",
+  "settings.about.commitSuffixPlural"
+ ],
+ "коммитов": [
+  "settings.about.commitSuffixPlural"
+ ],
+ "Настройки обоев": [
+  "settings.wallpaper.settings"
+ ],
+ "Wallpaper settings": [
+  "settings.wallpaper.settings"
+ ],
+ "Папка обоев": [
+  "settings.wallpaper.folder"
+ ],
+ "Wallpaper folder": [
+  "settings.wallpaper.folder"
+ ],
+ "Поиск обоев": [
+  "settings.wallpaper.search"
+ ],
+ "Search wallpapers": [
+  "settings.wallpaper.search"
+ ],
+ "Видеообои": [
+  "settings.wallpaper.video"
+ ],
+ "Video wallpapers": [
+  "settings.wallpaper.video"
+ ],
+ "Звук видеообоев": [
+  "settings.wallpaper.videoSound"
+ ],
+ "Video wallpaper sound": [
+  "settings.wallpaper.videoSound"
+ ],
+ "Громкость видеообоев": [
+  "settings.wallpaper.videoVolume"
+ ],
+ "Video wallpaper volume": [
+  "settings.wallpaper.videoVolume"
+ ],
+ "Громкость воспроизведения": [
+  "settings.wallpaper.playbackVolume"
+ ],
+ "Playback volume": [
+  "settings.wallpaper.playbackVolume"
+ ],
+ "Аппаратное декодирование": [
+  "settings.wallpaper.hwDecode"
+ ],
+ "Hardware decoding": [
+  "settings.wallpaper.hwDecode"
+ ],
+ "Пауза видео в Overview": [
+  "settings.wallpaper.pauseOverview"
+ ],
+ "Pause video in Overview": [
+  "settings.wallpaper.pauseOverview"
+ ],
+ "Автоматическая смена": [
+  "settings.wallpaper.autoChange"
+ ],
+ "Automatic cycling": [
+  "settings.wallpaper.autoChange"
+ ],
+ "Интервал смены": [
+  "settings.wallpaper.interval"
+ ],
+ "Cycle interval": [
+  "settings.wallpaper.interval"
+ ],
+ "Секунды между обоями из текущей папки": [
+  "settings.wallpaper.intervalHint"
+ ],
+ "Seconds between wallpapers from the current folder": [
+  "settings.wallpaper.intervalHint"
+ ],
+ "Переход при смене обоев": [
+  "settings.wallpaper.transition"
+ ],
+ "Wallpaper transition": [
+  "settings.wallpaper.transition"
+ ],
+ "Эффект смены": [
+  "settings.wallpaper.effect"
+ ],
+ "Transition effect": [
+  "settings.wallpaper.effect"
+ ],
+ "Масштабирование изображения": [
+  "settings.wallpaper.scaling"
+ ],
+ "Image scaling": [
+  "settings.wallpaper.scaling"
+ ],
+ "Отображение обоев": [
+  "settings.wallpaper.display"
+ ],
+ "Wallpaper display": [
+  "settings.wallpaper.display"
+ ],
+ "Размывать обои в Overview": [
+  "settings.wallpaper.blurOverview"
+ ],
+ "Blur wallpapers in Overview": [
+  "settings.wallpaper.blurOverview"
+ ],
+ "Часы и медиа": [
+  "settings.wallpaper.clockMedia"
+ ],
+ "Clock and media": [
+  "settings.wallpaper.clockMedia"
+ ],
+ "Растянуть": [
+  "settings.dropdown.stretch"
+ ],
+ "Stretch": [
+  "settings.dropdown.stretch"
+ ],
+ "Вместить": [
+  "settings.dropdown.fit"
+ ],
+ "Fit": [
+  "settings.dropdown.fit"
+ ],
+ "Заполнить": [
+  "settings.dropdown.fill"
+ ],
+ "Fill": [
+  "settings.dropdown.fill"
+ ],
+ "Замостить": [
+  "settings.dropdown.tile"
+ ],
+ "Tile": [
+  "settings.dropdown.tile"
+ ],
+ "Замостить по вертикали": [
+  "settings.dropdown.tileV"
+ ],
+ "Tile vertically": [
+  "settings.dropdown.tileV"
+ ],
+ "Замостить по горизонтали": [
+  "settings.dropdown.tileH"
+ ],
+ "Tile horizontally": [
+  "settings.dropdown.tileH"
+ ],
+ "С полями": [
+  "settings.dropdown.pad"
+ ],
+ "With padding": [
+  "settings.dropdown.pad"
+ ],
+ "Без эффекта": [
+  "settings.dropdown.noEffect"
+ ],
+ "No effect": [
+  "settings.dropdown.noEffect"
+ ],
+ "Простой": [
+  "settings.dropdown.simple"
+ ],
+ "Simple": [
+  "settings.dropdown.simple"
+ ],
+ "Плавное появление": [
+  "settings.dropdown.fade"
+ ],
+ "Fade in": [
+  "settings.dropdown.fade"
+ ],
+ "Стирание": [
+  "settings.dropdown.wipe"
+ ],
+ "Wipe": [
+  "settings.dropdown.wipe"
+ ],
+ "Волна": [
+  "settings.dropdown.wave"
+ ],
+ "Wave": [
+  "settings.dropdown.wave"
+ ],
+ "Раскрытие": [
+  "settings.dropdown.grow"
+ ],
+ "Grow": [
+  "settings.dropdown.grow"
+ ],
+ "Круг из центра": [
+  "settings.dropdown.center"
+ ],
+ "Circle from center": [
+  "settings.dropdown.center"
+ ],
+ "Круг из случайной точки": [
+  "settings.dropdown.any"
+ ],
+ "Circle from random point": [
+  "settings.dropdown.any"
+ ],
+ "Круг к центру": [
+  "settings.dropdown.outer"
+ ],
+ "Circle to center": [
+  "settings.dropdown.outer"
+ ],
+ "Случайный": [
+  "settings.dropdown.random"
+ ],
+ "Random": [
+  "settings.dropdown.random"
+ ],
+ "Яркий": [
+  "settings.dropdown.vibrant"
+ ],
+ "Vibrant": [
+  "settings.dropdown.vibrant"
+ ],
+ "Точный": [
+  "settings.dropdown.faithful"
+ ],
+ "Faithful": [
+  "settings.dropdown.faithful"
+ ],
+ "Диссонансный": [
+  "settings.dropdown.dysfunctional"
+ ],
+ "Dysfunctional": [
+  "settings.dropdown.dysfunctional"
+ ],
+ "Приглушённый": [
+  "settings.dropdown.muted"
+ ],
+ "Muted": [
+  "settings.dropdown.muted"
+ ],
+ "Мягкий": [
+  "settings.dropdown.soft"
+ ],
+ "Soft": [
+  "settings.dropdown.soft"
+ ],
+ "Material": [
+  "settings.dropdown.material"
+ ],
+ "Монохромный": [
+  "settings.dropdown.monochrome"
+ ],
+ "Monochrome": [
+  "settings.dropdown.monochrome"
+ ],
+ "ВЛ": [
+  "settings.dropdown.tl"
+ ],
+ "Top left": [
+  "settings.dropdown.tl"
+ ],
+ "Верх": [
+  "settings.dropdown.tc"
+ ],
+ "Top center": [
+  "settings.dropdown.tc"
+ ],
+ "ВП": [
+  "settings.dropdown.tr"
+ ],
+ "Top right": [
+  "settings.dropdown.tr"
+ ],
+ "НЛ": [
+  "settings.dropdown.bl"
+ ],
+ "Bottom left": [
+  "settings.dropdown.bl"
+ ],
+ "Низ": [
+  "settings.dropdown.bc"
+ ],
+ "Bottom center": [
+  "settings.dropdown.bc"
+ ],
+ "НП": [
+  "settings.dropdown.br"
+ ],
+ "Bottom right": [
+  "settings.dropdown.br"
+ ],
+ "24ч": [
+  "settings.dropdown.h24"
+ ],
+ "24h": [
+  "settings.dropdown.h24"
+ ],
+ "12ч": [
+  "settings.dropdown.h12"
+ ],
+ "12h": [
+  "settings.dropdown.h12"
+ ],
+ "Фон": [
+  "settings.dropdown.background"
+ ],
+ "Background": [
+  "settings.dropdown.background"
+ ]
+}
