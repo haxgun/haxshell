@@ -342,7 +342,7 @@ PanelWindow {
   Rectangle {
     id: container
     width: Config.scaledSize(410)
-    height: Math.min(content.implicitHeight + 28, root.height - 32)
+    height: Math.min(root.settingsView ? settingsEmbedded.settingsContentHeight : content.implicitHeight + 28, root.height - 32)
     anchors.left: Config.popupsAtLeft ? parent.left : undefined
     anchors.leftMargin: Config.popupsAtLeft ? Config.popupGap : undefined
     anchors.right: Config.popupsAtLeft ? undefined : parent.right
