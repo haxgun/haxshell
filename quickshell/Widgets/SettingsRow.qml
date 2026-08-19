@@ -15,7 +15,7 @@ Item {
   default property alias control: controlSlot.data
 
   width: parent ? parent.width : 0
-  height: Math.max(46, Math.max(textColumn.implicitHeight, controlSlot.childrenRect.height) + 14)
+  height: Math.max(46, textColumn.implicitHeight + 14)
 
   Rectangle {
     anchors.fill: parent
@@ -77,7 +77,8 @@ Item {
     anchors.rightMargin: Config.scaledSize(10)
     anchors.verticalCenter: parent.verticalCenter
     width: childrenRect.width
-    height: childrenRect.height
+    readonly property real controlHeight: controlSlot.children.length > 0 ? Math.max(0, Math.max(controlSlot.children[controlSlot.children.length - 1].height, controlSlot.children[controlSlot.children.length - 1].implicitHeight)) : 0
+    height: controlHeight
   }
 
   Rectangle { anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom; height: 1; color: Config.separatorColor; opacity: 0.45; visible: !root.last }
