@@ -1,14 +1,12 @@
 singleton Config 1.0 Common/Config.qml
 Bar 1.0 Modules/Bar/Bar.qml
 WorkspaceWidget 1.0 Modules/Bar/WorkspaceWidget.qml
-ClockWidget 1.0 Modules/Bar/ClockWidget.qml
 StatusWidget 1.0 Modules/Bar/StatusWidget.qml
 TrayWidget 1.0 Modules/Bar/TrayWidget.qml
 KeyboardLayoutWidget 1.0 Modules/Bar/KeyboardLayoutWidget.qml
 WeatherWidget 1.0 Modules/Bar/WeatherWidget.qml
 ActiveAppWidget 1.0 Modules/Bar/ActiveAppWidget.qml
 MediaWidget 1.0 Modules/Bar/MediaWidget.qml
-Time 1.0 Modules/Bar/Time.qml
 AppDrawer 1.0 Modules/AppDrawer/AppDrawer.qml
 AppLauncher 1.0 Modules/AppDrawer/AppLauncher.qml
 CalendarPopup 1.0 Modules/Calendar/CalendarPopup.qml
@@ -23,11 +21,8 @@ BatteryPopup 1.0 Modules/ControlCenter/BatteryPopup.qml
 BatteryInfoRow 1.0 Widgets/BatteryInfoRow.qml
 KeyboardLayoutPopup 1.0 Modules/ControlCenter/KeyboardLayoutPopup.qml
 TrayMenuPopup 1.0 Modules/Tray/TrayMenuPopup.qml
-WallpaperButton 1.0 Modules/Wallpapers/WallpaperButton.qml
-WallpaperPopup 1.0 Modules/Wallpapers/WallpaperPopup.qml
 SettingsPopup 1.0 Modules/Settings/SettingsPopup.qml
 SysMetricPill 1.0 Widgets/SysMetricPill.qml
-SpeedGauge 1.0 Widgets/SpeedGauge.qml
 ToggleSwitch 1.0 Widgets/ToggleSwitch.qml
 SystemPopup 1.0 Modules/System/SystemPopup.qml
 MediaPopup 1.0 Modules/Media/MediaPopup.qml

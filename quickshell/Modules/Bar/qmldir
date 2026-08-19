@@ -1,10 +1,8 @@
 Bar 1.0 Bar.qml
 WorkspaceWidget 1.0 WorkspaceWidget.qml
-ClockWidget 1.0 ClockWidget.qml
 StatusWidget 1.0 StatusWidget.qml
 ActiveAppWidget 1.0 ActiveAppWidget.qml
 WeatherWidget 1.0 WeatherWidget.qml
 MediaWidget 1.0 MediaWidget.qml
 TrayWidget 1.0 TrayWidget.qml
 KeyboardLayoutWidget 1.0 KeyboardLayoutWidget.qml
-Time 1.0 Time.qml

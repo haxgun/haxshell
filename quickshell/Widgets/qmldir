@@ -2,13 +2,10 @@ SettingsRow 1.0 SettingsRow.qml
 NumberSlider 1.0 NumberSlider.qml
 SystemDial 1.0 SystemDial.qml
 SysMetricPill 1.0 SysMetricPill.qml
-SpeedGauge 1.0 SpeedGauge.qml
 ToggleSwitch 1.0 ToggleSwitch.qml
 Spoiler 1.0 Spoiler.qml
 Tooltip 1.0 Tooltip.qml
 ColorPicker 1.0 ColorPicker.qml
-GradientRing 1.0 GradientRing.qml
-GradientSurface 1.0 GradientSurface.qml
 KeybindRecorder 1.0 KeybindRecorder.qml
 QuickControlTile 1.0 QuickControlTile.qml
 QuickControlSlider 1.0 QuickControlSlider.qml
