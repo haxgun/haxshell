@@ -398,7 +398,7 @@ func cmdI18n(args []string) {
 	if !map[string]bool{"ru": true, "en": true, "ja": true, "zh": true, "de": true}[lang] {
 		lang = "ru"
 	}
-	base := filepath.Join(filepath.Dir(os.Args[0]), "..", "translations")
+	base := filepath.Join(filepath.Dir(os.Args[0]), "translations")
 	path := filepath.Clean(filepath.Join(base, lang+".json"))
 	data, err := os.ReadFile(path)
 	if err != nil && lang != "ru" {
@@ -406,9 +406,27 @@ func cmdI18n(args []string) {
 	}
 	stringsMap := map[string]string{}
 	if err == nil {
-		_ = json.Unmarshal(data, &stringsMap)
+		var nested map[string]any
+		if json.Unmarshal(data, &nested) == nil {
+			flattenI18n("", nested, stringsMap)
+		}
 	}
 	output(map[string]any{"ok": err == nil, "language": lang, "strings": stringsMap})
+}
+
+func flattenI18n(prefix string, node map[string]any, out map[string]string) {
+	for key, val := range node {
+		slug := key
+		if prefix != "" {
+			slug = prefix + "." + key
+		}
+		switch v := val.(type) {
+		case map[string]any:
+			flattenI18n(slug, v, out)
+		case string:
+			out[slug] = v
+		}
+	}
 }
 
 func cmdPickFolder(args []string) {
