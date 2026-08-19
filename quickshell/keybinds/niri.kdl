@@ -13,4 +13,5 @@ binds {
     Mod+L { spawn "sh" "-c" "\"$HOME/.config/quickshell/natonctl\" ipc brightness toggle"; }
     Mod+K { spawn "sh" "-c" "\"$HOME/.config/quickshell/natonctl\" ipc keyboard toggle"; }
     Mod+I { spawn "sh" "-c" "\"$HOME/.config/quickshell/natonctl\" ipc system toggle"; }
+    Mod+Shift+Q { spawn "sh" "-c" "\"$HOME/.config/quickshell/natonctl\" ipc shell reload"; }
 }

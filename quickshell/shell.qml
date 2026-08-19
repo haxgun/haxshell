@@ -27,6 +27,11 @@ Scope {
     }
   }
 
+  IpcHandler {
+    target: "shell"
+    function reload() { Quickshell.reload(false) }
+  }
+
   function applySettings(data) {
     try {
       let settings = typeof data === "string" ? JSON.parse(data) : data
