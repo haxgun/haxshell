@@ -81,10 +81,7 @@ Rectangle {
   function openSettingsSection(section, item) {
     if (!root.controlCenterPopup) return false
     closeFlyouts("controlCenter")
-    root.controlCenterPopup.activeSection = section
-    root.controlCenterPopup.settingsView = true
-    root.controlCenterPopup.isOpen = true
-    root.controlCenterPopup.openSettings()
+    root.controlCenterPopup.openSettingsSection(section)
     return true
   }
 
