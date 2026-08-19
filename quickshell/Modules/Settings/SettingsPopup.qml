@@ -75,14 +75,14 @@ Item {
     { key: "bottom-left", label: "settings.dropdown.bl" }, { key: "bottom-center", label: "settings.dropdown.bc" }, { key: "bottom-right", label: "settings.dropdown.br" }
   ]
   readonly property var sectionCategories: [
-    { key: "appearance", icon: Config.iconTheme, title: "settings.sections.appearance", pages: [{ key: "general", title: "settings.pages.general" }, { key: "palette", title: "settings.pages.palette" }, { key: "fontPicker", hidden: true }] },
-    { key: "bar", icon: Config.iconPanel, title: "settings.sections.bar", pages: [{ key: "bar", title: "settings.pages.barPage" }, { key: "popups", title: "settings.pages.popups" }, { key: "monitoring", title: "settings.pages.monitoring" }] },
-    { key: "desktop", icon: Config.iconWallpaper, title: "settings.sections.desktop", pages: [{ key: "wallpaper", title: "settings.pages.wallpaper" }] },
-    { key: "time", icon: Config.iconClock, title: "settings.sections.time", pages: [{ key: "location", title: "settings.pages.location" }] },
-    { key: "notifications", icon: Config.iconNotifications, title: "settings.sections.notifications", pages: [{ key: "notifications", title: "notifications.title" }, { key: "osd", title: "settings.pages.osd" }] },
-    { key: "system", icon: Config.iconKeyboard, title: "settings.sections.system", pages: [{ key: "system", title: "settings.pages.systemPage" }] },
-    { key: "advanced", icon: Config.iconMonitor, title: "settings.sections.advanced", pages: [{ key: "advanced", title: "settings.pages.advancedPage" }] },
-    { key: "about", icon: Config.iconInfo, title: "settings.sections.about", pages: [{ key: "about", title: "settings.pages.aboutPage" }] }
+    { key: "appearance", icon: Config.iconTheme, title: "settings.sections.appearance", description: "settings.sections.appearanceDesc", pages: [{ key: "general", title: "settings.pages.general" }, { key: "palette", title: "settings.pages.palette" }, { key: "fontPicker", hidden: true }] },
+    { key: "bar", icon: Config.iconPanel, title: "settings.sections.bar", description: "settings.sections.barDesc", pages: [{ key: "bar", title: "settings.pages.barPage" }, { key: "popups", title: "settings.pages.popups" }, { key: "monitoring", title: "settings.pages.monitoring" }] },
+    { key: "desktop", icon: Config.iconWallpaper, title: "settings.sections.desktop", description: "settings.sections.desktopDesc", pages: [{ key: "wallpaper", title: "settings.pages.wallpaper" }] },
+    { key: "time", icon: Config.iconClock, title: "settings.sections.time", description: "settings.sections.timeDesc", pages: [{ key: "location", title: "settings.pages.location" }] },
+    { key: "notifications", icon: Config.iconNotifications, title: "settings.sections.notifications", description: "settings.sections.notificationsDesc", pages: [{ key: "notifications", title: "notifications.title" }, { key: "osd", title: "settings.pages.osd" }] },
+    { key: "system", icon: Config.iconKeyboard, title: "settings.sections.system", description: "settings.sections.systemDesc", pages: [{ key: "system", title: "settings.pages.systemPage" }] },
+    { key: "advanced", icon: Config.iconMonitor, title: "settings.sections.advanced", description: "settings.sections.advancedDesc", pages: [{ key: "advanced", title: "settings.pages.advancedPage" }] },
+    { key: "about", icon: Config.iconInfo, title: "settings.sections.about", description: "settings.sections.aboutDesc", pages: [{ key: "about", title: "settings.pages.aboutPage" }] }
   ]
   readonly property var searchableSettings: [
     { section: "general", title: "settings.pages.general" }, { section: "general", title: "settings.sections.appearance" },
@@ -1137,6 +1137,17 @@ Item {
                 MouseArea { id: sectionTabMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSection(parent.modelData.key) }
               }
             }
+          }
+
+          Text {
+            width: parent.width
+            text: I18n.tr(root.currentCategory.description || "")
+            color: Config.textMuted
+            font.pixelSize: Config.fontSizeSmall
+            font.family: Config.fontSans
+            wrapMode: Text.WordWrap
+            lineHeight: 1.2
+            visible: text.length > 0
           }
 
           Column {

@@ -96,7 +96,7 @@ PanelWindow {
   Shortcut {
     sequence: Config.settingsCloseKeybind
     enabled: root.isOpen && root.settingsView
-    onActivated: settingsEmbedded.handleBack()
+    onActivated: root.isOpen = false
   }
 
   Shortcut { sequence: "Ctrl+Tab"; enabled: root.isOpen && root.settingsView; onActivated: settingsEmbedded.selectRelativeCategory(1) }

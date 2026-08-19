@@ -193,13 +193,21 @@
     "searchPlaceholder": "Einstellungen suchen",
     "sections": {
       "appearance": "Darstellung",
+      "appearanceDesc": "Passen Sie das Erscheinungsbild an: Sprache, Schriften, Skalierung, Farbpalette und Animationen.",
       "bar": "Leiste & Popups",
+      "barDesc": "Konfigurieren Sie die obere Leiste, Popups und überwachte Systemwerte.",
       "desktop": "Hintergrund",
+      "desktopDesc": "Wählen Sie Hintergründe, legen Sie einen Ordner fest und aktivieren Sie den Wechsel.",
       "time": "Zeit & Ort",
+      "timeDesc": "Legen Sie Zeitformat, Wetterstandort und Datumsanzeige in der Leiste fest.",
       "notifications": "Benachrichtigungen",
+      "notificationsDesc": "Verwalten Sie Benachrichtigungen, Nicht-stören-Modus und Bildschirm-Overlays.",
       "system": "System",
+      "systemDesc": "Allgemeines Systemverhalten: Sprache, Tastenkürzel und Energieeinstellungen.",
       "advanced": "Erweitert",
-      "about": "Über"
+      "advancedDesc": "Niedrigstufige Optionen für Energiemanagement und Bildschirmhelligkeit.",
+      "about": "Über",
+      "aboutDesc": "Informationen über Naton, seine Version und laufende Komponenten."
     },
     "pages": {
       "general": "Oberfläche",

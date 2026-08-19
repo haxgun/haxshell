@@ -193,13 +193,21 @@
     "searchPlaceholder": "Search settings",
     "sections": {
       "appearance": "Appearance",
+      "appearanceDesc": "Customize the look and feel: interface language, fonts, scale, color palette and animations.",
       "bar": "Bar & popups",
+      "barDesc": "Configure the top bar, popups, and which system metrics are monitored.",
       "desktop": "Wallpapers",
+      "desktopDesc": "Choose wallpapers, set a wallpaper folder and enable automatic cycling.",
       "time": "Time & location",
+      "timeDesc": "Set time format, weather location and date display in the bar.",
       "notifications": "Notifications",
+      "notificationsDesc": "Manage notification toasts, do-not-disturb and on-screen display overlays.",
       "system": "System",
+      "systemDesc": "General system behavior: language, keybinds and power settings.",
       "advanced": "Advanced",
-      "about": "About"
+      "advancedDesc": "Low-level options for power management and hardware backlight control.",
+      "about": "About",
+      "aboutDesc": "Information about Naton, its version and what is running inside."
     },
     "pages": {
       "general": "Interface",
