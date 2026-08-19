@@ -1748,8 +1748,12 @@ Item {
             width: parent.width
             spacing: Config.scaledSize(10)
             visible: root.activeSection === "wallpaper"
-            height: visible ? Math.max(implicitHeight, root.sectionViewHeight) : 0
+            height: visible ? root.sectionViewHeight : 0
             clip: true
+            Column {
+              id: wallpaperHeader
+              width: parent.width
+              spacing: Config.scaledSize(10)
             Spoiler {
               title: I18n.tr("settings.wallpaper.settings")
               expanded: false
@@ -1965,13 +1969,14 @@ Item {
               }
             }
             Text { width: parent.width; visible: wallpapersModel.count === 0; text: I18n.tr("wallpaper.folderEmpty"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap }
+            }
             GridView {
               id: wallpaperGrid
               readonly property real tileGap: 6
               readonly property real tileWidth: width / 3
               readonly property real tileHeight: (tileWidth - tileGap) * 9 / 16 + tileGap
               width: parent.width
-              height: settingsFlickable.height
+              height: Math.max(0, parent.height - wallpaperHeader.height - Config.scaledSize(10))
               anchors.horizontalCenter: parent.horizontalCenter
               visible: wallpapersModel.count > 0
               clip: true
