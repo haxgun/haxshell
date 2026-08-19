@@ -1285,27 +1285,38 @@ Item {
           width: parent.width
           spacing: Config.scaledSize(12)
 
-          Row {
+          Rectangle {
             id: sectionTabs
+            readonly property real cornerRadius: Config.cardRadius
+            readonly property real innerPadding: Config.scaledSize(6)
             width: parent.width
-            height: visible ? Config.scaledSize(30) : 0
-            spacing: Config.scaledSize(4)
+            height: visible ? Config.scaledSize(30) + innerPadding * 2 : 0
+            radius: cornerRadius
+            color: Config.controlIdleBg
+            border.color: Config.borderColor
+            border.width: 1
             visible: root.visiblePageCount(root.currentCategory) > 1
 
-            Repeater {
-              model: root.currentCategory.pages
-              Rectangle {
-                required property var modelData
-                visible: !modelData.hidden
-                width: visible ? (sectionTabs.width - Config.scaledSize(4) * (root.visiblePageCount(root.currentCategory) - 1)) / root.visiblePageCount(root.currentCategory) : 0
-                height: sectionTabs.height
-                radius: Config.popupRadiusPx(8)
-                readonly property bool active: root.activeSection === modelData.key
-                color: active ? Config.selectedBg : (sectionTabMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
-                border.color: active ? Config.activeBorderColor : Config.borderColor
-                border.width: 1
-                Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.title || ""); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width - Config.scaledSize(12); horizontalAlignment: Text.AlignHCenter }
-                MouseArea { id: sectionTabMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSection(parent.modelData.key) }
+            Row {
+              anchors.fill: parent
+              anchors.margins: sectionTabs.innerPadding
+              spacing: sectionTabs.innerPadding
+
+              Repeater {
+                model: root.currentCategory.pages
+                Rectangle {
+                  required property var modelData
+                  visible: !modelData.hidden
+                  width: visible ? (parent.width - sectionTabs.innerPadding * (root.visiblePageCount(root.currentCategory) - 1)) / root.visiblePageCount(root.currentCategory) : 0
+                  height: parent.height
+                  radius: Math.max(0, sectionTabs.cornerRadius - sectionTabs.innerPadding)
+                  readonly property bool active: root.activeSection === modelData.key
+                  color: active ? Config.selectedBg : (sectionTabMouse.containsMouse ? Config.hoverBg : "#00000000")
+                  border.color: active ? Config.activeBorderColor : "#00000000"
+                  border.width: 1
+                  Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.title || ""); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width - Config.scaledSize(12); horizontalAlignment: Text.AlignHCenter }
+                  MouseArea { id: sectionTabMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.selectSection(parent.modelData.key) }
+                }
               }
             }
           }
