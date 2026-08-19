@@ -7,6 +7,7 @@ import "../../Widgets"
 
 Item {
   id: root
+  implicitHeight: panelContent.implicitHeight
 
   property bool active: false
   property int batteryPercent: 0
@@ -100,6 +101,7 @@ Item {
   }
 
   Column {
+    id: panelContent
     width: parent.width
     spacing: Config.scaledSize(12)
 

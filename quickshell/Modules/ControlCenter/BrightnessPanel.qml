@@ -6,6 +6,7 @@ import "../../Common"
 
 Item {
   id: root
+  implicitHeight: panelContent.implicitHeight
 
   property bool active: false
   property var osd: null
@@ -82,6 +83,7 @@ Item {
   }
 
   Column {
+    id: panelContent
     width: parent.width
     spacing: Config.scaledSize(14)
 

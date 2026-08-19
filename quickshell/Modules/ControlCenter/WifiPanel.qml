@@ -8,6 +8,7 @@ import "../../Widgets"
 
 Item {
   id: root
+  implicitHeight: panelContent.implicitHeight
 
   property bool active: false
   property bool refreshActive: false
@@ -104,6 +105,7 @@ Item {
   }
 
   Column {
+    id: panelContent
     width: parent.width
     spacing: Config.scaledSize(12)
 

@@ -8,6 +8,7 @@ import "../../Widgets"
 
 Item {
   id: root
+  implicitHeight: panelContent.implicitHeight
 
   property bool active: false
   readonly property var adapter: Bluetooth.defaultAdapter
@@ -61,6 +62,7 @@ Item {
   }
 
   Column {
+    id: panelContent
     width: parent.width
     spacing: Config.scaledSize(12)
 
