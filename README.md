@@ -6,7 +6,7 @@
 
 `Naton` is a customizable Wayland desktop shell built with Quickshell, QML, and Go for Hyprland and Niri.
 
-**English** · [Русский](README.ru.md)
+**English** · [Русский](README.ru.md) · [中文](README.zh.md) · [Deutsch](README.de.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-6b8e23.svg)](LICENSE)
 [![Quickshell](https://img.shields.io/badge/Quickshell-QML-5c7cfa.svg)](https://quickshell.org/)
@@ -24,13 +24,14 @@
 
 - Bar placement at the top, bottom, left, or right edge with configurable margins.
 - Workspace switcher, focused application indicator, clock, weather, media, tray, and system widgets on the bar, each independently toggleable.
-- Popups for Wi-Fi, Bluetooth, brightness, audio, battery, calendar, media, power, and settings, anchored to the bar so they follow its position on any edge.
+- Popups for calendar, media, power, and settings, anchored to the bar so they follow its position. Wi-Fi, Bluetooth, audio, battery, and brightness are in their own settings sections.
 - Compact control center with pill quick actions (Wi-Fi, Bluetooth, Do Not Disturb, keep screen on), a screenshot button, brightness and volume sliders, CPU/RAM/disk stats, power profiles, theme, and media controls with track switching.
 - Separate speaker and microphone volume controls with PipeWire device selection.
 - Shared MPRIS controller with album artwork, live playback progress, bar metadata, and a media popup with a blurred artwork backdrop.
-- Notification toasts and notification center with per-app muting and optional sound.
+- Notification toasts and notification center with per-app muting and optional sound; the list follows the bar position (top to bottom when the bar is on top and bottom to top when it is on the bottom).
 - Searchable launcher with application, window, shell-command, and calculator providers; clipboard history; dock/taskbar; calendar agenda from khal.
 - Wallpaper picker with extracted color palettes and a dynamic theme that colors shell surfaces from the current wallpaper. Seven palette schemes (`vibrant`, `faithful`, `dysfunctional`, `muted`, `soft`, `material`, `monochrome`) with animated color transitions between wallpapers.
+- Video wallpapers via `mpvpaper` with a static first-frame fallback through `awww` and settings for audio, hardware decoding, scaling, and pausing in Niri's overview.
 - Persistent settings for the theme, bar, typography (separate sans and mono families with independent scaling), notifications, OSD, wallpaper behavior, and shell appearance.
 - Remappable global keyboard shortcuts for opening popups (launcher, settings, clipboard, notifications, power, control center, calendar, media, Wi-Fi, Bluetooth, brightness, keyboard layout, system monitor), edited from Settings and applied to live per-compositor bind overrides.
 - Idle policy that locks the session or suspends after a configurable timeout via `swayidle`.
@@ -84,7 +85,7 @@ For Niri, install the event-driven `qml-niri` integration as a required dependen
 ./install.sh --compositor niri
 ```
 
-`yay` or `paru` is required when Vicinae is not installed because it is installed from the AUR.
+`yay` or `paru` is required when Vicinae or `mpvpaper` is not installed because they are installed from the AUR.
 
 ## Dependencies
 
@@ -95,8 +96,9 @@ For Niri, install the event-driven `qml-niri` integration as a required dependen
 | `quickshell` | the shell runtime |
 | `curl` | weather, holidays, and the About section |
 | `awww` | wallpaper daemon |
+| `mpv` | video wallpaper playback |
 | `imagemagick` | palette extraction, thumbnails, wallpaper tiling |
-| `ffmpeg` | video wallpaper thumbnails |
+| `ffmpeg` | video wallpaper thumbnails and first-frame extraction |
 | `brightnessctl` | brightness control |
 | `power-profiles-daemon` | power profiles |
 | `pipewire`, `pipewire-pulse`, `wireplumber` | audio |
@@ -127,6 +129,7 @@ One of:
 ### Optional
 
 - `vicinae` (AUR) — optional external app launcher (the shell ships a built-in launcher)
+- `mpvpaper` (AUR) — video wallpaper daemon
 - `cava` — bar music visualizer
 
 Quickshell handles notifications itself — disable any other notification daemon (such as Dunst) so toasts are not duplicated.
@@ -146,6 +149,8 @@ Rebuild the utility and restart Quickshell after changing files under `core/`.
 - Shared configuration is in `quickshell/Common/Config.qml`.
 - User settings are persisted by `quickshell/Common/SettingsStore.qml` in `quickshell/settings.json`.
 - Appearance settings: blur, borders, shadows, palette, typography (sans/mono family and scale), bar geometry and margins, per-widget bar toggles, popup positioning, notifications, OSD, and wallpaper rotation are available from the Settings popup.
+- Settings sections cover Appearance, Bar, Desktop (Wallpapers), Time/Location, Notifications/OSD, System, Advanced, Battery, Sound, Wi-Fi, Bluetooth, and About. Wi-Fi, Bluetooth, sound, battery, and brightness controls were moved from separate popups into these settings sections; brightness remains on the control center main page.
+- Video wallpaper settings (audio, volume, hardware decoding, and pausing in Niri's overview) live in Settings → Wallpapers.
 - Region screenshots use `slurp` and `grim`; clipboard history is available through `qs ipc call clipboard toggle`.
 - Global keyboard shortcuts are edited in Settings → System → Keyboard shortcuts. They persist to `settings.json` and are written to per-compositor bind overrides: defaults are installed from `quickshell/keybinds/` into `~/.config/niri/naton/keybinds.kdl` (Niri) or `~/.config/hypr/naton/keybinds.lua` (Hyprland), user overrides under `~/.config/niri/naton/binds.kdl` (Niri) or `~/.config/hypr/naton/binds.lua` (Hyprland), and the compositor reloads them automatically.
 - Dynamic theme stores the extracted wallpaper palette in `dynamicPalette` and applies it to shell surfaces, controls, borders, tracks, and workspace indicators.
