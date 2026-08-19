@@ -55,7 +55,7 @@ Rectangle {
   }
 
   function prettyAppName(value) {
-    if (!value) return "Рабочий стол"
+    if (!value) return I18n.tr("bar.desktop")
     let part = value.split(".").filter(p => p.length > 0).pop() || value
     if (part.toLowerCase() === "desktop" && value.toLowerCase().includes("telegram")) return "Telegram"
     return part.charAt(0).toUpperCase() + part.slice(1)

@@ -109,7 +109,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(launcherBtn, I18n.tr("Меню приложений"))
+        onEntered: if (root.tooltip) root.tooltip.show(launcherBtn, I18n.tr("bar.appMenu"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: if (root.appDrawer) root.appDrawer.isOpen = !root.appDrawer.isOpen
       }
@@ -186,7 +186,7 @@ Rectangle {
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
-          onEntered: if (root.tooltip) root.tooltip.show(itemRect, I18n.tr("Рабочий стол") + " " + modelData.label)
+          onEntered: if (root.tooltip) root.tooltip.show(itemRect, I18n.tr("bar.desktop") + " " + modelData.label)
           onExited: if (root.tooltip) root.tooltip.hide()
           onClicked: {
             CompositorService.switchWorkspace(modelData)

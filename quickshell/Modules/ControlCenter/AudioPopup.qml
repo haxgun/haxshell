@@ -159,7 +159,7 @@ PanelWindow {
 
         Text {
           width: parent.width - 38
-          text: "Звук"
+          text: I18n.tr("audio.title")
           color: Config.textWhite
           font.pixelSize: Config.fontSizeLarge
           font.weight: Font.Medium
@@ -170,7 +170,7 @@ PanelWindow {
 
       AudioSlider {
         width: parent.width
-        title: "Динамики"
+        title: I18n.tr("audio.speakers")
         iconText: root.sinkMuted ? Config.iconVolMuted : Config.iconVolHigh
         value: root.sinkVolume
         muted: root.sinkMuted
@@ -182,7 +182,7 @@ PanelWindow {
         width: parent.width
         model: root.sinks
         currentDevice: root.sink
-        emptyText: "Устройства вывода не найдены"
+        emptyText: I18n.tr("audio.noOutputs")
         onSelectDevice: node => root.setSink(node)
       }
 
@@ -194,7 +194,7 @@ PanelWindow {
 
       AudioSlider {
         width: parent.width
-        title: "Микрофон"
+        title: I18n.tr("audio.mic")
         iconText: Config.iconMic
         value: root.sourceVolume
         muted: root.sourceMuted
@@ -223,7 +223,7 @@ PanelWindow {
         width: parent.width
         model: root.sources
         currentDevice: root.source
-        emptyText: "Устройства ввода не найдены"
+        emptyText: I18n.tr("audio.noInputs")
         onSelectDevice: node => root.setSource(node)
       }
     }

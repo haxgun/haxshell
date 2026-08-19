@@ -13,7 +13,7 @@ Rectangle {
   readonly property var toastData: modelData || ({})
   readonly property var notification: toastData.notification || null
   readonly property int notificationId: toastData.id || -1
-  readonly property string toastSummary: toastData.summary || "Уведомление"
+  readonly property string toastSummary: toastData.summary || I18n.tr("notifications.fallback")
   readonly property string toastBody: toastData.body || ""
   readonly property string toastAppName: toastData.appName || ""
   readonly property string toastImageSource: toastData.imageSource || ""

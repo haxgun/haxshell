@@ -78,7 +78,7 @@ PanelWindow {
         spacing: Config.scaledSize(10)
 
         Text { text: Config.iconNotificationsActive; color: Config.textWhite; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { width: parent.width - 86; text: I18n.tr("Уведомления"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+        Text { width: parent.width - 86; text: I18n.tr("notifications.title"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
 
         Rectangle {
           width: Config.scaledSize(36)
@@ -100,7 +100,7 @@ PanelWindow {
         spacing: Config.scaledSize(10)
 
         Text { text: Config.iconNotifications; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { width: parent.width - doNotDisturbToggle.width - 28; text: I18n.tr("Не беспокоить"); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+        Text { width: parent.width - doNotDisturbToggle.width - 28; text: I18n.tr("notifications.dnd"); color: Config.textPrimary; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
         ToggleSwitch { id: doNotDisturbToggle; checked: NotificationService.doNotDisturb; anchors.verticalCenter: parent.verticalCenter; onToggled: NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb) }
       }
 
@@ -112,8 +112,8 @@ PanelWindow {
         spacing: Config.scaledSize(6)
         Repeater {
           model: [
-            { key: "current", text: I18n.tr("Текущие") + " (" + NotificationService.notificationCount + ")" },
-            { key: "history", text: I18n.tr("История") + " (" + NotificationService.historyList.length + ")" }
+            { key: "current", text: I18n.tr("notifications.current") + " (" + NotificationService.notificationCount + ")" },
+            { key: "history", text: I18n.tr("notifications.history") + " (" + NotificationService.historyList.length + ")" }
           ]
           Rectangle {
             required property var modelData
@@ -130,7 +130,7 @@ PanelWindow {
       Text {
         width: parent.width
         visible: centerModel.length === 0
-        text: I18n.tr("Нет уведомлений")
+        text: I18n.tr("notifications.empty")
         color: Config.textMuted
         font.pixelSize: Config.fontSizeNormal
         font.family: Config.fontSans

@@ -50,97 +50,97 @@ Item {
     { key: "de", label: "DE", name: "Deutsch" }
   ]
   readonly property var wallpaperFillModes: [
-    { key: "stretch", label: "Растянуть" }, { key: "fit", label: "Вместить" },
-    { key: "fill", label: "Заполнить" }, { key: "tile", label: "Замостить" },
-    { key: "tile-v", label: "Замостить по вертикали" }, { key: "tile-h", label: "Замостить по горизонтали" },
-    { key: "pad", label: "С полями" }
+    { key: "stretch", label: "settings.dropdown.stretch" }, { key: "fit", label: "settings.dropdown.fit" },
+    { key: "fill", label: "settings.dropdown.fill" }, { key: "tile", label: "settings.dropdown.tile" },
+    { key: "tile-v", label: "settings.dropdown.tileV" }, { key: "tile-h", label: "settings.dropdown.tileH" },
+    { key: "pad", label: "settings.dropdown.pad" }
   ]
   readonly property var wallpaperTransitions: [
-    { key: "none", label: "Без эффекта" }, { key: "simple", label: "Простой" },
-    { key: "fade", label: "Плавное появление" }, { key: "left", label: "Слева" },
-    { key: "right", label: "Справа" }, { key: "top", label: "Сверху" },
-    { key: "bottom", label: "Снизу" }, { key: "wipe", label: "Стирание" },
-    { key: "wave", label: "Волна" }, { key: "grow", label: "Раскрытие" },
-    { key: "center", label: "Круг из центра" }, { key: "any", label: "Круг из случайной точки" },
-    { key: "outer", label: "Круг к центру" }, { key: "random", label: "Случайный" }
+    { key: "none", label: "settings.dropdown.noEffect" }, { key: "simple", label: "settings.dropdown.simple" },
+    { key: "fade", label: "settings.dropdown.fade" }, { key: "left", label: "settings.popups.left" },
+    { key: "right", label: "settings.popups.right" }, { key: "top", label: "settings.popups.top" },
+    { key: "bottom", label: "settings.popups.bottom" }, { key: "wipe", label: "settings.dropdown.wipe" },
+    { key: "wave", label: "settings.dropdown.wave" }, { key: "grow", label: "settings.dropdown.grow" },
+    { key: "center", label: "settings.dropdown.center" }, { key: "any", label: "settings.dropdown.any" },
+    { key: "outer", label: "settings.dropdown.outer" }, { key: "random", label: "settings.dropdown.random" }
   ]
   readonly property var wallpaperPaletteSchemes: [
-    { key: "vibrant", label: "Яркий" }, { key: "faithful", label: "Точный" },
-    { key: "dysfunctional", label: "Диссонансный" }, { key: "muted", label: "Приглушённый" },
-    { key: "soft", label: "Мягкий" }, { key: "material", label: "Material" },
-    { key: "monochrome", label: "Монохромный" }
+    { key: "vibrant", label: "settings.dropdown.vibrant" }, { key: "faithful", label: "settings.dropdown.faithful" },
+    { key: "dysfunctional", label: "settings.dropdown.dysfunctional" }, { key: "muted", label: "settings.dropdown.muted" },
+    { key: "soft", label: "settings.dropdown.soft" }, { key: "material", label: "settings.dropdown.material" },
+    { key: "monochrome", label: "settings.dropdown.monochrome" }
   ]
   readonly property var screenPositions: [
-    { key: "top-left", label: "ВЛ" }, { key: "top-center", label: "Верх" }, { key: "top-right", label: "ВП" },
-    { key: "bottom-left", label: "НЛ" }, { key: "bottom-center", label: "Низ" }, { key: "bottom-right", label: "НП" }
+    { key: "top-left", label: "settings.dropdown.tl" }, { key: "top-center", label: "settings.dropdown.tc" }, { key: "top-right", label: "settings.dropdown.tr" },
+    { key: "bottom-left", label: "settings.dropdown.bl" }, { key: "bottom-center", label: "settings.dropdown.bc" }, { key: "bottom-right", label: "settings.dropdown.br" }
   ]
   readonly property var sectionCategories: [
-    { key: "appearance", icon: Config.iconTheme, title: "Оформление", pages: [{ key: "general", title: "Интерфейс" }, { key: "palette", title: "Цветовая палитра" }, { key: "fontPicker", hidden: true }] },
-    { key: "bar", icon: Config.iconPanel, title: "Бар и попапы", pages: [{ key: "bar", title: "Панель" }, { key: "popups", title: "Попапы" }, { key: "monitoring", title: "Мониторинг" }] },
-    { key: "desktop", icon: Config.iconWallpaper, title: "Обои", pages: [{ key: "wallpaper", title: "Обои" }] },
-    { key: "time", icon: Config.iconClock, title: "Время и локация", pages: [{ key: "location", title: "Время и локация" }] },
-    { key: "notifications", icon: Config.iconNotifications, title: "Уведомления", pages: [{ key: "notifications", title: "Уведомления" }, { key: "osd", title: "OSD" }] },
-    { key: "system", icon: Config.iconKeyboard, title: "Система", pages: [{ key: "system", title: "Сочетания клавиш" }] },
-    { key: "advanced", icon: Config.iconMonitor, title: "Дополнительно", pages: [{ key: "advanced", title: "Яркость" }] },
-    { key: "about", icon: Config.iconInfo, title: "О программе", pages: [{ key: "about", title: "О программе" }] }
+    { key: "appearance", icon: Config.iconTheme, title: "settings.sections.appearance", pages: [{ key: "general", title: "settings.pages.general" }, { key: "palette", title: "settings.pages.palette" }, { key: "fontPicker", hidden: true }] },
+    { key: "bar", icon: Config.iconPanel, title: "settings.sections.bar", pages: [{ key: "bar", title: "settings.pages.barPage" }, { key: "popups", title: "settings.pages.popups" }, { key: "monitoring", title: "settings.pages.monitoring" }] },
+    { key: "desktop", icon: Config.iconWallpaper, title: "settings.sections.desktop", pages: [{ key: "wallpaper", title: "settings.pages.wallpaper" }] },
+    { key: "time", icon: Config.iconClock, title: "settings.sections.time", pages: [{ key: "location", title: "settings.pages.location" }] },
+    { key: "notifications", icon: Config.iconNotifications, title: "settings.sections.notifications", pages: [{ key: "notifications", title: "notifications.title" }, { key: "osd", title: "settings.pages.osd" }] },
+    { key: "system", icon: Config.iconKeyboard, title: "settings.sections.system", pages: [{ key: "system", title: "settings.pages.systemPage" }] },
+    { key: "advanced", icon: Config.iconMonitor, title: "settings.sections.advanced", pages: [{ key: "advanced", title: "settings.pages.advancedPage" }] },
+    { key: "about", icon: Config.iconInfo, title: "settings.sections.about", pages: [{ key: "about", title: "settings.pages.aboutPage" }] }
   ]
   readonly property var searchableSettings: [
-    { section: "general", title: "Интерфейс" }, { section: "general", title: "Оформление" },
-    { section: "general", title: "Меньше анимаций" }, { section: "general", title: "Подсказки" },
-    { section: "general", title: "Основной шрифт" }, { section: "general", title: "Моноширинный шрифт" },
-    { section: "general", title: "Размер текста" }, { section: "general", title: "Звук уведомлений" },
-    { section: "general", title: "Отключённые приложения" }, { section: "general", title: "Порядок плиток центра управления" },
-    { section: "general", title: "Правило простоя" },
-    { section: "palette", title: "Цветовая палитра" }, { section: "palette", title: "Тема" },
-    { section: "palette", title: "Пресет палитры" }, { section: "palette", title: "Тёмная тема" },
-    { section: "wallpaper", title: "Обои" }, { section: "wallpaper", title: "Папка обоев" },
-    { section: "wallpaper", title: "Отображение обоев" }, { section: "wallpaper", title: "Эффект смены" },
-    { section: "wallpaper", title: "Автоматическая смена" }, { section: "wallpaper", title: "Интервал смены" },
-    { section: "wallpaper", title: "Размывать обои в Overview" }, { section: "wallpaper", title: "Звук видеообоев" },
-    { section: "wallpaper", title: "Громкость видеообоев" }, { section: "wallpaper", title: "Аппаратное декодирование" },
-    { section: "wallpaper", title: "Пауза видео в Overview" },
-    { section: "bar", title: "Панель" }, { section: "bar", title: "Положение панели" },
-    { section: "bar", title: "Дизайн панели" }, { section: "bar", title: "Адаптивный бар" },
-    { section: "bar", title: "Толщина панели" }, { section: "bar", title: "Автоскрытие" },
-    { section: "bar", title: "Задержка скрытия" }, { section: "bar", title: "Отступ сверху" },
-    { section: "bar", title: "Отступ снизу" }, { section: "bar", title: "Отступы слева и справа" },
-    { section: "bar", title: "Закругление бара" }, { section: "bar", title: "Режим закругления" },
-    { section: "bar", title: "Закругление виджетов бара" }, { section: "bar", title: "Размытие фона" },
-    { section: "bar", title: "Обводка бара" }, { section: "bar", title: "Тень бара" },
-    { section: "bar", title: "Непрозрачность фона" }, { section: "bar", title: "Рабочие столы" },
-    { section: "bar", title: "Меню приложений" }, { section: "bar", title: "Активное приложение" },
-    { section: "bar", title: "Медиа-плеер" }, { section: "bar", title: "Системный трей" },
-    { section: "bar", title: "Раскладка клавиатуры" }, { section: "bar", title: "Мониторинг системы" },
-    { section: "bar", title: "Уведомления" }, { section: "bar", title: "Громкость" },
-    { section: "bar", title: "Яркость" }, { section: "bar", title: "Батарея" },
-    { section: "bar", title: "Bluetooth" }, { section: "bar", title: "Сеть" },
-    { section: "bar", title: "Дата и время" }, { section: "bar", title: "Погода" },
-    { section: "bar", title: "VPN" }, { section: "bar", title: "Пипетка цвета" },
-    { section: "bar", title: "Питание" }, { section: "bar", title: "Цифры рабочих столов" },
-    { section: "bar", title: "Рабочие столы на всех экранах" }, { section: "bar", title: "Индикатор занятого стола" },
-    { section: "popups", title: "Попапы" }, { section: "popups", title: "Положение всплывающих панелей" },
-    { section: "popups", title: "Размытие всплывающих панелей" }, { section: "popups", title: "Обводка всплывающих панелей" },
-    { section: "popups", title: "Тень всплывающих панелей" }, { section: "popups", title: "Закругление панелей" },
-    { section: "popups", title: "Режим закругления" }, { section: "popups", title: "Закругление элементов панелей" },
-    { section: "popups", title: "Непрозрачность панелей" },
-    { section: "notifications", title: "Уведомления" }, { section: "notifications", title: "Не беспокоить" },
-    { section: "notifications", title: "Положение тостов" }, { section: "notifications", title: "Время показа" },
-    { section: "notifications", title: "Максимум тостов" },
-    { section: "osd", title: "OSD" }, { section: "osd", title: "Положение OSD" },
-    { section: "location", title: "Время и локация" }, { section: "location", title: "Формат времени" },
-    { section: "location", title: "Секунды в часах" }, { section: "location", title: "Дата" },
-    { section: "location", title: "Погода на панели" }, { section: "location", title: "Точность до десятых" },
-    { section: "location", title: "Город погоды" },
-    { section: "monitoring", title: "Мониторинг" }, { section: "monitoring", title: "Загрузка CPU" },
-    { section: "monitoring", title: "Температура CPU" }, { section: "monitoring", title: "Загрузка GPU" },
-    { section: "monitoring", title: "Температура GPU" }, { section: "monitoring", title: "Оперативная память" },
-    { section: "monitoring", title: "Сеть" },
-    { section: "system", title: "Сочетания клавиш" }, { section: "system", title: "Язык" },
-    { section: "system", title: "Закрыть настройки" }, { section: "system", title: "Следующий раздел" },
-    { section: "system", title: "Предыдущий раздел" }, { section: "system", title: "Следующая вкладка" },
-    { section: "system", title: "Предыдущая вкладка" },
-    { section: "advanced", title: "Яркость" }, { section: "advanced", title: "Шина монитора" },
-    { section: "advanced", title: "Задержка DDC/CI" }
+    { section: "general", title: "settings.pages.general" }, { section: "general", title: "settings.sections.appearance" },
+    { section: "general", title: "settings.general.reduceMotion" }, { section: "general", title: "settings.general.tooltips" },
+    { section: "general", title: "settings.general.sansFont" }, { section: "general", title: "settings.general.monoFont" },
+    { section: "general", title: "settings.general.uiScale" }, { section: "general", title: "settings.general.notificationSound" },
+    { section: "general", title: "settings.general.mutedApps" }, { section: "general", title: "settings.general.tileOrder" },
+    { section: "general", title: "settings.general.idlePolicy" },
+    { section: "palette", title: "settings.pages.palette" }, { section: "palette", title: "settings.palette.theme" },
+    { section: "palette", title: "settings.palette.palettePreset" }, { section: "palette", title: "settings.palette.darkTheme" },
+    { section: "wallpaper", title: "settings.pages.wallpaper" }, { section: "wallpaper", title: "settings.wallpaper.folder" },
+    { section: "wallpaper", title: "settings.wallpaper.display" }, { section: "wallpaper", title: "settings.wallpaper.effect" },
+    { section: "wallpaper", title: "settings.wallpaper.autoChange" }, { section: "wallpaper", title: "settings.wallpaper.interval" },
+    { section: "wallpaper", title: "settings.wallpaper.blurOverview" }, { section: "wallpaper", title: "settings.wallpaper.videoSound" },
+    { section: "wallpaper", title: "settings.wallpaper.videoVolume" }, { section: "wallpaper", title: "settings.wallpaper.hwDecode" },
+    { section: "wallpaper", title: "settings.wallpaper.pauseOverview" },
+    { section: "bar", title: "settings.pages.barPage" }, { section: "bar", title: "settings.popups.positionOfPanel" },
+    { section: "bar", title: "settings.barPage.design" }, { section: "bar", title: "settings.barPage.adaptive" },
+    { section: "bar", title: "settings.barPage.thickness" }, { section: "bar", title: "settings.barPage.autoHide" },
+    { section: "bar", title: "settings.barPage.hideDelay" }, { section: "bar", title: "settings.popups.topPadding" },
+    { section: "bar", title: "settings.popups.bottomPadding" }, { section: "bar", title: "settings.popups.sidePadding" },
+    { section: "bar", title: "settings.barPage.radius" }, { section: "bar", title: "settings.barPage.radiusMode" },
+    { section: "bar", title: "settings.barPage.widgetRadius" }, { section: "bar", title: "settings.barPage.blur" },
+    { section: "bar", title: "settings.barPage.outline" }, { section: "bar", title: "settings.barPage.shadow" },
+    { section: "bar", title: "settings.popups.backgroundOpacity" }, { section: "bar", title: "bar.workspaces" },
+    { section: "bar", title: "bar.appMenu" }, { section: "bar", title: "bar.activeApp" },
+    { section: "bar", title: "bar.mediaPlayerHyphen" }, { section: "bar", title: "bar.tray" },
+    { section: "bar", title: "bar.keyboardLayout" }, { section: "bar", title: "bar.systemMonitor" },
+    { section: "bar", title: "bar.notifications" }, { section: "bar", title: "bar.volume" },
+    { section: "bar", title: "bar.brightness" }, { section: "bar", title: "bar.battery" },
+    { section: "bar", title: "bar.bluetooth" }, { section: "bar", title: "bar.network" },
+    { section: "bar", title: "bar.clock" }, { section: "bar", title: "settings.location.weather" },
+    { section: "bar", title: "bar.vpn" }, { section: "bar", title: "bar.colorPicker" },
+    { section: "bar", title: "bar.power" }, { section: "bar", title: "bar.workspaceNumbers" },
+    { section: "bar", title: "bar.workspacesAllScreens" }, { section: "bar", title: "bar.workspaceIndicator" },
+    { section: "popups", title: "settings.pages.popups" }, { section: "popups", title: "settings.popups.position" },
+    { section: "popups", title: "settings.popups.blur" }, { section: "popups", title: "settings.popups.outline" },
+    { section: "popups", title: "settings.popups.shadow" }, { section: "popups", title: "settings.popups.radius" },
+    { section: "popups", title: "settings.barPage.radiusMode" }, { section: "popups", title: "settings.barPage.popupElementRadius" },
+    { section: "popups", title: "settings.popups.opacity" },
+    { section: "notifications", title: "notifications.title" }, { section: "notifications", title: "notifications.dnd" },
+    { section: "notifications", title: "settings.popups.toastPosition" }, { section: "notifications", title: "settings.general.showTime" },
+    { section: "notifications", title: "notifications.maxToasts" },
+    { section: "osd", title: "settings.pages.osd" }, { section: "osd", title: "settings.popups.osdPosition" },
+    { section: "location", title: "settings.pages.location" }, { section: "location", title: "settings.location.timeFormat" },
+    { section: "location", title: "settings.location.showSeconds" }, { section: "location", title: "bar.date" },
+    { section: "location", title: "settings.location.weatherInBar" }, { section: "location", title: "settings.palette.tenths" },
+    { section: "location", title: "settings.location.weatherCity" },
+    { section: "monitoring", title: "settings.pages.monitoring" }, { section: "monitoring", title: "settings.monitoring.cpuUsage" },
+    { section: "monitoring", title: "settings.monitoring.cpuTemp" }, { section: "monitoring", title: "settings.monitoring.gpuUsage" },
+    { section: "monitoring", title: "settings.monitoring.gpuTemp" }, { section: "monitoring", title: "settings.monitoring.memory" },
+    { section: "monitoring", title: "bar.network" },
+    { section: "system", title: "settings.pages.systemPage" }, { section: "system", title: "settings.general.language" },
+    { section: "system", title: "settings.system.closeSettings" }, { section: "system", title: "settings.system.nextSection" },
+    { section: "system", title: "settings.system.prevSection" }, { section: "system", title: "settings.system.nextTab" },
+    { section: "system", title: "settings.system.prevTab" },
+    { section: "advanced", title: "settings.pages.advancedPage" }, { section: "advanced", title: "settings.system.monitorBus" },
+    { section: "advanced", title: "settings.system.ddcDelay" }
   ]
   readonly property bool hasSearchText: settingsSearch.trim().length > 0
   readonly property var searchResults: {
@@ -155,7 +155,7 @@ Item {
   readonly property var currentCategory: categoryForSection(activeSection)
   property var allFonts: []
   property string thumbnail: ""
-  property string wallName: "Нет обоев"
+  property string wallName: I18n.tr("wallpaper.none")
   property int currentWallpaperIndex: 0
   property real wallpaperGridContentY: 0
   property bool restoringWallpaperScroll: false
@@ -212,7 +212,7 @@ Item {
       let category = sectionCategories[i]
       for (let j = 0; j < category.pages.length; j++) {
         if (category.pages[j].key === section) {
-          return category.title + " › " + category.pages[j].title
+          return I18n.tr(category.title) + " › " + I18n.tr(category.pages[j].title)
         }
       }
     }
@@ -491,8 +491,8 @@ Item {
     return "Русский"
   }
   function optionName(options, key) {
-    for (let i = 0; i < options.length; i++) if (options[i].key === key) return options[i].label
-    return options.length > 0 ? options[0].label : ""
+    for (let i = 0; i < options.length; i++) if (options[i].key === key) return I18n.tr(options[i].label)
+    return options.length > 0 ? I18n.tr(options[0].label) : ""
   }
 
   function applyLanguage(value) {
@@ -858,7 +858,7 @@ Item {
     try {
       let res = JSON.parse(data)
       root.thumbnail = res.thumbnail || ""
-      root.wallName = res.name || "Нет обоев"
+      root.wallName = res.name || I18n.tr("wallpaper.none")
       root.currentWallpaperIndex = res.index || 0
       root.palette = res.palette || []
         if (root.palette.length > 0 && Config.themeName === "dynamic") {
@@ -951,9 +951,9 @@ Item {
 
   function commitsLabel(n) {
     let m10 = n % 10, m100 = n % 100
-    if (m10 === 1 && m100 !== 11) return n + " коммит"
-    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return n + " коммита"
-    return n + " коммитов"
+    if (m10 === 1 && m100 !== 11) return n + " " + I18n.tr("settings.about.commitSuffix")
+    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return n + " " + I18n.tr("settings.about.commitSuffixGen")
+    return n + " " + I18n.tr("settings.about.commitSuffixPlural")
   }
 
   Rectangle {
@@ -1006,7 +1006,7 @@ Item {
           Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
           MouseArea { id: settingsBackMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.handleBack() }
         }
-        Text { text: I18n.tr("Настройки"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsBackButton.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter }
+        Text { text: I18n.tr("settings.title"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.left: settingsBackButton.right; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter }
       }
 
       Rectangle {
@@ -1031,7 +1031,7 @@ Item {
           font.family: Config.fontSans
           onTextChanged: root.settingsSearch = text
           onAccepted: root.searchSettings()
-          Text { anchors.verticalCenter: parent.verticalCenter; text: I18n.tr("Поиск настроек"); visible: !parent.text; color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+          Text { anchors.verticalCenter: parent.verticalCenter; text: I18n.tr("settings.searchPlaceholder"); visible: !parent.text; color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
         }
       }
 
@@ -1069,7 +1069,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Config.scaledSize(1)
                 Text { width: parent.width; text: I18n.tr(parent.parent.modelData.title); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-                Text { width: parent.width; visible: parent.parent.modelData.section !== undefined; text: I18n.tr(root.sectionBreadcrumb(parent.parent.modelData.section)); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+                Text { width: parent.width; visible: parent.parent.modelData.section !== undefined; text: root.sectionBreadcrumb(parent.parent.modelData.section); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
               }
               Text { anchors.right: parent.right; anchors.rightMargin: Config.scaledSize(12); anchors.verticalCenter: parent.verticalCenter; text: Config.iconChevronRight; color: Config.textMuted; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
               MouseArea {
@@ -1093,7 +1093,7 @@ Item {
             visible: root.hasSearchText && root.searchResults.length === 0
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
-            text: I18n.tr("Ничего не найдено")
+            text: I18n.tr("common.nothingFound")
             color: Config.textMuted
             font.pixelSize: Config.fontSizeSmall
             font.family: Config.fontSans
@@ -1153,26 +1153,26 @@ Item {
             visible: root.activeSection === "general"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Оформление"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.sections.appearance"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconMotion
-              title: I18n.tr("Меньше анимаций")
-              subtitle: Config.reduceMotion ? I18n.tr("Анимации сокращены") : I18n.tr("Обычные анимации")
+              title: I18n.tr("settings.general.reduceMotion")
+              subtitle: Config.reduceMotion ? I18n.tr("settings.general.reduced") : I18n.tr("settings.general.normal")
               ToggleSwitch { checked: Config.reduceMotion; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("reduceMotion", !Config.reduceMotion) }
             }
 
             SettingsRow {
               icon: Config.iconInfo
-              title: I18n.tr("Подсказки")
-              subtitle: Config.tooltipsEnabled ? I18n.tr("Показываются") : I18n.tr("Скрыты")
+              title: I18n.tr("settings.general.tooltips")
+              subtitle: Config.tooltipsEnabled ? I18n.tr("common.shownPlural") : I18n.tr("common.hiddenPlural")
               ToggleSwitch { checked: Config.tooltipsEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("tooltipsEnabled", !Config.tooltipsEnabled) }
             }
 
-            Text { text: I18n.tr("Интерфейс"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
+            Text { text: I18n.tr("settings.pages.general"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
 
             SettingsRow {
               icon: Config.iconFont
-              title: I18n.tr("Основной шрифт")
+              title: I18n.tr("settings.general.sansFont")
               subtitle: Config.fontFamily
               onClicked: {
                 root.fontPickerTarget = "sans"
@@ -1183,7 +1183,7 @@ Item {
 
             SettingsRow {
               icon: Config.iconFont
-              title: I18n.tr("Моноширинный шрифт")
+              title: I18n.tr("settings.general.monoFont")
               subtitle: Config.fontMonoFamily
               onClicked: {
                 root.fontPickerTarget = "mono"
@@ -1194,7 +1194,7 @@ Item {
 
             SettingsRow {
               icon: Config.iconScale
-              title: I18n.tr("Размер текста")
+              title: I18n.tr("settings.general.uiScale")
               subtitle: Math.round(Config.uiScale * 100) + "%"
               last: true
               Row {
@@ -1215,10 +1215,10 @@ Item {
                 }
               }
             }
-            SettingsRow { icon: Config.iconNotifications; title: I18n.tr("Звук уведомлений"); subtitle: Config.notificationSoundEnabled ? I18n.tr("Включено") : I18n.tr("Выключено"); ToggleSwitch { checked: Config.notificationSoundEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: { Config.notificationSoundEnabled = !Config.notificationSoundEnabled; root.saveSetting("notificationSoundEnabled", Config.notificationSoundEnabled) } } }
-            SettingsRow { icon: Config.iconNotifications; title: I18n.tr("Отключённые приложения"); subtitle: I18n.tr("Имена приложений через запятую"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.notificationMutedApps; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.notificationMutedApps = text; root.saveSetting("notificationMutedApps", text) } } } }
-            SettingsRow { icon: Config.iconClipboard; title: I18n.tr("Порядок плиток центра управления"); subtitle: I18n.tr("wifi, bluetooth, airplane, dnd, caffeine, screenshot, power, nightlight"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.controlCenterTiles; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.controlCenterTiles = text; root.saveSetting("controlCenterTiles", text) } } } }
-            SettingsRow { icon: Config.iconMoon; title: I18n.tr("Правило простоя"); subtitle: I18n.tr("0 отключает; применяется после простоя"); Row { width: Config.scaledSize(194); spacing: Config.scaledSize(4); Rectangle { width: Config.scaledSize(52); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.idleTimeoutMinutes.toString(); inputMethodHints: Qt.ImhDigitsOnly; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.idleTimeoutMinutes = parseInt(text) || 0; root.saveSetting("idleTimeoutMinutes", Config.idleTimeoutMinutes) } } } Repeater { model: [{ key: "lock", title: "Блокировка" }, { key: "suspend", title: "Сон" }]; Rectangle { required property var modelData; width: Config.scaledSize(67); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.idleAction === modelData.key ? Config.selectedBg : (idleActionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg); Text { anchors.centerIn: parent; width: parent.width - Config.scaledSize(8); text: I18n.tr(parent.modelData.title); color: Config.idleAction === parent.modelData.key ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter } MouseArea { id: idleActionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { Config.idleAction = parent.modelData.key; root.saveSetting("idleAction", Config.idleAction) } } } } } }
+            SettingsRow { icon: Config.iconNotifications; title: I18n.tr("settings.general.notificationSound"); subtitle: Config.notificationSoundEnabled ? I18n.tr("common.on") : I18n.tr("common.off"); ToggleSwitch { checked: Config.notificationSoundEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: { Config.notificationSoundEnabled = !Config.notificationSoundEnabled; root.saveSetting("notificationSoundEnabled", Config.notificationSoundEnabled) } } }
+            SettingsRow { icon: Config.iconNotifications; title: I18n.tr("settings.general.mutedApps"); subtitle: I18n.tr("settings.general.mutedAppsHint"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.notificationMutedApps; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.notificationMutedApps = text; root.saveSetting("notificationMutedApps", text) } } } }
+            SettingsRow { icon: Config.iconClipboard; title: I18n.tr("settings.general.tileOrder"); subtitle: I18n.tr("settings.general.tileOrderHint"); Rectangle { width: Config.scaledSize(194); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.controlCenterTiles; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.controlCenterTiles = text; root.saveSetting("controlCenterTiles", text) } } } }
+            SettingsRow { icon: Config.iconMoon; title: I18n.tr("settings.general.idlePolicy"); subtitle: I18n.tr("settings.general.idleHint"); Row { width: Config.scaledSize(194); spacing: Config.scaledSize(4); Rectangle { width: Config.scaledSize(52); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.searchBg; TextInput { anchors.fill: parent; anchors.margins: Config.scaledSize(7); text: Config.idleTimeoutMinutes.toString(); inputMethodHints: Qt.ImhDigitsOnly; color: Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontMono; onEditingFinished: { Config.idleTimeoutMinutes = parseInt(text) || 0; root.saveSetting("idleTimeoutMinutes", Config.idleTimeoutMinutes) } } } Repeater { model: [{ key: "lock", title: "Блокировка" }, { key: "suspend", title: "Сон" }]; Rectangle { required property var modelData; width: Config.scaledSize(67); height: Config.scaledSize(30); radius: Config.popupRadiusPx(8); color: Config.idleAction === modelData.key ? Config.selectedBg : (idleActionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg); Text { anchors.centerIn: parent; width: parent.width - Config.scaledSize(8); text: I18n.tr(parent.modelData.title); color: Config.idleAction === parent.modelData.key ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; elide: Text.ElideRight; horizontalAlignment: Text.AlignHCenter } MouseArea { id: idleActionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { Config.idleAction = parent.modelData.key; root.saveSetting("idleAction", Config.idleAction) } } } } } }
           }
 
           Column {
@@ -1241,9 +1241,9 @@ Item {
                 Text { anchors.centerIn: parent; text: Config.iconChevronLeft; color: Config.textPrimary; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
                 MouseArea { id: backMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.handleBack() }
               }
-              Text { text: root.fontPickerTarget === "mono" ? I18n.tr("Моноширинный шрифт") : I18n.tr("Основной шрифт"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+              Text { text: root.fontPickerTarget === "mono" ? I18n.tr("settings.general.monoFont") : I18n.tr("settings.general.sansFont"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
             }
-            Text { text: I18n.tr("Текущий") + ": " + (root.fontPickerTarget === "mono" ? Config.fontMonoFamily : Config.fontFamily); color: Config.textSubtle; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width }
+            Text { text: I18n.tr("settings.palette.current") + ": " + (root.fontPickerTarget === "mono" ? Config.fontMonoFamily : Config.fontFamily); color: Config.textSubtle; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; width: parent.width }
 
             Rectangle {
               width: parent.width
@@ -1279,7 +1279,7 @@ Item {
                   root.fontSearch = text
                   root.filterFonts()
                 }
-                Text { text: I18n.tr("Поиск шрифта"); color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; visible: !fontSearchInput.text && !fontSearchInput.activeFocus; anchors.verticalCenter: parent.verticalCenter }
+                Text { text: I18n.tr("settings.general.fontSearch"); color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; visible: !fontSearchInput.text && !fontSearchInput.activeFocus; anchors.verticalCenter: parent.verticalCenter }
               }
             }
 
@@ -1306,7 +1306,7 @@ Item {
                   anchors.rightMargin: Config.scaledSize(10)
                   spacing: Config.scaledSize(1)
                   Text { width: parent.width; text: name; color: active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: name; elide: Text.ElideRight }
-                  Text { width: parent.width; text: I18n.tr("19:37 пн, июл. 20  ·  Быстрая лиса 123"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: name; elide: Text.ElideRight }
+                  Text { width: parent.width; text: I18n.tr("settings.fontPreview"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: name; elide: Text.ElideRight }
                 }
                 MouseArea { id: fontMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyFont(parent.name) }
               }
@@ -1321,8 +1321,8 @@ Item {
             clip: true
             SettingsRow {
               icon: Config.iconPalette
-              title: I18n.tr("Тема")
-              subtitle: Config.themeName === "manual" ? I18n.tr("Ручной акцент") : (Config.themeName === "dynamic" ? I18n.tr("Акцент из обоев") : (Config.themeName === "light" ? I18n.tr("Светлая палитра") : I18n.tr("Тёмная палитра")))
+              title: I18n.tr("settings.palette.theme")
+              subtitle: Config.themeName === "manual" ? I18n.tr("settings.palette.manualAccent") : (Config.themeName === "dynamic" ? I18n.tr("settings.palette.wallpaperAccent") : (Config.themeName === "light" ? I18n.tr("settings.palette.lightPalette") : I18n.tr("settings.palette.darkPalette")))
               Rectangle {
                 id: themeSegment
                 width: Config.scaledSize(226)
@@ -1333,7 +1333,7 @@ Item {
                   anchors.fill: parent
                   spacing: Config.scaledSize(2)
                   Repeater {
-                    model: [{ key: "light", label: "Свет" }, { key: "dark", label: "Тьма" }, { key: "dynamic", label: "Дин." }, { key: "manual", label: "Своя" }]
+                    model: [{ key: "light", label: "settings.palette.light" }, { key: "dark", label: "settings.palette.dark" }, { key: "dynamic", label: "settings.palette.dynamic" }, { key: "manual", label: "settings.palette.custom" }]
                     Rectangle {
                       required property var modelData
                       width: (themeSegment.width - 6) / 4
@@ -1399,7 +1399,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: Config.scaledSize(2)
                     Text { width: parent.width; text: root.slotLabel(root.manualSlot) + " · " + root.currentManualHex; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-                    Text { width: parent.width; text: I18n.tr("Кликни по цвету, чтобы выбрать его"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+                    Text { width: parent.width; text: I18n.tr("settings.palette.clickToPick"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
                   }
                 }
 
@@ -1417,7 +1417,7 @@ Item {
                   color: screenColorMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg
                   border.color: Config.borderColor
                   border.width: 1
-                  Text { anchors.centerIn: parent; text: Config.iconColorPicker + "  " + I18n.tr("Выбрать цвет с экрана"); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                  Text { anchors.centerIn: parent; text: Config.iconColorPicker + "  " + I18n.tr("settings.system.pickColor"); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                   MouseArea { id: screenColorMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.pickManualColor() }
                 }
 
@@ -1491,8 +1491,8 @@ Item {
             SettingsRow {
               visible: Config.themeName === "dynamic"
               icon: Config.iconPalettePreset
-              title: I18n.tr("Пресет палитры")
-              subtitle: I18n.tr("Как извлекать цвета из обоев")
+              title: I18n.tr("settings.palette.palettePreset")
+              subtitle: I18n.tr("settings.palette.extractMethod")
               Item {
                 width: Config.scaledSize(194)
                 height: Config.scaledSize(30)
@@ -1527,13 +1527,13 @@ Item {
             SettingsRow {
               visible: Config.themeName === "dynamic"
               icon: Config.iconTheme
-              title: I18n.tr("Тёмная тема")
-              subtitle: Config.dynamicDark ? I18n.tr("Тёмные цвета из обоев") : I18n.tr("Светлые цвета из обоев")
+              title: I18n.tr("settings.palette.darkTheme")
+              subtitle: Config.dynamicDark ? I18n.tr("settings.palette.darkFromWall") : I18n.tr("settings.palette.lightFromWall")
               onClicked: root.setBoolSetting("dynamicDark", !Config.dynamicDark)
               ToggleSwitch { z: 1; checked: Config.dynamicDark; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("dynamicDark", !Config.dynamicDark) }
             }
 
-            Text { text: I18n.tr("Пресеты"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.palette.presets"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Grid {
               id: presetsGrid
               width: parent.width
@@ -1589,11 +1589,11 @@ Item {
             height: visible ? implicitHeight : 0
             clip: true
             Spoiler {
-              title: I18n.tr("Настройки обоев")
+              title: I18n.tr("settings.wallpaper.settings")
               expanded: false
               SettingsRow {
                 icon: Config.iconFolder
-                title: I18n.tr("Папка обоев")
+                title: I18n.tr("settings.wallpaper.folder")
                 subtitle: Config.wallpaperDir
                 Item {
                   width: Config.scaledSize(194)
@@ -1639,8 +1639,8 @@ Item {
               }
               SettingsRow {
                 icon: Config.iconFitToScreen
-                title: I18n.tr("Отображение обоев")
-                subtitle: I18n.tr("Масштабирование изображения")
+                title: I18n.tr("settings.wallpaper.display")
+                subtitle: I18n.tr("settings.wallpaper.scaling")
                 Item {
                   width: Config.scaledSize(194)
                   height: Config.scaledSize(30)
@@ -1672,8 +1672,8 @@ Item {
               }
               SettingsRow {
                 icon: Config.iconTransition
-                title: I18n.tr("Эффект смены")
-                subtitle: I18n.tr("Переход при смене обоев")
+                title: I18n.tr("settings.wallpaper.effect")
+                subtitle: I18n.tr("settings.wallpaper.transition")
                 Item {
                   width: Config.scaledSize(194)
                   height: Config.scaledSize(30)
@@ -1705,53 +1705,53 @@ Item {
               }
               SettingsRow {
                 icon: Config.iconRefreshAuto
-                title: I18n.tr("Автоматическая смена")
-                subtitle: Config.wallpaperCyclingEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+                title: I18n.tr("settings.wallpaper.autoChange")
+                subtitle: Config.wallpaperCyclingEnabled ? I18n.tr("settings.general.femOn") : I18n.tr("settings.general.femOff")
                 onClicked: root.setBoolSetting("wallpaperCyclingEnabled", !Config.wallpaperCyclingEnabled)
                 ToggleSwitch { z: 1; checked: Config.wallpaperCyclingEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("wallpaperCyclingEnabled", !Config.wallpaperCyclingEnabled) }
               }
               SettingsRow {
                 visible: Config.wallpaperCyclingEnabled
                 icon: Config.iconStopwatch
-                title: I18n.tr("Интервал смены")
-                subtitle: I18n.tr("Секунды между обоями из текущей папки")
-                NumberSlider { value: Config.wallpaperCyclingInterval; from: 30; to: 43200; defaultValue: 300; suffix: "с"; onValueEdited: root.applyWallpaperCyclingInterval(value) }
+                title: I18n.tr("settings.wallpaper.interval")
+                subtitle: I18n.tr("settings.wallpaper.intervalHint")
+                NumberSlider { value: Config.wallpaperCyclingInterval; from: 30; to: 43200; defaultValue: 300; suffix: I18n.tr("settings.general.secSuffixShort"); onValueEdited: root.applyWallpaperCyclingInterval(value) }
               }
               SettingsRow {
                 visible: CompositorService.backend === "niri"
                 icon: Config.iconBlur
-                title: I18n.tr("Размывать обои в Overview")
-                subtitle: Config.blurWallpaperOnOverview ? I18n.tr("Включено") : I18n.tr("Выключено")
+                title: I18n.tr("settings.wallpaper.blurOverview")
+                subtitle: Config.blurWallpaperOnOverview ? I18n.tr("common.on") : I18n.tr("common.off")
                 onClicked: root.setBoolSetting("blurWallpaperOnOverview", !Config.blurWallpaperOnOverview)
                 ToggleSwitch { z: 1; checked: Config.blurWallpaperOnOverview; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("blurWallpaperOnOverview", !Config.blurWallpaperOnOverview) }
               }
-              Text { text: I18n.tr("Видеообои"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+              Text { text: I18n.tr("settings.wallpaper.video"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
               SettingsRow {
                 icon: Config.iconSpeaker
-                title: I18n.tr("Звук видеообоев")
-                subtitle: Config.videoWallpaperAudio ? I18n.tr("Включено") : I18n.tr("Выключено")
+                title: I18n.tr("settings.wallpaper.videoSound")
+                subtitle: Config.videoWallpaperAudio ? I18n.tr("common.on") : I18n.tr("common.off")
                 onClicked: root.setBoolSetting("videoWallpaperAudio", !Config.videoWallpaperAudio)
                 ToggleSwitch { z: 1; checked: Config.videoWallpaperAudio; anchors.verticalCenter: parent.verticalCenter; onToggled: { root.setBoolSetting("videoWallpaperAudio", !Config.videoWallpaperAudio); reapplyTimer.restart() } }
               }
               SettingsRow {
                 visible: Config.videoWallpaperAudio
                 icon: Config.iconSpeaker
-                title: I18n.tr("Громкость видеообоев")
-                subtitle: I18n.tr("Громкость воспроизведения")
+                title: I18n.tr("settings.wallpaper.videoVolume")
+                subtitle: I18n.tr("settings.wallpaper.playbackVolume")
                 NumberSlider { value: Config.videoWallpaperVolume; from: 0; to: 100; defaultValue: 100; suffix: "%"; onValueEdited: root.applyVideoWallpaperVolume(value) }
               }
               SettingsRow {
                 icon: Config.iconGpu
-                title: I18n.tr("Аппаратное декодирование")
-                subtitle: Config.videoWallpaperHwdec ? I18n.tr("Включено") : I18n.tr("Выключено")
+                title: I18n.tr("settings.wallpaper.hwDecode")
+                subtitle: Config.videoWallpaperHwdec ? I18n.tr("common.on") : I18n.tr("common.off")
                 onClicked: root.setBoolSetting("videoWallpaperHwdec", !Config.videoWallpaperHwdec)
                 ToggleSwitch { z: 1; checked: Config.videoWallpaperHwdec; anchors.verticalCenter: parent.verticalCenter; onToggled: { root.setBoolSetting("videoWallpaperHwdec", !Config.videoWallpaperHwdec); reapplyTimer.restart() } }
               }
               SettingsRow {
                 visible: CompositorService.backend === "niri"
                 icon: Config.iconPause
-                title: I18n.tr("Пауза видео в Overview")
-                subtitle: Config.videoWallpaperPauseOnOverview ? I18n.tr("Включена") : I18n.tr("Выключена")
+                title: I18n.tr("settings.wallpaper.pauseOverview")
+                subtitle: Config.videoWallpaperPauseOnOverview ? I18n.tr("settings.general.femOn") : I18n.tr("settings.general.femOff")
                 onClicked: root.setBoolSetting("videoWallpaperPauseOnOverview", !Config.videoWallpaperPauseOnOverview)
                 ToggleSwitch { z: 1; checked: Config.videoWallpaperPauseOnOverview; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("videoWallpaperPauseOnOverview", !Config.videoWallpaperPauseOnOverview) }
               }
@@ -1792,7 +1792,7 @@ Item {
                     root.applyWallpaperFilter()
                   }
                   Text {
-                    text: I18n.tr("Поиск обоев")
+                    text: I18n.tr("settings.wallpaper.search")
                     color: Config.textPlaceholder
                     font.pixelSize: Config.fontSizeSmall
                     font.family: Config.fontSans
@@ -1802,7 +1802,7 @@ Item {
                 }
               }
             }
-            Text { width: parent.width; visible: wallpapersModel.count === 0; text: I18n.tr("В папке нет поддерживаемых изображений или видео"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap }
+            Text { width: parent.width; visible: wallpapersModel.count === 0; text: I18n.tr("wallpaper.folderEmpty"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap }
             GridView {
               id: wallpaperGrid
               readonly property real tileGap: 6
@@ -1915,16 +1915,16 @@ Item {
             visible: root.activeSection === "bar"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Панель"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.pages.barPage"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconPanelPosition
-              title: I18n.tr("Положение панели")
-              subtitle: Config.barPosition === "bottom" ? I18n.tr("Снизу") : (Config.barPosition === "left" ? I18n.tr("Слева") : (Config.barPosition === "right" ? I18n.tr("Справа") : I18n.tr("Сверху")))
+              title: I18n.tr("settings.popups.positionOfPanel")
+              subtitle: Config.barPosition === "bottom" ? I18n.tr("settings.popups.bottom") : (Config.barPosition === "left" ? I18n.tr("settings.popups.left") : (Config.barPosition === "right" ? I18n.tr("settings.popups.right") : I18n.tr("settings.popups.top")))
               Row {
                 width: Config.scaledSize(194)
                 spacing: Config.scaledSize(4)
                 Repeater {
-                  model: [{ key: "top", label: "Верх" }, { key: "bottom", label: "Низ" }, { key: "left", label: "Слева" }, { key: "right", label: "Справа" }]
+                  model: [{ key: "top", label: "settings.dropdown.tc" }, { key: "bottom", label: "settings.dropdown.bc" }, { key: "left", label: "settings.popups.left" }, { key: "right", label: "settings.popups.right" }]
                   Rectangle {
                     required property var modelData
                     width: (parent.width - 12) / 4
@@ -1932,7 +1932,7 @@ Item {
                     radius: Config.popupRadiusPx(8)
                     readonly property bool active: Config.barPosition === modelData.key
                     color: active ? Config.selectedBg : (barSectionMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
+                    Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
                     MouseArea { id: barSectionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarPosition(parent.modelData.key) }
                   }
                 }
@@ -1940,13 +1940,13 @@ Item {
             }
             SettingsRow {
               icon: Config.iconTheme
-              title: I18n.tr("Дизайн панели")
-              subtitle: Config.barStyle === "islands" ? I18n.tr("Островки") : I18n.tr("Сплошной")
+              title: I18n.tr("settings.barPage.design")
+              subtitle: Config.barStyle === "islands" ? I18n.tr("settings.barPage.islands") : I18n.tr("settings.barPage.solid")
               Row {
                 width: Config.scaledSize(194)
                 spacing: Config.scaledSize(4)
                 Repeater {
-                  model: [{ key: "solid", label: "Сплошной" }, { key: "islands", label: "Островки" }]
+                  model: [{ key: "solid", label: "settings.barPage.solid" }, { key: "islands", label: "settings.barPage.islands" }]
                   Rectangle {
                     required property var modelData
                     width: (parent.width - 4) / 2
@@ -1954,7 +1954,7 @@ Item {
                     radius: Config.popupRadiusPx(8)
                     readonly property bool active: Config.barStyle === modelData.key
                     color: active ? Config.selectedBg : (barStyleMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
+                    Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
                     MouseArea { id: barStyleMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyBarStyle(parent.modelData.key) }
                   }
                 }
@@ -1962,8 +1962,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconRefreshAuto
-              title: I18n.tr("Адаптивный бар")
-              subtitle: I18n.tr("Прозрачный без окна на весь экран")
+              title: I18n.tr("settings.barPage.adaptive")
+              subtitle: I18n.tr("settings.barPage.adaptiveHint")
               onClicked: root.setBoolSetting("barAdaptive", !Config.barAdaptive)
               ToggleSwitch {
                 z: 1
@@ -1974,8 +1974,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconScale
-              title: I18n.tr("Толщина панели")
-              subtitle: I18n.tr("Высота или ширина панели")
+              title: I18n.tr("settings.barPage.thickness")
+              subtitle: I18n.tr("settings.popups.wh")
               NumberSlider {
                 value: Config.barThickness
                 from: 28
@@ -1986,28 +1986,28 @@ Item {
             }
             SettingsRow {
               icon: Config.iconStopwatch
-              title: I18n.tr("Автоскрытие")
-              subtitle: Config.barAutoHide ? I18n.tr("Скрывается автоматически") : I18n.tr("Всегда отображается")
+              title: I18n.tr("settings.barPage.autoHide")
+              subtitle: Config.barAutoHide ? I18n.tr("settings.barPage.hidesAutomatically") : I18n.tr("settings.barPage.alwaysShown")
               onClicked: root.setBoolSetting("barAutoHide", !Config.barAutoHide)
               ToggleSwitch { z: 1; checked: Config.barAutoHide; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barAutoHide", !Config.barAutoHide) }
             }
             SettingsRow {
               icon: Config.iconStopwatch
-              title: I18n.tr("Задержка скрытия")
-              subtitle: I18n.tr("Через сколько секунд скрывать панель")
+              title: I18n.tr("settings.barPage.hideDelay")
+              subtitle: I18n.tr("settings.barPage.hideDelayHint")
               NumberSlider {
                 value: Config.barAutoHideDelay
                 from: 0
                 to: 60
                 defaultValue: 3
-                suffix: " с"
+                suffix: I18n.tr("settings.general.secSuffixShort")
                 onValueEdited: root.applyBarAutoHideDelay(value)
               }
             }
             SettingsRow {
               icon: Config.iconArrowUp
-              title: I18n.tr("Отступ сверху")
-              subtitle: I18n.tr("Расстояние от верхнего края")
+              title: I18n.tr("settings.popups.topPadding")
+              subtitle: I18n.tr("settings.popups.topDistance")
               NumberSlider {
                 value: Config.barTopMargin
                 from: 0
@@ -2018,8 +2018,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconArrowDown
-              title: I18n.tr("Отступ снизу")
-              subtitle: I18n.tr("Расстояние от нижнего края")
+              title: I18n.tr("settings.popups.bottomPadding")
+              subtitle: I18n.tr("settings.popups.bottomDistance")
               NumberSlider {
                 value: Config.barBottomMargin
                 from: 0
@@ -2030,8 +2030,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconArrowLeftRight
-              title: I18n.tr("Отступы слева и справа")
-              subtitle: I18n.tr("Одинаковое расстояние от боковых краёв")
+              title: I18n.tr("settings.popups.sidePadding")
+              subtitle: I18n.tr("settings.popups.sameSideGap")
               NumberSlider {
                 value: Config.barHorizontalMargin
                 from: 0
@@ -2042,8 +2042,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconRoundedCorner
-              title: I18n.tr("Закругление бара")
-              subtitle: I18n.tr("Радиус углов панели")
+              title: I18n.tr("settings.barPage.radius")
+              subtitle: I18n.tr("settings.barPage.radiusCorner")
               NumberSlider {
                 value: Config.barRadius
                 from: 0
@@ -2055,13 +2055,13 @@ Item {
             }
             SettingsRow {
               icon: Config.iconRoundedCorner
-              title: I18n.tr("Режим закругления")
-              subtitle: Config.barRadiusMode === "separate" ? I18n.tr("Раздельный") : I18n.tr("Полный")
+              title: I18n.tr("settings.barPage.radiusMode")
+              subtitle: Config.barRadiusMode === "separate" ? I18n.tr("settings.barPage.separate") : I18n.tr("settings.barPage.full")
               Row {
                 width: Config.scaledSize(194)
                 spacing: Config.scaledSize(4)
                 Repeater {
-                  model: [{ key: "linked", label: "Полный" }, { key: "separate", label: "Раздельный" }]
+                  model: [{ key: "linked", label: "settings.barPage.full" }, { key: "separate", label: "settings.barPage.separate" }]
                   Rectangle {
                     required property var modelData
                     width: (parent.width - Config.scaledSize(4)) / 2
@@ -2078,8 +2078,8 @@ Item {
             SettingsRow {
               visible: Config.barRadiusMode === "separate"
               icon: Config.iconRoundedCorner
-              title: I18n.tr("Закругление виджетов бара")
-              subtitle: I18n.tr("Радиус углов элементов панели")
+              title: I18n.tr("settings.barPage.widgetRadius")
+              subtitle: I18n.tr("settings.barPage.widgetRadiusCorner")
               NumberSlider {
                 value: Config.barWidgetRadius
                 from: 0
@@ -2091,8 +2091,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconBlur
-              title: I18n.tr("Размытие фона")
-              subtitle: Config.barBlurEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")
+              title: I18n.tr("settings.barPage.blur")
+              subtitle: Config.barBlurEnabled ? I18n.tr("common.on") : I18n.tr("common.off")
               onClicked: root.setBoolSetting("barBlurEnabled", !Config.barBlurEnabled)
               ToggleSwitch {
                 z: 1
@@ -2103,8 +2103,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconBorder
-              title: I18n.tr("Обводка бара")
-              subtitle: Config.barBordersEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              title: I18n.tr("settings.barPage.outline")
+              subtitle: Config.barBordersEnabled ? I18n.tr("settings.general.femOn") : I18n.tr("settings.general.femOff")
               onClicked: root.setBoolSetting("barBordersEnabled", !Config.barBordersEnabled)
               ToggleSwitch {
                 z: 1
@@ -2115,8 +2115,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconShadow
-              title: I18n.tr("Тень бара")
-              subtitle: Config.barShadowsEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              title: I18n.tr("settings.barPage.shadow")
+              subtitle: Config.barShadowsEnabled ? I18n.tr("settings.general.femOn") : I18n.tr("settings.general.femOff")
               onClicked: root.setBoolSetting("barShadowsEnabled", !Config.barShadowsEnabled)
               ToggleSwitch {
                 z: 1
@@ -2127,8 +2127,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconOpacity
-              title: I18n.tr("Непрозрачность фона")
-              subtitle: I18n.tr("Непрозрачность фона панели")
+              title: I18n.tr("settings.popups.backgroundOpacity")
+              subtitle: I18n.tr("settings.barPage.opacity")
               NumberSlider {
                 value: Config.barFrostOpacity
                 from: 0
@@ -2138,160 +2138,160 @@ Item {
                 onValueEdited: root.applyBarFrostOpacity(value)
               }
             }
-            Text { text: I18n.tr("Виджеты панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.general.barWidgets"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconWorkspace
-              title: I18n.tr("Рабочие столы")
-              subtitle: Config.barWorkspacesEnabled ? I18n.tr("Показываются в панели") : I18n.tr("Скрыты из панели")
+              title: I18n.tr("bar.workspaces")
+              subtitle: Config.barWorkspacesEnabled ? I18n.tr("common.shownInBarPlural") : I18n.tr("common.hiddenFromBarPlural")
               onClicked: root.setBoolSetting("barWorkspacesEnabled", !Config.barWorkspacesEnabled)
               ToggleSwitch { z: 1; checked: Config.barWorkspacesEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barWorkspacesEnabled", !Config.barWorkspacesEnabled) }
             }
             SettingsRow {
               icon: Config.iconLauncher
-              title: I18n.tr("Меню приложений")
-              subtitle: Config.barLauncherEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыто из панели")
+              title: I18n.tr("bar.appMenu")
+              subtitle: Config.barLauncherEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarN")
               onClicked: root.setBoolSetting("barLauncherEnabled", !Config.barLauncherEnabled)
               ToggleSwitch { z: 1; checked: Config.barLauncherEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barLauncherEnabled", !Config.barLauncherEnabled) }
             }
             SettingsRow {
               icon: Config.iconApplication
-              title: I18n.tr("Активное приложение")
-              subtitle: Config.barActiveAppEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыто из панели")
+              title: I18n.tr("bar.activeApp")
+              subtitle: Config.barActiveAppEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarN")
               onClicked: root.setBoolSetting("barActiveAppEnabled", !Config.barActiveAppEnabled)
               ToggleSwitch { z: 1; checked: Config.barActiveAppEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barActiveAppEnabled", !Config.barActiveAppEnabled) }
             }
             SettingsRow {
               icon: Config.iconMusic
-              title: I18n.tr("Медиа-плеер")
-              subtitle: Config.barMediaEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыт из панели")
+              title: I18n.tr("bar.mediaPlayerHyphen")
+              subtitle: Config.barMediaEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBar")
               onClicked: root.setBoolSetting("barMediaEnabled", !Config.barMediaEnabled)
               ToggleSwitch { z: 1; checked: Config.barMediaEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barMediaEnabled", !Config.barMediaEnabled) }
             }
             SettingsRow {
               icon: Config.iconTray
-              title: I18n.tr("Системный трей")
-              subtitle: Config.barTrayEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыт из панели")
+              title: I18n.tr("bar.tray")
+              subtitle: Config.barTrayEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBar")
               onClicked: root.setBoolSetting("barTrayEnabled", !Config.barTrayEnabled)
               ToggleSwitch { z: 1; checked: Config.barTrayEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barTrayEnabled", !Config.barTrayEnabled) }
             }
             SettingsRow {
               icon: Config.iconKeyboard
-              title: I18n.tr("Раскладка клавиатуры")
-              subtitle: Config.barKeyboardLayoutEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              title: I18n.tr("bar.keyboardLayout")
+              subtitle: Config.barKeyboardLayoutEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barKeyboardLayoutEnabled", !Config.barKeyboardLayoutEnabled)
               ToggleSwitch { z: 1; checked: Config.barKeyboardLayoutEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barKeyboardLayoutEnabled", !Config.barKeyboardLayoutEnabled) }
             }
             SettingsRow {
               icon: Config.iconCpu
-              title: I18n.tr("Мониторинг системы")
-              subtitle: Config.barSystemEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыт из панели")
+              title: I18n.tr("bar.systemMonitor")
+              subtitle: Config.barSystemEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBar")
               onClicked: root.setBoolSetting("barSystemEnabled", !Config.barSystemEnabled)
               ToggleSwitch { z: 1; checked: Config.barSystemEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSystemEnabled", !Config.barSystemEnabled) }
             }
             SettingsRow {
               icon: Config.iconNotifications
-              title: I18n.tr("Уведомления")
-              subtitle: Config.barNotificationsEnabled ? I18n.tr("Показываются в панели") : I18n.tr("Скрыты из панели")
+              title: I18n.tr("bar.notifications")
+              subtitle: Config.barNotificationsEnabled ? I18n.tr("common.shownInBarPlural") : I18n.tr("common.hiddenFromBarPlural")
               onClicked: root.setBoolSetting("barNotificationsEnabled", !Config.barNotificationsEnabled)
               ToggleSwitch { z: 1; checked: Config.barNotificationsEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barNotificationsEnabled", !Config.barNotificationsEnabled) }
             }
             SettingsRow {
               icon: Config.iconVolHigh
-              title: I18n.tr("Громкость")
-              subtitle: Config.barVolumeEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              title: I18n.tr("bar.volume")
+              subtitle: Config.barVolumeEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barVolumeEnabled", !Config.barVolumeEnabled)
               ToggleSwitch { z: 1; checked: Config.barVolumeEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barVolumeEnabled", !Config.barVolumeEnabled) }
             }
             SettingsRow {
               icon: Config.iconBrightHigh
-              title: I18n.tr("Яркость")
-              subtitle: Config.barBrightnessEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              title: I18n.tr("bar.brightness")
+              subtitle: Config.barBrightnessEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barBrightnessEnabled", !Config.barBrightnessEnabled)
               ToggleSwitch { z: 1; checked: Config.barBrightnessEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barBrightnessEnabled", !Config.barBrightnessEnabled) }
             }
             SettingsRow {
               icon: Config.iconBattery
-              title: I18n.tr("Батарея")
-              subtitle: Config.barBatteryEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              title: I18n.tr("bar.battery")
+              subtitle: Config.barBatteryEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barBatteryEnabled", !Config.barBatteryEnabled)
               ToggleSwitch { z: 1; checked: Config.barBatteryEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barBatteryEnabled", !Config.barBatteryEnabled) }
             }
             SettingsRow {
               icon: Config.iconBluetooth
-              title: I18n.tr("Bluetooth")
-              subtitle: Config.barBluetoothEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыт из панели")
+              title: I18n.tr("bar.bluetooth")
+              subtitle: Config.barBluetoothEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBar")
               onClicked: root.setBoolSetting("barBluetoothEnabled", !Config.barBluetoothEnabled)
               ToggleSwitch { z: 1; checked: Config.barBluetoothEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barBluetoothEnabled", !Config.barBluetoothEnabled) }
             }
             SettingsRow {
               icon: Config.iconEthernet
-              title: I18n.tr("Сеть")
-              subtitle: Config.barNetworkEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              title: I18n.tr("bar.network")
+              subtitle: Config.barNetworkEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barNetworkEnabled", !Config.barNetworkEnabled)
               ToggleSwitch { z: 1; checked: Config.barNetworkEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barNetworkEnabled", !Config.barNetworkEnabled) }
             }
             SettingsRow {
               icon: Config.iconClock
-              title: I18n.tr("Дата и время")
-              subtitle: Config.barDateTimeEnabled ? I18n.tr("Показываются в панели") : I18n.tr("Скрыты из панели")
+              title: I18n.tr("bar.clock")
+              subtitle: Config.barDateTimeEnabled ? I18n.tr("common.shownInBarPlural") : I18n.tr("common.hiddenFromBarPlural")
               onClicked: root.setBoolSetting("barDateTimeEnabled", !Config.barDateTimeEnabled)
               ToggleSwitch { z: 1; checked: Config.barDateTimeEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barDateTimeEnabled", !Config.barDateTimeEnabled) }
             }
             SettingsRow {
               icon: Config.iconWeather
-              title: I18n.tr("Погода")
-              subtitle: Config.barWeatherEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              title: I18n.tr("settings.location.weather")
+              subtitle: Config.barWeatherEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barWeatherEnabled", !Config.barWeatherEnabled)
               ToggleSwitch { z: 1; checked: Config.barWeatherEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barWeatherEnabled", !Config.barWeatherEnabled) }
             }
             SettingsRow {
               icon: Config.iconVpnShield
-              title: I18n.tr("VPN")
-              subtitle: Config.barVpnEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыт из панели")
+              title: I18n.tr("bar.vpn")
+              subtitle: Config.barVpnEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBar")
               onClicked: root.setBoolSetting("barVpnEnabled", !Config.barVpnEnabled)
               ToggleSwitch { z: 1; checked: Config.barVpnEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barVpnEnabled", !Config.barVpnEnabled) }
             }
             SettingsRow {
               icon: Config.iconColorPicker
-              title: I18n.tr("Пипетка цвета")
-              subtitle: Config.barColorPickerEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              title: I18n.tr("bar.colorPicker")
+              subtitle: Config.barColorPickerEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barColorPickerEnabled", !Config.barColorPickerEnabled)
               ToggleSwitch { z: 1; checked: Config.barColorPickerEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barColorPickerEnabled", !Config.barColorPickerEnabled) }
             }
             SettingsRow {
               icon: Config.iconPower
-              title: I18n.tr("Питание")
-              subtitle: Config.barPowerEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыто из панели")
+              title: I18n.tr("bar.power")
+              subtitle: Config.barPowerEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarN")
               last: true
               onClicked: root.setBoolSetting("barPowerEnabled", !Config.barPowerEnabled)
               ToggleSwitch { z: 1; checked: Config.barPowerEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barPowerEnabled", !Config.barPowerEnabled) }
             }
-            Text { text: I18n.tr("Рабочие столы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("bar.workspaces"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconWorkspaceNumber
-              title: I18n.tr("Цифры рабочих столов")
-              subtitle: Config.showWorkspaceNumbers ? I18n.tr("Показываются") : I18n.tr("Скрыты")
+              title: I18n.tr("bar.workspaceNumbers")
+              subtitle: Config.showWorkspaceNumbers ? I18n.tr("common.shownPlural") : I18n.tr("common.hiddenPlural")
               ToggleSwitch { checked: Config.showWorkspaceNumbers; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showWorkspaceNumbers", !Config.showWorkspaceNumbers) }
             }
             SettingsRow {
               icon: Config.iconWorkspace
-              title: I18n.tr("Рабочие столы на всех экранах")
-              subtitle: Config.showWorkspacesOnAllMonitors ? I18n.tr("Показываются") : I18n.tr("На своих экранах")
+              title: I18n.tr("bar.workspacesAllScreens")
+              subtitle: Config.showWorkspacesOnAllMonitors ? I18n.tr("common.shownPlural") : I18n.tr("bar.ownScreens")
               last: true
               onClicked: root.setBoolSetting("showWorkspacesOnAllMonitors", !Config.showWorkspacesOnAllMonitors)
               ToggleSwitch { z: 1; checked: Config.showWorkspacesOnAllMonitors; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showWorkspacesOnAllMonitors", !Config.showWorkspacesOnAllMonitors) }
             }
             SettingsRow {
               icon: Config.iconControlCenter
-              title: I18n.tr("Индикатор занятого стола")
-              subtitle: Config.workspaceIndicatorStyle === "dot" ? I18n.tr("Точка") : (Config.workspaceIndicatorStyle === "border" ? I18n.tr("Рамка") : I18n.tr("Подсветка"))
+              title: I18n.tr("bar.workspaceIndicator")
+              subtitle: Config.workspaceIndicatorStyle === "dot" ? I18n.tr("settings.popups.dot") : (Config.workspaceIndicatorStyle === "border" ? I18n.tr("settings.popups.border") : I18n.tr("settings.popups.highlight"))
               last: true
               Row {
                 width: Config.scaledSize(194)
                 height: Config.scaledSize(30)
                 spacing: Config.scaledSize(4)
                 Repeater {
-                  model: [{ key: "tint", label: "Фон" }, { key: "dot", label: "Точка" }, { key: "border", label: "Рамка" }]
+                  model: [{ key: "tint", label: "settings.dropdown.background" }, { key: "dot", label: "settings.popups.dot" }, { key: "border", label: "settings.popups.border" }]
                   Rectangle {
                     required property var modelData
                     width: (parent.width - 8) / 3
@@ -2315,18 +2315,18 @@ Item {
             visible: root.activeSection === "popups"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Всплывающие панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.popups.popupPanels"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconPopupPosition
-              title: I18n.tr("Положение всплывающих панелей")
-              subtitle: I18n.tr("Выбор для левой и правой панели")
+              title: I18n.tr("settings.popups.position")
+              subtitle: I18n.tr("settings.popups.edges")
               Row {
                 width: Config.scaledSize(154)
                 height: Config.scaledSize(30)
                 spacing: Config.scaledSize(6)
                 anchors.verticalCenter: parent.verticalCenter
                 Repeater {
-                  model: [{ key: "top", label: "Верх" }, { key: "bottom", label: "Низ" }]
+                  model: [{ key: "top", label: "settings.dropdown.tc" }, { key: "bottom", label: "settings.dropdown.bc" }]
                   Rectangle {
                     required property var modelData
                     width: Config.scaledSize(74)
@@ -2336,7 +2336,7 @@ Item {
                     color: active ? Config.selectedBg : (popupSideMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
                     border.color: active ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
+                    Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
                     MouseArea { id: popupSideMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyPopupVerticalAlign(parent.modelData.key) }
                   }
                 }
@@ -2344,29 +2344,29 @@ Item {
             }
             SettingsRow {
               icon: Config.iconBlur
-              title: I18n.tr("Размытие всплывающих панелей")
-              subtitle: Config.popupBlurEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")
+              title: I18n.tr("settings.popups.blur")
+              subtitle: Config.popupBlurEnabled ? I18n.tr("common.on") : I18n.tr("common.off")
               onClicked: root.setBoolSetting("popupBlurEnabled", !Config.popupBlurEnabled)
               ToggleSwitch { z: 1; checked: Config.popupBlurEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupBlurEnabled", !Config.popupBlurEnabled) }
             }
             SettingsRow {
               icon: Config.iconBorder
-              title: I18n.tr("Обводка всплывающих панелей")
-              subtitle: Config.popupBordersEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              title: I18n.tr("settings.popups.outline")
+              subtitle: Config.popupBordersEnabled ? I18n.tr("settings.general.femOn") : I18n.tr("settings.general.femOff")
               onClicked: root.setBoolSetting("popupBordersEnabled", !Config.popupBordersEnabled)
               ToggleSwitch { z: 1; checked: Config.popupBordersEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupBordersEnabled", !Config.popupBordersEnabled) }
             }
             SettingsRow {
               icon: Config.iconShadow
-              title: I18n.tr("Тень всплывающих панелей")
-              subtitle: Config.popupShadowsEnabled ? I18n.tr("Включена") : I18n.tr("Выключена")
+              title: I18n.tr("settings.popups.shadow")
+              subtitle: Config.popupShadowsEnabled ? I18n.tr("settings.general.femOn") : I18n.tr("settings.general.femOff")
               onClicked: root.setBoolSetting("popupShadowsEnabled", !Config.popupShadowsEnabled)
               ToggleSwitch { z: 1; checked: Config.popupShadowsEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("popupShadowsEnabled", !Config.popupShadowsEnabled) }
             }
             SettingsRow {
               icon: Config.iconRoundedCorner
-              title: I18n.tr("Закругление панелей")
-              subtitle: I18n.tr("Радиус углов выпадающих меню")
+              title: I18n.tr("settings.popups.radius")
+              subtitle: I18n.tr("settings.popups.dropdownRadius")
               NumberSlider {
                 value: Config.popupRadius
                 from: 0
@@ -2378,13 +2378,13 @@ Item {
             }
             SettingsRow {
               icon: Config.iconRoundedCorner
-              title: I18n.tr("Режим закругления")
-              subtitle: Config.popupRadiusMode === "separate" ? I18n.tr("Раздельный") : I18n.tr("Полный")
+              title: I18n.tr("settings.barPage.radiusMode")
+              subtitle: Config.popupRadiusMode === "separate" ? I18n.tr("settings.barPage.separate") : I18n.tr("settings.barPage.full")
               Row {
                 width: Config.scaledSize(194)
                 spacing: Config.scaledSize(4)
                 Repeater {
-                  model: [{ key: "linked", label: "Полный" }, { key: "separate", label: "Раздельный" }]
+                  model: [{ key: "linked", label: "settings.barPage.full" }, { key: "separate", label: "settings.barPage.separate" }]
                   Rectangle {
                     required property var modelData
                     width: (parent.width - Config.scaledSize(4)) / 2
@@ -2401,8 +2401,8 @@ Item {
             SettingsRow {
               visible: Config.popupRadiusMode === "separate"
               icon: Config.iconRoundedCorner
-              title: I18n.tr("Закругление элементов панелей")
-              subtitle: I18n.tr("Радиус углов карточек и кнопок")
+              title: I18n.tr("settings.barPage.popupElementRadius")
+              subtitle: I18n.tr("settings.barPage.cardButtonRadius")
               NumberSlider {
                 value: Config.popupWidgetRadius
                 from: 0
@@ -2414,8 +2414,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconOpacity
-              title: I18n.tr("Непрозрачность панелей")
-              subtitle: I18n.tr("Фон выпадающих меню и уведомлений")
+              title: I18n.tr("settings.popups.opacity")
+              subtitle: I18n.tr("settings.popups.menuBg")
               NumberSlider {
                 value: Config.popupBackgroundOpacity
                 from: 0
@@ -2433,29 +2433,29 @@ Item {
             visible: root.activeSection === "notifications"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Уведомления"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("bar.notifications"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconNotifications
-              title: I18n.tr("Не беспокоить")
-              subtitle: Config.doNotDisturb ? I18n.tr("Всплывающие тосты выключены") : I18n.tr("Всплывающие тосты включены")
+              title: I18n.tr("notifications.dnd")
+              subtitle: Config.doNotDisturb ? I18n.tr("notifications.toastsOff") : I18n.tr("notifications.toastsOn")
               ToggleSwitch { checked: Config.doNotDisturb; anchors.verticalCenter: parent.verticalCenter; onToggled: NotificationService.setDoNotDisturb(!Config.doNotDisturb) }
             }
             SettingsRow {
               icon: Config.iconToastPosition
-              title: I18n.tr("Положение тостов")
-              subtitle: I18n.tr("Место появления уведомлений")
+              title: I18n.tr("settings.popups.toastPosition")
+              subtitle: I18n.tr("notifications.position")
               PositionPicker { settingKey: "notificationPosition"; currentValue: Config.notificationPosition }
             }
             SettingsRow {
               icon: Config.iconStopwatch
-              title: I18n.tr("Время показа")
-              subtitle: Math.round(Config.notificationTimeoutMs / 1000) + I18n.tr(" сек.")
-              NumberSlider { value: Config.notificationTimeoutMs / 1000; from: 1; to: 300; defaultValue: 15; suffix: " с"; onValueEdited: root.applyNotificationTimeout(value * 1000) }
+              title: I18n.tr("settings.general.showTime")
+              subtitle: Math.round(Config.notificationTimeoutMs / 1000) + I18n.tr("settings.monitoring.secSuffix")
+              NumberSlider { value: Config.notificationTimeoutMs / 1000; from: 1; to: 300; defaultValue: 15; suffix: I18n.tr("settings.general.secSuffixShort"); onValueEdited: root.applyNotificationTimeout(value * 1000) }
             }
             SettingsRow {
               icon: Config.iconNotifications
-              title: I18n.tr("Максимум тостов")
-              subtitle: I18n.tr("Одновременно на экране")
+              title: I18n.tr("notifications.maxToasts")
+              subtitle: I18n.tr("notifications.visibleAtOnce")
               last: true
               NumberSlider { value: Config.notificationMaxVisible; from: 1; to: 10; defaultValue: 5; suffix: ""; onValueEdited: root.applyNotificationMaxVisible(value) }
             }
@@ -2467,11 +2467,11 @@ Item {
             visible: root.activeSection === "osd"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Экранные индикаторы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.general.screenIndicators"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconOsd
-              title: I18n.tr("Положение OSD")
-              subtitle: I18n.tr("Громкость и яркость")
+              title: I18n.tr("settings.popups.osdPosition")
+              subtitle: I18n.tr("settings.general.volumeBrightness")
               PositionPicker { settingKey: "osdPosition"; currentValue: Config.osdPosition }
             }
           }
@@ -2482,18 +2482,18 @@ Item {
             visible: root.activeSection === "location"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Время и локация"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.sections.time"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconClock
-              title: I18n.tr("Формат времени")
-              subtitle: Config.timeFormat === "12" ? I18n.tr("12-часовой формат") : I18n.tr("24-часовой формат")
+              title: I18n.tr("settings.location.timeFormat")
+              subtitle: Config.timeFormat === "12" ? I18n.tr("settings.location.h12") : I18n.tr("settings.location.h24")
               Row {
                 width: Config.scaledSize(154)
                 height: Config.scaledSize(30)
                 spacing: Config.scaledSize(6)
                 anchors.verticalCenter: parent.verticalCenter
                 Repeater {
-                  model: [{ key: "24", label: "24ч" }, { key: "12", label: "12ч" }]
+                  model: [{ key: "24", label: "settings.dropdown.h24" }, { key: "12", label: "settings.dropdown.h12" }]
                   Rectangle {
                     required property var modelData
                     width: Config.scaledSize(74)
@@ -2503,7 +2503,7 @@ Item {
                     color: active ? Config.selectedBg : (timeMouse.containsMouse ? Config.hoverBg : Config.controlIdleBg)
                     border.color: active ? Config.activeBorderColor : Config.borderColor
                     border.width: 1
-                    Text { anchors.centerIn: parent; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
+                    Text { anchors.centerIn: parent; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
                     MouseArea { id: timeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyTimeFormat(parent.modelData.key) }
                   }
                 }
@@ -2511,34 +2511,34 @@ Item {
             }
             SettingsRow {
               icon: Config.iconStopwatch
-              title: I18n.tr("Секунды в часах")
-              subtitle: Config.showSeconds ? I18n.tr("Показываются") : I18n.tr("Скрыты")
+              title: I18n.tr("settings.location.showSeconds")
+              subtitle: Config.showSeconds ? I18n.tr("common.shownPlural") : I18n.tr("common.hiddenPlural")
               ToggleSwitch { checked: Config.showSeconds; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("showSeconds", !Config.showSeconds) }
             }
             SettingsRow {
               icon: Config.iconCalendar
-              title: I18n.tr("Дата")
-              subtitle: Config.barDateEnabled ? I18n.tr("Показывается в панели") : I18n.tr("Скрыта из панели")
+              title: I18n.tr("bar.date")
+              subtitle: Config.barDateEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barDateEnabled", !Config.barDateEnabled)
               ToggleSwitch { z: 1; checked: Config.barDateEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barDateEnabled", !Config.barDateEnabled) }
             }
             SettingsRow {
               icon: Config.iconWeather
-              title: I18n.tr("Погода на панели")
-              subtitle: Config.weatherEnabled ? I18n.tr("Показывается") : I18n.tr("Скрыта")
+              title: I18n.tr("settings.location.weatherInBar")
+              subtitle: Config.weatherEnabled ? I18n.tr("common.shown") : I18n.tr("common.hidden")
               ToggleSwitch { checked: Config.weatherEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("weatherEnabled", !Config.weatherEnabled) }
             }
             SettingsRow {
               icon: Config.iconTemperature
-              title: I18n.tr("Точность до десятых")
-              subtitle: Config.weatherTenths ? I18n.tr("С десятыми") : I18n.tr("Целые градусы")
+              title: I18n.tr("settings.palette.tenths")
+              subtitle: Config.weatherTenths ? I18n.tr("settings.palette.withTenths") : I18n.tr("settings.palette.wholeDegrees")
               onClicked: root.setBoolSetting("weatherTenths", !Config.weatherTenths)
               ToggleSwitch { z: 1; checked: Config.weatherTenths; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("weatherTenths", !Config.weatherTenths) }
             }
             SettingsRow {
               icon: Config.iconWeather
-              title: I18n.tr("Город погоды")
-              subtitle: Config.weatherLocation.length > 0 ? Config.weatherLocation : I18n.tr("Автоматически по IP")
+              title: I18n.tr("settings.location.weatherCity")
+              subtitle: Config.weatherLocation.length > 0 ? Config.weatherLocation : I18n.tr("settings.location.autoIp")
               Rectangle {
                 width: Config.scaledSize(210)
                 height: Config.scaledSize(34)
@@ -2559,7 +2559,7 @@ Item {
                   font.pixelSize: Config.fontSizeSmall
                   font.family: Config.fontSans
                   clip: true
-                  Text { text: I18n.tr("авто по IP"); color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; visible: !weatherLocationInput.text && !weatherLocationInput.activeFocus; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: I18n.tr("settings.location.autoIpShort"); color: Config.textPlaceholder; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; visible: !weatherLocationInput.text && !weatherLocationInput.activeFocus; anchors.verticalCenter: parent.verticalCenter }
                   onTextChanged: if (activeFocus) citySearchTimer.restart()
                   onEditingFinished: root.applyWeatherLocation(text)
                   Keys.onReturnPressed: focus = false
@@ -2604,7 +2604,7 @@ Item {
             visible: root.activeSection === "monitoring"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Мониторинг системы"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("bar.systemMonitor"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Rectangle {
               width: parent.width
               height: Config.scaledSize(76)
@@ -2616,51 +2616,51 @@ Item {
                 anchors.fill: parent
                 anchors.margins: Config.scaledSize(12)
                 spacing: Config.scaledSize(5)
-                Text { text: I18n.tr("Системные метрики"); color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
-                Text { text: I18n.tr("CPU, память, сеть и накопители отображаются на панели и в системном попапе."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
+                Text { text: I18n.tr("settings.monitoring.sysMetrics"); color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans }
+                Text { text: I18n.tr("settings.monitoring.sysMetricsHint"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
               }
             }
 
-            Text { text: I18n.tr("Метрики в панели"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.monitoring.metrics"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconCpu
-              title: I18n.tr("Загрузка CPU")
-              subtitle: I18n.tr("Процент использования процессора")
+              title: I18n.tr("settings.monitoring.cpuUsage")
+              subtitle: I18n.tr("settings.monitoring.cpuPercent")
               onClicked: root.setBoolSetting("barSysCpuEnabled", !Config.barSysCpuEnabled)
               ToggleSwitch { z: 1; checked: Config.barSysCpuEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysCpuEnabled", !Config.barSysCpuEnabled) }
             }
             SettingsRow {
               icon: Config.iconTemperature
-              title: I18n.tr("Температура CPU")
-              subtitle: I18n.tr("Температура процессора")
+              title: I18n.tr("settings.monitoring.cpuTemp")
+              subtitle: I18n.tr("settings.monitoring.cpuTempLong")
               onClicked: root.setBoolSetting("barSysCpuTempEnabled", !Config.barSysCpuTempEnabled)
               ToggleSwitch { z: 1; checked: Config.barSysCpuTempEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysCpuTempEnabled", !Config.barSysCpuTempEnabled) }
             }
             SettingsRow {
               icon: Config.iconGpu
-              title: I18n.tr("Загрузка GPU")
-              subtitle: I18n.tr("Процент использования видеокарты")
+              title: I18n.tr("settings.monitoring.gpuUsage")
+              subtitle: I18n.tr("settings.monitoring.gpuPercent")
               onClicked: root.setBoolSetting("barSysGpuEnabled", !Config.barSysGpuEnabled)
               ToggleSwitch { z: 1; checked: Config.barSysGpuEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysGpuEnabled", !Config.barSysGpuEnabled) }
             }
             SettingsRow {
               icon: Config.iconTemperature
-              title: I18n.tr("Температура GPU")
-              subtitle: I18n.tr("Температура видеокарты")
+              title: I18n.tr("settings.monitoring.gpuTemp")
+              subtitle: I18n.tr("settings.monitoring.gpuTempLong")
               onClicked: root.setBoolSetting("barSysGpuTempEnabled", !Config.barSysGpuTempEnabled)
               ToggleSwitch { z: 1; checked: Config.barSysGpuTempEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysGpuTempEnabled", !Config.barSysGpuTempEnabled) }
             }
             SettingsRow {
               icon: Config.iconRam
-              title: I18n.tr("Оперативная память")
-              subtitle: I18n.tr("Использование RAM")
+              title: I18n.tr("settings.monitoring.memory")
+              subtitle: I18n.tr("settings.monitoring.ramUsage")
               onClicked: root.setBoolSetting("barSysRamEnabled", !Config.barSysRamEnabled)
               ToggleSwitch { z: 1; checked: Config.barSysRamEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysRamEnabled", !Config.barSysRamEnabled) }
             }
             SettingsRow {
               icon: Config.iconNet
-              title: I18n.tr("Сеть")
-              subtitle: I18n.tr("Скорость загрузки")
+              title: I18n.tr("bar.network")
+              subtitle: I18n.tr("settings.monitoring.downloadSpeed")
               onClicked: root.setBoolSetting("barSysNetEnabled", !Config.barSysNetEnabled)
               ToggleSwitch { z: 1; checked: Config.barSysNetEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barSysNetEnabled", !Config.barSysNetEnabled) }
             }
@@ -2672,10 +2672,10 @@ Item {
             visible: root.activeSection === "system"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Система"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.sections.system"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconLanguage
-              title: I18n.tr("Язык")
+              title: I18n.tr("settings.general.language")
               subtitle: root.languageName(Config.language)
               Item {
                 width: Config.scaledSize(194)
@@ -2731,29 +2731,29 @@ Item {
                 }
               }
             }
-            Text { text: I18n.tr("Сочетания клавиш"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.system.keybinds"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconKeyboard
-              title: I18n.tr("Закрыть настройки")
-              subtitle: I18n.tr("Сочетание клавиш для закрытия окна настроек")
+              title: I18n.tr("settings.system.closeSettings")
+              subtitle: I18n.tr("settings.system.closeSettingsHint")
                 KeybindRecorder { keybind: Config.settingsCloseKeybind; apply: value => { root.applyCloseKeybind(value); return true } }
             }
-            Text { text: I18n.tr("Глобальные сочетания"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.system.global"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Repeater {
               model: [
-                { icon: Config.iconLauncher, title: "Меню приложений", configKey: "keybindDrawer" },
-                { icon: Config.iconSettings, title: "Настройки", configKey: "keybindSettings" },
-                { icon: Config.iconClipboard, title: "Буфер обмена", configKey: "keybindClipboard" },
-                { icon: Config.iconNotifications, title: "Уведомления", configKey: "keybindNotifications" },
-                { icon: Config.iconPower, title: "Питание", configKey: "keybindPower" },
-                { icon: Config.iconControlCenter, title: "Центр управления", configKey: "keybindControlCenter" },
-                { icon: Config.iconClock, title: "Дата и время", configKey: "keybindCalendar" },
-                { icon: Config.iconMusic, title: "Медиа-плеер", configKey: "keybindMedia" },
-                { icon: Config.iconWifiConnected, title: "Wi-Fi", configKey: "keybindWiFi" },
-                { icon: Config.iconBluetooth, title: "Bluetooth", configKey: "keybindBluetooth" },
-                { icon: Config.iconBrightHigh, title: "Яркость", configKey: "keybindBrightness" },
-                { icon: Config.iconKeyboard, title: "Раскладка клавиатуры", configKey: "keybindKeyboard" },
-                { icon: Config.iconCpu, title: "Мониторинг системы", configKey: "keybindSystem" }
+                { icon: Config.iconLauncher, title: "keybind.drawer", configKey: "keybindDrawer" },
+                { icon: Config.iconSettings, title: "keybind.settings", configKey: "keybindSettings" },
+                { icon: Config.iconClipboard, title: "keybind.clipboard", configKey: "keybindClipboard" },
+                { icon: Config.iconNotifications, title: "keybind.notifications", configKey: "keybindNotifications" },
+                { icon: Config.iconPower, title: "keybind.power", configKey: "keybindPower" },
+                { icon: Config.iconControlCenter, title: "keybind.controlCenter", configKey: "keybindControlCenter" },
+                { icon: Config.iconClock, title: "keybind.calendar", configKey: "keybindCalendar" },
+                { icon: Config.iconMusic, title: "keybind.media", configKey: "keybindMedia" },
+                { icon: Config.iconWifiConnected, title: "keybind.wifi", configKey: "keybindWiFi" },
+                { icon: Config.iconBluetooth, title: "keybind.bluetooth", configKey: "keybindBluetooth" },
+                { icon: Config.iconBrightHigh, title: "keybind.brightness", configKey: "keybindBrightness" },
+                { icon: Config.iconKeyboard, title: "keybind.keyboardLayout", configKey: "keybindKeyboard" },
+                { icon: Config.iconCpu, title: "keybind.systemMonitor", configKey: "keybindSystem" }
               ]
               SettingsRow {
                 required property var modelData
@@ -2763,11 +2763,11 @@ Item {
                 KeybindRecorder { keybind: Config[modelData.configKey]; apply: value => root.applyGlobalKeybind(modelData.configKey, value) }
               }
             }
-            Text { text: I18n.tr("Навигация настроек"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
-            SettingsRow { icon: Config.iconKeyboard; title: I18n.tr("Следующий раздел"); subtitle: "Ctrl+Tab" }
-            SettingsRow { icon: Config.iconKeyboard; title: I18n.tr("Предыдущий раздел"); subtitle: "Ctrl+Shift+Tab" }
-            SettingsRow { icon: Config.iconChevronRight; title: I18n.tr("Следующая вкладка"); subtitle: "Alt+Right" }
-            SettingsRow { icon: Config.iconChevronLeft; title: I18n.tr("Предыдущая вкладка"); subtitle: "Alt+Left" }
+            Text { text: I18n.tr("settings.system.nav"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            SettingsRow { icon: Config.iconKeyboard; title: I18n.tr("settings.system.nextSection"); subtitle: "Ctrl+Tab" }
+            SettingsRow { icon: Config.iconKeyboard; title: I18n.tr("settings.system.prevSection"); subtitle: "Ctrl+Shift+Tab" }
+            SettingsRow { icon: Config.iconChevronRight; title: I18n.tr("settings.system.nextTab"); subtitle: "Alt+Right" }
+            SettingsRow { icon: Config.iconChevronLeft; title: I18n.tr("settings.system.prevTab"); subtitle: "Alt+Left" }
           }
 
           Column {
@@ -2776,10 +2776,10 @@ Item {
             visible: root.activeSection === "advanced"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("Дополнительно"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.sections.advanced"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             SettingsRow {
               icon: Config.iconBrightHigh
-              title: I18n.tr("Шина монитора")
+              title: I18n.tr("settings.system.monitorBus")
               subtitle: Config.brightnessMonitorBus
               Rectangle {
                 width: Config.scaledSize(120)
@@ -2807,8 +2807,8 @@ Item {
             }
             SettingsRow {
               icon: Config.iconStopwatch
-              title: I18n.tr("Задержка DDC/CI")
-              subtitle: I18n.tr("Множитель паузы между командами")
+              title: I18n.tr("settings.system.ddcDelay")
+              subtitle: I18n.tr("settings.system.ddcMultiplier")
               Rectangle {
                 width: Config.scaledSize(120)
                 height: Config.scaledSize(34)
@@ -2842,7 +2842,7 @@ Item {
             visible: root.activeSection === "about"
             height: visible ? implicitHeight : 0
             clip: true
-            Text { text: I18n.tr("О программе"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+            Text { text: I18n.tr("settings.sections.about"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
             Rectangle {
               width: parent.width
               height: Config.scaledSize(140)
@@ -2867,9 +2867,9 @@ Item {
                   anchors.verticalCenter: parent.verticalCenter
                   spacing: Config.scaledSize(4)
                   Text { text: "Naton"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans }
-                  Text { text: I18n.tr("Naton is a customizable Wayland desktop shell built with Quickshell, QML, and Go."); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
-                  Text { text: I18n.tr("Установленная версия") + ": " + root.aboutVersion; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
-                  Text { text: I18n.tr("Последняя версия") + ": " + root.aboutLatest; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
+                  Text { text: I18n.tr("settings.about.description"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; wrapMode: Text.Wrap; width: parent.width }
+                  Text { text: I18n.tr("settings.about.installed") + ": " + root.aboutVersion; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
+                  Text { text: I18n.tr("settings.about.latest") + ": " + root.aboutLatest; color: Config.textSubtle; font.pixelSize: Config.fontMonoSizeSmall; font.family: Config.fontMono; width: parent.width; elide: Text.ElideRight }
                 }
               }
             }
@@ -2878,7 +2878,7 @@ Item {
               width: parent.width
               spacing: Config.scaledSize(8)
               visible: root.aboutContributors.length > 0
-              Text { text: I18n.tr("Контрибьюторы") + " (" + root.aboutContributors.length + ")"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
+              Text { text: I18n.tr("settings.about.contributors") + " (" + root.aboutContributors.length + ")"; color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 0.8 }
               Grid {
                 id: contributorsGrid
                 width: parent.width
@@ -3041,7 +3041,7 @@ Item {
                 color: active ? Config.selectedBg : (wallpaperModeMouse.containsMouse ? Config.hoverBg : "#00000000")
                 border.color: active ? Config.activeBorderColor : "#00000000"
                 border.width: 1
-                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                 MouseArea { id: wallpaperModeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyWallpaperFillMode(parent.modelData.key) }
               }
             }
@@ -3084,7 +3084,7 @@ Item {
                 color: active ? Config.selectedBg : (wallpaperTransitionMouse.containsMouse ? Config.hoverBg : "#00000000")
                 border.color: active ? Config.activeBorderColor : "#00000000"
                 border.width: 1
-                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                 MouseArea { id: wallpaperTransitionMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyWallpaperTransition(parent.modelData.key) }
               }
             }
@@ -3127,7 +3127,7 @@ Item {
                 color: active ? Config.selectedBg : (wallpaperPaletteMouse.containsMouse ? Config.hoverBg : "#00000000")
                 border.color: active ? Config.activeBorderColor : "#00000000"
                 border.width: 1
-                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: parent.modelData.label; color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                Text { anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; text: I18n.tr(parent.modelData.label); color: parent.active ? Config.textWhite : Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                 MouseArea { id: wallpaperPaletteMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.applyWallpaperPaletteScheme(parent.modelData.key) }
               }
             }

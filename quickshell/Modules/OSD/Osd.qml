@@ -10,7 +10,7 @@ PanelWindow {
 
   property bool visibleOsd: false
   property string icon: Config.iconVolHigh
-  property string label: "Громкость"
+  property string label: I18n.tr("osd.volume")
   property int value: 0
   property bool muted: false
   property bool suppressed: false
@@ -59,7 +59,7 @@ PanelWindow {
     if (root.suppressed) return
     value = Math.max(0, Math.min(150, Math.round(nextValue)))
     muted = isMuted
-    label = muted ? "Звук выключен" : "Громкость"
+    label = muted ? I18n.tr("osd.muted") : I18n.tr("osd.volume")
     icon = muted ? Config.iconVolMuted : (value >= 70 ? Config.iconVolHigh : (value >= 30 ? Config.iconVolMedium : Config.iconVolLow))
     visibleOsd = true
     hideTimer.restart()
@@ -69,7 +69,7 @@ PanelWindow {
     if (root.suppressed) return
     value = Math.max(0, Math.min(100, Math.round(nextValue)))
     muted = false
-    label = "Яркость"
+    label = I18n.tr("osd.brightness")
     icon = value >= 75 ? Config.iconBrightHigh : (value >= 35 ? Config.iconBrightMedium : (value > 0 ? Config.iconBrightLow : Config.iconBrightOff))
     visibleOsd = true
     hideTimer.restart()
@@ -111,7 +111,7 @@ PanelWindow {
         Row {
           width: parent.width
           Text { text: root.label; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; width: parent.width - 46 }
-          Text { text: root.muted ? "Выкл." : root.value + "%"; color: root.muted ? Config.dangerRed : Config.textWhite; font.pixelSize: Config.fontMonoSizeSmall; font.weight: Font.Medium; font.family: Config.fontMono; width: Config.scaledSize(46); horizontalAlignment: Text.AlignRight }
+          Text { text: root.muted ? I18n.tr("osd.off") : root.value + "%"; color: root.muted ? Config.dangerRed : Config.textWhite; font.pixelSize: Config.fontMonoSizeSmall; font.weight: Font.Medium; font.family: Config.fontMono; width: Config.scaledSize(46); horizontalAlignment: Text.AlignRight }
         }
         Rectangle {
           width: parent.width

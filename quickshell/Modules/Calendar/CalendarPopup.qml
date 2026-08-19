@@ -61,8 +61,8 @@ PanelWindow {
   property bool weatherOk: false
   property real weatherTempRaw: 0
   readonly property string weatherTemp: !weatherOk ? "--" : Config.tempText(weatherTempRaw, Config.weatherTenths)
-  property string weatherCondition: "Погода недоступна"
-  property string weatherDetails: "Погода недоступна"
+  property string weatherCondition: I18n.tr("calendar.weatherUnavailable")
+  property string weatherDetails: I18n.tr("calendar.weatherUnavailable")
   property string weatherHumidity: "--"
   property var holidaysMap: ({})
   property string agenda: ""
@@ -130,8 +130,8 @@ PanelWindow {
       root.weatherTempRaw = res.temperature
       root.weatherCode = res.code
       root.weatherHumidity = res.humidity + "%"
-      root.weatherCondition = res.condition || "Погода"
-      root.weatherDetails = (res.name || Config.weatherLocation || "Текущий город") + " · влажность " + root.weatherHumidity
+      root.weatherCondition = res.condition || I18n.tr("calendar.weather")
+      root.weatherDetails = (res.name || Config.weatherLocation || I18n.tr("calendar.currentCity")) + I18n.tr("calendar.humidity") + root.weatherHumidity
       forecastModel.clear()
       let days = res.days || []
       for (let i = 0; i < Math.min(4, days.length); i++) {
@@ -141,7 +141,7 @@ PanelWindow {
           tempRaw: day.temperature,
           humidity: day.humidity + "%",
           code: day.code,
-          desc: day.condition || "Прогноз"
+          desc: day.condition || I18n.tr("calendar.forecast")
         })
       }
       for (let i = days.length; i < 4; i++) {
@@ -149,7 +149,7 @@ PanelWindow {
           dayLabel: root.forecastDayLabel(root.addDays(new Date(), i), i),
           tempRaw: -999,
           humidity: "--",
-          desc: "Нет данных"
+          desc: I18n.tr("calendar.noData")
         })
       }
       hourlyModel.clear()
@@ -165,7 +165,7 @@ PanelWindow {
   }
 
   function forecastDayLabel(rawDate, index) {
-    if (index === 0) return "Сегодня"
+    if (index === 0) return I18n.tr("calendar.today")
     let d = rawDate instanceof Date ? rawDate : new Date(rawDate + "T00:00:00")
     return Config.weekdayBarNamesRu[d.getDay()]
   }
@@ -364,7 +364,7 @@ PanelWindow {
             width: parent.width
             height: Config.scaledSize(24)
             spacing: Config.scaledSize(6)
-            Text { width: parent.width - 52; text: Config.weatherLocation || "Погода"; color: Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
+            Text { width: parent.width - 52; text: Config.weatherLocation || I18n.tr("calendar.weather"); color: Config.textSubtle; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
             Text { width: Config.scaledSize(46); text: Config.iconHumidity + " " + root.weatherHumidity; color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontIcon; horizontalAlignment: Text.AlignRight; anchors.verticalCenter: parent.verticalCenter }
           }
 
@@ -392,7 +392,7 @@ PanelWindow {
 
           Column {
             width: parent.width; spacing: Config.scaledSize(3); visible: root.agenda.length > 0
-            Text { text: I18n.tr("Повестка"); color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
+            Text { text: I18n.tr("calendar.agenda"); color: Config.textMuted; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans }
             Text { width: parent.width; text: root.agenda; color: Config.textSubtle; font.pixelSize: Config.fontSizeTiny; font.family: Config.fontSans; maximumLineCount: 3; elide: Text.ElideRight; wrapMode: Text.Wrap }
           }
 

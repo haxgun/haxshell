@@ -14,7 +14,7 @@ PanelWindow {
   property int cpu: 0
   property int cpuTemp: 0
   property double load1: 0
-  property string uptime: "0м"
+  property string uptime: I18n.tr("system.uptimeFallback")
   property int ramPct: 0
   property double ramUsed: 0
   property double ramTotal: 0
@@ -26,7 +26,7 @@ PanelWindow {
   property int storageDisk: 0
   property bool storageExists: false
   property string uptimeSysmon: "UP 0D 00:00"
-  readonly property string localizedUptimeSysmon: uptimeSysmon.indexOf("UP ") === 0 ? I18n.tr("UP") + uptimeSysmon.slice(2) : uptimeSysmon
+  readonly property string localizedUptimeSysmon: uptimeSysmon.indexOf("UP ") === 0 ? I18n.tr("system.up") + uptimeSysmon.slice(2) : uptimeSysmon
   property double swapUsed: 0
   property bool hasGpu: false
   property int gpu: 0
@@ -79,7 +79,7 @@ PanelWindow {
       root.cpu = res.cpu || 0
       root.cpuTemp = res.cpu_temp || 0
       root.load1 = res.load1 || 0
-      root.uptime = res.uptime || "0м"
+      root.uptime = res.uptime || I18n.tr("system.uptimeFallback")
       root.uptimeSysmon = res.uptime_sysmon || "UP 0D 00:00"
       root.ramPct = res.ram_pct || 0
       root.ramUsed = res.ram_used || 0
@@ -113,10 +113,10 @@ PanelWindow {
   }
 
   function cellLabel(key) {
-    if (key === "net") return "СЕТЬ · МБ/С"
-    if (key === "disk") return "ДИСК · %"
-    if (key === "swap") return "SWAP · ГБ"
-    return "VRAM · ГБ"
+    if (key === "net") return I18n.tr("system.net")
+    if (key === "disk") return I18n.tr("system.disk")
+    if (key === "swap") return I18n.tr("system.swap")
+    return I18n.tr("system.vram")
   }
 
   Rectangle {
@@ -166,7 +166,7 @@ PanelWindow {
           anchors.verticalCenter: parent.verticalCenter
           spacing: Config.scaledSize(9)
           Text { text: Config.iconCpu; color: Config.textWhite; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-          Text { text: "СИСТЕМА"; color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 1.8; anchors.verticalCenter: parent.verticalCenter }
+          Text { text: I18n.tr("system.title"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 1.8; anchors.verticalCenter: parent.verticalCenter }
         }
         Text { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; text: root.localizedUptimeSysmon; color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.weight: Font.Medium; font.family: Config.fontSans; font.letterSpacing: 1.1 }
       }
@@ -187,8 +187,8 @@ PanelWindow {
             value: pct
             primary: key === "ram" ? root.ramUsed.toFixed(1) : pct.toString()
             unit: key === "ram" ? "" : "%"
-            label: key === "cpu" ? I18n.tr("CPU") : (key === "gpu" ? I18n.tr("GPU") : I18n.tr("RAM"))
-            sub: key === "cpu" ? (root.cpuTemp > 0 ? root.cpuTemp + "°" : "") : (key === "gpu" ? (root.gpuTemp > 0 ? root.gpuTemp + "°" : "") : "/ " + root.ramTotal.toFixed(0) + " ГБ")
+            label: key === "cpu" ? I18n.tr("system.cpu") : (key === "gpu" ? I18n.tr("system.gpu") : I18n.tr("system.ram"))
+            sub: key === "cpu" ? (root.cpuTemp > 0 ? root.cpuTemp + "°" : "") : (key === "gpu" ? (root.gpuTemp > 0 ? root.gpuTemp + "°" : "") : "/ " + root.ramTotal.toFixed(0) + I18n.tr("system.ramSuffix"))
           }
         }
       }

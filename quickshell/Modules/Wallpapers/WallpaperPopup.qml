@@ -10,7 +10,7 @@ PanelWindow {
 
   property bool isOpen: false
   property string thumbnail: ""
-  property string wallName: "Нет обоев"
+  property string wallName: I18n.tr("wallpaper.none")
   property int currentIndex: 0
   property var palette: []
   readonly property string natonctl: Config.natonctl
@@ -76,7 +76,7 @@ PanelWindow {
     try {
       let res = JSON.parse(data)
       root.thumbnail = res.thumbnail || ""
-      root.wallName = res.name || "Нет обоев"
+      root.wallName = res.name || I18n.tr("wallpaper.none")
       root.currentIndex = res.index || 0
       root.palette = res.palette || []
       if (root.palette.length > 0) {
@@ -156,7 +156,7 @@ PanelWindow {
         color: nextMouse.containsMouse ? Config.activeHoverBg : Config.selectedBg
         border.color: Config.activeBorderColor
         border.width: 1
-        Text { anchors.centerIn: parent; text: "Следующие обои"; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
+        Text { anchors.centerIn: parent; text: I18n.tr("wallpaper.next"); color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
         MouseArea { id: nextMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.nextWallpaper() }
       }
 

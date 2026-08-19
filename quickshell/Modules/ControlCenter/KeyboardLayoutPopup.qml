@@ -108,7 +108,7 @@ PanelWindow {
         height: Config.scaledSize(24)
         spacing: Config.scaledSize(8)
         Text { text: Config.iconKeyboard; color: Config.textWhite; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { width: parent.width - 28; text: "Раскладка"; color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
+        Text { width: parent.width - 28; text: I18n.tr("keyboard.title"); color: Config.textWhite; font.pixelSize: Config.fontSizeNormal; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight; anchors.verticalCenter: parent.verticalCenter }
       }
 
       Repeater {

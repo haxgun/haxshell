@@ -108,25 +108,25 @@ PanelWindow {
   }
 
   function stateText() {
-    if (root.batteryCharging && root.batteryStatus === "Full") return "Полностью заряжена, подключена"
-    if (root.batteryStatus === "Charging") return "Заряжается"
-    if (root.batteryStatus === "Discharging") return "Разряжается"
-    if (root.batteryStatus === "Full") return "Полностью заряжена"
-    if (root.acOnline) return "Подключена к сети"
-    return "Неизвестно"
+    if (root.batteryCharging && root.batteryStatus === "Full") return I18n.tr("battery.fullChargedConnected")
+    if (root.batteryStatus === "Charging") return I18n.tr("battery.charging")
+    if (root.batteryStatus === "Discharging") return I18n.tr("battery.discharging")
+    if (root.batteryStatus === "Full") return I18n.tr("battery.full")
+    if (root.acOnline) return I18n.tr("battery.onAc")
+    return I18n.tr("battery.unknown")
   }
 
   function timeText() {
     if (!root.batteryTimeHours || root.batteryTimeHours <= 0) return "--"
     let hours = Math.floor(root.batteryTimeHours)
     let minutes = Math.round((root.batteryTimeHours - hours) * 60)
-    return hours + "ч " + minutes + "м"
+    return I18n.tr("battery.hoursMinutes").replace("{h}", hours).replace("{m}", minutes)
   }
 
   function profileName(profile) {
-    if (profile === "power-saver") return "Экономия"
-    if (profile === "performance") return "Производительность"
-    return "Баланс"
+    if (profile === "power-saver") return I18n.tr("cc.powerSaver")
+    if (profile === "performance") return I18n.tr("cc.performance")
+    return I18n.tr("cc.balanced")
   }
 
   function profileIcon(profile) {
@@ -194,7 +194,7 @@ PanelWindow {
           spacing: Config.scaledSize(1)
 
           Text {
-            text: "Батарея"
+            text: I18n.tr("battery.title")
             color: Config.textWhite
             font.pixelSize: Config.fontSizeLarge
             font.weight: Font.Medium
@@ -229,7 +229,7 @@ PanelWindow {
             width: parent.width
             Text {
               width: parent.width / 2
-              text: root.batteryCharging ? "Заряд" : "Остаток"
+              text: root.batteryCharging ? I18n.tr("battery.chargeLabel") : I18n.tr("battery.remainingLabel")
               color: Config.textMuted
               font.pixelSize: Config.fontSizeExtraSmall
               font.weight: Font.Medium
@@ -272,17 +272,17 @@ PanelWindow {
         rowSpacing: Config.scaledSize(8)
         columnSpacing: Config.scaledSize(10)
 
-        BatteryInfoRow { label: "Осталось"; value: root.timeText(); width: (parent.width - 10) / 2 }
+        BatteryInfoRow { label: I18n.tr("battery.remaining"); value: root.timeText(); width: (parent.width - 10) / 2 }
         BatteryInfoRow { label: "RATE"; value: root.batteryRate.toFixed(2) + " W"; width: (parent.width - 10) / 2 }
         BatteryInfoRow { label: "CAPACITY"; value: root.batteryCapacity + "%"; width: (parent.width - 10) / 2 }
         BatteryInfoRow { label: "STATUS"; value: root.acOnline ? "AC" : "BAT"; width: (parent.width - 10) / 2 }
-        BatteryInfoRow { label: "Напряжение"; value: root.batteryVoltage > 0 ? root.batteryVoltage.toFixed(2) + " В" : "--"; width: (parent.width - 10) / 2 }
-        BatteryInfoRow { label: "Температура"; value: root.batteryTemp !== 0 ? root.batteryTemp.toFixed(1) + "°C" : "--"; width: (parent.width - 10) / 2 }
-        BatteryInfoRow { label: "Циклы"; value: root.batteryCycles > 0 ? String(root.batteryCycles) : "--"; width: (parent.width - 10) / 2 }
+        BatteryInfoRow { label: I18n.tr("battery.voltage"); value: root.batteryVoltage > 0 ? root.batteryVoltage.toFixed(2) + I18n.tr("battery.voltageUnit") : "--"; width: (parent.width - 10) / 2 }
+        BatteryInfoRow { label: I18n.tr("battery.temperature"); value: root.batteryTemp !== 0 ? root.batteryTemp.toFixed(1) + "°C" : "--"; width: (parent.width - 10) / 2 }
+        BatteryInfoRow { label: I18n.tr("battery.cycles"); value: root.batteryCycles > 0 ? String(root.batteryCycles) : "--"; width: (parent.width - 10) / 2 }
       }
 
       Text {
-        text: "Профиль питания"
+        text: I18n.tr("battery.powerProfile")
         color: Config.textSubtle
         font.pixelSize: Config.fontSizeSmall
         font.weight: Font.Medium

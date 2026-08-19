@@ -188,7 +188,7 @@ PanelWindow {
           }
 
           Text {
-            text: "Яркость экрана"
+            text: I18n.tr("brightness.title")
             color: Config.textWhite
             font.pixelSize: Config.fontSizeLarge
             font.weight: Font.Medium

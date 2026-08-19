@@ -133,8 +133,8 @@ PanelWindow {
           width: parent.width - artwork.width - parent.spacing
           spacing: Config.scaledSize(4)
             Item { width: 1; height: 6 }
-            Text { width: parent.width; text: root.title || "Нет трека"; color: "#ffffff"; font.pixelSize: Config.fontSizeTitle; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-            Text { width: parent.width; text: root.artist || "Неизвестный артист"; color: "#e8ffffff"; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; elide: Text.ElideRight }
+            Text { width: parent.width; text: root.title || I18n.tr("media.noTrack"); color: "#ffffff"; font.pixelSize: Config.fontSizeTitle; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+            Text { width: parent.width; text: root.artist || I18n.tr("media.unknownArtist"); color: "#e8ffffff"; font.pixelSize: Config.fontSizeNormal; font.family: Config.fontSans; elide: Text.ElideRight }
             Text { width: parent.width; text: root.album || ""; color: "#b8ffffff"; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; elide: Text.ElideRight; visible: text.length > 0 }
             Item { width: 1; height: 6 }
 

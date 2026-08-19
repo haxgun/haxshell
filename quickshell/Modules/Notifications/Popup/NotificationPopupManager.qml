@@ -101,7 +101,7 @@ PanelWindow {
     let item = {
       id: notification.id,
       notification: notification,
-      summary: notification.summary || notification.appName || "Уведомление",
+      summary: notification.summary || notification.appName || I18n.tr("notifications.fallback"),
       body: notification.body || "",
       appName: notification.appName || "",
       imageSource: NotificationService.notificationImageSource(notification),

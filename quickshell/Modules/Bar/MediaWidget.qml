@@ -91,7 +91,7 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
-    onEntered: if (root.tooltip) root.tooltip.show(root, I18n.tr("Медиаплеер"))
+    onEntered: if (root.tooltip) root.tooltip.show(root, I18n.tr("bar.mediaPlayer"))
     onExited: if (root.tooltip) root.tooltip.hide()
     onClicked: {
       if (root.mediaPopup) {

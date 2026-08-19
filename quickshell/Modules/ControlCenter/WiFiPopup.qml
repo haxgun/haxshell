@@ -96,9 +96,9 @@ PanelWindow {
   }
 
   function statusText(network) {
-    if (network.connected) return "Подключено"
-    if (network.state === ConnectionState.Connecting || network.stateChanging) return "Подключение..."
-    return network.known ? "Сохранено" : "Доступно"
+    if (network.connected) return I18n.tr("wifi.connected")
+    if (network.state === ConnectionState.Connecting || network.stateChanging) return I18n.tr("wifi.connecting")
+    return network.known ? I18n.tr("wifi.saved") : I18n.tr("wifi.available")
   }
 
   function secured(network) {
@@ -206,7 +206,7 @@ PanelWindow {
           }
 
           Text {
-            text: root.connectedNetworkName || (Networking.wifiEnabled ? "Не подключено" : "Выключено")
+            text: root.connectedNetworkName || (Networking.wifiEnabled ? I18n.tr("wifi.notConnected") : I18n.tr("wifi.off"))
             color: Config.textMuted
             font.pixelSize: Config.fontSizeSmall
             font.family: Config.fontSans
@@ -263,7 +263,7 @@ PanelWindow {
       Text {
         width: parent.width
         visible: !root.wifiDevice
-        text: "Wi-Fi адаптер не найден"
+        text: I18n.tr("wifi.adapterNotFound")
         color: Config.textMuted
         font.pixelSize: Config.fontSizeNormal
         font.family: Config.fontSans
@@ -287,7 +287,7 @@ PanelWindow {
           color: "#00000000"
 
           Text {
-            text: section === "true" ? "Знакомые сети" : "Другие сети"
+            text: section === "true" ? I18n.tr("wifi.known") : I18n.tr("wifi.other")
             color: Config.textMuted
             font.pixelSize: Config.fontSizeExtraSmall
             font.weight: Font.Medium
@@ -341,7 +341,7 @@ PanelWindow {
               spacing: Config.scaledSize(1)
 
               Text {
-                text: modelData.name || "Скрытая сеть"
+                text: modelData.name || I18n.tr("wifi.hidden")
                 color: modelData.connected ? Config.textWhite : Config.textPrimary
                 font.pixelSize: Config.fontSizeNormal
                 font.weight: modelData.connected ? Font.Medium : Font.Medium
@@ -386,7 +386,7 @@ PanelWindow {
 
             Text {
               width: parent.width
-              text: "Пароль для " + (modelData.name || "сети")
+              text: I18n.tr("wifi.passwordFor") + (modelData.name || "сети")
               color: Config.textSubtle
               font.pixelSize: Config.fontSizeSmall
               font.family: Config.fontSans
@@ -433,7 +433,7 @@ PanelWindow {
                 border.color: Config.borderColor
                 border.width: 1
 
-                Text { anchors.centerIn: parent; text: "Отмена"; color: Config.textSubtle; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
+                Text { anchors.centerIn: parent; text: I18n.tr("wifi.cancel"); color: Config.textSubtle; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
                 MouseArea { id: cancelMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.pendingNetwork = null }
               }
 
@@ -452,7 +452,7 @@ PanelWindow {
                   root.pendingNetwork = null
                 }
 
-                Text { anchors.centerIn: parent; text: "Подключить"; color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
+                Text { anchors.centerIn: parent; text: I18n.tr("wifi.connect"); color: Config.textWhite; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans }
                 MouseArea { id: connectMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: connectButton.clicked() }
               }
             }

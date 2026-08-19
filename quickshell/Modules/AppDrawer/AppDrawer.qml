@@ -122,7 +122,7 @@ PanelWindow {
     let query = searchInput.text.toLowerCase().trim()
     let expression = root.calculate(query)
     if (expression !== "") filteredAppModel.append({ name: expression, icon: "accessories-calculator", execCmd: "", desktopId: "", kind: "calculator" })
-    if (query.startsWith(">") && query.length > 1) filteredAppModel.append({ name: I18n.tr("Выполнить команду") + ": " + query.slice(1), icon: "utilities-terminal", execCmd: query.slice(1), desktopId: "", kind: "command" })
+    if (query.startsWith(">") && query.length > 1) filteredAppModel.append({ name: I18n.tr("appDrawer.runCommand") + ": " + query.slice(1), icon: "utilities-terminal", execCmd: query.slice(1), desktopId: "", kind: "command" })
     let windows = CompositorService.toplevels
     for (let i = 0; i < windows.length; i++) {
       let window = windows[i]
@@ -251,7 +251,7 @@ PanelWindow {
             focus: root.isOpen
 
             Text {
-              text: I18n.tr("Поиск приложений, окон, команд или выражений")
+              text: I18n.tr("appDrawer.searchPlaceholder")
               color: root.textPlaceholderColor
               font.pixelSize: Config.fontSizeTitle
               font.family: Config.fontSans

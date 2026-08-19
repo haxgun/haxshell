@@ -29,8 +29,8 @@ PanelWindow {
       Item {
         width: parent.width
         height: Config.scaledSize(22)
-        Text { text: Config.iconClipboard + "  " + I18n.tr("Буфер обмена"); color: Config.textPrimary; font.pixelSize: Config.fontSizeLarge; font.family: Config.fontSans }
-        Text { anchors.right: parent.right; text: I18n.tr("Очистить"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; MouseArea { anchors.fill: parent; onClicked: ClipboardService.clear() } }
+        Text { text: Config.iconClipboard + "  " + I18n.tr("clipboard.title"); color: Config.textPrimary; font.pixelSize: Config.fontSizeLarge; font.family: Config.fontSans }
+        Text { anchors.right: parent.right; text: I18n.tr("clipboard.clear"); color: Config.textMuted; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans; MouseArea { anchors.fill: parent; onClicked: ClipboardService.clear() } }
       }
       ListView {
         width: parent.width; height: parent.height - Config.scaledSize(42); clip: true; spacing: Config.scaledSize(6); model: ClipboardService.entries

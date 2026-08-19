@@ -74,7 +74,7 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.NoButton
-    onEntered: if (root.tooltip) root.tooltip.show(root, I18n.tr("Системный трей"))
+    onEntered: if (root.tooltip) root.tooltip.show(root, I18n.tr("bar.tray"))
     onExited: if (root.tooltip) root.tooltip.hide()
   }
 

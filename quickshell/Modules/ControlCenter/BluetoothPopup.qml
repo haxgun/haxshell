@@ -60,7 +60,7 @@ PanelWindow {
   }
 
   function deviceName(device) {
-    return device.name || device.deviceName || device.address || "Bluetooth устройство"
+    return device.name || device.deviceName || device.address || I18n.tr("bt.device")
   }
 
   function deviceIcon(device) {
@@ -77,11 +77,11 @@ PanelWindow {
   }
 
   function deviceStatus(device) {
-    if (device.connected) return "Подключено"
-    if (device.state === BluetoothDeviceState.Connecting) return "Подключение..."
-    if (device.pairing) return "Сопряжение..."
-    if (device.paired || device.bonded) return "Сопряжено"
-    return "Доступно"
+    if (device.connected) return I18n.tr("bt.connected")
+    if (device.state === BluetoothDeviceState.Connecting) return I18n.tr("bt.connecting")
+    if (device.pairing) return I18n.tr("bt.pairing")
+    if (device.paired || device.bonded) return I18n.tr("bt.paired")
+    return I18n.tr("bt.available")
   }
 
   function toggleDevice(device) {
@@ -163,7 +163,7 @@ PanelWindow {
           }
 
           Text {
-            text: root.connectedDeviceName || (root.adapter && root.adapter.enabled ? "Не подключено" : "Выключено")
+            text: root.connectedDeviceName || (root.adapter && root.adapter.enabled ? I18n.tr("bt.notConnected") : I18n.tr("bt.off"))
             color: Config.textMuted
             font.pixelSize: Config.fontSizeSmall
             font.family: Config.fontSans
@@ -222,7 +222,7 @@ PanelWindow {
       Text {
         width: parent.width
         visible: !root.adapter
-        text: "Bluetooth адаптер не найден"
+        text: I18n.tr("bt.adapterNotFound")
         color: Config.textMuted
         font.pixelSize: Config.fontSizeNormal
         font.family: Config.fontSans

@@ -12,7 +12,7 @@ Rectangle {
   required property var modelData
   readonly property bool isHistory: !modelData.dismiss
   readonly property var actions: modelData.actions || []
-  readonly property string summary: modelData.summary || modelData.appName || "Уведомление"
+  readonly property string summary: modelData.summary || modelData.appName || I18n.tr("notifications.fallback")
   readonly property string appName: modelData.appName || ""
   readonly property string body: modelData.body || ""
   readonly property string imageSource: modelData.imageSource || NotificationService.notificationImageSource(modelData)

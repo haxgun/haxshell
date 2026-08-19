@@ -79,18 +79,18 @@ PanelWindow {
         height: Config.scaledSize(28)
         spacing: Config.scaledSize(10)
         Text { text: Config.iconPower; color: Config.dangerRed; font.pixelSize: Config.fontSizeTitle; font.family: Config.fontIcon; anchors.verticalCenter: parent.verticalCenter }
-        Text { text: "Питание"; color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
+        Text { text: I18n.tr("power.title"); color: Config.textWhite; font.pixelSize: Config.fontSizeLarge; font.weight: Font.Medium; font.family: Config.fontSans; anchors.verticalCenter: parent.verticalCenter }
       }
 
       Rectangle { width: parent.width; height: 1; color: Config.separatorColor }
 
       Repeater {
         model: [
-          { label: "Заблокировать", icon: Config.iconLock, command: "loginctl lock-session" },
-          { label: "Сон", icon: Config.iconSuspend, command: "systemctl suspend" },
-          { label: "Выйти", icon: Config.iconLogout, command: "loginctl terminate-user $USER" },
-          { label: "Перезагрузка", icon: Config.iconRestart, command: "systemctl reboot" },
-          { label: "Выключить", icon: Config.iconPower, command: "systemctl poweroff", danger: true }
+          { label: I18n.tr("power.lock"), icon: Config.iconLock, command: "loginctl lock-session" },
+          { label: I18n.tr("power.sleep"), icon: Config.iconSuspend, command: "systemctl suspend" },
+          { label: I18n.tr("power.logout"), icon: Config.iconLogout, command: "loginctl terminate-user $USER" },
+          { label: I18n.tr("power.reboot"), icon: Config.iconRestart, command: "systemctl reboot" },
+          { label: I18n.tr("power.shutdown"), icon: Config.iconPower, command: "systemctl poweroff", danger: true }
         ]
 
         Rectangle {

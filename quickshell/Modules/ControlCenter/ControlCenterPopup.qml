@@ -292,17 +292,17 @@ PanelWindow {
     if (url.length === 0) return ""
     return url.indexOf("/") === 0 ? "file://" + url : url
   }
-  function wifiSubtitle() { return !Networking.wifiEnabled ? "Выключен" : (connectedNetworkName || "Не подключено") }
-  function bluetoothSubtitle() { return !adapter || !adapter.enabled ? "Выключен" : (connectedDeviceName || "Включен") }
-  function batterySubtitle() { return (batteryCharging ? "Заряжается" : (acOnline ? "От сети" : "Аккумулятор")) + " · " + profileName(powerProfile) }
-  function profileName(profile) { return profile === "power-saver" ? "Экономия" : (profile === "performance" ? "Производительность" : "Баланс") }
+  function wifiSubtitle() { return !Networking.wifiEnabled ? I18n.tr("cc.off") : (connectedNetworkName || I18n.tr("cc.notConnected")) }
+  function bluetoothSubtitle() { return !adapter || !adapter.enabled ? I18n.tr("cc.off") : (connectedDeviceName || I18n.tr("cc.on")) }
+  function batterySubtitle() { return (batteryCharging ? I18n.tr("cc.charging") : (acOnline ? I18n.tr("cc.onAc") : I18n.tr("cc.battery"))) + " · " + profileName(powerProfile) }
+  function profileName(profile) { return profile === "power-saver" ? I18n.tr("cc.powerSaver") : (profile === "performance" ? I18n.tr("cc.performance") : I18n.tr("cc.balanced")) }
   function profileIcon(profile) { return profile === "power-saver" ? Config.iconPowerSaver : (profile === "performance" ? Config.iconPerformance : Config.iconBalanced) }
   function volumeIcon() { return sinkMuted ? Config.iconVolMuted : (sinkVolume >= 70 ? Config.iconVolHigh : (sinkVolume >= 30 ? Config.iconVolMedium : Config.iconVolLow)) }
   function brightnessIcon() { return brightnessPercent >= 75 ? Config.iconBrightHigh : (brightnessPercent >= 35 ? Config.iconBrightMedium : (brightnessPercent > 0 ? Config.iconBrightLow : Config.iconBrightOff)) }
   function visibleTiles() { return Config.controlCenterTiles.split(",").map(tile => tile.trim()).filter(tile => ["wifi", "bluetooth", "airplane", "dnd", "caffeine", "screenshot", "power", "nightlight"].indexOf(tile) >= 0) }
   function tileIcon(tile) { return tile === "wifi" ? (Networking.wifiEnabled ? Config.iconWifiConnected : Config.iconWifiDisconnected) : (tile === "bluetooth" ? Config.iconBluetooth : (tile === "airplane" ? Config.iconAirplane : (tile === "dnd" ? Config.iconNotificationsActive : (tile === "caffeine" ? Config.iconCoffee : (tile === "power" ? profileIcon(powerProfile) : (tile === "nightlight" ? Config.iconNightLight : "󰹑")))))) }
-  function tileTitle(tile) { return tile === "wifi" ? "Wi-Fi" : (tile === "bluetooth" ? "Bluetooth" : (tile === "airplane" ? I18n.tr("Авиарежим") : (tile === "dnd" ? I18n.tr("Не беспокоить") : (tile === "caffeine" ? I18n.tr("Не спать") : (tile === "power" ? I18n.tr("Режим питания") : (tile === "nightlight" ? I18n.tr("Ночной свет") : I18n.tr("Снимок области"))))))) }
-  function tileSubtitle(tile) { return tile === "wifi" ? wifiSubtitle() : (tile === "bluetooth" ? bluetoothSubtitle() : (tile === "airplane" ? (airplaneModeEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")) : (tile === "dnd" ? (NotificationService.doNotDisturb ? I18n.tr("Включено") : I18n.tr("Выключено")) : (tile === "caffeine" ? (caffeineEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")) : (tile === "power" ? profileName(powerProfile) : (tile === "nightlight" ? (nightLightEnabled ? I18n.tr("Включено") : I18n.tr("Выключено")) : I18n.tr("Выбрать область"))))))) }
+  function tileTitle(tile) { return tile === "wifi" ? "Wi-Fi" : (tile === "bluetooth" ? "Bluetooth" : (tile === "airplane" ? I18n.tr("cc.airplane") : (tile === "dnd" ? I18n.tr("cc.dnd") : (tile === "caffeine" ? I18n.tr("cc.caffeine") : (tile === "power" ? I18n.tr("cc.powerProfile") : (tile === "nightlight" ? I18n.tr("cc.nightLight") : I18n.tr("cc.screenshot"))))))) }
+  function tileSubtitle(tile) { return tile === "wifi" ? wifiSubtitle() : (tile === "bluetooth" ? bluetoothSubtitle() : (tile === "airplane" ? (airplaneModeEnabled ? I18n.tr("cc.on") : I18n.tr("common.off")) : (tile === "dnd" ? (NotificationService.doNotDisturb ? I18n.tr("cc.on") : I18n.tr("common.off")) : (tile === "caffeine" ? (caffeineEnabled ? I18n.tr("cc.on") : I18n.tr("common.off")) : (tile === "power" ? profileName(powerProfile) : (tile === "nightlight" ? (nightLightEnabled ? I18n.tr("cc.on") : I18n.tr("common.off")) : I18n.tr("cc.selectRegion"))))))) }
   function tileActive(tile) { return tile === "wifi" ? Networking.wifiEnabled : (tile === "bluetooth" ? !!(adapter && adapter.enabled) : (tile === "airplane" ? airplaneModeEnabled : (tile === "dnd" ? NotificationService.doNotDisturb : (tile === "caffeine" ? caffeineEnabled : (tile === "power" ? true : (tile === "nightlight" ? nightLightEnabled : false)))))) }
   function activateTile(tile) { if (tile === "wifi") toggleWifi(); else if (tile === "bluetooth") toggleBluetooth(); else if (tile === "airplane") toggleAirplaneMode(); else if (tile === "dnd") NotificationService.setDoNotDisturb(!NotificationService.doNotDisturb); else if (tile === "caffeine") toggleCaffeine(); else if (tile === "power") cyclePowerProfile(); else if (tile === "nightlight") toggleNightLight(); else takeScreenshot() }
 
@@ -400,8 +400,8 @@ PanelWindow {
         }
         Column {
           anchors.left: parent.left; anchors.leftMargin: Config.scaledSize(62); anchors.right: mediaControls.left; anchors.rightMargin: Config.scaledSize(10); anchors.verticalCenter: parent.verticalCenter; spacing: Config.scaledSize(3)
-          Text { width: parent.width; text: root.hasMedia ? (root.mediaTitle || "Музыка") : "Музыка"; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
-          Text { width: parent.width; text: root.hasMedia ? (root.mediaArtist || "Неизвестный исполнитель") : "Нет активного плеера"; color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
+          Text { width: parent.width; text: root.hasMedia ? (root.mediaTitle || I18n.tr("cc.music")) : I18n.tr("cc.music"); color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.weight: Font.Medium; font.family: Config.fontSans; elide: Text.ElideRight }
+          Text { width: parent.width; text: root.hasMedia ? (root.mediaArtist || I18n.tr("cc.unknownArtist")) : I18n.tr("cc.noPlayer"); color: Config.textMuted; font.pixelSize: Config.fontSizeExtraSmall; font.family: Config.fontSans; elide: Text.ElideRight }
         }
         Row {
           id: mediaControls

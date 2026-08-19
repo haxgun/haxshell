@@ -128,7 +128,7 @@ Rectangle {
   property int sysCpuPercent: 0
   property int sysCpuTemp: 0
   property double sysLoad1: 0.0
-  property string sysUptime: "0м"
+  property string sysUptime: I18n.tr("system.uptimeFallback")
   property double sysRamUsedGb: 0.0
   property double sysRamTotalGb: 0.0
   property int sysRamPercent: 0
@@ -480,7 +480,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(sysContainer, I18n.tr("Мониторинг системы"))
+        onEntered: if (root.tooltip) root.tooltip.show(sysContainer, I18n.tr("bar.systemMonitor"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: root.toggleAnchoredFlyout("system", root.systemPopup, sysContainer)
       }
@@ -540,7 +540,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(notificationContainer, I18n.tr("Уведомления"))
+        onEntered: if (root.tooltip) root.tooltip.show(notificationContainer, I18n.tr("bar.notifications"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: root.toggleAnchoredFlyout("notifications", root.notificationPopup, notificationContainer)
       }
@@ -590,7 +590,7 @@ Rectangle {
           root.sink.audio.volume = nextVolume / 100
         }
 
-        onEntered: if (root.tooltip) root.tooltip.show(volContainer, I18n.tr("Громкость"))
+        onEntered: if (root.tooltip) root.tooltip.show(volContainer, I18n.tr("bar.volume"))
         onExited: if (root.tooltip) root.tooltip.hide()
       }
     }
@@ -636,7 +636,7 @@ Rectangle {
           }
         }
 
-        onEntered: if (root.tooltip) root.tooltip.show(brightContainer, I18n.tr("Яркость"))
+        onEntered: if (root.tooltip) root.tooltip.show(brightContainer, I18n.tr("bar.brightness"))
         onExited: if (root.tooltip) root.tooltip.hide()
       }
     }
@@ -718,7 +718,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(batteryContainer, I18n.tr("Батарея"))
+        onEntered: if (root.tooltip) root.tooltip.show(batteryContainer, I18n.tr("bar.battery"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: root.toggleAnchoredFlyout("battery", root.batteryPopup, batteryContainer)
       }
@@ -761,7 +761,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(btContainer, I18n.tr("Bluetooth"))
+        onEntered: if (root.tooltip) root.tooltip.show(btContainer, I18n.tr("bar.bluetooth"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           if (!root.toggleAnchoredFlyout("bluetooth", root.bluetoothPopup, btContainer)) {
@@ -809,7 +809,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(netContainer, I18n.tr("Сеть"))
+        onEntered: if (root.tooltip) root.tooltip.show(netContainer, I18n.tr("bar.network"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           if (!root.toggleAnchoredFlyout("wifi", root.wifiPopup, netContainer)) {
@@ -877,7 +877,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(controlCenterContainer, I18n.tr("Центр управления"))
+        onEntered: if (root.tooltip) root.tooltip.show(controlCenterContainer, I18n.tr("bar.controlCenter"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: root.openControlCenter("wifi", controlCenterContainer)
       }
@@ -964,7 +964,7 @@ Rectangle {
         enabled: Config.barDateTimeEnabled
         hoverEnabled: enabled
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onEntered: if (root.tooltip) root.tooltip.show(dateTimeContainer, I18n.tr("Дата и время"))
+        onEntered: if (root.tooltip) root.tooltip.show(dateTimeContainer, I18n.tr("bar.clock"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           if (root.calendarPopup) {
@@ -999,7 +999,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
-        onEntered: if (root.tooltip) root.tooltip.show(vpnContainer, I18n.tr("VPN"))
+        onEntered: if (root.tooltip) root.tooltip.show(vpnContainer, I18n.tr("bar.vpn"))
         onExited: if (root.tooltip) root.tooltip.hide()
       }
     }
@@ -1028,7 +1028,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(pickerContainer, I18n.tr("Пипетка цвета"))
+        onEntered: if (root.tooltip) root.tooltip.show(pickerContainer, I18n.tr("bar.colorPicker"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           pickerProc.running = false
@@ -1063,7 +1063,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onEntered: if (root.tooltip) root.tooltip.show(powerContainer, I18n.tr("Питание"))
+        onEntered: if (root.tooltip) root.tooltip.show(powerContainer, I18n.tr("bar.power"))
         onExited: if (root.tooltip) root.tooltip.hide()
         onClicked: {
           root.toggleAnchoredFlyout("power", root.powerPopup, powerContainer)
