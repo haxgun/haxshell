@@ -456,7 +456,8 @@
       "background": "背景"
     },
     "battery": {
-      "showPercent": "显示电量百分比"
+      "showPercent": "显示电量百分比",
+      "chargingAnimation": "充电动画"
     }
   }
 }

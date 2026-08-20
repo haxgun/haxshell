@@ -456,7 +456,8 @@
       "background": "Background"
     },
     "battery": {
-      "showPercent": "Show charge percent"
+      "showPercent": "Show charge percent",
+      "chargingAnimation": "Charging animation"
     }
   }
 }

@@ -456,7 +456,8 @@
       "background": "背景"
     },
     "battery": {
-      "showPercent": "充電率を表示"
+      "showPercent": "充電率を表示",
+      "chargingAnimation": "充電アニメーション"
     }
   }
 }

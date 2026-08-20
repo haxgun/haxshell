@@ -98,6 +98,7 @@ Scope {
       if (typeof settings.barVolumeEnabled === "string") Config.barVolumeEnabled = settings.barVolumeEnabled === "true"
       if (typeof settings.barBatteryEnabled === "string") Config.barBatteryEnabled = settings.barBatteryEnabled === "true"
       if (typeof settings.barBatteryPercentEnabled === "string") Config.barBatteryPercentEnabled = settings.barBatteryPercentEnabled === "true"
+      if (typeof settings.barBatteryAnimationEnabled === "string") Config.barBatteryAnimationEnabled = settings.barBatteryAnimationEnabled === "true"
       if (typeof settings.barBluetoothEnabled === "string") Config.barBluetoothEnabled = settings.barBluetoothEnabled === "true"
       if (typeof settings.barNetworkEnabled === "string") Config.barNetworkEnabled = settings.barNetworkEnabled === "true"
       else if (typeof settings.barEthernetEnabled === "string" || typeof settings.barWifiEnabled === "string") Config.barNetworkEnabled = (settings.barEthernetEnabled !== "false" || settings.barWifiEnabled !== "false")

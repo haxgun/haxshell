@@ -355,6 +355,7 @@ Singleton {
   property bool barVolumeEnabled: true
   property bool barBatteryEnabled: true
   property bool barBatteryPercentEnabled: true
+  property bool barBatteryAnimationEnabled: true
   property bool barBluetoothEnabled: true
   property bool barNetworkEnabled: true
   property bool barControlCenterEnabled: true

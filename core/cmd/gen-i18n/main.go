@@ -409,6 +409,7 @@ var entries = [][6]string{
 	{"settings.dropdown.h12", "12ч", "12h", "12 Std.", "12時間", "12小时"},
 	{"settings.dropdown.background", "Фон", "Background", "Hintergrund", "背景", "背景"},
 	{"settings.battery.showPercent", "Проценты заряда", "Show charge percent", "Ladezustand in Prozent", "充電率を表示", "显示电量百分比"},
+	{"settings.battery.chargingAnimation", "Анимация зарядки", "Charging animation", "Ladeanimation", "充電アニメーション", "充电动画"},
 }
 
 type ordered struct {

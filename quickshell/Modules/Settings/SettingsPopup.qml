@@ -879,6 +879,7 @@ Item {
     if (key === "barVolumeEnabled") Config.barVolumeEnabled = value
     if (key === "barBatteryEnabled") Config.barBatteryEnabled = value
     if (key === "barBatteryPercentEnabled") Config.barBatteryPercentEnabled = value
+    if (key === "barBatteryAnimationEnabled") Config.barBatteryAnimationEnabled = value
     if (key === "barBluetoothEnabled") Config.barBluetoothEnabled = value
     if (key === "barNetworkEnabled") Config.barNetworkEnabled = value
     if (key === "barControlCenterEnabled") Config.barControlCenterEnabled = value
@@ -3107,6 +3108,13 @@ Item {
               subtitle: Config.barBatteryPercentEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
               onClicked: root.setBoolSetting("barBatteryPercentEnabled", !Config.barBatteryPercentEnabled)
               ToggleSwitch { z: 1; checked: Config.barBatteryPercentEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barBatteryPercentEnabled", !Config.barBatteryPercentEnabled) }
+            }
+            SettingsRow {
+              icon: Config.iconBatteryCharging
+              title: I18n.tr("settings.battery.chargingAnimation")
+              subtitle: Config.barBatteryAnimationEnabled ? I18n.tr("common.on") : I18n.tr("common.off")
+              onClicked: root.setBoolSetting("barBatteryAnimationEnabled", !Config.barBatteryAnimationEnabled)
+              ToggleSwitch { z: 1; checked: Config.barBatteryAnimationEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barBatteryAnimationEnabled", !Config.barBatteryAnimationEnabled) }
             }
           }
 

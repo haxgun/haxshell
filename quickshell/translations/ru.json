@@ -456,7 +456,8 @@
       "background": "Фон"
     },
     "battery": {
-      "showPercent": "Проценты заряда"
+      "showPercent": "Проценты заряда",
+      "chargingAnimation": "Анимация зарядки"
     }
   }
 }

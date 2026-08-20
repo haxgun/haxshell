@@ -590,6 +590,7 @@ Rectangle {
       visible: Config.barBatteryEnabled
       readonly property bool showChargingProgress: BatteryService.batteryCharging || BatteryService.acOnline
       readonly property bool showBatteryPercent: Config.barBatteryPercentEnabled
+      readonly property bool chargingAnimated: showChargingProgress && Config.barBatteryAnimationEnabled && !Config.reduceMotion
       width: Config.buttonWidth + (showChargingProgress ? Config.scaledSize(14) : 0) + (showBatteryPercent ? Config.scaledSize(34) : 0)
       height: Config.buttonHeight
       radius: Config.buttonRadius
@@ -645,7 +646,7 @@ Rectangle {
             // shimmer sweep when charging
             Rectangle {
               id: chargingShimmer
-              visible: batteryContainer.showChargingProgress && !Config.reduceMotion
+              visible: batteryContainer.chargingAnimated
               width: Config.scaledSize(10)
               height: parent.height
               radius: 2
@@ -653,7 +654,7 @@ Rectangle {
               x: -width
               SequentialAnimation on x {
                 loops: Animation.Infinite
-                running: batteryContainer.showChargingProgress && !Config.reduceMotion
+                running: batteryContainer.chargingAnimated
                 NumberAnimation { from: -10; to: batteryBody.width; duration: 1100; easing.type: Easing.InOutQuad }
                 PauseAnimation { duration: 300 }
               }
@@ -665,7 +666,7 @@ Rectangle {
               property real pulseOpacity: 0.95
               SequentialAnimation on pulseOpacity {
                 loops: Animation.Infinite
-                running: batteryContainer.showChargingProgress && !Config.reduceMotion
+                running: batteryContainer.chargingAnimated
                 NumberAnimation { from: 0.75; to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
                 NumberAnimation { from: 1.0; to: 0.75; duration: 900; easing.type: Easing.InOutQuad }
               }
@@ -715,7 +716,7 @@ Rectangle {
             // gentle blink when charging
             SequentialAnimation on opacity {
               loops: Animation.Infinite
-              running: batteryContainer.showChargingProgress && !Config.reduceMotion
+              running: batteryContainer.chargingAnimated
               NumberAnimation { from: 1.0; to: 0.55; duration: 700; easing.type: Easing.InOutQuad }
               NumberAnimation { from: 0.55; to: 1.0; duration: 700; easing.type: Easing.InOutQuad }
             }

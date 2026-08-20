@@ -456,7 +456,8 @@
       "background": "Hintergrund"
     },
     "battery": {
-      "showPercent": "Ladezustand in Prozent"
+      "showPercent": "Ladezustand in Prozent",
+      "chargingAnimation": "Ladeanimation"
     }
   }
 }
