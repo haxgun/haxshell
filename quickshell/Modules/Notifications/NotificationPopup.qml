@@ -11,14 +11,14 @@ Scope {
 
   property bool isOpen: false
   property int rightMargin: Config.scaledSize(16)
-  readonly property int notificationCount: NotificationService.historyList.length
+  readonly property int notificationCount: NotificationService.notificationCount
 
   IpcHandler {
     target: "notifications"
     function toggle() { root.isOpen = !root.isOpen }
     function open() { root.isOpen = true }
     function close() { root.isOpen = false }
-    function clear() { NotificationService.clearAll() }
+    function clear() { NotificationService.clearCurrent() }
   }
 
   Variants {

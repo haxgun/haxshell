@@ -13,8 +13,7 @@ PanelWindow {
   property bool isOpen: false
   property int rightMargin: Config.scaledSize(16)
   readonly property bool isTargetScreen: NotificationService.isScreenFocused(targetScreen)
-  property string activeTab: "current"
-  readonly property var centerModel: activeTab === "current" ? NotificationService.notifications : NotificationService.historyList
+  readonly property var centerModel: NotificationService.notifications
 
   signal closeRequested()
 
@@ -90,7 +89,7 @@ PanelWindow {
           opacity: centerModel.length > 0 ? 1.0 : 0.45
 
           Text { anchors.centerIn: parent; text: Config.iconTrash; color: Config.dangerRed; font.pixelSize: Config.fontSizeIconMedium; font.family: Config.fontIcon }
-          MouseArea { id: clearMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; enabled: centerModel.length > 0; onClicked: activeTab === "current" ? NotificationService.clearCurrent() : NotificationService.clearHistory() }
+          MouseArea { id: clearMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; enabled: centerModel.length > 0; onClicked: NotificationService.clearCurrent() }
         }
       }
 
@@ -105,27 +104,6 @@ PanelWindow {
       }
 
       Rectangle { width: parent.width; height: 1; color: Config.separatorColor }
-
-      Row {
-        width: parent.width
-        height: Config.scaledSize(28)
-        spacing: Config.scaledSize(6)
-        Repeater {
-          model: [
-            { key: "current", text: I18n.tr("notifications.current") + " (" + NotificationService.notificationCount + ")" },
-            { key: "history", text: I18n.tr("notifications.history") + " (" + NotificationService.historyList.length + ")" }
-          ]
-          Rectangle {
-            required property var modelData
-            width: (parent.width - Config.scaledSize(6)) / 2
-            height: parent.height
-            radius: Config.popupRadiusPx(8)
-            color: panel.activeTab === modelData.key ? Config.pressedBg : Config.controlIdleBg
-            Text { anchors.centerIn: parent; text: modelData.text; color: Config.textPrimary; font.pixelSize: Config.fontSizeSmall; font.family: Config.fontSans }
-            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: panel.activeTab = modelData.key }
-          }
-        }
-      }
 
       Text {
         width: parent.width
@@ -143,8 +121,8 @@ PanelWindow {
         visible: centerModel.length > 0
         clip: true
         spacing: Config.scaledSize(8)
-        model: panel.centerModel
-        verticalLayoutDirection: Config.popupsAtBottom ? ListView.BottomToTop : ListView.TopToBottom
+        model: panel.centerModel.slice().reverse()
+        verticalLayoutDirection: ListView.TopToBottom
         delegate: NotificationCard {}
         add: Transition { NumberAnimation { properties: "opacity"; from: 0; to: 1; duration: Config.reduceMotion ? 0 : 160; easing.type: Easing.OutCubic } }
         remove: Transition { NumberAnimation { properties: "opacity"; to: 0; duration: Config.reduceMotion ? 0 : 120; easing.type: Easing.InCubic } }

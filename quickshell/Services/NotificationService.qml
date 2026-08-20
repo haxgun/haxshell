@@ -13,8 +13,6 @@ Singleton {
 
   readonly property var notifications: notificationServer.trackedNotifications && notificationServer.trackedNotifications.values ? notificationServer.trackedNotifications.values : []
   readonly property int notificationCount: notifications.length
-  property var historyList: []
-  readonly property int historyLimit: 80
   property bool doNotDisturb: Config.doNotDisturb
 
   signal notificationReceived(var notification)
@@ -35,7 +33,6 @@ Singleton {
 
     onNotification: notification => {
       notification.tracked = true
-      root.addToHistory(notification)
       if (!root.isMuted(notification)) {
         root.notificationReceived(notification)
         root.playSound()
@@ -71,10 +68,6 @@ Singleton {
     return image.indexOf("/") === 0 ? "file://" + image : image
   }
 
-  function historyImageSource(notification) {
-    return notificationImageSource(notification)
-  }
-
   function notificationIconSource(notification) {
     let icon = notification && notification.appIcon ? notification.appIcon : ""
     if (!icon && notification && notification.desktopEntry) icon = notification.desktopEntry
@@ -93,45 +86,13 @@ Singleton {
     for (let i = 0; i < list.length; i++) list[i].dismiss()
   }
 
-  function clearHistory() {
-    historyList = []
-  }
-
   function clearAll() {
     clearCurrent()
-    clearHistory()
   }
 
   function removeNotification(notification) {
     if (!notification) return
-    let id = notification.id
     if (notification.dismiss) notification.dismiss()
-    if (typeof id !== "undefined") removeFromHistory(id)
-  }
-
-  function removeFromHistory(notificationId) {
-    let next = []
-    for (let i = 0; i < historyList.length; i++) {
-      if (historyList[i] && historyList[i].id !== notificationId) next.push(historyList[i])
-    }
-    historyList = next
-  }
-
-  function addToHistory(notification) {
-    if (!notification) return
-    let item = {
-      id: notification.id,
-      summary: notification.summary || notification.appName || I18n.tr("notifications.fallback"),
-      body: notification.body || "",
-      appName: notification.appName || "",
-      appIcon: notification.appIcon || "",
-      desktopEntry: notification.desktopEntry || "",
-      imageSource: historyImageSource(notification),
-      iconSource: notificationIconSource(notification),
-      urgency: notification.urgency || 0,
-      timestamp: Date.now()
-    }
-    historyList = historyList.concat(item).slice(-historyLimit)
   }
 
   function invokeDefault(notification) {
