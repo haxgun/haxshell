@@ -408,6 +408,7 @@ var entries = [][6]string{
 	{"settings.dropdown.h24", "24ч", "24h", "24 Std.", "24時間", "24小时"},
 	{"settings.dropdown.h12", "12ч", "12h", "12 Std.", "12時間", "12小时"},
 	{"settings.dropdown.background", "Фон", "Background", "Hintergrund", "背景", "背景"},
+	{"settings.battery.showPercent", "Проценты заряда", "Show charge percent", "Ladezustand in Prozent", "充電率を表示", "显示电量百分比"},
 }
 
 type ordered struct {

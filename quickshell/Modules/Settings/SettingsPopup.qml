@@ -878,6 +878,7 @@ Item {
     if (key === "barNotificationsEnabled") Config.barNotificationsEnabled = value
     if (key === "barVolumeEnabled") Config.barVolumeEnabled = value
     if (key === "barBatteryEnabled") Config.barBatteryEnabled = value
+    if (key === "barBatteryPercentEnabled") Config.barBatteryPercentEnabled = value
     if (key === "barBluetoothEnabled") Config.barBluetoothEnabled = value
     if (key === "barNetworkEnabled") Config.barNetworkEnabled = value
     if (key === "barControlCenterEnabled") Config.barControlCenterEnabled = value
@@ -3099,6 +3100,13 @@ Item {
               title: I18n.tr("cc.performance")
               onClicked: BatteryService.setProfile("performance")
               ToggleSwitch { z: 1; checked: BatteryService.powerProfile === "performance"; anchors.verticalCenter: parent.verticalCenter; onToggled: BatteryService.setProfile("performance") }
+            }
+            SettingsRow {
+              icon: Config.iconBattery
+              title: I18n.tr("settings.battery.showPercent")
+              subtitle: Config.barBatteryPercentEnabled ? I18n.tr("common.shownInBar") : I18n.tr("common.hiddenFromBarF")
+              onClicked: root.setBoolSetting("barBatteryPercentEnabled", !Config.barBatteryPercentEnabled)
+              ToggleSwitch { z: 1; checked: Config.barBatteryPercentEnabled; anchors.verticalCenter: parent.verticalCenter; onToggled: root.setBoolSetting("barBatteryPercentEnabled", !Config.barBatteryPercentEnabled) }
             }
           }
 

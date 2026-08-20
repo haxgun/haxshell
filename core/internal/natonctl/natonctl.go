@@ -201,6 +201,7 @@ func settingsDefaults() map[string]string {
 		"barVolumeEnabled":              "true",
 		"barBrightnessEnabled":          "true",
 		"barBatteryEnabled":             "true",
+		"barBatteryPercentEnabled":      "true",
 		"barBluetoothEnabled":           "true",
 		"barNetworkEnabled":             "true",
 		"barControlCenterEnabled":       "true",

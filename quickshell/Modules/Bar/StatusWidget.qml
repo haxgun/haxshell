@@ -589,7 +589,8 @@ Rectangle {
       id: batteryContainer
       visible: Config.barBatteryEnabled
       readonly property bool showChargingProgress: BatteryService.batteryCharging || BatteryService.acOnline
-      width: Config.buttonWidth + (showChargingProgress ? Config.scaledSize(14) : 0)
+      readonly property bool showBatteryPercent: Config.barBatteryPercentEnabled
+      width: Config.buttonWidth + (showChargingProgress ? Config.scaledSize(14) : 0) + (showBatteryPercent ? Config.scaledSize(34) : 0)
       height: Config.buttonHeight
       radius: Config.buttonRadius
       readonly property bool isBatteryActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "battery"
@@ -603,6 +604,16 @@ Rectangle {
         id: batteryRow
         anchors.centerIn: parent
         spacing: Config.scaledSize(4)
+
+        Text {
+          id: batteryPercentText
+          visible: batteryContainer.showBatteryPercent
+          text: batteryContainer.batteryPercent + "%"
+          color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.textPrimary
+          font.pixelSize: Config.fontMonoSizeSmall
+          font.family: Config.fontMono
+          anchors.verticalCenter: parent.verticalCenter
+        }
 
         Item {
           width: batteryContainer.showChargingProgress ? Config.scaledSize(38) : Config.scaledSize(26)

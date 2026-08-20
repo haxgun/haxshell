@@ -454,6 +454,9 @@
       "h24": "24 Std.",
       "h12": "12 Std.",
       "background": "Hintergrund"
+    },
+    "battery": {
+      "showPercent": "Ladezustand in Prozent"
     }
   }
 }

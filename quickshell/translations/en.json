@@ -454,6 +454,9 @@
       "h24": "24h",
       "h12": "12h",
       "background": "Background"
+    },
+    "battery": {
+      "showPercent": "Show charge percent"
     }
   }
 }
