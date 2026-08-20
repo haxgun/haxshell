@@ -1,5 +1,6 @@
 // StatusWidget.qml - System Monitor, Audio, Connectivity & Power Controls
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
@@ -141,14 +142,14 @@ Rectangle {
   property double sysGpuVramUsedGb: 0.0
   property double sysGpuVramTotalGb: 0.0
 
-  function batteryColor(percent) {
-    if (percent <= 20) return Config.dangerRed
-    return Config.textPrimary
-  }
-
-  function chargingIconColor(percent) {
-    if (percent < 50) return Config.textWhite
-    return Config.isLightTheme ? "#ffffff" : "#020617"
+  // Fluent UI battery icon (20x20 svg, uses currentColor) selected by level + charging state.
+  // Discharge icons skip "1" (0, 2..10); charge icons cover 0..10.
+  function batteryIconSource(percent, charging) {
+    var level = Math.max(0, Math.min(10, Math.floor(percent / 10)))
+    var base = Qt.resolvedUrl("../../Icons/Battery/")
+    if (charging) return base + "fluent--battery-charge-" + level + "-20-regular.svg"
+    if (level === 1) level = 2
+    return base + "fluent--battery-" + level + "-20-regular.svg"
   }
 
   // System resource polling only runs while its bar indicators are visible.
@@ -591,7 +592,7 @@ Rectangle {
       readonly property bool showChargingProgress: BatteryService.batteryCharging || BatteryService.acOnline
       readonly property bool showBatteryPercent: Config.barBatteryPercentEnabled
       readonly property bool chargingAnimated: showChargingProgress && Config.barBatteryAnimationEnabled && !Config.reduceMotion
-      width: Config.buttonWidth + (showChargingProgress ? Config.scaledSize(14) : 0) + (showBatteryPercent ? Config.scaledSize(34) : 0)
+      width: Config.buttonWidth + (showBatteryPercent ? Config.scaledSize(42) : 6)
       height: Config.buttonHeight
       radius: Config.buttonRadius
       readonly property bool isBatteryActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "battery"
@@ -604,7 +605,7 @@ Rectangle {
       Row {
         id: batteryRow
         anchors.centerIn: parent
-        spacing: Config.scaledSize(4)
+        spacing: Config.scaledSize(5)
 
         Text {
           id: batteryPercentText
@@ -617,108 +618,40 @@ Rectangle {
         }
 
         Item {
-          width: batteryContainer.showChargingProgress ? Config.scaledSize(38) : Config.scaledSize(26)
-          height: 16
+          width: Config.scaledSize(24)
+          height: Config.scaledSize(24)
           anchors.verticalCenter: parent.verticalCenter
 
-          Rectangle {
-            id: batteryBody
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            width: Config.scaledSize(22)
-            height: 14
-            radius: 3
-            color: Config.meterTrack
-            clip: true
-
-            Rectangle {
-              id: batteryFill
-              anchors.left: parent.left
-              anchors.top: parent.top
-              anchors.bottom: parent.bottom
-              anchors.margins: Config.scaledSize(2)
-              width: Math.max(2, Math.round((parent.width - 4) * batteryContainer.batteryPercent / 100))
-              radius: 2
-              color: root.batteryColor(batteryContainer.batteryPercent)
-              opacity: batteryContainer.showChargingProgress ? chargingPulse.pulseOpacity : 0.95
-            }
-
-            // shimmer sweep when charging
-            Rectangle {
-              id: chargingShimmer
-              visible: batteryContainer.chargingAnimated
-              width: Config.scaledSize(10)
-              height: parent.height
-              radius: 2
-              color: Qt.rgba(1, 1, 1, 0.22)
-              x: -width
-              SequentialAnimation on x {
-                loops: Animation.Infinite
-                running: batteryContainer.chargingAnimated
-                NumberAnimation { from: -10; to: batteryBody.width; duration: 1100; easing.type: Easing.InOutQuad }
-                PauseAnimation { duration: 300 }
-              }
-            }
-
-            // pulse driver - disabled when reduceMotion is on
-            Item {
-              id: chargingPulse
-              property real pulseOpacity: 0.95
-              SequentialAnimation on pulseOpacity {
-                loops: Animation.Infinite
-                running: batteryContainer.chargingAnimated
-                NumberAnimation { from: 0.75; to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
-                NumberAnimation { from: 1.0; to: 0.75; duration: 900; easing.type: Easing.InOutQuad }
-              }
-            }
-
-            Rectangle {
-              anchors.fill: parent
-              radius: parent.radius
-              color: "#00000000"
-              border.color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
-              border.width: 1
-            }
-
-            Text {
-              anchors.centerIn: parent
-              visible: !batteryContainer.showChargingProgress && (BatteryService.batteryCharging || BatteryService.acOnline)
-              text: Config.iconBatteryCharging
-              color: root.chargingIconColor(batteryContainer.batteryPercent)
-              font.pixelSize: Config.fontSizeIconTiny
-              font.family: Config.fontIcon
-            }
+          Image {
+            id: batteryIcon
+            anchors.centerIn: parent
+            width: Config.scaledSize(24)
+            height: Config.scaledSize(24)
+            source: root.batteryIconSource(batteryContainer.batteryPercent, batteryContainer.showChargingProgress)
+            sourceSize: Qt.size(40, 40)
+            fillMode: Image.PreserveAspectFit
+            asynchronous: true
+            visible: false
           }
 
-          Rectangle {
-            id: batteryNub
-            width: 3
-            height: 7
-            radius: 1
-            anchors.left: batteryBody.right
-            anchors.leftMargin: Config.scaledSize(1)
-            anchors.verticalCenter: batteryBody.verticalCenter
-            color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
-          }
-
-          Text {
-            id: chargingLightning
-            visible: batteryContainer.showChargingProgress
-            anchors.left: batteryNub.right
-            anchors.leftMargin: Config.scaledSize(3)
-            anchors.verticalCenter: batteryBody.verticalCenter
-            text: Config.iconLightning
-            color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.themeAccent
-            font.pixelSize: Config.fontSizeIconSmall
-            font.family: Config.fontIcon
-            opacity: batteryContainer.showChargingProgress ? 1 : 0
+          MultiEffect {
+            anchors.fill: batteryIcon
+            source: batteryIcon
+            colorizationColor: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
+            colorization: 1.0
+            opacity: batteryContainer.chargingAnimated ? chargingPulse.pulseOpacity : 0.95
             Behavior on opacity { NumberAnimation { duration: Config.reduceMotion ? 0 : 150 } }
-            // gentle blink when charging
-            SequentialAnimation on opacity {
+          }
+
+          // pulse driver - disabled when reduceMotion is on
+          Item {
+            id: chargingPulse
+            property real pulseOpacity: 0.95
+            SequentialAnimation on pulseOpacity {
               loops: Animation.Infinite
               running: batteryContainer.chargingAnimated
-              NumberAnimation { from: 1.0; to: 0.55; duration: 700; easing.type: Easing.InOutQuad }
-              NumberAnimation { from: 0.55; to: 1.0; duration: 700; easing.type: Easing.InOutQuad }
+              NumberAnimation { from: 0.75; to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
+              NumberAnimation { from: 1.0; to: 0.75; duration: 900; easing.type: Easing.InOutQuad }
             }
           }
         }
