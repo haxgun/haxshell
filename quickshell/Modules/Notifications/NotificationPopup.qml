@@ -10,6 +10,9 @@ Scope {
   id: root
 
   property bool isOpen: false
+  property bool controlOpen: false
+  property int controlHeight: 0
+  property string controlScreenName: ""
   property int rightMargin: Config.scaledSize(16)
   readonly property int notificationCount: NotificationService.notificationCount
 
@@ -28,6 +31,9 @@ Scope {
       targetScreen: modelData
       rightMargin: root.rightMargin
       centerOpen: root.isOpen
+      controlOpen: root.controlOpen
+      controlHeight: root.controlHeight
+      controlScreenName: root.controlScreenName
       onCenterRequested: root.isOpen = true
     }
   }

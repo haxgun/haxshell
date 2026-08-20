@@ -12,6 +12,9 @@ PanelWindow {
   property var targetScreen: null
   property int rightMargin: Config.scaledSize(16)
   property bool centerOpen: false
+  property bool controlOpen: false
+  property int controlHeight: 0
+  property string controlScreenName: ""
   property var toastBlurRegion: null
   readonly property int maxVisibleToasts: Config.notificationMaxVisible
   readonly property bool isTargetScreen: NotificationService.isScreenFocused(targetScreen)
@@ -84,16 +87,25 @@ PanelWindow {
     }
   }
 
+  readonly property bool controlOnThisScreen: controlOpen && controlScreenName.length > 0 && targetScreen && targetScreen.name === controlScreenName
+  readonly property int toastTopOffset: controlOnThisScreen && !Config.popupsAtBottom && toastAtTop ? controlHeight + Config.popupGap + 8 : 8
+  readonly property int toastBottomOffset: controlOnThisScreen && Config.popupsAtBottom && !toastAtTop ? controlHeight + Config.popupGap + 8 : 8
+
   onCenterOpenChanged: {
     if (centerOpen) toastModel.clear()
   }
 
   onMaxVisibleToastsChanged: panel.trimToasts()
+  onToastTopOffsetChanged: blurRebuildTimer.restart()
+  onToastBottomOffsetChanged: blurRebuildTimer.restart()
 
   Component.onDestruction: { if (panel.toastBlurRegion) panel.toastBlurRegion.destroy() }
 
   function trimToasts() {
-    while (toastModel.count > maxVisibleToasts) toastModel.remove(toastModel.count - 1)
+    while (toastModel.count > maxVisibleToasts) {
+      if (Config.popupsAtBottom) toastModel.remove(toastModel.count - 1)
+      else toastModel.remove(0)
+    }
   }
 
   function showToast(notification) {
@@ -108,7 +120,8 @@ PanelWindow {
       iconSource: NotificationService.notificationIconSource(notification),
       timeoutMs: notification.expireTimeout >= 0 ? notification.expireTimeout : panel.toastTimeoutMs
     }
-    toastModel.insert(0, item)
+    if (Config.popupsAtBottom) toastModel.insert(0, item)
+    else toastModel.append(item)
     panel.trimToasts()
   }
 
@@ -126,9 +139,9 @@ PanelWindow {
     width: Config.scaledSize(360)
     height: implicitHeight
     anchors.top: panel.toastAtTop ? parent.top : undefined
-    anchors.topMargin: panel.toastAtTop ? 8 : 0
+    anchors.topMargin: panel.toastAtTop ? panel.toastTopOffset : 0
     anchors.bottom: panel.toastAtTop ? undefined : parent.bottom
-    anchors.bottomMargin: panel.toastAtTop ? 0 : 8
+    anchors.bottomMargin: panel.toastAtTop ? 0 : panel.toastBottomOffset
     anchors.left: panel.toastAtLeft ? parent.left : undefined
     anchors.leftMargin: panel.toastAtLeft ? panel.rightMargin : 0
     anchors.right: panel.toastAtLeft || panel.toastAtCenter ? undefined : parent.right

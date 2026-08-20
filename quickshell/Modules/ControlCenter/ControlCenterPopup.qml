@@ -18,6 +18,8 @@ PanelWindow {
   property int rightMargin: Config.scaledSize(16)
   property var osd: null
   property var powerPopup: null
+  readonly property int openPopupHeight: isOpen ? Math.round(container.height) : 0
+  property string openScreenName: ""
   property string activeSection: "wifi"
   property int brightnessPercent: 100
   property string activeBrightnessBus: Config.brightnessMonitorBus
@@ -128,12 +130,15 @@ PanelWindow {
   Shortcut { sequence: "Alt+Right"; enabled: root.isOpen && root.settingsView; onActivated: settingsEmbedded.selectRelativePage(1) }
   Shortcut { sequence: "Alt+Left"; enabled: root.isOpen && root.settingsView; onActivated: settingsEmbedded.selectRelativePage(-1) }
 
-  onIsOpenChanged: if (isOpen) {
-    refreshAll()
-    if (wifiDevice) wifiDevice.scannerEnabled = true
-    if (adapter && adapter.enabled) adapter.discovering = true
-  } else {
-    root.settingsView = false
+  onIsOpenChanged: {
+    if (isOpen) {
+      root.openScreenName = CompositorService.focusedOutputName || (Quickshell.screens.length > 0 ? Quickshell.screens[0].name : "")
+      refreshAll()
+      if (wifiDevice) wifiDevice.scannerEnabled = true
+      if (adapter && adapter.enabled) adapter.discovering = true
+    } else {
+      root.settingsView = false
+    }
   }
 
   Timer {

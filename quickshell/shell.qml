@@ -212,6 +212,9 @@ Scope {
 
   NotificationPopup {
     id: notifications
+    controlOpen: controlCenter.isOpen
+    controlHeight: controlCenter.openPopupHeight
+    controlScreenName: controlCenter.openScreenName
   }
 
   TrayMenuPopup {
