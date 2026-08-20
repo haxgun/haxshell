@@ -455,6 +455,7 @@ Singleton {
   readonly property string iconVideo: ""
   readonly property string iconBattery: "󰁹"
   readonly property string iconBatteryCharging: "󰚥"
+  readonly property string iconLightning: "󱐋"
   readonly property string iconPowerSaver: "󰌪"
   readonly property string iconBalanced: "󰗑"
   readonly property string iconPerformance: "󰓅"

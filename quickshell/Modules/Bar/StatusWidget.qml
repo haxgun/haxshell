@@ -588,7 +588,8 @@ Rectangle {
     Rectangle {
       id: batteryContainer
       visible: Config.barBatteryEnabled
-      width: Config.buttonWidth
+      readonly property bool showChargingProgress: BatteryService.batteryCharging || BatteryService.acOnline
+      width: Config.buttonWidth + (showChargingProgress ? Config.scaledSize(14) : 0)
       height: Config.buttonHeight
       radius: Config.buttonRadius
       readonly property bool isBatteryActive: root.controlCenterPopup && root.controlCenterPopup.isOpen && root.controlCenterPopup.settingsView && root.controlCenterPopup.activeSection === "battery"
@@ -596,63 +597,118 @@ Rectangle {
       color: (isBatteryActive || batteryMouse.containsMouse) ? Config.pressedBg : "#00000000"
 
       Behavior on color { ColorAnimation { duration: 150 } }
+      Behavior on width { NumberAnimation { duration: Config.reduceMotion ? 0 : 150; easing.type: Easing.OutCubic } }
 
-      Text {
-        visible: false
-      }
-
-      Item {
-        width: Config.scaledSize(26)
-        height: 16
+      Row {
+        id: batteryRow
         anchors.centerIn: parent
+        spacing: Config.scaledSize(4)
 
-        Rectangle {
-          id: batteryBody
-          anchors.left: parent.left
+        Item {
+          width: batteryContainer.showChargingProgress ? Config.scaledSize(38) : Config.scaledSize(26)
+          height: 16
           anchors.verticalCenter: parent.verticalCenter
-          width: Config.scaledSize(22)
-          height: 14
-          radius: 3
-          color: Config.meterTrack
-          clip: true
 
           Rectangle {
+            id: batteryBody
             anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.margins: Config.scaledSize(2)
-            width: Math.max(2, Math.round((parent.width - 4) * batteryContainer.batteryPercent / 100))
-            radius: 2
-            color: root.batteryColor(batteryContainer.batteryPercent)
-            opacity: 0.95
+            anchors.verticalCenter: parent.verticalCenter
+            width: Config.scaledSize(22)
+            height: 14
+            radius: 3
+            color: Config.meterTrack
+            clip: true
+
+            Rectangle {
+              id: batteryFill
+              anchors.left: parent.left
+              anchors.top: parent.top
+              anchors.bottom: parent.bottom
+              anchors.margins: Config.scaledSize(2)
+              width: Math.max(2, Math.round((parent.width - 4) * batteryContainer.batteryPercent / 100))
+              radius: 2
+              color: root.batteryColor(batteryContainer.batteryPercent)
+              opacity: batteryContainer.showChargingProgress ? chargingPulse.pulseOpacity : 0.95
+            }
+
+            // shimmer sweep when charging
+            Rectangle {
+              id: chargingShimmer
+              visible: batteryContainer.showChargingProgress && !Config.reduceMotion
+              width: Config.scaledSize(10)
+              height: parent.height
+              radius: 2
+              color: Qt.rgba(1, 1, 1, 0.22)
+              x: -width
+              SequentialAnimation on x {
+                loops: Animation.Infinite
+                running: batteryContainer.showChargingProgress && !Config.reduceMotion
+                NumberAnimation { from: -10; to: batteryBody.width; duration: 1100; easing.type: Easing.InOutQuad }
+                PauseAnimation { duration: 300 }
+              }
+            }
+
+            // pulse driver - disabled when reduceMotion is on
+            Item {
+              id: chargingPulse
+              property real pulseOpacity: 0.95
+              SequentialAnimation on pulseOpacity {
+                loops: Animation.Infinite
+                running: batteryContainer.showChargingProgress && !Config.reduceMotion
+                NumberAnimation { from: 0.75; to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
+                NumberAnimation { from: 1.0; to: 0.75; duration: 900; easing.type: Easing.InOutQuad }
+              }
+            }
+
+            Rectangle {
+              anchors.fill: parent
+              radius: parent.radius
+              color: "#00000000"
+              border.color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
+              border.width: 1
+            }
+
+            Text {
+              anchors.centerIn: parent
+              visible: !batteryContainer.showChargingProgress && (BatteryService.batteryCharging || BatteryService.acOnline)
+              text: Config.iconBatteryCharging
+              color: root.chargingIconColor(batteryContainer.batteryPercent)
+              font.pixelSize: Config.fontSizeIconTiny
+              font.family: Config.fontIcon
+            }
           }
 
           Rectangle {
-            anchors.fill: parent
-            radius: parent.radius
-            color: "#00000000"
-            border.color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
-            border.width: 1
+            id: batteryNub
+            width: 3
+            height: 7
+            radius: 1
+            anchors.left: batteryBody.right
+            anchors.leftMargin: Config.scaledSize(1)
+            anchors.verticalCenter: batteryBody.verticalCenter
+            color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
           }
 
           Text {
-            anchors.centerIn: parent
-            visible: BatteryService.batteryCharging || BatteryService.acOnline
-            text: Config.iconBatteryCharging
-            color: root.chargingIconColor(batteryContainer.batteryPercent)
-            font.pixelSize: Config.fontSizeIconTiny
+            id: chargingLightning
+            visible: batteryContainer.showChargingProgress
+            anchors.left: batteryNub.right
+            anchors.leftMargin: Config.scaledSize(3)
+            anchors.verticalCenter: batteryBody.verticalCenter
+            text: Config.iconLightning
+            color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.themeAccent
+            font.pixelSize: Config.fontSizeIconSmall
             font.family: Config.fontIcon
+            opacity: batteryContainer.showChargingProgress ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: Config.reduceMotion ? 0 : 150 } }
+            // gentle blink when charging
+            SequentialAnimation on opacity {
+              loops: Animation.Infinite
+              running: batteryContainer.showChargingProgress && !Config.reduceMotion
+              NumberAnimation { from: 1.0; to: 0.55; duration: 700; easing.type: Easing.InOutQuad }
+              NumberAnimation { from: 0.55; to: 1.0; duration: 700; easing.type: Easing.InOutQuad }
+            }
           }
-        }
-
-        Rectangle {
-          width: 3
-          height: 7
-          radius: 1
-          anchors.left: batteryBody.right
-          anchors.leftMargin: Config.scaledSize(1)
-          anchors.verticalCenter: batteryBody.verticalCenter
-          color: (batteryContainer.isBatteryActive || batteryMouse.containsMouse) ? Config.textWhite : Config.iconColor
         }
       }
 
@@ -668,6 +724,7 @@ Rectangle {
     }
 
     // Bluetooth Icon Button
+
     Rectangle {
       id: btContainer
       visible: Config.barBluetoothEnabled
