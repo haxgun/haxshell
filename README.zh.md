@@ -8,15 +8,16 @@
 
 [English](README.md) · [Русский](README.ru.md) · **中文** · [Deutsch](README.de.md)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-6b8e23.svg)](LICENSE)
-[![Quickshell](https://img.shields.io/badge/Quickshell-QML-5c7cfa.svg)](https://quickshell.org/)
-[![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58e1ff.svg)](https://hyprland.org/)
-[![Niri](https://img.shields.io/badge/Niri-Wayland-7c4dff.svg)](https://github.com/YaLTeR/niri)
-[![Go](https://img.shields.io/badge/Go-1.25-00ADD8.svg)](https://go.dev/)
-[![Stars](https://img.shields.io/github/stars/haxgun/naton?style=flat&color=green)](https://github.com/ValoryLabs/Valory/stargazers)
-[![Forks](https://img.shields.io/github/forks/haxgun/naton?style=flat&color=green)](https://github.com/ValoryLabs/Valory/forks)
-[![Issues](https://img.shields.io/github/issues/haxgun/naton?style=flat)](https://github.com/ValoryLabs/Valory/issues)
-![GitHub last commit](https://img.shields.io/github/last-commit/haxgun/naton)
+<a href="https://github.com/vercel/next.js"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/github/vercel/next.js/license.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/github/vercel/next.js/license.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>
+<a href="https://quickshell.org/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Quickshell-QML.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/badge/Quickshell-QML.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>
+<a href="https://hypr.land/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Hyprland-Wayland.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/badge/Hyprland-Wayland.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>
+<a href="https://github.com/YaLTeR/niri"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Niri-Wayland.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/badge/Niri-Wayland.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>
+<a href="https://go.dev/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Go-1.25+.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/badge/Go-1.25+.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>  
+<a href="https://github.com/haxgun/naton"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/github/haxgun/naton/stars.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/github/haxgun/naton/stars.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>
+<a href="https://github.com/haxgun/naton/forks"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/github/haxgun/naton/forks.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/github/haxgun/naton/forks.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>
+<a href="https://github.com/haxgun/naton/issues"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/github/haxgun/naton/issues.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/github/haxgun/naton/issues.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>
+<a href="https://github.com/haxgun/naton/commits"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/github/haxgun/naton/last-commit.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/github/haxgun/naton/last-commit.svg?variant=outline&amp;size=xs&amp;font=geist&amp;mode=light"></picture></a>
+
 
 </div>
 
